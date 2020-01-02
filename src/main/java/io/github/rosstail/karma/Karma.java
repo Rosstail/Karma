@@ -1,5 +1,6 @@
 package io.github.rosstail.karma;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Karma extends JavaPlugin {
@@ -9,6 +10,7 @@ public class Karma extends JavaPlugin {
         System.out.println("==========================");
         System.out.println("===   KARMA  ENABLED   ===");
         System.out.println("==========================");
+        Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
         this.saveDefaultConfig();
     }
 
