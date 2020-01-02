@@ -9,6 +9,7 @@ public class Karma extends JavaPlugin {
         System.out.println("==========================");
         System.out.println("===   KARMA  ENABLED   ===");
         System.out.println("==========================");
+        this.saveDefaultConfig();
     }
 
     @Override
