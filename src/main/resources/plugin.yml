@@ -1,0 +1,3 @@
+name: Karma
+version: 1.0
+main: io.github.rosstail.karma.Karma
