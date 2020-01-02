@@ -14,9 +14,17 @@ public class PlayerConnect implements Listener {
         String displayPlayerName = event.getPlayer().getName();
         UUID playerId = event.getPlayer().getUniqueId();
         if (! event.getPlayer().hasPlayedBefore() )
-            event.setJoinMessage(ChatColor.GOLD + "Welcome to " + displayPlayerName +
-                    " who made his firsts steps into the server !");
+            PlayerFirstWelcomeMessage(displayPlayerName, event);
         else
-            event.setJoinMessage(ChatColor.BLUE + displayPlayerName + " is connected with the UUID " + playerId + ".");
+            PlayerConnectMessage(displayPlayerName, playerId, event);
+    }
+
+    public void PlayerFirstWelcomeMessage(String displayPlayerName, PlayerJoinEvent event) {
+        event.setJoinMessage(ChatColor.GOLD + "Welcome to " + displayPlayerName +
+                " who made his firsts steps into the server !");
+    }
+
+    public void PlayerConnectMessage(String displayPlayerName, UUID playerId, PlayerJoinEvent event) {
+        event.setJoinMessage(ChatColor.BLUE + displayPlayerName + " is connected with the UUID " + playerId + ".");
     }
 }
