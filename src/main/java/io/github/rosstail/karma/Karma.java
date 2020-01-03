@@ -10,8 +10,9 @@ public class Karma extends JavaPlugin {
         System.out.println("==========================");
         System.out.println("===   KARMA  ENABLED   ===");
         System.out.println("==========================");
-        Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
         this.saveDefaultConfig();
+        FoldersManagement.CreateFolders();
+        Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
     }
 
     @Override
@@ -20,4 +21,5 @@ public class Karma extends JavaPlugin {
         System.out.println("===   KARMA DISABLED   ===");
         System.out.println("==========================");
     }
+
 }
