@@ -11,7 +11,7 @@ public class Karma extends JavaPlugin {
         System.out.println("===   KARMA  ENABLED   ===");
         System.out.println("==========================");
         this.saveDefaultConfig();
-        FoldersManagement.CreateFolders();
+        PlayerConnect.createFolders();
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
     }
 
