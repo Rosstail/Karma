@@ -1,4 +1,4 @@
-package io.github.rosstail.karma;
+package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;

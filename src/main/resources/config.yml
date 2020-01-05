@@ -1,1 +1,4 @@
 Config-version: 0.1
+
+karma:
+  default-karma: 0
