@@ -16,6 +16,11 @@ public class PlayerConnect implements Listener {
 
     private static File file;
     private static FileConfiguration customFile;
+    private Karma karma;
+
+    public PlayerConnect(Karma karma) {
+        this.karma = karma;
+    }
 
     @EventHandler
     public void CheckPlayerJoinNumber(PlayerJoinEvent event) {
@@ -29,15 +34,6 @@ public class PlayerConnect implements Listener {
             playerConnectMessage(displayPlayerName, event);
     }
 
-    public static void createFolders() {
-        File file = new File(Bukkit.getServer().getPluginManager().getPlugin("Karma")
-                .getDataFolder().getPath() + System.getProperty("file.separator") + "playerdata");
-        if ( !file.exists() ) {
-            System.out.println("[Karma] \"playerdata\" folder doesn't exists. Creating it.");
-            file.mkdir();
-        }
-    }
-
     public void playerFirstJoin(UUID playerId, String displayPlayerName, PlayerJoinEvent event) {
         event.setJoinMessage(ChatColor.GOLD + "Welcome to " + displayPlayerName +
                 " who made his firsts steps into the server !");
@@ -49,18 +45,15 @@ public class PlayerConnect implements Listener {
     }
 
     public void createPlayerData(UUID playerId) {
-        System.out.println("TEST CREATE FILE");
-        file = new File(Bukkit.getServer().getPluginManager().getPlugin("Karma").getDataFolder()
-                .getPath() + System.getProperty("file.separator") + "playerdata/" + playerId + ".yml");
-
+        File file = new File(karma.getDataFolder(), "playerdata/" + playerId + ".yml");
         if (!file.exists()) {
             file.getParentFile().mkdirs();
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                //oww
+                e.printStackTrace();
             }
-            System.out.println("PATH : " + file);
+            System.out.println("[Karma] Create new user file " + file + " .");
         }
         customFile = YamlConfiguration.loadConfiguration(file);
     }

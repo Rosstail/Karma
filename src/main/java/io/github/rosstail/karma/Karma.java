@@ -3,6 +3,8 @@ package io.github.rosstail.karma;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
+
 public class Karma extends JavaPlugin {
 
     @Override
@@ -11,8 +13,16 @@ public class Karma extends JavaPlugin {
         System.out.println("===   KARMA  ENABLED   ===");
         System.out.println("==========================");
         this.saveDefaultConfig();
-        PlayerConnect.createFolders();
-        Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
+        createFolders();
+        Bukkit.getPluginManager().registerEvents(new PlayerConnect(this), this);
+    }
+
+    public void createFolders() {
+        File file = new File(this.getDataFolder(), "playerdata/");
+        if ( !file.exists() ) {
+            System.out.println("[Karma] \"playerdata\" folder doesn't exists. Creating it.");
+            file.mkdir();
+        }
     }
 
     @Override
