@@ -1,3 +1,7 @@
 name: Karma
 version: 1.0
 main: fr.rosstail.karma.Karma
+commands:
+  karma set:
+    description: Directly set the karma of a player
+    usage: /karma <player> set <amount>
