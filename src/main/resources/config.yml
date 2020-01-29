@@ -1,6 +1,6 @@
 Config-version: 0.1
 
 karma:
-  default-karma: 9000000
+  default-karma:       0
   minimum-karma: -300000
   maximum-karma:  300000
