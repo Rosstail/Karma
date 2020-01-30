@@ -3,17 +3,17 @@ version: 1.0
 main: fr.rosstail.karma.Karma
 commands:
   karma:
-    description: Check your own karma (Player)
+    description: Check your own karma (player)
     usage: /karma
     permission: karma.karma.own
     permission-message: You don't have permission !
   karma <player>:
-    description: Check another player karma
+    description: Check another player karma (permission needed)
     usage: /karma <player>
     permission: karma.karma.other
     permission-message: You don't have permission !
-  karma set:
-    description: Directly set the karma of a player
+  karma set [player] [amount]:
+    description: Directly set the karma of a player (permission needed)
     usage: /karma [player] set [amount]
     permission: karma.set.other
     permission-message: You don't have permission !
