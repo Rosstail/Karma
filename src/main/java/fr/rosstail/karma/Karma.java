@@ -18,6 +18,7 @@ public class Karma extends JavaPlugin {
         this.saveDefaultConfig();
         this.createFolders();
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
+        this.getCommand("karma").setExecutor(new KarmaCommand());
     }
 
     public void createFolders() {
