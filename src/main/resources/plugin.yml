@@ -14,6 +14,21 @@ commands:
     permission-message: You don't have permission !
   karma set [player] [amount]:
     description: Directly set the karma of a player (permission needed)
-    usage: /karma [player] set [amount]
+    usage: /karma set [player] [amount]
     permission: karma.set.other
+    permission-message: You don't have permission !
+  karma add [player] [amount]:
+    description: Directly set the karma of a player, negative value decrease karma (permission needed)
+    usage: /karma add [player] [amount]
+    permission: karma.add.other
+    permission-message: You don't have permission !
+  karma remove [player] [amount]:
+    description: Directly set the karma of a player, negative value increase karma (permission needed)
+    usage: /karma remove [player] [amount]
+    permission: karma.remove.other
+    permission-message: You don't have permission !
+  karma reset [player]:
+    description: Set player's karma to default one (permission needed)
+    usage: /karma [player] reset
+    permission: karma.reset.other
     permission-message: You don't have permission !

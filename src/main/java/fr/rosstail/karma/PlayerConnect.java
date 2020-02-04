@@ -27,7 +27,7 @@ public class PlayerConnect implements Listener {
                 file.createNewFile();
                 YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
                 configuration.set("name", player.getName());
-                configuration.set("karma", new Integer(this.karma.getConfig().getInt("karma.default-karma")));
+                configuration.set("karma", this.karma.getConfig().getInt("karma.default-karma"));
                 configuration.save(file);
             } catch (IOException var4) {
                 var4.printStackTrace();
