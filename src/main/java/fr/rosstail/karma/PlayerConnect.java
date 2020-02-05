@@ -9,8 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerConnect implements Listener {
-    ChangeKarma changeKarma = new ChangeKarma();
     private Karma karma = Karma.getInstance();
+    ChangeKarma changeKarma = new ChangeKarma();
 
     public PlayerConnect() {
     }

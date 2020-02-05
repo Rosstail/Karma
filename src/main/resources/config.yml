@@ -1,6 +1,42 @@
 Config-version: 0.1
 
 karma:
+  ######### You can put any value you want, while they are all int and maximum_karma >= minimum-karma
   default-karma:       0
   minimum-karma: -300000
   maximum-karma:  300000
+
+tiers:
+  ######### You can add, edit or delete many tiers as you want !
+  #  name: (no spaces)
+  #    tier-display-name: <string>
+  #    tier-minimum-karma: <int>
+  #    tier-maximum-karma: <int>
+  tier-3:
+    tier-display-name: "&f[&4Criminal&f]&r"
+    tier-minimum-karma: -300000
+    tier-maximum-karma: -150000
+  tier-2:
+    tier-display-name: "&f[&cVillain&f]&r"
+    tier-minimum-karma: -149999
+    tier-maximum-karma:  -30000
+  tier-1:
+    tier-display-name: "&f[&eThug&f]&r"
+    tier-minimum-karma:  -29999
+    tier-maximum-karma:   -5000
+  tier_0:
+    tier-display-name: "&f[&7Civilian&f]&r"
+    tier-minimum-karma:   -4999
+    tier-maximum-karma:    4999
+  tier+1:
+    tier-display-name: "&f[&4Criminal&f]&r"
+    tier-minimum-karma:    5000
+    tier-maximum-karma:   29999
+  tier+2:
+    tier-display-name: "&f[&cVillain&f]&r"
+    tier-minimum-karma:   30000
+    tier-maximum-karma:  149999
+  tier+3:
+    tier-display-name: "&f[&eThug&f]&r"
+    tier-minimum-karma:  150000
+    tier-maximum-karma:  300000

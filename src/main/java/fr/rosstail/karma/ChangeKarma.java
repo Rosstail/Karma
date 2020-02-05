@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 
 public class ChangeKarma {
     private Karma karma = Karma.getInstance();
+    private SetTier setTier = new SetTier();
 
     public ChangeKarma() {
     }
@@ -19,7 +20,7 @@ public class ChangeKarma {
         } else if (configuration.getInt("karma") < this.karma.getConfig().getInt("karma.minimum-karma")) {
             this.setKarmaToMaximum(player, file, configuration);
         }
-
+        this.setTier.checkTier(player);
     }
 
     public void setKarmaToMinimum(Player player, File file, YamlConfiguration configuration) {

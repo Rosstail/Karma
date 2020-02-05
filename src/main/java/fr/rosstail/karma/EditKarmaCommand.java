@@ -11,6 +11,7 @@ import java.io.IOException;
 public class EditKarmaCommand {
     private Karma karma = Karma.getInstance();
     ChangeKarma changeKarma = new ChangeKarma();
+
     public EditKarmaCommand() {
     }
 
