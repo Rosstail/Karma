@@ -1,4 +1,4 @@
-Config-version: 0.1
+Config-version: 0.1 #Don't touch it, it's just to be sure on what kind of config it is or check self-update
 
 karma:
   ######### You can put any value you want, while they are all int and maximum_karma >= minimum-karma
@@ -8,7 +8,7 @@ karma:
 
 tiers:
   ######### You can add, edit or delete many tiers as you want !
-  #  name: (no spaces)
+  #  sampleTierName: (no spaces)
   #    tier-display-name: <string>
   #    tier-minimum-karma: <int>
   #    tier-maximum-karma: <int>

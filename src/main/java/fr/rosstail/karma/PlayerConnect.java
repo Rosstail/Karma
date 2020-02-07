@@ -10,7 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class PlayerConnect implements Listener {
     private Karma karma = Karma.getInstance();
-    ChangeKarma changeKarma = new ChangeKarma();
+    VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
+    SetTier setTier = new SetTier();
 
     public PlayerConnect() {
     }
@@ -20,6 +21,11 @@ public class PlayerConnect implements Listener {
         this.createPlayerData(event.getPlayer());
     }
 
+    /**
+     * Create the player datas inside Karma/playerdata/ folder if his file doens't already exists.
+     * Check on connection if his karma is in the limit fork.
+     * @param player
+     */
     public void createPlayerData(Player player) {
         File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         if (!file.exists()) {
@@ -36,6 +42,8 @@ public class PlayerConnect implements Listener {
             System.out.println("[Karma] Create new user file " + file + ".");
         }
 
-        this.changeKarma.checkKarmaLimit(player);
+        verifyKarmaLimits.checkKarmaLimit(player);
+        setTier.checkTier(player);
+
     }
 }

@@ -4,6 +4,9 @@ import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Main class and methods of the plugin
+ */
 public class Karma extends JavaPlugin {
     private static Karma instance;
 
@@ -21,6 +24,9 @@ public class Karma extends JavaPlugin {
         this.getCommand("karma").setExecutor(new KarmaCommand());
     }
 
+    /**
+     * Create the subfolders inside plugins/Karma/ folder
+     */
     public void createFolders() {
         File file = new File(this.getDataFolder(), "playerdata/");
         if (!file.exists()) {
@@ -30,6 +36,10 @@ public class Karma extends JavaPlugin {
 
     }
 
+    /**
+     * Get the instance to use Karma folder location everytime
+     * @return
+     */
     public static Karma getInstance() {
         return instance;
     }

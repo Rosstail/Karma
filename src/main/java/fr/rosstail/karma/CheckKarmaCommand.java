@@ -7,12 +7,23 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 
+/**
+ * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
+ */
 public class CheckKarmaCommand {
     private Karma karma = Karma.getInstance();
+
+    SetTier setTier = new SetTier();
 
     public CheckKarmaCommand() {
     }
 
+    /**
+     * Is used when an argument is used with the command
+     * Is necessary if commandSender isn't a player.
+     * @param commandSender
+     * @param args
+     */
     public void karmaOther(CommandSender commandSender, String[] args)
     {
         Player target = Bukkit.getServer().getPlayer(args[0]);
@@ -20,18 +31,25 @@ public class CheckKarmaCommand {
             File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
             YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
             int targetKarma = configuration.getInt("karma");
-            commandSender.sendMessage("[Karma] " + target.getName() + "'s Karma is " + targetKarma + ".");
+            String targetTierDisplay = setTier.checkTier(target);
+            commandSender.sendMessage("[Karma] " + target.getName() + "'s Karma is " + targetKarma + " and his Tier is " + targetTierDisplay + ".");
         }
         else
             commandSender.sendMessage("[Karma] The player \"" + args[0] + "\" doesn't exists.");
     }
 
+    /**
+     * Used when a player use /karma without argument behind
+     * @param commandSender
+     */
     public void karmaSelf(CommandSender commandSender)
     {
         Player player = (Player) commandSender;
         File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         int playerKarma = configuration.getInt("karma");
-        player.sendMessage("[Karma] Your own Karma is " + playerKarma + ".");
+        String playerTierDisplay = setTier.checkTier(player);
+        player.sendMessage("[Karma] Your own Karma is " + playerKarma + " and your actual Tier is " + playerTierDisplay + ".");
+
     }
 }

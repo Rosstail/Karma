@@ -5,14 +5,19 @@ import java.io.IOException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-public class ChangeKarma {
+public class VerifyKarmaLimits {
     private Karma karma = Karma.getInstance();
     private SetTier setTier = new SetTier();
 
-    public ChangeKarma() {
+    public VerifyKarmaLimits() {
     }
 
-    public void checkKarmaLimit(Player player) {
+    /**
+     * Check if the karma of specified player is inside the limits fork, specified in config.yml
+     * @param player
+     * @return
+     */
+    public int checkKarmaLimit(Player player) {
         File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         if (configuration.getInt("karma") > this.karma.getConfig().getInt("karma.maximum-karma")) {
@@ -21,8 +26,15 @@ public class ChangeKarma {
             this.setKarmaToMinimum(player, file, configuration);
         }
         this.setTier.checkTier(player);
+        return configuration.getInt("karma");
     }
 
+    /**
+     * When the karma is too high, set it to the maximum allowed.
+     * @param player
+     * @param file
+     * @param configuration
+     */
     public void setKarmaToMaximum(Player player, File file, YamlConfiguration configuration) {
         try {
             configuration.set("karma", this.karma.getConfig().getInt("karma.maximum-karma"));
@@ -30,10 +42,15 @@ public class ChangeKarma {
         } catch (IOException var5) {
             var5.printStackTrace();
         }
-
         System.out.println(player.getName() + " has a karma higher than maximum, now set to maximum karma defined in config.yml");
     }
 
+    /**
+     * When the player karma is too low, set it as minimum allowed
+     * @param player
+     * @param file
+     * @param configuration
+     */
     public void setKarmaToMinimum(Player player, File file, YamlConfiguration configuration) {
         try {
             configuration.set("karma", this.karma.getConfig().getInt("karma.minimum-karma"));
@@ -41,7 +58,6 @@ public class ChangeKarma {
         } catch (IOException var5) {
             var5.printStackTrace();
         }
-
         System.out.println(player.getName() + " has a karma higher than maximum, now set to minimum karma defined in config.yml");
     }
 }
