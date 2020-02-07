@@ -37,7 +37,7 @@ public class SetTier {
                         configuration.set("tier", path);
                         configuration.save(file);
                         String newTierDisplay = karma.getConfig().getString("tiers." + path + ".tier-display-name");
-                        player.sendMessage("Vous êtes désormais un " + newTierDisplay + ".");
+                        player.sendMessage("You are now a " + newTierDisplay + ".");
                         return newTierDisplay;
                     } catch (IOException e) {
                         e.printStackTrace();
