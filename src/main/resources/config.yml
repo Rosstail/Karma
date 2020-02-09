@@ -65,3 +65,178 @@ tiers:
       - "me is the hero !"
       - "me another command !"
       - "me infinite commands !"
+
+entities:
+  ######## Rou can add edit or delete any mob you want ! There is no error if you set a mob from a higher Minecraft version.
+  ######## Removing a mob just set the changes to 0.
+  #  MobName: # use ALT-F3 to check the name of a mob, cave sensitive. Don't use "_" between words, example : MagmaCube instead of Magma_Cube
+  #    hit-karma-reward: <int> # Gives / removes specified karma when the mob is hit
+  #    kill-karma-reward: <int> # Gives / removes specified karma when mob is killed
+  Bat:
+    hit-karma-reward:      1
+    kill-karma-reward:     1
+  Bee:
+    hit-karma-reward:      1
+    kill-karma-reward:     1
+  Blaze:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Cat:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  CaveSpider:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Chicken:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  Cod:
+    hit-karma-reward:      1
+    kill-karma-reward:     1
+  Cow:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  Creeper:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Dolphin:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  Donkey:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  Drowned:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  ElderGuardian:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Enderman:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Endermite:
+    hit-karma-reward:      1
+    kill-karma-reward:    10
+  Evoker:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Fox:
+    hit-karma-reward:      0
+    kill-karma-reward:     0
+  Ghast:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Guardian:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Horse:
+    hit-karma-reward:    -10
+    kill-karma-reward:  -150
+  Husk:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Llama:
+    hit-karma-reward:    -10
+    kill-karma-reward:  -100
+  MagmaCube:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Mooshroom:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  Mule:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  Ocelot:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  Panda:
+    hit-karma-reward:    -10
+    kill-karma-reward:  1000
+  Parrot:
+    hit-karma-reward:    -10
+    kill-karma-reward:  -100
+  Phantom:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Pig:
+    hit-karma-reward:     -1
+    kill-karma-reward:  -100
+  PolarBear:
+    hit-karma-reward:    -10
+    kill-karma-reward:  -100
+  Pufferfish:
+    hit-karma-reward:      0
+    kill-karma-reward:     0
+  Rabbit:
+    hit-karma-reward:    -10
+    kill-karma-reward:  -100
+  Ravager:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Salmon:
+    hit-karma-reward:      0
+    kill-karma-reward:     0
+  Sheep:
+    hit-karma-reward:    -10
+    kill-karma-reward:  -100
+  Shulker:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Silverfish:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Skeleton:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  SkeletonHorse:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Slime:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Spider:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Squid:
+    hit-karma-reward:      0
+    kill-karma-reward:     0
+  Stray:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  TraderLlama:
+    hit-karma-reward:    -10
+    kill-karma-reward: -1000
+  TropicalFish:
+    hit-karma-reward:      0
+    kill-karma-reward:     0
+  Turtle:
+    hit-karma-reward:     -5
+    kill-karma-reward:   200
+  vex:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Villager:
+    hit-karma-reward:   -100
+    kill-karma-reward: -1000
+  Vindicator:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  WanderingTrader:
+    hit-karma-reward:    -70
+    kill-karma-reward:  -700
+  WitherSkeleton:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  Wolf:
+    hit-karma-reward:      3
+    kill-karma-reward:    30
+  Zombie:
+    hit-karma-reward:      1
+    kill-karma-reward:   100
+  ZombiePigman:
+    hit-karma-reward:      0
+    kill-karma-reward:     0
+  ZombieVillager:
+    hit-karma-reward:      0
+    kill-karma-reward:  -100
