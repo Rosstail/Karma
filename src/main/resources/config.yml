@@ -15,8 +15,7 @@ tiers:
   #    commands: #set how many commands you want, without / (except for worldguards, only 1)
   #      - "command1" ### basic command
   #      - "command2 <player>" ### <player> is replaced by the player's name
-  #      - "<@> command3" ### <@> makes the command sent by the console/server
-  #      - "command<@>Infinite" ### The command stills be sent by the server, gonna fix it.
+  #      - "<@> command3" ### set <@> at the begin of the line makes the command sent by the console/server
   tier-3:
     tier-display-name: "&f[&4Criminal&f]&r"
     tier-minimum-karma: -300000
@@ -50,7 +49,7 @@ tiers:
     tier-maximum-karma:   29999
     commands:
       - "me is now a good guy who likes Streets of Rage games serie."
-      - "me @ is a test, it will be sent by player."
+      - "me is a test, it will be sent by player."
   tier+2:
     tier-display-name: "&f[&bSheriff&f]&r"
     tier-minimum-karma:   30000

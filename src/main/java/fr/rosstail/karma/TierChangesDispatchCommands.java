@@ -18,7 +18,7 @@ public class TierChangesDispatchCommands {
 
         for (String command : cmds) {
             command = command.replaceAll("<player>", player.getName());
-            if (command.contains("<@>")) {
+            if (command.startsWith("<@>")) {
                 command = command.replaceAll("<@>", "");
                 Bukkit.dispatchCommand(console, command);
             }
