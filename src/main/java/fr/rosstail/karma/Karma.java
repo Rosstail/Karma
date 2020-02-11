@@ -2,7 +2,6 @@ package fr.rosstail.karma;
 
 import java.io.File;
 import org.bukkit.Bukkit;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -22,7 +21,8 @@ public class Karma extends JavaPlugin {
         this.saveDefaultConfig();
         this.createFolders();
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
-        Bukkit.getPluginManager().registerEvents(new KarmaActions(), this);
+        Bukkit.getPluginManager().registerEvents(new KillEvents(), this);
+        Bukkit.getPluginManager().registerEvents(new HitEvents(), this);
         this.getCommand("karma").setExecutor(new KarmaCommand());
     }
 

@@ -16,10 +16,11 @@ import java.io.IOException;
 /**
  * Changes the attacker karma when attacking / killing entities
  */
-public class KarmaActions implements Listener {
+public class KillEvents implements Listener {
     private Karma karma = Karma.getInstance();
     Player killer = null;
     int reward = 0;
+    String message;
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
     SetTier setTier = new SetTier();
 
@@ -31,9 +32,8 @@ public class KarmaActions implements Listener {
             killer = monsterEnt.getKiller();
             if (killer != null) {
                 String monsterName = monsterEnt.toString().replaceAll("Craft", "");
-                System.out.println(monsterName);
                 reward = karma.getConfig().getInt("entities." + monsterName + ".kill-karma-reward");
-
+                message = karma.getConfig().getString("entities." + monsterName + ".kill-message");
                 if (reward == 0)
                     return;
             }
@@ -47,7 +47,7 @@ public class KarmaActions implements Listener {
             if (killer != null) {
                 String animalName = animalEnt.toString().replaceAll("Craft", "").replaceAll(" ", "_");
                 reward = karma.getConfig().getInt("entities." + animalName + ".kill-karma-reward");
-
+                message = karma.getConfig().getString("entities." + animalName + ".kill-message");
                 if (reward == 0)
                     return;
             }
@@ -60,12 +60,15 @@ public class KarmaActions implements Listener {
         File killerFile = new File(this.karma.getDataFolder(), "playerdata/" + killer.getUniqueId() + ".yml");
         YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(killerFile);
         int killerKarma = killerConfig.getInt("karma");
-
         int killerModifiedKarma = killerKarma + reward;
-        if (reward > 0)
-            killer.sendMessage("Your karma goes from " + killerKarma + " to " + killerModifiedKarma + ".");
-        else
-            killer.sendMessage("You killed an innocent creature ! Your karma falls from " + killerKarma + " to " + killerModifiedKarma + ".");
+
+        if (message != null) {
+            message = message.replaceAll("<attacker>", killer.getName());
+            message = message.replaceAll("<reward>", Integer.toString(reward));
+            message = message.replaceAll("<previousKarma>", Integer.toString(killerKarma));
+            message = message.replaceAll("<karma>", Integer.toString(killerModifiedKarma));
+            killer.sendMessage(message);
+        }
 
         killerConfig.set("karma", killerModifiedKarma);
         try {
