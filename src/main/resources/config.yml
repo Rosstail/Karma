@@ -15,13 +15,15 @@ tiers:
   #    commands: #set how many commands you want, without / (except for worldguards, only 1)
   #      - "command1" ### basic command
   #      - "command2 <player>" ### <player> is replaced by the player's name
-  #      - "<@> command3" ### set <@> at the begin of the line makes the command sent by the console/server
+  #      - "command3 <karma>" ### <karma> is replaced by the player's karma
+  #      - "command4 <tier>" ### <tier> is replaced by the player's tier
+  #      - "<@> command5" ### set <@> at the begin of the line makes the command sent by the console/server
   tier-3:
     tier-display-name: "&f[&4Criminal&f]&r"
     tier-minimum-karma: -300000
     tier-maximum-karma: -150000
     commands:
-      - "me is the baddest."
+      - "me is the baddest <tier>."
   tier-2:
     tier-display-name: "&f[&cVillain&f]&r"
     tier-minimum-karma: -149999
