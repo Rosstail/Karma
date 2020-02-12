@@ -16,35 +16,50 @@ import java.io.IOException;
  */
 public class KillEvents implements Listener {
     private Karma karma = Karma.getInstance();
-    Player killer = null;
-    int reward = 0;
-    String message;
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
-    SetTier setTier = new SetTier();
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
+        Player killer = null;
+        int reward = 0;
+        String message;
+        Mob mob;
+        String mobName;
+        SetTier setTier = new SetTier();
+        int killerKarma = 0;
+        int killerModifiedKarma = 0;
+
         if (event.getEntity() instanceof Mob && event.getEntity().getKiller() != null)
         {
-            Mob monsterEnt = (Mob) event.getEntity();
-            killer = monsterEnt.getKiller();
-            if (killer != null) {
-                String monsterName = monsterEnt.toString().replaceAll("Craft", "");
-                reward = karma.getConfig().getInt("entities." + monsterName + ".kill-karma-reward");
-                message = karma.getConfig().getString("entities." + monsterName + ".kill-message");
-                if (reward == 0)
-                    return;
-            }
+            mob = (Mob) event.getEntity();
+            killer = mob.getKiller();
+            if (killer != null)
+                mobName = mob.toString().replaceAll("Craft", "");
             else
                 return;
         }
         else
             return;
 
-        File killerFile = new File(this.karma.getDataFolder(), "playerdata/" + killer.getUniqueId() + ".yml");
-        YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(killerFile);
-        int killerKarma = killerConfig.getInt("karma");
-        int killerModifiedKarma = killerKarma + reward;
+        reward = karma.getConfig().getInt("entities." + mobName + ".kill-karma-reward");
+
+        if (reward != 0) {
+            File killerFile = new File(this.karma.getDataFolder(), "playerdata/" + killer.getUniqueId() + ".yml");
+            YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(killerFile);
+            killerKarma = killerConfig.getInt("karma");
+            killerModifiedKarma = killerKarma + reward;
+
+            killerConfig.set("karma", killerModifiedKarma);
+            try {
+                killerConfig.save(killerFile);
+                verifyKarmaLimits.checkKarmaLimit(killer);
+                setTier.checkTier(killer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        message = karma.getConfig().getString("entities." + mobName + ".kill-message");
 
         if (message != null) {
             message = message.replaceAll("<attacker>", killer.getName());
@@ -54,14 +69,6 @@ public class KillEvents implements Listener {
             killer.sendMessage(message);
         }
 
-        killerConfig.set("karma", killerModifiedKarma);
-        try {
-            killerConfig.save(killerFile);
-            verifyKarmaLimits.checkKarmaLimit(killer);
-            setTier.checkTier(killer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     /**

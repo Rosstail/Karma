@@ -3,6 +3,7 @@ package fr.rosstail.karma;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -15,9 +16,6 @@ import java.io.IOException;
  */
 public class HitEvents implements Listener {
     private Karma karma = Karma.getInstance();
-    Player attacker = null;
-    int reward = 0;
-    String message;
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
     SetTier setTier = new SetTier();
 
@@ -27,24 +25,50 @@ public class HitEvents implements Listener {
      */
     @EventHandler
     public void onEntityHurt(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Mob && event.getDamager() instanceof Player)
-        {
-            Mob monsterEnt = (Mob) event.getEntity();
-            attacker = (Player) event.getDamager();
-            String monsterName = monsterEnt.toString().replaceAll("Craft", "").replaceAll(" ", "_");
-            reward = karma.getConfig().getInt("entities." + monsterName + ".hit-karma-reward");
-            message = karma.getConfig().getString("entities." + monsterName + ".hit-message");
+        Player attacker = null;
+        int reward = 0;
+        int attackerKarma = 0;
+        int attackerModifiedKarma = 0;
+        String message;
+        Mob mob;
+        String mobName;
 
-            if (reward == 0)
+        if (event.getEntity() instanceof Mob)
+        {
+            mob = (Mob) event.getEntity();
+            mobName = mob.toString().replaceAll("Craft", "");
+            if (event.getDamager() instanceof Projectile) {
+                Projectile projectile = (Projectile) event.getDamager();
+                if (projectile.getShooter() instanceof Player)
+                    attacker = (Player) projectile.getShooter();
+            }
+            else if (event.getDamager() instanceof Player)
+                attacker = (Player) event.getDamager();
+            else
                 return;
         }
         else
             return;
 
-        File attackerFile = new File(this.karma.getDataFolder(), "playerdata/" + attacker.getUniqueId() + ".yml");
-        YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(attackerFile);
-        int attackerKarma = killerConfig.getInt("karma");
-        int attackerModifiedKarma = attackerKarma + reward;
+        reward = karma.getConfig().getInt("entities." + mobName + ".hit-karma-reward");
+
+        if (reward != 0) {
+            File attackerFile = new File(this.karma.getDataFolder(), "playerdata/" + attacker.getUniqueId() + ".yml");
+            YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(attackerFile);
+            attackerKarma = killerConfig.getInt("karma");
+            attackerModifiedKarma = attackerKarma + reward;
+
+            killerConfig.set("karma", attackerModifiedKarma);
+            try {
+                killerConfig.save(attackerFile);
+                verifyKarmaLimits.checkKarmaLimit(attacker);
+                setTier.checkTier(attacker);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        message = karma.getConfig().getString("entities." + mobName + ".hit-message");
 
         if (message != null) {
             message = message.replaceAll("<attacker>", attacker.getName());
@@ -53,14 +77,7 @@ public class HitEvents implements Listener {
             message = message.replaceAll("<karma>", Integer.toString(attackerModifiedKarma));
             attacker.sendMessage(message);
         }
-        killerConfig.set("karma", attackerModifiedKarma);
-        try {
-            killerConfig.save(attackerFile);
-            verifyKarmaLimits.checkKarmaLimit(attacker);
-            setTier.checkTier(attacker);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
     }
 
     /**
