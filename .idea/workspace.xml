@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="53d11734-8c26-4e6c-b126-b0e085e743e4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KarmaActions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -79,22 +79,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1578335446155" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1581460220835">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1581517917866">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1581460220835" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1581460220835">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1581517917866" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1581517917865">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1581460220835" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1581460220835">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1581517917865" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1581517917864">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1581460220835" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1581460220835">
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1581517917864" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1581517917866">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1581460220835" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1581517917866" />
     <state x="490" y="176" key="Maven.ArtifactSearchDialog" timestamp="1581209729933">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

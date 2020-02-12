@@ -145,6 +145,11 @@ entities:
   ElderGuardian:
     hit-karma-reward:      1
     kill-karma-reward:   100
+  EnderDragon:
+    hit-karma-reward:      1
+    hit-message: "KEEP GOING"
+    kill-karma-reward: 10000
+    kill-message: "You did it ! You finally did it !"
   Enderman:
     hit-karma-reward:      1
     kill-karma-reward:   100

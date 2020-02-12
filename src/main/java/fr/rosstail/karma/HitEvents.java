@@ -1,14 +1,11 @@
 package fr.rosstail.karma;
 
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Monster;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,24 +27,13 @@ public class HitEvents implements Listener {
      */
     @EventHandler
     public void onEntityHurt(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Monster) // && event.getDamager() instanceof Player)
+        if (event.getEntity() instanceof Mob && event.getDamager() instanceof Player)
         {
-            Monster monsterEnt = (Monster) event.getEntity();
+            Mob monsterEnt = (Mob) event.getEntity();
             attacker = (Player) event.getDamager();
             String monsterName = monsterEnt.toString().replaceAll("Craft", "").replaceAll(" ", "_");
             reward = karma.getConfig().getInt("entities." + monsterName + ".hit-karma-reward");
             message = karma.getConfig().getString("entities." + monsterName + ".hit-message");
-
-            if (reward == 0)
-                return;
-        }
-        else if(event.getEntity() instanceof Animals) // && event.getDamager() instanceof Player)
-        {
-            Animals animalEnt = (Animals) event.getEntity();
-            attacker = (Player) event.getDamager();
-            String animalName = animalEnt.toString().replaceAll("Craft", "").replaceAll(" ", "_");
-            reward = karma.getConfig().getInt("entities." + animalName + ".hit-karma-reward");
-            message = karma.getConfig().getString("entities." + animalName + ".hit-message");
 
             if (reward == 0)
                 return;
@@ -81,7 +67,7 @@ public class HitEvents implements Listener {
      * Launch When a player is hurt by another player.
      * @param event
      */
-    @EventHandler
+    /*@EventHandler
     public void onPlayerHurt(PlayerDeathEvent event) {
         Player victim = event.getEntity();
         Player attacker = victim.getKiller();
@@ -105,5 +91,5 @@ public class HitEvents implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

@@ -1,11 +1,9 @@
 package fr.rosstail.karma;
 
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.entity.Mob;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
@@ -26,28 +24,14 @@ public class KillEvents implements Listener {
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntity() instanceof Monster)
+        if (event.getEntity() instanceof Mob && event.getEntity().getKiller() != null)
         {
-            Monster monsterEnt = (Monster) event.getEntity();
+            Mob monsterEnt = (Mob) event.getEntity();
             killer = monsterEnt.getKiller();
             if (killer != null) {
                 String monsterName = monsterEnt.toString().replaceAll("Craft", "");
                 reward = karma.getConfig().getInt("entities." + monsterName + ".kill-karma-reward");
                 message = karma.getConfig().getString("entities." + monsterName + ".kill-message");
-                if (reward == 0)
-                    return;
-            }
-            else
-                return;
-        }
-        else if(event.getEntity() instanceof Animals)
-        {
-            Animals animalEnt = (Animals) event.getEntity();
-            killer = animalEnt.getKiller();
-            if (killer != null) {
-                String animalName = animalEnt.toString().replaceAll("Craft", "").replaceAll(" ", "_");
-                reward = karma.getConfig().getInt("entities." + animalName + ".kill-karma-reward");
-                message = karma.getConfig().getString("entities." + animalName + ".kill-message");
                 if (reward == 0)
                     return;
             }
