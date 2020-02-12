@@ -1,6 +1,7 @@
 package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -12,8 +13,8 @@ import java.io.File;
  */
 public class CheckKarmaCommand {
     private Karma karma = Karma.getInstance();
-
     SetTier setTier = new SetTier();
+    String message = null;
 
     public CheckKarmaCommand() {
     }
@@ -32,10 +33,13 @@ public class CheckKarmaCommand {
             YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
             int targetKarma = configuration.getInt("karma");
             String targetTierDisplay = setTier.checkTier(target);
-            commandSender.sendMessage("[Karma] " + target.getName() + "'s Karma is " + targetKarma + " and his Tier is " + targetTierDisplay + ".");
+            message ="[Karma] " + target.getName() + "'s Karma is " + targetKarma + " and his Tier is " + targetTierDisplay + ".";
         }
         else
-            commandSender.sendMessage("[Karma] The player \"" + args[0] + "\" doesn't exists.");
+            message = "[Karma] The player \"" + args[0] + "\" doesn't exists.";
+
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        commandSender.sendMessage(message);
     }
 
     /**
@@ -49,7 +53,9 @@ public class CheckKarmaCommand {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         int playerKarma = configuration.getInt("karma");
         String playerTierDisplay = setTier.checkTier(player);
-        player.sendMessage("[Karma] Your own Karma is " + playerKarma + " and your actual Tier is " + playerTierDisplay + ".");
+        message = "[Karma] Your own Karma is " + playerKarma + " and your actual Tier is " + playerTierDisplay + ".";
 
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        player.sendMessage(message);
     }
 }

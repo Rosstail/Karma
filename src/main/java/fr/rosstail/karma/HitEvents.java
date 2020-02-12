@@ -1,6 +1,8 @@
 package fr.rosstail.karma;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -30,13 +32,13 @@ public class HitEvents implements Listener {
         int attackerKarma = 0;
         int attackerModifiedKarma = 0;
         String message;
-        Mob mob;
-        String mobName;
+        LivingEntity livingEntity;
+        String livingEntityName;
 
-        if (event.getEntity() instanceof Mob)
+        if (event.getEntity() instanceof LivingEntity)
         {
-            mob = (Mob) event.getEntity();
-            mobName = mob.toString().replaceAll("Craft", "");
+            livingEntity = (LivingEntity) event.getEntity();
+            livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             if (event.getDamager() instanceof Projectile) {
                 Projectile projectile = (Projectile) event.getDamager();
                 if (projectile.getShooter() instanceof Player)
@@ -50,7 +52,7 @@ public class HitEvents implements Listener {
         else
             return;
 
-        reward = karma.getConfig().getInt("entities." + mobName + ".hit-karma-reward");
+        reward = karma.getConfig().getInt("entities." + livingEntityName + ".hit-karma-reward");
 
         if (reward != 0) {
             File attackerFile = new File(this.karma.getDataFolder(), "playerdata/" + attacker.getUniqueId() + ".yml");
@@ -68,13 +70,14 @@ public class HitEvents implements Listener {
             }
         }
 
-        message = karma.getConfig().getString("entities." + mobName + ".hit-message");
+        message = karma.getConfig().getString("entities." + livingEntityName + ".hit-message");
 
         if (message != null) {
             message = message.replaceAll("<attacker>", attacker.getName());
             message = message.replaceAll("<reward>", Integer.toString(reward));
             message = message.replaceAll("<previousKarma>", Integer.toString(attackerKarma));
             message = message.replaceAll("<karma>", Integer.toString(attackerModifiedKarma));
+            message = ChatColor.translateAlternateColorCodes('&', message);
             attacker.sendMessage(message);
         }
 

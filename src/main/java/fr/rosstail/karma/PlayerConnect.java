@@ -2,6 +2,8 @@ package fr.rosstail.karma;
 
 import java.io.File;
 import java.io.IOException;
+
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,6 +14,7 @@ public class PlayerConnect implements Listener {
     private Karma karma = Karma.getInstance();
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
     SetTier setTier = new SetTier();
+    String message = null;
 
     public PlayerConnect() {
     }
@@ -39,7 +42,9 @@ public class PlayerConnect implements Listener {
                 var4.printStackTrace();
             }
 
-            System.out.println("[Karma] Create new user file " + file + ".");
+            message = "[Karma] Create new user file " + file + ".";
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            player.sendMessage(message);
         }
 
         verifyKarmaLimits.checkKarmaLimit(player);

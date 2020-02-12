@@ -1,5 +1,6 @@
 package fr.rosstail.karma;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -17,31 +18,34 @@ import java.io.IOException;
 public class KillEvents implements Listener {
     private Karma karma = Karma.getInstance();
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
+    String message1 = null;
+    String message2 = null;
 
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         Player killer = null;
         int reward = 0;
         String message;
-        Mob mob;
-        String mobName;
+        LivingEntity livingEntity;
+        String livingEntityName;
         SetTier setTier = new SetTier();
         int killerKarma = 0;
         int killerModifiedKarma = 0;
 
-        if (event.getEntity() instanceof Mob && event.getEntity().getKiller() != null)
+        event.getEntity();
+        if (event.getEntity().getKiller() != null)
         {
-            mob = (Mob) event.getEntity();
-            killer = mob.getKiller();
+            livingEntity = (LivingEntity) event.getEntity();
+            killer = livingEntity.getKiller();
             if (killer != null)
-                mobName = mob.toString().replaceAll("Craft", "");
+                livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             else
                 return;
         }
         else
             return;
 
-        reward = karma.getConfig().getInt("entities." + mobName + ".kill-karma-reward");
+        reward = karma.getConfig().getInt("entities." + livingEntityName + ".kill-karma-reward");
 
         if (reward != 0) {
             File killerFile = new File(this.karma.getDataFolder(), "playerdata/" + killer.getUniqueId() + ".yml");
@@ -59,13 +63,14 @@ public class KillEvents implements Listener {
             }
         }
 
-        message = karma.getConfig().getString("entities." + mobName + ".kill-message");
+        message = karma.getConfig().getString("entities." + livingEntityName + ".kill-message");
 
         if (message != null) {
             message = message.replaceAll("<attacker>", killer.getName());
             message = message.replaceAll("<reward>", Integer.toString(reward));
             message = message.replaceAll("<previousKarma>", Integer.toString(killerKarma));
             message = message.replaceAll("<karma>", Integer.toString(killerModifiedKarma));
+            message = ChatColor.translateAlternateColorCodes('&', message);
             killer.sendMessage(message);
         }
 
@@ -91,8 +96,15 @@ public class KillEvents implements Listener {
         int victimKarma = victimConfig.getInt("karma");
 
         int killerModifiedKarma = killerKarma + (killerKarma - victimKarma) / 10;
-        killer.sendMessage("Initial Karma from killer " + killer.getName() + "goes from " + killerKarma + " to " + killerModifiedKarma + ".");
-        killer.sendMessage("Difference " + (killerModifiedKarma - killerKarma));
+
+        message1 = "Initial Karma from killer " + killer.getName() + "goes from " + killerKarma + " to " + killerModifiedKarma + ".";
+        message1 = ChatColor.translateAlternateColorCodes('&', message1);
+        killer.sendMessage(message1);
+
+        message2 ="Difference " + (killerModifiedKarma - killerKarma);
+        message2 = ChatColor.translateAlternateColorCodes('&', message2);
+        killer.sendMessage(message2);
+
         killerConfig.set("karma", killerModifiedKarma);
         try {
             killerConfig.save(killerFile);

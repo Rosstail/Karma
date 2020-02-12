@@ -1,6 +1,7 @@
 package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -28,6 +29,7 @@ public class TierChangesDispatchCommands {
             command = command.replaceAll("<player>", player.getName());
             command = command.replaceAll("<karma>", Integer.toString(playerKarma));
             command = command.replaceAll("<tier>", tierDisplay);
+            command = ChatColor.translateAlternateColorCodes('&', command);
             if (command.startsWith("<@>")) {
                 command = command.replaceAll("<@>", "");
                 Bukkit.dispatchCommand(console, command);

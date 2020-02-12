@@ -1,5 +1,6 @@
 package fr.rosstail.karma;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -13,6 +14,7 @@ import java.util.Set;
 public class SetTier {
     private Karma karma = Karma.getInstance();
     TierChangesDispatchCommands tierChangesDispatchCommands = new TierChangesDispatchCommands();
+    String message;
 
     /**
      * Check the difference between old and new tiers of the player
@@ -39,7 +41,11 @@ public class SetTier {
                         configuration.set("tier", tiers);
                         configuration.save(file);
                         String newTierDisplay = karma.getConfig().getString("tiers." + tiers + ".tier-display-name");
-                        player.sendMessage("You are now a " + newTierDisplay + ".");
+
+                        message = "You are now a " + newTierDisplay + ".";
+                        message = ChatColor.translateAlternateColorCodes('&', message);
+                        player.sendMessage(message);
+
                         tierChangesDispatchCommands.executeTierChangesCommands(player, tiers);
                         return newTierDisplay;
                     } catch (IOException e) {
