@@ -2,6 +2,8 @@ package fr.rosstail.karma;
 
 import java.io.File;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -32,7 +34,11 @@ public class Karma extends JavaPlugin {
     public void createFolders() {
         File file = new File(this.getDataFolder(), "playerdata/");
         if (!file.exists()) {
-            System.out.println("[Karma] \"playerdata\" folder doesn't exists. Creating it.");
+            String message = this.getConfig().getString("messages.creating-playerdata-folder");
+            if (message != null) {
+                message = ChatColor.translateAlternateColorCodes('&', message);
+                System.out.println(message);
+            }
             file.mkdir();
         }
 

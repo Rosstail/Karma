@@ -42,9 +42,12 @@ public class PlayerConnect implements Listener {
                 var4.printStackTrace();
             }
 
-            message = "[Karma] Create new user file " + file + ".";
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            player.sendMessage(message);
+            message = karma.getConfig().getString("messages.creating-player-file");
+            if (message != null) {
+                message = message.replaceAll("<player>", player.getName());
+                message = ChatColor.translateAlternateColorCodes('&', message);
+                System.out.println(message);
+            }
         }
 
         verifyKarmaLimits.checkKarmaLimit(player);

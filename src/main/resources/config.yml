@@ -6,6 +6,10 @@ karma:
   minimum-karma: -300000
   maximum-karma:  300000
 
+messages: #Compatible with <player> placeholder, changing him to player name
+  creating-playerdata-folder: "&7playerdata/ folder doens't exists. &aCreating it&7."
+  creating-player-file: "&7creating player file for &a<player>&r."
+
 tiers:
   ######### You can add, edit or delete many tiers as you want !
   #  sampleTierName: (no spaces)
@@ -70,22 +74,9 @@ tiers:
       - "me &6infinite commands !"
 
 pvp: #### THIS DOESN'T WORKS ATM
-  Player:
-    killer_positive-victim_positive:
-      hit-karma-reward: -15
-      kill-karma-reward: "<killerKarma> - ( <killerkarma> / <victimKarma> )² / 100"
-    killer_positive-victim_negative:
-      hit-karma-reward: 15
-      kill-karma-reward: "<killerKarma> + ( <killerkarma> / <victimKarma> )² / 100"
-    killer_negative-victim_positive:
-      hit-karma-reward: -15
-      kill-karma-reward: "<killerKarma> - ( <killerkarma> / <victimKarma> )² / 100"
-    killer_negative-victim_negative:
-      hit-karma-reward: 15
-      kill-karma-reward: "<killerKarma> + ( <killerkarma> / <victimKarma> )² / 70"
 
 entities:
-  ######## Rou can add edit or delete any mob you want ! There is no error if you set a mob from a higher Minecraft version.
+  ######## Rou can add edit or delete any Living Entity you want ! There is no error if you set a mob from a higher Minecraft version.
   ######## Removing a mob just set the changes to 0.
   ######## messages are compatible with 4 placeholders:
   ######## <attacker> : player who hit/kill the entity

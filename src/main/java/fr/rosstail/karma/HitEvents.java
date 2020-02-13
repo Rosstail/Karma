@@ -3,7 +3,6 @@ package fr.rosstail.karma;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -54,7 +53,7 @@ public class HitEvents implements Listener {
 
         reward = karma.getConfig().getInt("entities." + livingEntityName + ".hit-karma-reward");
 
-        if (reward != 0) {
+        if (!(reward == 0 || attacker == null)) {
             File attackerFile = new File(this.karma.getDataFolder(), "playerdata/" + attacker.getUniqueId() + ".yml");
             YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(attackerFile);
             attackerKarma = killerConfig.getInt("karma");
@@ -72,7 +71,7 @@ public class HitEvents implements Listener {
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".hit-message");
 
-        if (message != null) {
+        if (!(message == null || attacker == null)) {
             message = message.replaceAll("<attacker>", attacker.getName());
             message = message.replaceAll("<reward>", Integer.toString(reward));
             message = message.replaceAll("<previousKarma>", Integer.toString(attackerKarma));
