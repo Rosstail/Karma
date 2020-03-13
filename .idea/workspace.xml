@@ -2,15 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="53d11734-8c26-4e6c-b126-b0e085e743e4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/AdaptMessage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/CheckKarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/CheckKarmaCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/EditKarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/EditKarmaCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KarmaCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/PlayerConnect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/PlayerConnect.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/SetTier.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/SetTier.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/TierChangesDispatchCommands.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/TierChangesDispatchCommands.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/VerifyKarmaLimits.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/VerifyKarmaLimits.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,6 +76,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="414" y="176" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1582399464729">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="176" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1582399464729" />
     <state x="765" y="237" key="#com.intellij.ide.util.MemberChooser" timestamp="1581209635967">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -88,22 +96,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1578335446155" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1581632240398">
+    <state x="740" y="276" key="FileChooserDialogImpl" timestamp="1581819520747">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1581632240398" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1581632240397">
+    <state x="740" y="276" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1581819520747" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1584142285932">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1581632240397" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1581632240395">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1584142285932" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1584142285932">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1581632240395" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1581632240397">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1584142285932" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1584142285931">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1581632240397" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1584142285931" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1584142285932">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1584142285932" />
     <state x="490" y="176" key="Maven.ArtifactSearchDialog" timestamp="1581209729933">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -116,10 +128,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="795" y="471" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577981717397" />
-    <state x="616" y="240" width="672" height="677" key="run.anything.popup" timestamp="1580930690762">
+    <state x="342" y="223" key="new project wizard" timestamp="1581819535487">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="616" y="240" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1580930690762" />
+    <state x="342" y="223" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1581819535487" />
+    <state x="616" y="240" width="672" height="677" key="run.anything.popup" timestamp="1584141562134">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="616" y="240" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1584141562134" />
     <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1581540213762">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

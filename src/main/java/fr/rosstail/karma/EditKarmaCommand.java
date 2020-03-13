@@ -31,25 +31,32 @@ public class EditKarmaCommand {
         Player target = Bukkit.getServer().getPlayer(args[1]);
         int value = Integer.parseInt(args[2]);
         if (target != null) {
-            try {
-                File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
 
-                configuration.set("karma", value);
+            File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+
+            configuration.set("karma", value);
+
+            try {
                 configuration.save(file);
-                int newValue = verifyKarmaLimits.checkKarmaLimit(target);
-                String tier = setTier.checkTier(target);
-                message = "[Karma] " + target.getName() + "'s Karma is now " + newValue + " and his Tier is " + tier + ".";
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            value = verifyKarmaLimits.checkKarmaLimit(target);
+            String tier = setTier.checkTier(target);
+            message = karma.getConfig().getString("messages.set-karma");
+
+            if (message != null) {
+                message = message.replaceAll("<player>", target.getName());
+                message = message.replaceAll("<newKarma>", Integer.toString(value));
+                message = message.replaceAll("<tier>", tier);
+                message = ChatColor.translateAlternateColorCodes('&', message);
+                commandSender.sendMessage(message);
+            }
         }
         else {
-            message = "[Karma] The player \"" + args[1] + "\" is not connected.";
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            commandSender.sendMessage(message);
+            disconnectedPlayer(commandSender, target);
         }
     }
 
@@ -75,18 +82,23 @@ public class EditKarmaCommand {
                 int newValue = verifyKarmaLimits.checkKarmaLimit(target);
                 String tier = setTier.checkTier(target);
 
-                message = "[Karma] " + target.getName() + "'s Karma is now " + newValue + " and his Tier is " + tier + ".";
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
+                message = karma.getConfig().getString("messages.add-karma");
+
+                if (message != null) {
+                    message = message.replaceAll("<player>", target.getName());
+                    message = message.replaceAll("<value>", Integer.toString(value));
+                    message = message.replaceAll("<newKarma>", Integer.toString(newValue));
+                    message = message.replaceAll("<tier>", tier);
+                    message = ChatColor.translateAlternateColorCodes('&', message);
+                    commandSender.sendMessage(message);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             verifyKarmaLimits.checkKarmaLimit(target);
         }
         else {
-            message = "[Karma] The player \"" + args[1] + "\" is not connected.";
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            commandSender.sendMessage(message);
+            disconnectedPlayer(commandSender, target);
         }
     }
 
@@ -112,17 +124,22 @@ public class EditKarmaCommand {
                 int newValue = verifyKarmaLimits.checkKarmaLimit(target);
                 String tier = setTier.checkTier(target);
 
-                message = "[Karma] " + target.getName() + "'s Karma is now " + newValue + " and his Tier is " + tier + ".";
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
+                message = karma.getConfig().getString("messages.remove-karma");
+
+                if (message != null) {
+                    message = message.replaceAll("<player>", target.getName());
+                    message = message.replaceAll("<value>", Integer.toString(value));
+                    message = message.replaceAll("<newKarma>", Integer.toString(newValue));
+                    message = message.replaceAll("<tier>", tier);
+                    message = ChatColor.translateAlternateColorCodes('&', message);
+                    commandSender.sendMessage(message);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         else {
-            message = "[Karma] The player \"" + args[1] + "\" is not connected.";
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            commandSender.sendMessage(message);
+            disconnectedPlayer(commandSender, target);
         }
     }
 
@@ -145,17 +162,29 @@ public class EditKarmaCommand {
                 int newValue = verifyKarmaLimits.checkKarmaLimit(target);
                 String tier = setTier.checkTier(target);
 
-                message = "[Karma] " + target.getName() + "'s Karma is now " + newValue + " and his Tier is " + tier + ".";
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
+                message = karma.getConfig().getString("messages.reset-karma");
+
+                if (message != null) {
+                    message = message.replaceAll("<player>", target.getName());
+                    message = message.replaceAll("<karma>", String.valueOf(resKarma));
+                    message = message.replaceAll("<newKarma>", Integer.toString(newValue));
+                    message = message.replaceAll("<tier>", tier);
+                    message = ChatColor.translateAlternateColorCodes('&', message);
+                    commandSender.sendMessage(message);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
         else {
-            message = "[Karma] The player \"" + args[1] + "\" is not connected.";
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            commandSender.sendMessage(message);
+            disconnectedPlayer(commandSender, target);
         }
+    }
+
+    private void disconnectedPlayer(CommandSender commandSender, Player target) {
+        message = karma.getConfig().getString("messages.disconnected-player");
+        message = message.replaceAll("<player>", target.getName());
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        commandSender.sendMessage(message);
     }
 }

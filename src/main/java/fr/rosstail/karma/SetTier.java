@@ -42,7 +42,8 @@ public class SetTier {
                         configuration.save(file);
                         String newTierDisplay = karma.getConfig().getString("tiers." + tiers + ".tier-display-name");
 
-                        message = "You are now a " + newTierDisplay + ".";
+                        message = karma.getConfig().getString("messages.tier-change");
+                        message = message.replaceAll("<tier>", newTierDisplay);
                         message = ChatColor.translateAlternateColorCodes('&', message);
                         player.sendMessage(message);
 

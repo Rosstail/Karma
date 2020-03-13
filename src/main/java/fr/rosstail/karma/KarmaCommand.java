@@ -1,5 +1,6 @@
 package fr.rosstail.karma;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -9,7 +10,7 @@ import org.bukkit.entity.Player;
  * Checking what method/class will be used on command, depending of command Sender and number of args.
  */
 public class KarmaCommand implements CommandExecutor {
-
+    private Karma karma = Karma.getInstance();
     CheckKarmaCommand checkKarmaCommand = new CheckKarmaCommand();
     EditKarmaCommand editKarmaCommand = new EditKarmaCommand();
 
@@ -34,8 +35,9 @@ public class KarmaCommand implements CommandExecutor {
         else if (commandSender instanceof Player)
             checkKarmaCommand.karmaSelf(commandSender);
         else {
-            commandSender.sendMessage("[Karma] \"/karma\" must be send by a player.");
-            commandSender.sendMessage("[Karma] As non-player, you can select a player with \"/karma <player>\".");
+            String message = karma.getConfig().getString("general.by-player-only");
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            commandSender.sendMessage(message);
         }
         return true;
     }

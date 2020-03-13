@@ -33,13 +33,24 @@ public class CheckKarmaCommand {
             YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
             int targetKarma = configuration.getInt("karma");
             String targetTierDisplay = setTier.checkTier(target);
-            message ="[Karma] " + target.getName() + "'s Karma is " + targetKarma + " and his Tier is " + targetTierDisplay + ".";
+            message = karma.getConfig().getString("messages.check-other-karma");
+            message = message.replaceAll("<karma>", String.valueOf(targetKarma));
+            message = message.replaceAll("<tier>", String.valueOf(targetTierDisplay));
         }
         else
-            message = "[Karma] The player \"" + args[0] + "\" doesn't exists.";
+            message = karma.getConfig().getString("messages.check-other-karma");
 
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        commandSender.sendMessage(message);
+        if (message != null) {
+            if (target.isOnline()) {
+                message = message.replaceAll("<player>", target.getName());
+                message = ChatColor.translateAlternateColorCodes('&', message);
+            }
+            else {
+                message = karma.getConfig().getString("disconnected-player");
+                message = ChatColor.translateAlternateColorCodes('&', message);
+            }
+            commandSender.sendMessage(message);
+        }
     }
 
     /**
@@ -53,9 +64,15 @@ public class CheckKarmaCommand {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         int playerKarma = configuration.getInt("karma");
         String playerTierDisplay = setTier.checkTier(player);
-        message = "[Karma] Your own Karma is " + playerKarma + " and your actual Tier is " + playerTierDisplay + ".";
 
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        player.sendMessage(message);
+        message = karma.getConfig().getString("messages.check-own-karma");
+        if (message != null) {
+            message = message.replaceAll("<player>", player.getName());
+            message = message.replaceAll("<karma>", String.valueOf(playerKarma));
+            message = message.replaceAll("<tier>", String.valueOf(playerTierDisplay));
+
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            player.sendMessage(message);
+        }
     }
 }

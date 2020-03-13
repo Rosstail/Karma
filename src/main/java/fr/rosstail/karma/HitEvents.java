@@ -19,6 +19,11 @@ public class HitEvents implements Listener {
     private Karma karma = Karma.getInstance();
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
     SetTier setTier = new SetTier();
+    AdaptMessage adaptMessage = new AdaptMessage();
+
+    Player attacker = null;
+    Player victim = null;
+    String message;
 
     /**
      * Changes karma when player attack another entity (animal or monster)
@@ -26,15 +31,14 @@ public class HitEvents implements Listener {
      */
     @EventHandler
     public void onEntityHurt(EntityDamageByEntityEvent event) {
-        Player attacker = null;
         int reward = 0;
         int attackerKarma = 0;
         int attackerModifiedKarma = 0;
-        String message;
         LivingEntity livingEntity;
         String livingEntityName;
+        attacker = null;
 
-        if (event.getEntity() instanceof LivingEntity)
+        if (event.getEntity() instanceof LivingEntity && event.getFinalDamage() >= 1d)
         {
             livingEntity = (LivingEntity) event.getEntity();
             livingEntityName = livingEntity.toString().replaceAll("Craft", "");
@@ -50,6 +54,13 @@ public class HitEvents implements Listener {
         }
         else
             return;
+
+        if (livingEntity instanceof Player && attacker != null)
+        {
+            victim = ((Player) livingEntity).getPlayer();
+            onPlayerHurt();
+            return;
+        }
 
         reward = karma.getConfig().getInt("entities." + livingEntityName + ".hit-karma-reward");
 
@@ -84,31 +95,53 @@ public class HitEvents implements Listener {
 
     /**
      * Launch When a player is hurt by another player.
-     * @param event
      */
-    /*@EventHandler
-    public void onPlayerHurt(PlayerDeathEvent event) {
-        Player victim = event.getEntity();
-        Player attacker = victim.getKiller();
-
-        if (attacker == null)
-            return;
+    public void onPlayerHurt() {
 
         File attackerFile = new File(this.karma.getDataFolder(), "playerdata/" + attacker.getUniqueId() + ".yml");
-        YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(attackerFile);
-        int attackerKarma = killerConfig.getInt("karma");
+        YamlConfiguration attackerConfig = YamlConfiguration.loadConfiguration(attackerFile);
+        int attackerInitialKarma = attackerConfig.getInt("karma");
         File victimFile = new File(this.karma.getDataFolder(), "playerdata/" + victim.getUniqueId() + ".yml");
         YamlConfiguration victimConfig = YamlConfiguration.loadConfiguration(victimFile);
         int victimKarma = victimConfig.getInt("karma");
 
-        int attackerModifiedKarma = attackerKarma + (attackerKarma - victimKarma) / 1000;
-        attacker.sendMessage("Initial Karma from attacker " + attacker.getName() + "goes from " + attackerKarma + " to " + attackerModifiedKarma + ".");
-        attacker.sendMessage("Difference " + (attackerModifiedKarma - attackerKarma));
-        killerConfig.set("karma", attackerModifiedKarma);
-        try {
-            killerConfig.save(attackerFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!victim.getName().equals(attacker.getName()) && victim.getLastDamage() >= 1d) {
+            int arg1 = karma.getConfig().getInt("pvp.hit-reward-variables.1");
+            String arg2Str = karma.getConfig().getString("pvp.hit-reward-variables.2");
+            int arg2 = 0;
+            int arg3 = karma.getConfig().getInt("pvp.hit-reward-variables.3");
+            int arg4 = karma.getConfig().getInt("pvp.hit-reward-variables.4");
+
+            if (arg2Str != null) {
+                if (arg2Str.equals("<victimKarma>")) {
+                    arg2 = victimKarma;
+                } else
+                    arg2 = Integer.parseInt(arg2Str);
+            }
+
+            int attackerNewKarma = attackerInitialKarma + arg1 * (arg2 + arg3) / arg4;
+
+            attackerConfig.set("karma", attackerNewKarma);
+            try {
+                attackerConfig.save(attackerFile);
+                verifyKarmaLimits.checkKarmaLimit(attacker);
+                setTier.checkTier(attacker);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            message = null;
+            if (attackerNewKarma > attackerInitialKarma) {
+                message = karma.getConfig().getString("pvp.hit-message-on-karma-increase");
+            }
+            else if (attackerNewKarma < attackerInitialKarma) {
+                message = karma.getConfig().getString("pvp.hit-message-on-karma-decrease");
+            }
+            if (message != null) {
+                message = adaptMessage.getPlayerHitMessage(message, attacker, attackerInitialKarma, attackerNewKarma);
+                attacker.sendMessage(message);
+            }
         }
-    }*/
+
+    }
 }

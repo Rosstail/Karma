@@ -1,4 +1,8 @@
-Config-version: 0.1 #Don't touch it, it's just to be sure on what kind of config it is or check self-update
+Config-version: 1.0 #Don't touch it, it's just to be sure on what kind of config it is or check self-update
+
+general:
+  delay-between-messages: 0 #Gonna be useful on another update !
+  by-player-only: "[Karma] \"/karma\" must be send by a player."
 
 karma:
   ######### You can put any value you want, while they are all int and maximum_karma >= minimum-karma
@@ -6,9 +10,17 @@ karma:
   minimum-karma: -300000
   maximum-karma:  300000
 
-messages: #Compatible with <player> placeholder, changing him to player name
-  creating-playerdata-folder: "&7playerdata/ folder doens't exists. &aCreating it&7."
+messages:
+  creating-playerdata-folder: "&7playerdata/ folder doesn't exists. &aCreating it&7."
   creating-player-file: "&7creating player file for &a<player>&r."
+  disconnected-player: "[Karma] &cThe player &risn't connected or doesn't exists." #This feature will be changed to unexisting player on a future update !
+  check-own-karma: "[Karma] Your karma is &a<karma> &rand your tier is &6<tier>&r."
+  check-other-karma: "[Karma] &6<player>'s &rkarma is &6<karma> &rand his tier is &6<tier>&r."
+  set-karma: "[Karma] <player>'s Karma is now <newKarma> and his Tier is <tier>."
+  add-karma: "[Karma] &aAdded &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier."
+  remove-karma: "[Karma] &cRemoved &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier."
+  reset-karma: "[Karma] &6<player>&r's karma has been reset. Karma : &6<karma> &rand tier is &6<tier>&r."
+  tier-change: "[Karma] You are now a &6<tier> &r!"
 
 tiers:
   ######### You can add, edit or delete many tiers as you want !
@@ -28,6 +40,7 @@ tiers:
     tier-maximum-karma: -150000
     commands:
       - "me &8is the baddest <tier>."
+      - "<@>kill <player>"
   tier-2:
     tier-display-name: "&f[&cVillain&f]&r"
     tier-minimum-karma: -149999
@@ -47,9 +60,7 @@ tiers:
     tier-maximum-karma:    4999
     commands:
       - "me &7is the neutral neutral alignment."
-      - "help karma"
-      - "<@>tell &6<player> &aSalut !"
-      - "<@>tell &6<player> &aSUP' &f! &bmust be sent by console&r."
+      - "<@>me &6<player> &aSalut !"
   tier+1:
     tier-display-name: "&f[&aVigilante&f]&r"
     tier-minimum-karma:    5000
@@ -73,7 +84,23 @@ tiers:
       - "me &6another command !"
       - "me &6infinite commands !"
 
-pvp: #### THIS DOESN'T WORKS ATM
+pvp:
+  # The 2nd argument must be <victimKarma> OR a number, inside like this: "<victimKarma>" or "9".
+  hit-reward-variables: #FORMULA IS     attackerKarma + [1] * ([2] + [3]) / [4]
+    1: -1
+    2: "<victimKarma>"
+    3: 3000
+    4: 50
+  kill-reward-variables: #FORMULA IS     attackerKarma + [1] * ([2] + [3]) / [4]
+    1: -1
+    2: "<victimKarma>"
+    3: 3000
+    4: 10
+  #Sends a message to <attacker> when hitting / killing another player. You can use <attacker>, <attackerKarma>, <victim> and <victimKarma>.
+  hit-message-on-karma-increase: "&aThat scum will not escape from that !"
+  kill-message-on-karma-increase: "&bThat bastard is now finished !"
+  hit-message-on-karma-decrease: "&cYou attack a honnest people !"
+  kill-message-on-karma-decrease: "&4You sonovabitch !"
 
 entities:
   ######## Rou can add edit or delete any Living Entity you want ! There is no error if you set a mob from a higher Minecraft version.
@@ -258,6 +285,11 @@ entities:
   WanderingTrader:
     hit-karma-reward:    -70
     kill-karma-reward:  -700
+  Wither:
+    hit-karma-reward:     10
+    hit-message: "&5Come on !"
+    kill-karma-reward:  1000
+    kill-message: "&6YOU DID IT !"
   WitherSkeleton:
     hit-karma-reward:      1
     kill-karma-reward:   100

@@ -5,30 +5,53 @@ commands:
   karma:
     description: Check your own karma (player)
     usage: /karma
-    permission: karma.karma.own
+    permission: karma.own
     permission-message: You don't have permission !
   karma <player>:
-    description: Check another player karma (permission needed)
+    description: Check another player karma
     usage: /karma <player>
-    permission: karma.karma.other
+    permission: karma.other
     permission-message: You don't have permission !
   karma set [player] [amount]:
-    description: Directly set the karma of a player (permission needed)
+    description: Directly set the karma of a player
     usage: /karma set [player] [amount]
-    permission: karma.set.other
+    permission: karma.set
     permission-message: You don't have permission !
   karma add [player] [amount]:
-    description: Directly set the karma of a player, negative value decrease karma (permission needed)
+    description: Add specified amount of a player karma
     usage: /karma add [player] [amount]
-    permission: karma.add.other
+    permission: karma.add
     permission-message: You don't have permission !
   karma remove [player] [amount]:
-    description: Directly set the karma of a player, negative value increase karma (permission needed)
+    description: Remove specified amount of a player karma
     usage: /karma remove [player] [amount]
-    permission: karma.remove.other
+    permission: karma.remove
     permission-message: You don't have permission !
   karma reset [player]:
-    description: Set player's karma to default one (permission needed)
+    description: Set player's karma to default
     usage: /karma [player] reset
-    permission: karma.reset.other
+    permission: karma.reset
     permission-message: You don't have permission !
+permissions:
+  karma.own:
+    default: true
+  karma.other:
+    default: false
+  karma.set:
+    default: op
+  karma.add:
+    default: op
+  karma.remove:
+    default: op
+  karma.reset:
+    default: op
+  karma.*:
+    default: op
+    description: Gives all karma plugin permissions
+    children:
+      karma.own: true
+      karma.other: true
+      karma.set: true
+      karma.add: true
+      karma.remove: true
+      karma.reset: true

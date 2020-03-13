@@ -42,7 +42,6 @@ public class VerifyKarmaLimits {
         } catch (IOException var5) {
             var5.printStackTrace();
         }
-        System.out.println(player.getName() + " has a karma higher than maximum, now set to maximum karma defined in config.yml");
     }
 
     /**
@@ -58,6 +57,5 @@ public class VerifyKarmaLimits {
         } catch (IOException var5) {
             var5.printStackTrace();
         }
-        System.out.println(player.getName() + " has a karma higher than maximum, now set to minimum karma defined in config.yml");
     }
 }
