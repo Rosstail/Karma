@@ -1,7 +1,8 @@
 Config-version: 1.0 #Don't touch it, it's just to be sure on what kind of config it is or check self-update
 
 general:
-  delay-between-messages: 0 #Gonna be useful on another update !
+  delay-between-hit-messages: 5
+  delay-between-kill-messages: 10
   by-player-only: "[Karma] \"/karma\" must be send by a player."
 
 karma:
@@ -21,6 +22,7 @@ messages:
   remove-karma: "[Karma] &cRemoved &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier."
   reset-karma: "[Karma] &6<player>&r's karma has been reset. Karma : &6<newKarma> &rand tier is &6<tier>&r."
   tier-change: "[Karma] You are now a &6<tier> &r!"
+  permission-denied: "[Karma] &cYou don't have permission !"
 
 tiers:
   ######### You can add, edit or delete many tiers as you want !

@@ -38,7 +38,7 @@ public class HitEvents implements Listener {
         String livingEntityName;
         attacker = null;
 
-        if (event.getEntity() instanceof LivingEntity && event.getFinalDamage() >= 1d)
+        if (event.getEntity() instanceof LivingEntity && event.getFinalDamage() >= 1d && ((LivingEntity) event.getEntity()).getHealth() - event.getFinalDamage() > 0)
         {
             livingEntity = (LivingEntity) event.getEntity();
             livingEntityName = livingEntity.toString().replaceAll("Craft", "");
@@ -83,14 +83,8 @@ public class HitEvents implements Listener {
         message = karma.getConfig().getString("entities." + livingEntityName + ".hit-message");
 
         if (!(message == null || attacker == null)) {
-            message = message.replaceAll("<attacker>", attacker.getName());
-            message = message.replaceAll("<reward>", Integer.toString(reward));
-            message = message.replaceAll("<previousKarma>", Integer.toString(attackerKarma));
-            message = message.replaceAll("<karma>", Integer.toString(attackerModifiedKarma));
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            attacker.sendMessage(message);
+            adaptMessage.getEntityHitMessage(message, attacker, attackerModifiedKarma, reward);
         }
-
     }
 
     /**
@@ -138,8 +132,7 @@ public class HitEvents implements Listener {
                 message = karma.getConfig().getString("pvp.hit-message-on-karma-decrease");
             }
             if (message != null) {
-                message = adaptMessage.getPlayerHitMessage(message, attacker, attackerInitialKarma, attackerNewKarma);
-                attacker.sendMessage(message);
+                adaptMessage.getPlayerHitMessage(message, attacker, attackerInitialKarma, attackerNewKarma);
             }
         }
 

@@ -65,12 +65,7 @@ public class KillEvents implements Listener {
         }
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".kill-message");
-
-        if (message != null) {
-            message = adaptMessage.getEntityKillMessage(message, killer, killerKarma, reward);
-            killer.sendMessage(message);
-        }
-
+        adaptMessage.getEntityKillMessage(message, killer, killerKarma, reward);
     }
 
     /**
@@ -126,8 +121,7 @@ public class KillEvents implements Listener {
                 message = karma.getConfig().getString("pvp.kill-message-on-karma-decrease");
             }
             if (message != null) {
-                message = adaptMessage.getPlayerKillMessage(message, killer, killerInitialKarma, killerNewKarma);
-                killer.sendMessage(message);
+                adaptMessage.getPlayerKillMessage(message, killer, killerInitialKarma, killerNewKarma);
             }
         }
 
