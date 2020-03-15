@@ -51,7 +51,7 @@ public class KarmaCommand implements CommandExecutor {
             }
         }
         else if (args.length == 1) {
-            if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.reset")) {
+            if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.other")) {
                 checkKarmaCommand.karmaOther(commandSender, args);
             } else {
                 permissionDenied(commandSender);
