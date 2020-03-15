@@ -7,7 +7,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Change the karma of the target, check the limit fork and new tier after.
@@ -15,6 +14,7 @@ import java.io.IOException;
 public class EditKarmaCommand {
     private Karma karma = Karma.getInstance();
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
+    Setters setters = new Setters();
     SetTier setTier = new SetTier();
     String message = null;
 
@@ -30,25 +30,16 @@ public class EditKarmaCommand {
     {
         Player target = Bukkit.getServer().getPlayer(args[1]);
         int value = Integer.parseInt(args[2]);
-        if (target != null) {
+        if (target != null && target.isOnline()) {
 
-            File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-
-            configuration.set("karma", value);
-
-            try {
-                configuration.save(file);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            setters.setKarmaToPlayer(target, value);
 
             value = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
             message = karma.getConfig().getString("messages.set-karma");
 
             if (message != null) {
-                message = message.replaceAll("<player>", target.getName());
+                message = message.replaceAll("<player>", args[1]);
                 message = message.replaceAll("<newKarma>", Integer.toString(value));
                 message = message.replaceAll("<tier>", tier);
                 message = ChatColor.translateAlternateColorCodes('&', message);
@@ -56,7 +47,7 @@ public class EditKarmaCommand {
             }
         }
         else {
-            disconnectedPlayer(commandSender, target);
+            disconnectedPlayer(commandSender, args);
         }
     }
 
@@ -70,35 +61,31 @@ public class EditKarmaCommand {
     {
         Player target = Bukkit.getServer().getPlayer(args[1]);
         int value = Integer.parseInt(args[2]);
-        if (target != null) {
-            try {
-                File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                int targetKarma = configuration.getInt("karma");
-                int targetNewKarma = targetKarma + value;
+        if (target != null && target.isOnline()) {
+            File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+            int targetKarma = configuration.getInt("karma");
 
-                configuration.set("karma", targetNewKarma);
-                configuration.save(file);
-                int newValue = verifyKarmaLimits.checkKarmaLimit(target);
-                String tier = setTier.checkTier(target);
+            int targetNewKarma = targetKarma + value;
 
-                message = karma.getConfig().getString("messages.add-karma");
+            setters.setKarmaToPlayer(target, targetNewKarma);
 
-                if (message != null) {
-                    message = message.replaceAll("<player>", target.getName());
-                    message = message.replaceAll("<value>", Integer.toString(value));
-                    message = message.replaceAll("<newKarma>", Integer.toString(newValue));
-                    message = message.replaceAll("<tier>", tier);
-                    message = ChatColor.translateAlternateColorCodes('&', message);
-                    commandSender.sendMessage(message);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
+            String tier = setTier.checkTier(target);
+
+            message = karma.getConfig().getString("messages.add-karma");
+
+            if (message != null) {
+                message = message.replaceAll("<player>", args[1]);
+                message = message.replaceAll("<value>", Integer.toString(value));
+                message = message.replaceAll("<newKarma>", Integer.toString(newKarma));
+                message = message.replaceAll("<tier>", tier);
+                message = ChatColor.translateAlternateColorCodes('&', message);
+                commandSender.sendMessage(message);
             }
-            verifyKarmaLimits.checkKarmaLimit(target);
-        }
-        else {
-            disconnectedPlayer(commandSender, target);
+
+        } else {
+            disconnectedPlayer(commandSender, args);
         }
     }
 
@@ -112,34 +99,31 @@ public class EditKarmaCommand {
     {
         Player target = Bukkit.getServer().getPlayer(args[1]);
         int value = Integer.parseInt(args[2]);
-        if (target != null) {
-            try {
-                File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                int targetKarma = configuration.getInt("karma");
-                int targetNewKarma = targetKarma - value;
+        if (target != null && target.isOnline()) {
+            File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
+            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+            int targetKarma = configuration.getInt("karma");
 
-                configuration.set("karma", targetNewKarma);
-                configuration.save(file);
-                int newValue = verifyKarmaLimits.checkKarmaLimit(target);
-                String tier = setTier.checkTier(target);
+            int targetNewKarma = targetKarma - value;
 
-                message = karma.getConfig().getString("messages.remove-karma");
+            setters.setKarmaToPlayer(target, targetNewKarma);
 
-                if (message != null) {
-                    message = message.replaceAll("<player>", target.getName());
-                    message = message.replaceAll("<value>", Integer.toString(value));
-                    message = message.replaceAll("<newKarma>", Integer.toString(newValue));
-                    message = message.replaceAll("<tier>", tier);
-                    message = ChatColor.translateAlternateColorCodes('&', message);
-                    commandSender.sendMessage(message);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
+            String tier = setTier.checkTier(target);
+
+            message = karma.getConfig().getString("messages.remove-karma");
+
+            if (message != null) {
+                message = message.replaceAll("<player>", args[1]);
+                message = message.replaceAll("<value>", Integer.toString(value));
+                message = message.replaceAll("<newKarma>", Integer.toString(newKarma));
+                message = message.replaceAll("<tier>", tier);
+                message = ChatColor.translateAlternateColorCodes('&', message);
+                commandSender.sendMessage(message);
             }
-        }
-        else {
-            disconnectedPlayer(commandSender, target);
+
+        } else {
+            disconnectedPlayer(commandSender, args);
         }
     }
 
@@ -148,43 +132,36 @@ public class EditKarmaCommand {
      * @param commandSender
      * @param args
      */
-    public void karmaReset(CommandSender commandSender, String[] args)
-    {
+    public void karmaReset(CommandSender commandSender, String[] args) {
         Player target = Bukkit.getServer().getPlayer(args[1]);
-        if (target != null) {
-            try {
-                File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-                YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        if (target != null && target.isOnline()) {
+            int resKarma = this.karma.getConfig().getInt("karma.default-karma");
 
-                int resKarma = this.karma.getConfig().getInt("karma.default-karma");
-                configuration.set("karma", resKarma);
-                configuration.save(file);
-                int newValue = verifyKarmaLimits.checkKarmaLimit(target);
-                String tier = setTier.checkTier(target);
+            setters.setKarmaToPlayer(target, resKarma);
 
-                message = karma.getConfig().getString("messages.reset-karma");
+            int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
+            String tier = setTier.checkTier(target);
 
-                if (message != null) {
-                    message = message.replaceAll("<player>", target.getName());
-                    message = message.replaceAll("<karma>", String.valueOf(resKarma));
-                    message = message.replaceAll("<newKarma>", Integer.toString(newValue));
-                    message = message.replaceAll("<tier>", tier);
-                    message = ChatColor.translateAlternateColorCodes('&', message);
-                    commandSender.sendMessage(message);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            message = karma.getConfig().getString("messages.reset-karma");
+            if (message != null) {
+                message = message.replaceAll("<player>", args[1]);
+                message = message.replaceAll("<newKarma>", Integer.toString(newKarma));
+                message = message.replaceAll("<tier>", tier);
+                message = ChatColor.translateAlternateColorCodes('&', message);
+                commandSender.sendMessage(message);
             }
         }
         else {
-            disconnectedPlayer(commandSender, target);
+            disconnectedPlayer(commandSender, args);
         }
     }
 
-    private void disconnectedPlayer(CommandSender commandSender, Player target) {
+    private void disconnectedPlayer(CommandSender commandSender, String[] args) {
         message = karma.getConfig().getString("messages.disconnected-player");
-        message = message.replaceAll("<player>", target.getName());
-        message = ChatColor.translateAlternateColorCodes('&', message);
-        commandSender.sendMessage(message);
+        if (message != null) {
+            message = message.replaceAll("<player>", args[1]);
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            commandSender.sendMessage(message);
+        }
     }
 }

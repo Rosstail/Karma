@@ -3,10 +3,7 @@ package fr.rosstail.karma;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-
-import java.io.File;
 
 /**
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
@@ -15,6 +12,7 @@ public class CheckKarmaCommand {
     private Karma karma = Karma.getInstance();
     SetTier setTier = new SetTier();
     String message = null;
+    Getters getters = new Getters();
 
     public CheckKarmaCommand() {
     }
@@ -27,28 +25,22 @@ public class CheckKarmaCommand {
      */
     public void karmaOther(CommandSender commandSender, String[] args)
     {
-        Player target = Bukkit.getServer().getPlayer(args[0]);
-        if (target != null) {
-            File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-            int targetKarma = configuration.getInt("karma");
-            String targetTierDisplay = setTier.checkTier(target);
+        Player player = Bukkit.getServer().getPlayer(args[0]);
+
+        if (player != null && player.isOnline()) {
             message = karma.getConfig().getString("messages.check-other-karma");
+            int targetKarma = getters.getPlayerKarma(player);
+            String targetTierDisplay = setTier.checkTier(player);
+
             message = message.replaceAll("<karma>", String.valueOf(targetKarma));
             message = message.replaceAll("<tier>", String.valueOf(targetTierDisplay));
+        } else {
+            message = karma.getConfig().getString("messages.disconnected-player");
         }
-        else
-            message = karma.getConfig().getString("messages.check-other-karma");
 
         if (message != null) {
-            if (target.isOnline()) {
-                message = message.replaceAll("<player>", target.getName());
-                message = ChatColor.translateAlternateColorCodes('&', message);
-            }
-            else {
-                message = karma.getConfig().getString("disconnected-player");
-                message = ChatColor.translateAlternateColorCodes('&', message);
-            }
+            message = message.replaceAll("<player>", args[0]);
+            message = ChatColor.translateAlternateColorCodes('&', message);
             commandSender.sendMessage(message);
         }
     }
@@ -60,9 +52,7 @@ public class CheckKarmaCommand {
     public void karmaSelf(CommandSender commandSender)
     {
         Player player = (Player) commandSender;
-        File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        int playerKarma = configuration.getInt("karma");
+        int playerKarma = getters.getPlayerKarma(player);
         String playerTierDisplay = setTier.checkTier(player);
 
         message = karma.getConfig().getString("messages.check-own-karma");

@@ -12,14 +12,14 @@ karma:
 
 messages:
   creating-playerdata-folder: "&7playerdata/ folder doesn't exists. &aCreating it&7."
-  creating-player-file: "&7creating player file for &a<player>&r."
-  disconnected-player: "[Karma] &cThe player &risn't connected or doesn't exists." #This feature will be changed to unexisting player on a future update !
+  creating-player-file: "&7Creating player file for &a<player>&r."
+  disconnected-player: "[Karma] &c<player> is not connected or does not exists."
   check-own-karma: "[Karma] Your karma is &a<karma> &rand your tier is &6<tier>&r."
   check-other-karma: "[Karma] &6<player>'s &rkarma is &6<karma> &rand his tier is &6<tier>&r."
   set-karma: "[Karma] <player>'s Karma is now <newKarma> and his Tier is <tier>."
   add-karma: "[Karma] &aAdded &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier."
   remove-karma: "[Karma] &cRemoved &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier."
-  reset-karma: "[Karma] &6<player>&r's karma has been reset. Karma : &6<karma> &rand tier is &6<tier>&r."
+  reset-karma: "[Karma] &6<player>&r's karma has been reset. Karma : &6<newKarma> &rand tier is &6<tier>&r."
   tier-change: "[Karma] You are now a &6<tier> &r!"
 
 tiers:
