@@ -15,9 +15,6 @@ public class Karma extends JavaPlugin {
     }
 
     public void onEnable() {
-        System.out.println("==========================");
-        System.out.println("===   KARMA  ENABLED   ===");
-        System.out.println("==========================");
         instance = this;
         this.saveDefaultConfig();
         this.createFolders();
@@ -52,8 +49,5 @@ public class Karma extends JavaPlugin {
     }
 
     public void onDisable() {
-        System.out.println("==========================");
-        System.out.println("===   KARMA DISABLED   ===");
-        System.out.println("==========================");
     }
 }

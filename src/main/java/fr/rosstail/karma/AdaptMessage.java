@@ -11,6 +11,14 @@ public class AdaptMessage {
     private Map<String, Long> cooldown = new HashMap<String, Long>();
     private String message = null;
 
+    /**
+     * Replaces every placeholders when a player hit an entity
+     * @param message
+     * @param player
+     * @param karma
+     * @param reward
+     * @return
+     */
     private String setEntityHitMessage(String message, Player player, int karma, int reward) {
         message = message.replaceAll("<attacker>", player.getName());
         message = message.replaceAll("<reward>", Integer.toString(reward));

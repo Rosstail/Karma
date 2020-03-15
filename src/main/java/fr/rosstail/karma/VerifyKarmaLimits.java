@@ -21,9 +21,9 @@ public class VerifyKarmaLimits {
         File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         if (configuration.getInt("karma") > this.karma.getConfig().getInt("karma.maximum-karma")) {
-            this.setKarmaToMaximum(player, file, configuration);
+            this.setKarmaToMaximum(file, configuration);
         } else if (configuration.getInt("karma") < this.karma.getConfig().getInt("karma.minimum-karma")) {
-            this.setKarmaToMinimum(player, file, configuration);
+            this.setKarmaToMinimum(file, configuration);
         }
         this.setTier.checkTier(player);
         return configuration.getInt("karma");
@@ -31,11 +31,10 @@ public class VerifyKarmaLimits {
 
     /**
      * When the karma is too high, set it to the maximum allowed.
-     * @param player
      * @param file
      * @param configuration
      */
-    public void setKarmaToMaximum(Player player, File file, YamlConfiguration configuration) {
+    public void setKarmaToMaximum(File file, YamlConfiguration configuration) {
         try {
             configuration.set("karma", this.karma.getConfig().getInt("karma.maximum-karma"));
             configuration.save(file);
@@ -46,11 +45,10 @@ public class VerifyKarmaLimits {
 
     /**
      * When the player karma is too low, set it as minimum allowed
-     * @param player
      * @param file
      * @param configuration
      */
-    public void setKarmaToMinimum(Player player, File file, YamlConfiguration configuration) {
+    public void setKarmaToMinimum(File file, YamlConfiguration configuration) {
         try {
             configuration.set("karma", this.karma.getConfig().getInt("karma.minimum-karma"));
             configuration.save(file);

@@ -9,6 +9,11 @@ import java.io.IOException;
 public class Setters {
     private Karma karma = Karma.getInstance();
 
+    /**
+     * Set the specified Karma to the player
+     * @param player
+     * @param karma
+     */
     public void setKarmaToPlayer(Player player, int karma) {
         File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
