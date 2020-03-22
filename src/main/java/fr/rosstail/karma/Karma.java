@@ -1,8 +1,11 @@
 package fr.rosstail.karma;
 
 import java.io.File;
+import java.io.IOException;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -28,7 +31,20 @@ public class Karma extends JavaPlugin {
      * Create the subfolders inside plugins/Karma/ folder
      */
     public void createFolders() {
-        File file = new File(this.getDataFolder(), "playerdata/");
+        File file = new File(this.getDataFolder(), "lang/");
+        if (!file.exists()) {
+            file.mkdir();
+            System.out.println("Create lang files");
+            YamlConfiguration defaultLangFile = YamlConfiguration.loadConfiguration(this.getTextResource("lang/en_EN.yml"));
+            file = new File(this.getDataFolder(), "lang/" + defaultLangFile + ".yml");
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        file = new File(this.getDataFolder(), "playerdata/");
         if (!file.exists()) {
             String message = this.getConfig().getString("messages.creating-playerdata-folder");
             if (message != null) {
@@ -37,7 +53,6 @@ public class Karma extends JavaPlugin {
             }
             file.mkdir();
         }
-
     }
 
     /**

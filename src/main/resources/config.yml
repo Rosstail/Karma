@@ -1,6 +1,7 @@
 Config-version: 1.0
 
 general:
+  lang: "en_EN"
   delay-between-hit-messages: 5
   delay-between-kill-messages: 10
   by-player-only: "[Karma] \"/karma\" must be send by a player."

@@ -37,7 +37,9 @@ public class AdaptMessage {
                 return;
             }
             else {
-                message = setEntityHitMessage(message, player, karma, reward);
+                if (message != null) {
+                    message = setEntityHitMessage(message, player, karma, reward);
+                }
             }
         }
         cooldown.put(player.getName(), System.currentTimeMillis());
@@ -71,7 +73,9 @@ public class AdaptMessage {
                 return;
             }
             else {
-                message = setEntityKillMessage(message, player, karma, reward);
+                if (message != null) {
+                    message = setEntityKillMessage(message, player, karma, reward);
+                }
             }
         }
         cooldown.put(player.getName(), System.currentTimeMillis());
@@ -104,7 +108,9 @@ public class AdaptMessage {
                 return;
             }
             else {
-                message = setPlayerHitMessage(message, player, initialKarma, newKarma);
+                if (message != null) {
+                    message = setPlayerHitMessage(message, player, initialKarma, newKarma);
+                }
             }
         }
         cooldown.put(player.getName(), System.currentTimeMillis());
@@ -136,7 +142,9 @@ public class AdaptMessage {
                 return;
             }
             else {
-                message = setPlayerKillMessage(message, player, initialKarma, newKarma);
+                if (message != null) {
+                    message = setPlayerKillMessage(message, player, initialKarma, newKarma);
+                }
             }
         }
         cooldown.put(player.getName(), System.currentTimeMillis());
