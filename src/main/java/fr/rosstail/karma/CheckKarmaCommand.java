@@ -29,16 +29,18 @@ public class CheckKarmaCommand {
     public void karmaOther(CommandSender commandSender, String[] args)
     {
         Player player = Bukkit.getServer().getPlayer(args[0]);
+        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
 
         if (player != null && player.isOnline()) {
-            message = karma.getConfig().getString("messages.check-other-karma");
+            message = configurationLang.getString("check-other-karma");
             int targetKarma = getters.getPlayerKarma(player);
             String targetTierDisplay = setTier.checkTier(player);
 
             message = message.replaceAll("<karma>", String.valueOf(targetKarma));
             message = message.replaceAll("<tier>", String.valueOf(targetTierDisplay));
         } else {
-            message = karma.getConfig().getString("messages.disconnected-player");
+            message = configurationLang.getString("disconnected-player");
         }
 
         if (message != null) {
