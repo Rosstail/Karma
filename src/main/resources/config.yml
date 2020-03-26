@@ -1,28 +1,14 @@
-Config-version: 1.0
+Config-version: 1.1
 
 general:
   lang: "en_EN"
   delay-between-hit-messages: 5
   delay-between-kill-messages: 10
-  by-player-only: "[Karma] \"/karma\" must be send by a player."
 
 karma:
   default-karma:       0
   minimum-karma: -300000
   maximum-karma:  300000
-
-messages:
-  creating-playerdata-folder: "[Karma] &9playerdata/ folder doesn't exists. &aCreating it&7."
-  creating-player-file: "[Karma] &9Creating player file for &a<player>&9."
-  disconnected-player: "[Karma] &c<player> is not connected or does not exists."
-  check-own-karma: "[Karma] Your karma is &a<karma> &rand your tier is &6<tier>&r."
-  check-other-karma: "[Karma] &6<player>'s &rkarma is &6<karma> &rand his tier is &6<tier>&r."
-  set-karma: "[Karma] &9<player>'s &rKarma is now &9<newKarma> &rand his Tier is &9<tier>&r."
-  add-karma: "[Karma] &aAdded &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier."
-  remove-karma: "[Karma] &cRemoved &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier."
-  reset-karma: "[Karma] &6<player>&r's karma has been reset. Karma : &6<newKarma> &rand tier is &6<tier>&r."
-  tier-change: "[Karma] You are now a &6<tier> &r!"
-  permission-denied: "[Karma] &cYou don't have permission !"
 
 tiers:
   tier-3:

@@ -42,7 +42,10 @@ public class SetTier {
                         configuration.save(file);
                         String newTierDisplay = karma.getConfig().getString("tiers." + tiers + ".tier-display-name");
 
-                        message = karma.getConfig().getString("messages.tier-change");
+
+                        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+                        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+                        message = configurationLang.getString("tier-change");
                         message = message.replaceAll("<tier>", newTierDisplay);
                         message = ChatColor.translateAlternateColorCodes('&', message);
                         player.sendMessage(message);

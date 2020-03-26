@@ -36,7 +36,9 @@ public class EditKarmaCommand {
 
             value = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
-            message = karma.getConfig().getString("messages.set-karma");
+            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+            message = configurationLang.getString("set-karma");
 
             if (message != null) {
                 message = message.replaceAll("<player>", args[1]);
@@ -73,7 +75,9 @@ public class EditKarmaCommand {
             int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
 
-            message = karma.getConfig().getString("messages.add-karma");
+            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+            message = configurationLang.getString("add-karma");
 
             if (message != null) {
                 message = message.replaceAll("<player>", args[1]);
@@ -111,7 +115,9 @@ public class EditKarmaCommand {
             int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
 
-            message = karma.getConfig().getString("messages.remove-karma");
+            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+            message = configurationLang.getString("remove-karma");
 
             if (message != null) {
                 message = message.replaceAll("<player>", args[1]);
@@ -142,7 +148,9 @@ public class EditKarmaCommand {
             int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
 
-            message = karma.getConfig().getString("messages.reset-karma");
+            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+            message = configurationLang.getString("reset-karma");
             if (message != null) {
                 message = message.replaceAll("<player>", args[1]);
                 message = message.replaceAll("<newKarma>", Integer.toString(newKarma));
@@ -157,7 +165,10 @@ public class EditKarmaCommand {
     }
 
     private void disconnectedPlayer(CommandSender commandSender, String[] args) {
-        message = karma.getConfig().getString("messages.disconnected-player");
+        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+        message = configurationLang.getString("disconnected-player");
+
         if (message != null) {
             message = message.replaceAll("<player>", args[1]);
             message = ChatColor.translateAlternateColorCodes('&', message);

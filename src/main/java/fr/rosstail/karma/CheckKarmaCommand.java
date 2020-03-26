@@ -3,7 +3,10 @@ package fr.rosstail.karma;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import java.io.File;
 
 /**
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
@@ -55,7 +58,9 @@ public class CheckKarmaCommand {
         int playerKarma = getters.getPlayerKarma(player);
         String playerTierDisplay = setTier.checkTier(player);
 
-        message = karma.getConfig().getString("messages.check-own-karma");
+        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+        message = configurationLang.getString("check-own-karma");
         if (message != null) {
             message = message.replaceAll("<player>", player.getName());
             message = message.replaceAll("<karma>", String.valueOf(playerKarma));

@@ -4,7 +4,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import java.io.File;
 
 /**
  * Checking what method/class will be used on command, depending of command Sender and number of args.
@@ -65,7 +68,10 @@ public class KarmaCommand implements CommandExecutor {
             }
         }
         else {
-            String message = karma.getConfig().getString("general.by-player-only");
+            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+            String message = configurationLang.getString("by-player-only");
+
             if (message != null) {
                 message = ChatColor.translateAlternateColorCodes('&', message);
                 commandSender.sendMessage(message);
@@ -75,7 +81,10 @@ public class KarmaCommand implements CommandExecutor {
     }
 
     private void permissionDenied(CommandSender commandSender) {
-        String message = this.karma.getConfig().getString("messages.permission-denied");
+        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+
+        String message = configurationLang.getString("permission-denied");
         if (message != null) {
             message = ChatColor.translateAlternateColorCodes('&', message);
             commandSender.sendMessage(message);
