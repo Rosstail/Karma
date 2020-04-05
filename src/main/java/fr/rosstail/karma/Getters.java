@@ -23,4 +23,8 @@ public class Getters {
         return playerConfig.getString("tier");
     }
 
+    public String getPlayerDisplayTier(Player player) {
+        return karma.getConfig().getString("tiers." + getPlayerTier(player) + ".tier-display-name");
+    }
+
 }

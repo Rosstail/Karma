@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -55,6 +54,7 @@ public class Karma extends JavaPlugin {
             getServer().getConsoleSender().sendMessage("&9Creating default language files");
             setEnglishLang();
             setFrenchLang();
+            setSpanishLang();
             setRomanianLang();
         }
     }
@@ -119,6 +119,34 @@ public class Karma extends JavaPlugin {
         configuration.set("reset-karma", "[Karma] Le karma du joueur &6<player> &rest réinitialisé. Karma : &6<newKarma> &ret Alignement : &6<tier>&r.");
         configuration.set("tier-change", "[Karma] Vous êtes désormais un(e) &6<tier> &r!");
         configuration.set("permission-denied", "[Karma] &cVous n'avez pas la permission !");
+
+        try {
+            configuration.save(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setSpanishLang() {
+        File file = new File(this.getDataFolder(), "lang/es_ES.yml");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+        configuration.set("by-player-only", "[Karma] Este comando es solo para jugadores.");
+        configuration.set("creating-playerdata-folder", "[Karma] &9Carpeta playerdata/ no exite. &aCreandola&7.");
+        configuration.set("creating-player", "[Karma] &9Creando un archivo de jugador para &a<player>&9.");
+        configuration.set("disconnected-player", "[Karma] &c<player> no esta conectado o no exite.");
+        configuration.set("check-own-karma", "[Karma] Tu karma es &a<karma> &ry tu Tier es &6<tier>&r.");
+        configuration.set("check-other-karma", "[Karma] &rEl karma de &6<player> &res &6<karma> &ry su Tier es &6<tier>&r.");
+        configuration.set("set-karma", "[Karma] &rEl karma de &9<player>'s &rahora es &9<newKarma> &ry su Tier es &9<tier>&r.");
+        configuration.set("add-karma", "[Karma] &aSe añadido &6<value> &rKarma a &6<player> &rcon un total de &6<newKarma> &rkarma y tier <tier>.");
+        configuration.set("remove-karma", "[Karma] &cEliminado &6<value> &rKarma a &6<player> &rcon un total de &6<newKarma> &rkarma y tier <tier>.");
+        configuration.set("reset-karma", "[Karma] &rEl karma de &6<player>&r se ha reiniciado. Karma : &6<newKarma> &ry el tier es &6<tier>&r.");
+        configuration.set("tier-change", "[Karma] ¡ Ahora eres &6<tier> &r!");
+        configuration.set("permission-denied", "[Karma] &c¡No tienes permiso!");
 
         try {
             configuration.save(file);

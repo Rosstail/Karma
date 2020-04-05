@@ -13,7 +13,6 @@ import java.io.File;
  */
 public class CheckKarmaCommand {
     private Karma karma = Karma.getInstance();
-    SetTier setTier = new SetTier();
     String message = null;
     Getters getters = new Getters();
 
@@ -35,7 +34,7 @@ public class CheckKarmaCommand {
         if (player != null && player.isOnline()) {
             message = configurationLang.getString("check-other-karma");
             int targetKarma = getters.getPlayerKarma(player);
-            String targetTierDisplay = setTier.checkTier(player);
+            String targetTierDisplay = getters.getPlayerTier(player);
 
             message = message.replaceAll("<karma>", String.valueOf(targetKarma));
             message = message.replaceAll("<tier>", String.valueOf(targetTierDisplay));
@@ -58,7 +57,7 @@ public class CheckKarmaCommand {
     {
         Player player = (Player) commandSender;
         int playerKarma = getters.getPlayerKarma(player);
-        String playerTierDisplay = setTier.checkTier(player);
+        String playerTierDisplay = getters.getPlayerDisplayTier(player);
 
         File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
         YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
