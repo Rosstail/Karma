@@ -166,12 +166,12 @@ public class Karma extends JavaPlugin {
         configuration.set("by-player-only", "[Karma] &fComanda aceasta trebuie executata de catre un jucator!");
         configuration.set("creating-playerdata-folder", "[Karma] &fNu exista \"playerdata\", asa ca creem noi!");
         configuration.set("creating-player", "[Karma] &fCreem un jucator cu numele &a<player>");
-        configuration.set("disconnected-player", "[Karma] &a<player>nu este pe server, sau nu exista.");
+        configuration.set("disconnected-player", "[Karma] &a<player> nu este pe server, sau nu exista.");
         configuration.set("check-own-karma", "[Karma] Karma-ul tau este &a<karma> &fsi tier-ul tau este &2<tier>&r.");
         configuration.set("check-other-karma", "[Karma] &a<player> &fdetine &a<karma> &fKarma si tier-ul sau este &2<tier>&r.");
         configuration.set("set-karma", "[Karma] &9<player>''s &rAi setat karma &a<newKarma> &rsi tier &2<tier>&r.");
         configuration.set("add-karma", "[Karma] &fAi scos &a<value> &rKarma de la &2<player> &rel acum detine de &a<newKarma> &rKarma si tier-ul&2 <tier>.");
-        configuration.set("remove-karma", "[Karma] &cDiminution de &6<value> &rkarma pour &6<player> &rpour un total de &6<newKarma> &rkarma et l'alignement <tier>.");
+        configuration.set("remove-karma", "[Karma] &cAti scos &6<value> &rkarma de la &6<player> &rpentru un total de &6<newKarma> &rsi tier-ul <tier>.");
         configuration.set("reset-karma", "[Karma] &fKarma-ul lui &a<player>&fa fost resetat. Noul sau Karma este &a<newKarma>;Tier &2<tier>&r.");
         configuration.set("tier-change", "[Karma] Ai ajuns la tier &a<tier> &r!");
         configuration.set("permission-denied", "[Karma] &fDin pacate nu ai &apermisiunea !");
