@@ -1,4 +1,12 @@
-Config-version: 1.1
+Config-version: 1.2
+
+mysql:
+  active: false
+  host: "localhost"
+  port: 3306
+  database: "test"
+  username: "root"
+  password: ""
 
 general:
   lang: "en_EN"

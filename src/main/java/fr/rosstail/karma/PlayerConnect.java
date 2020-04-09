@@ -18,6 +18,9 @@ public class PlayerConnect implements Listener {
     SetTier setTier = new SetTier();
     String message = null;
 
+    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+
     public PlayerConnect() {
     }
 
@@ -48,8 +51,6 @@ public class PlayerConnect implements Listener {
                 var4.printStackTrace();
             }
 
-            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
             message = configurationLang.getString("creating-player");
             if (message != null) {
                 message = message.replaceAll("<player>", player.getName());

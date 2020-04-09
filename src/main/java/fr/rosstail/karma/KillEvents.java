@@ -1,20 +1,15 @@
 package fr.rosstail.karma;
 
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import java.io.File;
-import java.io.IOException;
-
 /**
  * Changes the attacker karma when killing living entities
  */
-public class KillEvents implements Listener {
+public class KillEvents extends GetSet implements Listener {
     private Karma karma = Karma.getInstance();
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
     SetTier setTier = new SetTier();
@@ -50,18 +45,11 @@ public class KillEvents implements Listener {
         reward = karma.getConfig().getInt("entities." + livingEntityName + ".kill-karma-reward");
 
         if (reward != 0) {
-            File killerFile = new File(this.karma.getDataFolder(), "playerdata/" + killer.getUniqueId() + ".yml");
-            YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(killerFile);
-            killerKarma = killerConfig.getInt("karma");
+            killerKarma = getPlayerKarma(killer);
 
-            killerConfig.set("karma", killerKarma + reward);
-            try {
-                killerConfig.save(killerFile);
-                verifyKarmaLimits.checkKarmaLimit(killer);
-                setTier.checkTier(killer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            setKarmaToPlayer(killer,killerKarma + reward);
+            verifyKarmaLimits.checkKarmaLimit(killer);
+            setTier.checkTier(killer);
         }
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".kill-message");
@@ -80,12 +68,8 @@ public class KillEvents implements Listener {
         if (killer == null)
             return;
 
-        File killerFile = new File(this.karma.getDataFolder(), "playerdata/" + killer.getUniqueId() + ".yml");
-        YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(killerFile);
-        int killerInitialKarma = killerConfig.getInt("karma");
-        File victimFile = new File(this.karma.getDataFolder(), "playerdata/" + victim.getUniqueId() + ".yml");
-        YamlConfiguration victimConfig = YamlConfiguration.loadConfiguration(victimFile);
-        int victimKarma = victimConfig.getInt("karma");
+        int killerInitialKarma = getPlayerKarma(killer);
+        int victimKarma = getPlayerKarma(victim);
 
         if (!victim.getName().equals(killer.getName())) {
 
@@ -104,14 +88,9 @@ public class KillEvents implements Listener {
 
             int killerNewKarma = killerInitialKarma + arg1 * (arg2 + arg3) / arg4;
 
-            killerConfig.set("karma", killerNewKarma);
-            try {
-                killerConfig.save(killerFile);
-                verifyKarmaLimits.checkKarmaLimit(killer);
-                setTier.checkTier(killer);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            setKarmaToPlayer(killer,killerNewKarma);
+            verifyKarmaLimits.checkKarmaLimit(killer);
+            setTier.checkTier(killer);
 
             message = null;
             if (killerNewKarma > killerInitialKarma) {

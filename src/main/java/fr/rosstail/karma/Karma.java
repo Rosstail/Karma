@@ -2,6 +2,7 @@ package fr.rosstail.karma;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,9 +18,37 @@ public class Karma extends JavaPlugin {
     public Karma() {
     }
 
+        private Connection connection;
+        private String host, database, username, password;
+        private int port;
+
     public void onEnable() {
         instance = this;
+
+
         this.saveDefaultConfig();
+
+        if (this.getConfig().getBoolean("mysql.active")) {
+            host = this.getConfig().getString("mysql.host");
+            database = this.getConfig().getString("mysql.database");
+            username = this.getConfig().getString("mysql.username");
+            password = this.getConfig().getString("mysql.password");
+            port = this.getConfig().getInt("mysql.port");
+            try {
+                openConnection();
+                Statement statement = connection.createStatement();
+
+                ResultSet result = statement.executeQuery("SELECT * FROM users");
+                while (result.next()) {
+                    System.out.println(result.getString("First_Name") + " " + result.getString("Name"));
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
         this.createPlayerDataFolder();
         this.createLangFiles();
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
@@ -27,6 +56,21 @@ public class Karma extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new HitEvents(), this);
         this.getCommand("karma").setExecutor(new KarmaCommand());
     }
+
+    public void openConnection() throws SQLException, ClassNotFoundException {
+        if (connection != null && !connection.isClosed()) {
+            return;
+        }
+
+        synchronized (this) {
+            if (connection != null && !connection.isClosed()) {
+                return;
+            }
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database, this.username, this.password);
+        }
+    }
+
 
     /**
      * Create the folder for player's datas
@@ -68,6 +112,11 @@ public class Karma extends JavaPlugin {
     }
 
     public void onDisable() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

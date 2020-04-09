@@ -1,6 +1,5 @@
 package fr.rosstail.karma;
 
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -8,13 +7,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Changes the attacker karma when attacking entities
  */
-public class HitEvents implements Listener {
+public class HitEvents extends GetSet implements Listener {
     private Karma karma = Karma.getInstance();
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
     SetTier setTier = new SetTier();
@@ -64,19 +61,12 @@ public class HitEvents implements Listener {
         reward = karma.getConfig().getInt("entities." + livingEntityName + ".hit-karma-reward");
 
         if (!(reward == 0 || attacker == null)) {
-            File attackerFile = new File(this.karma.getDataFolder(), "playerdata/" + attacker.getUniqueId() + ".yml");
-            YamlConfiguration killerConfig = YamlConfiguration.loadConfiguration(attackerFile);
-            attackerKarma = killerConfig.getInt("karma");
+            attackerKarma = getPlayerKarma(attacker);
             attackerModifiedKarma = attackerKarma + reward;
 
-            killerConfig.set("karma", attackerModifiedKarma);
-            try {
-                killerConfig.save(attackerFile);
-                verifyKarmaLimits.checkKarmaLimit(attacker);
-                setTier.checkTier(attacker);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            setKarmaToPlayer(attacker, attackerModifiedKarma);
+            verifyKarmaLimits.checkKarmaLimit(attacker);
+            setTier.checkTier(attacker);
         }
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".hit-message");
@@ -91,12 +81,8 @@ public class HitEvents implements Listener {
      */
     public void onPlayerHurt() {
 
-        File attackerFile = new File(this.karma.getDataFolder(), "playerdata/" + attacker.getUniqueId() + ".yml");
-        YamlConfiguration attackerConfig = YamlConfiguration.loadConfiguration(attackerFile);
-        int attackerInitialKarma = attackerConfig.getInt("karma");
-        File victimFile = new File(this.karma.getDataFolder(), "playerdata/" + victim.getUniqueId() + ".yml");
-        YamlConfiguration victimConfig = YamlConfiguration.loadConfiguration(victimFile);
-        int victimKarma = victimConfig.getInt("karma");
+        int attackerInitialKarma = getPlayerKarma(attacker);
+        int victimKarma = getPlayerKarma(victim);
 
         if (!victim.getName().equals(attacker.getName()) && victim.getLastDamage() >= 1d) {
             int arg1 = karma.getConfig().getInt("pvp.hit-reward-variables.1");
@@ -114,14 +100,9 @@ public class HitEvents implements Listener {
 
             int attackerNewKarma = attackerInitialKarma + arg1 * (arg2 + arg3) / arg4;
 
-            attackerConfig.set("karma", attackerNewKarma);
-            try {
-                attackerConfig.save(attackerFile);
-                verifyKarmaLimits.checkKarmaLimit(attacker);
-                setTier.checkTier(attacker);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            setKarmaToPlayer(attacker, attackerNewKarma);
+            verifyKarmaLimits.checkKarmaLimit(attacker);
+            setTier.checkTier(attacker);
 
             message = null;
             if (attackerNewKarma > attackerInitialKarma) {

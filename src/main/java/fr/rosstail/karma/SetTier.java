@@ -13,6 +13,9 @@ import java.util.Set;
 public class SetTier extends GetSet {
     private Karma karma = Karma.getInstance();
 
+    private File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+    private YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+
     /**
      * Check the difference between old and new tiers of the player
      * @param player
@@ -23,13 +26,8 @@ public class SetTier extends GetSet {
         String tierDisplay = getPlayerDisplayTier(player);
 
         int[] tierLimits;
-        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
 
-        File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-
-        String tier = configuration.getString("tier");
+        String tier = getPlayerTier(player);
         Set<String> path = karma.getConfig().getConfigurationSection("tiers").getKeys(false);
 
         for (String tiers : path) {

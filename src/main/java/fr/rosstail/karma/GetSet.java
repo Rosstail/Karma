@@ -75,4 +75,15 @@ public class GetSet {
         }
     }
 
+    public int setKarmaToLimit(Player player, int min, int max) {
+        int playerKarma = getPlayerKarma(player);
+        if (playerKarma < min) {
+            setKarmaToPlayer(player, min);
+            return min;
+        }
+        else {
+            setKarmaToPlayer(player, max);
+            return max;
+        }
+    }
 }

@@ -17,6 +17,9 @@ public class KarmaCommand implements CommandExecutor {
     CheckKarmaCommand checkKarmaCommand = new CheckKarmaCommand();
     EditKarmaCommand editKarmaCommand = new EditKarmaCommand();
 
+    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+
     public KarmaCommand() {
     }
 
@@ -68,8 +71,6 @@ public class KarmaCommand implements CommandExecutor {
             }
         }
         else {
-            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
             String message = configurationLang.getString("by-player-only");
 
             if (message != null) {
@@ -81,8 +82,6 @@ public class KarmaCommand implements CommandExecutor {
     }
 
     private void permissionDenied(CommandSender commandSender) {
-        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
 
         String message = configurationLang.getString("permission-denied");
         if (message != null) {
