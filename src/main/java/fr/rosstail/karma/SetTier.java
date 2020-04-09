@@ -5,16 +5,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Set;
 
 /**
  * Change the tier of a user if changing karma put the player in another tier
  */
-public class SetTier {
+public class SetTier extends GetSet {
     private Karma karma = Karma.getInstance();
-    TierChangesDispatchCommands tierChangesDispatchCommands = new TierChangesDispatchCommands();
-    String message;
 
     /**
      * Check the difference between old and new tiers of the player
@@ -22,41 +19,33 @@ public class SetTier {
      * @return
      */
     public String checkTier(Player player) {
-        int tierMinimumKarma;
-        int tierMaximumKarma;
+        int playerKarma = getPlayerKarma(player);
+        String tierDisplay = getPlayerDisplayTier(player);
+
+        int[] tierLimits;
+        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+
         File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        int playerKarma = configuration.getInt("karma");
+
         String tier = configuration.getString("tier");
-        String tierDisplay = karma.getConfig().getString("tiers." + tier + ".tier-display-name");
         Set<String> path = karma.getConfig().getConfigurationSection("tiers").getKeys(false);
 
         for (String tiers : path) {
-            tierMinimumKarma = karma.getConfig().getInt("tiers." + tiers + ".tier-minimum-karma");
-            tierMaximumKarma = karma.getConfig().getInt("tiers." + tiers + ".tier-maximum-karma");
-            if (playerKarma >=  tierMinimumKarma && playerKarma <= tierMaximumKarma) {
+            tierLimits = getTierLimits(tiers);
+            if (playerKarma >=  tierLimits[0] && playerKarma <= tierLimits[1] && !tiers.equals(tier)) {
+                setTierToPlayer(player, tiers);
+                tierDisplay = getPlayerDisplayTier(player);
 
-                if (!tiers.equals(tier)) {
-                    try {
-                        configuration.set("tier", tiers);
-                        configuration.save(file);
-                        String newTierDisplay = karma.getConfig().getString("tiers." + tiers + ".tier-display-name");
-
-
-                        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-                        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
-                        message = configurationLang.getString("tier-change");
-                        message = message.replaceAll("<tier>", newTierDisplay);
-                        message = ChatColor.translateAlternateColorCodes('&', message);
-                        player.sendMessage(message);
-
-                        tierChangesDispatchCommands.executeTierChangesCommands(player, tiers);
-                        return newTierDisplay;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    break;
+                String message = configurationLang.getString("tier-change");
+                if (message != null) {
+                    message = message.replaceAll("<tier>", tierDisplay);
+                    message = ChatColor.translateAlternateColorCodes('&', message);
+                    player.sendMessage(message);
                 }
+
+                break;
             }
         }
         return tierDisplay;

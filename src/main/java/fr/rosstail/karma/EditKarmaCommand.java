@@ -11,10 +11,9 @@ import java.io.File;
 /**
  * Change the karma of the target, check the limit fork and new tier after.
  */
-public class EditKarmaCommand {
+public class EditKarmaCommand extends GetSet{
     private Karma karma = Karma.getInstance();
     VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
-    Setters setters = new Setters();
     SetTier setTier = new SetTier();
     String message = null;
 
@@ -32,7 +31,7 @@ public class EditKarmaCommand {
         int value = Integer.parseInt(args[2]);
         if (target != null && target.isOnline()) {
 
-            setters.setKarmaToPlayer(target, value);
+            setKarmaToPlayer(target, value);
 
             value = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
@@ -70,7 +69,7 @@ public class EditKarmaCommand {
 
             int targetNewKarma = targetKarma + value;
 
-            setters.setKarmaToPlayer(target, targetNewKarma);
+            setKarmaToPlayer(target, targetNewKarma);
 
             int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
@@ -110,7 +109,7 @@ public class EditKarmaCommand {
 
             int targetNewKarma = targetKarma - value;
 
-            setters.setKarmaToPlayer(target, targetNewKarma);
+            setKarmaToPlayer(target, targetNewKarma);
 
             int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);
@@ -143,7 +142,7 @@ public class EditKarmaCommand {
         if (target != null && target.isOnline()) {
             int resKarma = this.karma.getConfig().getInt("karma.default-karma");
 
-            setters.setKarmaToPlayer(target, resKarma);
+            setKarmaToPlayer(target, resKarma);
 
             int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
             String tier = setTier.checkTier(target);

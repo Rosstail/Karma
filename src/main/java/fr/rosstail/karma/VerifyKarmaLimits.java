@@ -1,11 +1,10 @@
 package fr.rosstail.karma;
 
 import java.io.File;
-import java.io.IOException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-public class VerifyKarmaLimits {
+public class VerifyKarmaLimits extends GetSet {
     private Karma karma = Karma.getInstance();
     private SetTier setTier = new SetTier();
 
@@ -20,40 +19,26 @@ public class VerifyKarmaLimits {
     public int checkKarmaLimit(Player player) {
         File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        if (configuration.getInt("karma") > this.karma.getConfig().getInt("karma.maximum-karma")) {
-            this.setKarmaToMaximum(file, configuration);
-        } else if (configuration.getInt("karma") < this.karma.getConfig().getInt("karma.minimum-karma")) {
-            this.setKarmaToMinimum(file, configuration);
+        int playerKarma = configuration.getInt("karma");
+        int min = this.karma.getConfig().getInt("karma.minimum-karma");
+        int max = this.karma.getConfig().getInt("karma.maximum-karma");
+
+        if (playerKarma < min || playerKarma > max) {
+            setKarmaToLimit(player, min, max);
         }
-        this.setTier.checkTier(player);
+
+        setTier.checkTier(player);
         return configuration.getInt("karma");
     }
 
-    /**
-     * When the karma is too high, set it to the maximum allowed.
-     * @param file
-     * @param configuration
-     */
-    public void setKarmaToMaximum(File file, YamlConfiguration configuration) {
-        try {
-            configuration.set("karma", this.karma.getConfig().getInt("karma.maximum-karma"));
-            configuration.save(file);
-        } catch (IOException var5) {
-            var5.printStackTrace();
+    public void setKarmaToLimit(Player player, int min, int max) {
+        int playerKarma = getPlayerKarma(player);
+        if (playerKarma < min) {
+            setKarmaToPlayer(player, min);
         }
-    }
+        else {
+            setKarmaToPlayer(player, max);
+        }
 
-    /**
-     * When the player karma is too low, set it as minimum allowed
-     * @param file
-     * @param configuration
-     */
-    public void setKarmaToMinimum(File file, YamlConfiguration configuration) {
-        try {
-            configuration.set("karma", this.karma.getConfig().getInt("karma.minimum-karma"));
-            configuration.save(file);
-        } catch (IOException var5) {
-            var5.printStackTrace();
-        }
     }
 }
