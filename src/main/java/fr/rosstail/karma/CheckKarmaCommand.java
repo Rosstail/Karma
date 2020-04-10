@@ -12,7 +12,7 @@ import java.io.File;
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
  */
 public class CheckKarmaCommand extends GetSet{
-    private Karma karma = Karma.getInstance();
+    private Karma karma = Karma.get();
     String message = null;
 
     File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");

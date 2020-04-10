@@ -10,9 +10,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
  * Changes the attacker karma when killing living entities
  */
 public class KillEvents extends GetSet implements Listener {
-    private Karma karma = Karma.getInstance();
-    VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
-    SetTier setTier = new SetTier();
+    private Karma karma = Karma.get();
     AdaptMessage adaptMessage = new AdaptMessage();
     String message = null;
 
@@ -27,7 +25,6 @@ public class KillEvents extends GetSet implements Listener {
         int reward = 0;
         LivingEntity livingEntity;
         String livingEntityName;
-        SetTier setTier = new SetTier();
 
         event.getEntity();
         if (event.getEntity().getKiller() != null)
@@ -48,12 +45,11 @@ public class KillEvents extends GetSet implements Listener {
             killerKarma = getPlayerKarma(killer);
 
             setKarmaToPlayer(killer,killerKarma + reward);
-            verifyKarmaLimits.checkKarmaLimit(killer);
-            setTier.checkTier(killer);
+            setTierToPlayer(killer);
         }
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".kill-message");
-        adaptMessage.getEntityKillMessage(message, killer, killerKarma, reward);
+        adaptMessage.getEntityKillMessage(message, killer, reward);
     }
 
     /**
@@ -89,8 +85,7 @@ public class KillEvents extends GetSet implements Listener {
             int killerNewKarma = killerInitialKarma + arg1 * (arg2 + arg3) / arg4;
 
             setKarmaToPlayer(killer,killerNewKarma);
-            verifyKarmaLimits.checkKarmaLimit(killer);
-            setTier.checkTier(killer);
+            setTierToPlayer(killer);
 
             message = null;
             if (killerNewKarma > killerInitialKarma) {

@@ -4,7 +4,7 @@ mysql:
   active: false
   host: "localhost"
   port: 3306
-  database: "test"
+  database: "database_name"
   username: "root"
   password: ""
 
@@ -15,7 +15,7 @@ general:
 
 karma:
   default-karma:       0
-  minimum-karma: -300000
+  minimum-karma: -500000
   maximum-karma:  300000
 
 tiers:

@@ -13,18 +13,22 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Main class and methods of the plugin
  */
 public class Karma extends JavaPlugin {
-    private static Karma instance;
 
     public Karma() {
     }
 
-        private Connection connection;
-        private String host, database, username, password;
-        private int port;
+    public static Karma INSTANCE;
+
+    public static Karma get() {
+        return INSTANCE;
+    }
+
+    public Connection connection;
+    public String host, database, username, password;
+    public int port;
 
     public void onEnable() {
-        instance = this;
-
+        INSTANCE = this;
 
         this.saveDefaultConfig();
 
@@ -36,12 +40,7 @@ public class Karma extends JavaPlugin {
             port = this.getConfig().getInt("mysql.port");
             try {
                 openConnection();
-                Statement statement = connection.createStatement();
-
-                ResultSet result = statement.executeQuery("SELECT * FROM users");
-                while (result.next()) {
-                    System.out.println(result.getString("First_Name") + " " + result.getString("Name"));
-                }
+                setTableToDataBase();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (SQLException e) {
@@ -71,6 +70,22 @@ public class Karma extends JavaPlugin {
         }
     }
 
+
+    public void setTableToDataBase() {
+        String sql = "CREATE TABLE IF NOT EXISTS Karma ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
+                " NickName varchar(16) NOT NULL,\n" +
+                " Karma integer,\n" +
+                " Tier varchar(50));";
+        try {
+            if (connection != null && !connection.isClosed()) {
+                Statement statement = connection.createStatement();
+                statement.execute(sql);
+                statement.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Create the folder for player's datas
@@ -103,17 +118,11 @@ public class Karma extends JavaPlugin {
         }
     }
 
-    /**
-     * Get the instance to use Karma folder location everytime
-     * @return
-     */
-    public static Karma getInstance() {
-        return instance;
-    }
-
     public void onDisable() {
         try {
-            connection.close();
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

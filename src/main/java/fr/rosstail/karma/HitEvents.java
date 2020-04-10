@@ -12,9 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
  * Changes the attacker karma when attacking entities
  */
 public class HitEvents extends GetSet implements Listener {
-    private Karma karma = Karma.getInstance();
-    VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
-    SetTier setTier = new SetTier();
+    private Karma karma = Karma.get();
     AdaptMessage adaptMessage = new AdaptMessage();
 
     Player attacker = null;
@@ -65,14 +63,13 @@ public class HitEvents extends GetSet implements Listener {
             attackerModifiedKarma = attackerKarma + reward;
 
             setKarmaToPlayer(attacker, attackerModifiedKarma);
-            verifyKarmaLimits.checkKarmaLimit(attacker);
-            setTier.checkTier(attacker);
+            setTierToPlayer(attacker);
         }
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".hit-message");
 
         if (!(message == null || attacker == null)) {
-            adaptMessage.getEntityHitMessage(message, attacker, attackerModifiedKarma, reward);
+            adaptMessage.getEntityHitMessage(message, attacker, reward);
         }
     }
 
@@ -101,8 +98,7 @@ public class HitEvents extends GetSet implements Listener {
             int attackerNewKarma = attackerInitialKarma + arg1 * (arg2 + arg3) / arg4;
 
             setKarmaToPlayer(attacker, attackerNewKarma);
-            verifyKarmaLimits.checkKarmaLimit(attacker);
-            setTier.checkTier(attacker);
+            setTierToPlayer(attacker);
 
             message = null;
             if (attackerNewKarma > attackerInitialKarma) {
@@ -112,9 +108,8 @@ public class HitEvents extends GetSet implements Listener {
                 message = karma.getConfig().getString("pvp.hit-message-on-karma-decrease");
             }
             if (message != null) {
-                adaptMessage.getPlayerHitMessage(message, attacker, attackerInitialKarma, attackerNewKarma);
+                adaptMessage.getPlayerHitMessage(message, attacker, attackerInitialKarma);
             }
         }
-
     }
 }

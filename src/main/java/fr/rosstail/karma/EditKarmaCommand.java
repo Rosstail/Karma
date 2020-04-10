@@ -12,10 +12,11 @@ import java.io.File;
  * Change the karma of the target, check the limit fork and new tier after.
  */
 public class EditKarmaCommand extends GetSet{
-    private Karma karma = Karma.getInstance();
-    VerifyKarmaLimits verifyKarmaLimits = new VerifyKarmaLimits();
-    SetTier setTier = new SetTier();
+    private Karma karma = Karma.get();
     String message = null;
+
+    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
 
     public EditKarmaCommand() {
     }
@@ -27,22 +28,17 @@ public class EditKarmaCommand extends GetSet{
      */
     public void karmaSet(CommandSender commandSender, String[] args)
     {
-        Player target = Bukkit.getServer().getPlayer(args[1]);
+        Player player = Bukkit.getServer().getPlayer(args[1]);
         int value = Integer.parseInt(args[2]);
-        if (target != null && target.isOnline()) {
+        if (player != null && player.isOnline()) {
 
-            setKarmaToPlayer(target, value);
+            setKarmaToPlayer(player, value);
 
-            value = verifyKarmaLimits.checkKarmaLimit(target);
-            String tier = setTier.checkTier(target);
-            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
             message = configurationLang.getString("set-karma");
-
             if (message != null) {
-                message = message.replaceAll("<player>", args[1]);
-                message = message.replaceAll("<newKarma>", Integer.toString(value));
-                message = message.replaceAll("<tier>", tier);
+                message = message.replaceAll("<player>", player.getName());
+                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
+                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
                 message = ChatColor.translateAlternateColorCodes('&', message);
                 commandSender.sendMessage(message);
             }
@@ -60,29 +56,21 @@ public class EditKarmaCommand extends GetSet{
      */
     public void karmaAdd(CommandSender commandSender, String[] args)
     {
-        Player target = Bukkit.getServer().getPlayer(args[1]);
+        Player player = Bukkit.getServer().getPlayer(args[1]);
         int value = Integer.parseInt(args[2]);
-        if (target != null && target.isOnline()) {
-            File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-            int targetKarma = configuration.getInt("karma");
+        if (player != null && player.isOnline()) {
+            int targetNewKarma = getPlayerKarma(player) + value;
 
-            int targetNewKarma = targetKarma + value;
+            setKarmaToPlayer(player, targetNewKarma);
+            setTierToPlayer(player);
 
-            setKarmaToPlayer(target, targetNewKarma);
-
-            int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
-            String tier = setTier.checkTier(target);
-
-            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
             message = configurationLang.getString("add-karma");
 
             if (message != null) {
-                message = message.replaceAll("<player>", args[1]);
+                message = message.replaceAll("<player>", player.getName());
                 message = message.replaceAll("<value>", Integer.toString(value));
-                message = message.replaceAll("<newKarma>", Integer.toString(newKarma));
-                message = message.replaceAll("<tier>", tier);
+                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
+                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
                 message = ChatColor.translateAlternateColorCodes('&', message);
                 commandSender.sendMessage(message);
             }
@@ -100,29 +88,20 @@ public class EditKarmaCommand extends GetSet{
      */
     public void karmaRemove(CommandSender commandSender, String[] args)
     {
-        Player target = Bukkit.getServer().getPlayer(args[1]);
+        Player player = Bukkit.getServer().getPlayer(args[1]);
         int value = Integer.parseInt(args[2]);
-        if (target != null && target.isOnline()) {
-            File file = new File(this.karma.getDataFolder(), "playerdata/" + target.getUniqueId() + ".yml");
-            YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-            int targetKarma = configuration.getInt("karma");
+        if (player != null && player.isOnline()) {
+            int targetNewKarma = getPlayerKarma(player) - value;
 
-            int targetNewKarma = targetKarma - value;
+            setKarmaToPlayer(player, targetNewKarma);
 
-            setKarmaToPlayer(target, targetNewKarma);
-
-            int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
-            String tier = setTier.checkTier(target);
-
-            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
             message = configurationLang.getString("remove-karma");
 
             if (message != null) {
-                message = message.replaceAll("<player>", args[1]);
+                message = message.replaceAll("<player>", player.getName());
                 message = message.replaceAll("<value>", Integer.toString(value));
-                message = message.replaceAll("<newKarma>", Integer.toString(newKarma));
-                message = message.replaceAll("<tier>", tier);
+                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
+                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
                 message = ChatColor.translateAlternateColorCodes('&', message);
                 commandSender.sendMessage(message);
             }
@@ -138,22 +117,17 @@ public class EditKarmaCommand extends GetSet{
      * @param args
      */
     public void karmaReset(CommandSender commandSender, String[] args) {
-        Player target = Bukkit.getServer().getPlayer(args[1]);
-        if (target != null && target.isOnline()) {
+        Player player = Bukkit.getServer().getPlayer(args[1]);
+        if (player != null && player.isOnline()) {
             int resKarma = this.karma.getConfig().getInt("karma.default-karma");
 
-            setKarmaToPlayer(target, resKarma);
+            setKarmaToPlayer(player, resKarma);
 
-            int newKarma = verifyKarmaLimits.checkKarmaLimit(target);
-            String tier = setTier.checkTier(target);
-
-            File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-            YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
             message = configurationLang.getString("reset-karma");
             if (message != null) {
-                message = message.replaceAll("<player>", args[1]);
-                message = message.replaceAll("<newKarma>", Integer.toString(newKarma));
-                message = message.replaceAll("<tier>", tier);
+                message = message.replaceAll("<player>", player.getName());
+                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
+                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
                 message = ChatColor.translateAlternateColorCodes('&', message);
                 commandSender.sendMessage(message);
             }
@@ -163,9 +137,11 @@ public class EditKarmaCommand extends GetSet{
         }
     }
 
+    /**
+     * @param commandSender
+     * @param args
+     */
     private void disconnectedPlayer(CommandSender commandSender, String[] args) {
-        File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-        YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
         message = configurationLang.getString("disconnected-player");
 
         if (message != null) {

@@ -13,7 +13,7 @@ import java.io.File;
  * Checking what method/class will be used on command, depending of command Sender and number of args.
  */
 public class KarmaCommand implements CommandExecutor {
-    private Karma karma = Karma.getInstance();
+    private Karma karma = Karma.get();
     CheckKarmaCommand checkKarmaCommand = new CheckKarmaCommand();
     EditKarmaCommand editKarmaCommand = new EditKarmaCommand();
 
