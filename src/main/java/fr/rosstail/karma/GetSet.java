@@ -244,6 +244,7 @@ public class GetSet {
                         }
 
                         changePlayerTierMessage(player);
+                        tierCommandsLauncher(player);
                         break;
                     }
                 }
