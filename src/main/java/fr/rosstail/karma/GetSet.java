@@ -1,5 +1,6 @@
 package fr.rosstail.karma;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -10,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -20,6 +22,23 @@ public class GetSet {
 
     private File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
     private YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+
+    public boolean ifPlayerExistsInDTB(Player player) {
+        try {
+            if (karma.connection != null && !karma.connection.isClosed()) {
+                Statement statement = karma.connection.createStatement();
+                String UUID = String.valueOf(player.getUniqueId());
+                ResultSet result = statement.executeQuery("SELECT UUID FROM Karma WHERE UUID = '" + UUID + "';");
+                if (result.next()) {
+                    return true;
+                }
+                statement.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     /**
      * Returns the amount of Karma of the player
@@ -106,36 +125,38 @@ public class GetSet {
      * @param player -> The player for the props are gonna be made
      */
     public void initPlayerData(Player player) {
-        int value = karma.getConfig().getInt("karma.default-karma");
-        try {
-            if (karma.connection != null && !karma.connection.isClosed()) {
-                PreparedStatement preparedStatement = karma.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier)\n" +
-                        "VALUES (?, ?, ?, ?);");
+        if (!ifPlayerExistsInDTB(player)) {
+            int value = karma.getConfig().getInt("karma.default-karma");
+            try {
+                if (karma.connection != null && !karma.connection.isClosed()) {
+                    PreparedStatement preparedStatement = karma.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier)\n" +
+                            "VALUES (?, ?, ?, ?);");
 
-                preparedStatement.setString(1, String.valueOf(player.getUniqueId()));
-                preparedStatement.setString(2, player.getName());
-                preparedStatement.setInt(3, value);
-                preparedStatement.setString(4, null);
+                    preparedStatement.setString(1, String.valueOf(player.getUniqueId()));
+                    preparedStatement.setString(2, player.getName());
+                    preparedStatement.setInt(3, value);
+                    preparedStatement.setString(4, null);
 
-                preparedStatement.execute();
-                preparedStatement.close();
+                    preparedStatement.execute();
+                    preparedStatement.close();
 
-                setKarmaToLimit(player);
-                setTierToPlayer(player);
-
-            } else {
-                File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                playerConfig.set("karma", value);
-                try {
-                    playerConfig.save(playerFile);
+                    setKarmaToLimit(player);
                     setTierToPlayer(player);
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                } else {
+                    File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+                    YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+                    playerConfig.set("karma", value);
+                    try {
+                        playerConfig.save(playerFile);
+                        setTierToPlayer(player);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -200,6 +221,7 @@ public class GetSet {
                         preparedStatement.executeUpdate();
                         preparedStatement.close();
                         changePlayerTierMessage(player);
+                        tierCommandsLauncher(player);
                         break;
                     }
                 }
@@ -255,7 +277,7 @@ public class GetSet {
      * SEND A MESSAGE WITH THE SPECIFIED TIER TO THE PLAYER
      * @param player the player who gonna receive the message
      */
-    public void changePlayerTierMessage(Player player) {
+    private void changePlayerTierMessage(Player player) {
         String message = configurationLang.getString("tier-change");
         if (message != null) {
             message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
@@ -263,4 +285,32 @@ public class GetSet {
             player.sendMessage(message);
         }
     }
+
+    private void tierCommandsLauncher(Player player) {
+        String tier = getPlayerTier(player);
+        List<String> list = (List<String>) karma.getConfig().getList("tiers." + tier + ".commands");
+        for (String line : list) {
+
+            if (line.contains("<player>")) {
+                line = line.replaceAll("<player>", player.getName());
+            }
+            if (line.contains("karma")) {
+                line = line.replaceAll("<karma>", Integer.toString(getPlayerKarma(player)));
+            }
+            if (line.contains("<tier>")) {
+                line = line.replaceAll("<tier>", getPlayerDisplayTier(player));
+            }
+            line = ChatColor.translateAlternateColorCodes('&', line);
+
+            if (line.startsWith("<@>")) {
+                line = line.replaceAll("<@>", "");
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), line);
+            }
+            else {
+                Bukkit.dispatchCommand(player, line);
+            }
+        }
+    }
+
+
 }

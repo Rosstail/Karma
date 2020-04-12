@@ -34,7 +34,7 @@ public class CheckKarmaCommand extends GetSet{
         if (player != null && player.isOnline()) {
             message = configurationLang.getString("check-other-karma");
             int targetKarma = getPlayerKarma(player);
-            String targetTierDisplay = getPlayerTier(player);
+            String targetTierDisplay = getPlayerDisplayTier(player);
 
             message = message.replaceAll("<karma>", String.valueOf(targetKarma));
             message = message.replaceAll("<tier>", String.valueOf(targetTierDisplay));
