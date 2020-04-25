@@ -11,8 +11,9 @@ import java.io.File;
 /**
  * Change the karma of the target, check the limit fork and new tier after.
  */
-public class EditKarmaCommand extends GetSet{
+public class EditKarmaCommand extends GetSet {
     private Karma karma = Karma.get();
+    AdaptMessage adaptMessage = new AdaptMessage();
     String message = null;
 
     File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
@@ -35,13 +36,7 @@ public class EditKarmaCommand extends GetSet{
             setKarmaToPlayer(player, value);
 
             message = configurationLang.getString("set-karma");
-            if (message != null) {
-                message = message.replaceAll("<player>", player.getName());
-                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
-                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
-            }
+            adaptMessage.editKarmaMessage(commandSender, player, message, 0);
         }
         else {
             disconnectedPlayer(commandSender, args);
@@ -65,15 +60,7 @@ public class EditKarmaCommand extends GetSet{
             setTierToPlayer(player);
 
             message = configurationLang.getString("add-karma");
-
-            if (message != null) {
-                message = message.replaceAll("<player>", player.getName());
-                message = message.replaceAll("<value>", Integer.toString(value));
-                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
-                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
-            }
+            adaptMessage.editKarmaMessage(commandSender, player, message, value);
 
         } else {
             disconnectedPlayer(commandSender, args);
@@ -96,15 +83,7 @@ public class EditKarmaCommand extends GetSet{
             setKarmaToPlayer(player, targetNewKarma);
 
             message = configurationLang.getString("remove-karma");
-
-            if (message != null) {
-                message = message.replaceAll("<player>", player.getName());
-                message = message.replaceAll("<value>", Integer.toString(value));
-                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
-                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
-            }
+            adaptMessage.editKarmaMessage(commandSender, player, message, value);
 
         } else {
             disconnectedPlayer(commandSender, args);
@@ -124,13 +103,7 @@ public class EditKarmaCommand extends GetSet{
             setKarmaToPlayer(player, resKarma);
 
             message = configurationLang.getString("reset-karma");
-            if (message != null) {
-                message = message.replaceAll("<player>", player.getName());
-                message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
-                message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
-                message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
-            }
+            adaptMessage.editKarmaMessage(commandSender, player, message, 0);
         }
         else {
             disconnectedPlayer(commandSender, args);
@@ -142,12 +115,8 @@ public class EditKarmaCommand extends GetSet{
      * @param args
      */
     private void disconnectedPlayer(CommandSender commandSender, String[] args) {
+        Player player = Bukkit.getServer().getPlayer(args[1]);
         message = configurationLang.getString("disconnected-player");
-
-        if (message != null) {
-            message = message.replaceAll("<player>", args[1]);
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            commandSender.sendMessage(message);
-        }
+        adaptMessage.editKarmaMessage(commandSender, player, message, 0);
     }
 }

@@ -4,7 +4,13 @@
     <list default="true" id="53d11734-8c26-4e6c-b126-b0e085e743e4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/AdaptMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/AdaptMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/EditKarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/EditKarmaCommand.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/GetSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/GetSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KarmaCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -103,30 +109,26 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="276" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1581819520747" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1586725761544">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1587826953113">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1586725761544" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1586725761544">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587826953113" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1587826953113">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1586725761544" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1586725761544">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587826953113" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1587826953113">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1586725761544" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1586725761544">
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587826953113" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1587826953113">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1586725761544" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587826953113" />
     <state x="490" y="176" key="Maven.ArtifactSearchDialog" timestamp="1585255637569">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="490" y="176" key="Maven.ArtifactSearchDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1585255637569" />
-    <state x="440" y="95" key="SettingsEditor" timestamp="1578253977266">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="440" y="95" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1578253977266" />
     <state width="498" height="446" key="SwitcherDM" timestamp="1584968552127">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

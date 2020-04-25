@@ -49,6 +49,10 @@ public class HitEvents extends GetSet implements Listener {
         else
             return;
 
+        if (!getTime(attacker)) {
+            return;
+        }
+
         if (livingEntity instanceof Player && attacker != null)
         {
             victim = ((Player) livingEntity).getPlayer();

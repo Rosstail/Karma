@@ -31,7 +31,7 @@ public class KillEvents extends GetSet implements Listener {
         {
             livingEntity = (LivingEntity) event.getEntity();
             killer = livingEntity.getKiller();
-            if (killer != null)
+            if (killer != null && getTime(killer))
                 livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             else
                 return;
@@ -61,7 +61,7 @@ public class KillEvents extends GetSet implements Listener {
         Player victim = event.getEntity();
         Player killer = victim.getKiller();
 
-        if (killer == null)
+        if (killer == null || !getTime(killer))
             return;
 
         int killerInitialKarma = getPlayerKarma(killer);

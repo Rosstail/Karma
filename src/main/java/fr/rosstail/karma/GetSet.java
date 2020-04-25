@@ -2,15 +2,14 @@ package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -118,8 +117,51 @@ public class GetSet {
         return new int[]{tierMinimumKarma, tierMaximumKarma};
     }
 
+    public String[] getSystemTimeLimits(String time) {
+        String minimumHourMin = karma.getConfig().getString("times.system-times." + time + ".starting-time");
+        String maximumHourMin = karma.getConfig().getString("times.system-times." + time + ".ending-time");
+        return new String[]{minimumHourMin, maximumHourMin};
+    }
 
+    public boolean getTime(Player player) {
+        String type = karma.getConfig().getString("times.use-both-system-and-worlds-time");
+        if (type != null && !type.equals("NONE")) {
+            if (type.equals("BOTH")) {
+                return getSystemTime() && getWorldTime(player);
+            } else if (type.equals("SYSTEM")) {
+                return getSystemTime();
+            } else if (type.equals("WORLDS")) {
+                return getWorldTime(player);
+            }
+        }
+        return true;
+    }
 
+    public boolean getSystemTime() {
+        Set<String> path =karma.getConfig().getConfigurationSection("times.system-times").getKeys(false);
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat hhmmFormat = new SimpleDateFormat("HH:mm");
+
+        String[] timeLimits;
+
+        for ( String timeList : path ) {
+            timeLimits = getSystemTimeLimits(timeList);
+            if ( timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 && timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean getWorldTime(Player player) {
+        World world = player.getWorld();
+        Long test = world.getTime();
+        Date now = new Date(System.currentTimeMillis());
+        SimpleDateFormat hhmmFormat = new SimpleDateFormat("HH:mm");
+        System.out.println(hhmmFormat.format(now));
+        return false;
+    }
     /**
      * Initialize the file / Line of the player with UUID, name, karma and tier
      * @param player -> The player for the props are gonna be made

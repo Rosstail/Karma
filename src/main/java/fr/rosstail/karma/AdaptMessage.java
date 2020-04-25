@@ -1,16 +1,27 @@
 package fr.rosstail.karma;
 
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AdaptMessage extends GetSet {
     private Karma karma = Karma.get();
     private Map<String, Long> cooldown = new HashMap<String, Long>();
+
+
+    public void editKarmaMessage(CommandSender commandSender, Player player, String message, int value) {
+        if (message != null) {
+            message = message.replaceAll("<player>", player.getName());
+            message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
+            message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
+            message = message.replaceAll("<value>", Integer.toString(value));
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            commandSender.sendMessage(message);
+        }
+    }
 
     /**
      * Replaces every placeholders when a player hit an entity

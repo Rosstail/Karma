@@ -1,4 +1,4 @@
-Config-version: 1.2
+Config-version: 1.3
 
 mysql:
   active: false
@@ -69,6 +69,27 @@ tiers:
       - "me &6is the hero !"
       - "me &6another command !"
       - "<@>me You can create an infinite amount of commands and tiers !"
+
+times:
+  use-both-system-and-worlds-time: "NONE" #can be replaced by WORLDS, SYSTEM and BOTH or NONE
+  #NONE Doesn't check time
+  #WORLDS Check only the worlds-time
+  #SYSTEM Check only the server/system time
+  #BOTH check WORLDS AND SYSTEM. both must be TRUE.
+  worlds-times: #use the time where the attacker / killer is You can add all the time-X you want with custom name
+    time-1:
+      starting-time: "08:00"
+      ending-time: "12:00"
+    time-2:
+      starting-time: "13:00"
+      ending-time: "21:00"
+  system-times: #use the server real life time. You can add all the time-X you want, with custom name
+    time-1:
+      starting-time: "08:00"
+      ending-time: "12:00"
+    time-2:
+      starting-time: "13:00"
+      ending-time: "21:00"
 
 pvp:
   # The 2nd argument must be <victimKarma> OR a number, inside brackets.

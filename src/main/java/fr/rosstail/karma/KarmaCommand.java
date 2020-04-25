@@ -57,9 +57,17 @@ public class KarmaCommand implements CommandExecutor {
             }
         }
         else if (args.length == 1) {
-            if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.other")) {
+            if (args[0].equals("reload")) {
+                if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.reload")) {
+                    commandSender.sendMessage("Karma can't be reload alone for now. Please wait a future update.");
+                } else {
+                    permissionDenied(commandSender);
+                }
+            }
+            else if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.other")) {
                 checkKarmaCommand.karmaOther(commandSender, args);
-            } else {
+            }
+            else {
                 permissionDenied(commandSender);
             }
         }
