@@ -1,5 +1,5 @@
 name: Karma
-version: 1.3.0-beta
+version: 1.3.0
 description: Make your players actions have consequences !
 softdepend:
   - worldguard

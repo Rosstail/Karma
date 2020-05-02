@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -123,6 +124,25 @@ public class GetSet {
         return new String[]{minimumHourMin, maximumHourMin};
     }
 
+    public Long[] getWorldTimeLimits(String time) {
+        String minimumHourMin = karma.getConfig().getString("times.worlds-times." + time + ".starting-time");
+        String maximumHourMin = karma.getConfig().getString("times.worlds-times." + time + ".ending-time");
+
+        assert minimumHourMin != null;
+        assert maximumHourMin != null;
+        String[] convMinHourMin = minimumHourMin.split(":", 2);
+        String[] convMaxHourMin = maximumHourMin.split(":", 2);
+        long minHour = (long)( 1000 * Integer.parseInt(convMinHourMin[0]) + 16.66 * Integer.parseInt(convMinHourMin[1])) + 18000L;
+        long maxHour = (long)( 1000 * Integer.parseInt(convMaxHourMin[0]) + 16.66 * Integer.parseInt(convMinHourMin[1])) + 18000L;
+        if (minHour > 24000) {
+            minHour -= 24000;
+        }
+        if (maxHour > 24000) {
+            maxHour -= 24000;
+        }
+        return new Long[]{minHour, maxHour};
+    }
+
     public boolean getTime(Player player) {
         String type = karma.getConfig().getString("times.use-both-system-and-worlds-time");
         if (type != null && !type.equals("NONE")) {
@@ -138,7 +158,7 @@ public class GetSet {
     }
 
     public boolean getSystemTime() {
-        Set<String> path =karma.getConfig().getConfigurationSection("times.system-times").getKeys(false);
+        Set<String> path = karma.getConfig().getConfigurationSection("times.system-times").getKeys(false);
         Date now = new Date(System.currentTimeMillis());
         SimpleDateFormat hhmmFormat = new SimpleDateFormat("HH:mm");
 
@@ -146,8 +166,14 @@ public class GetSet {
 
         for ( String timeList : path ) {
             timeLimits = getSystemTimeLimits(timeList);
-            if ( timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 && timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
-                return true;
+            if (timeLimits[1].compareTo(timeLimits[0]) >= 0) {
+                if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 && timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
+                    return true;
+                }
+            } else {
+                if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 || timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
+                    return true;
+                }
             }
         }
 
@@ -155,11 +181,24 @@ public class GetSet {
     }
 
     public boolean getWorldTime(Player player) {
+        Set<String> path = karma.getConfig().getConfigurationSection("times.worlds-times").getKeys(false);
         World world = player.getWorld();
-        Long test = world.getTime();
-        Date now = new Date(System.currentTimeMillis());
-        SimpleDateFormat hhmmFormat = new SimpleDateFormat("HH:mm");
-        System.out.println(hhmmFormat.format(now));
+        Long worldTime = world.getTime();
+        Long[] timeLimits;
+
+        for ( String timeList : path ) {
+            timeLimits = getWorldTimeLimits(timeList);
+            if (timeLimits[0] <= timeLimits[1]) {
+                if (timeLimits[0] <= worldTime && timeLimits[1] >= worldTime) {
+                    return true;
+                }
+            } else {
+                if (timeLimits[0] <= worldTime || timeLimits[1] >= worldTime) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
     /**
