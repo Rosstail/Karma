@@ -38,8 +38,11 @@ public class HitEvents extends GetSet implements Listener {
             livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             if (event.getDamager() instanceof Projectile) {
                 Projectile projectile = (Projectile) event.getDamager();
-                if (projectile.getShooter() instanceof Player)
+                if (projectile.getShooter() instanceof Player) {
                     attacker = (Player) projectile.getShooter();
+                } else {
+                    return;
+                }
             }
             else if (event.getDamager() instanceof Player)
                 attacker = (Player) event.getDamager();
