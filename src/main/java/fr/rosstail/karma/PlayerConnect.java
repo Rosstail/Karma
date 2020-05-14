@@ -47,7 +47,7 @@ public class PlayerConnect extends GetSet implements Listener {
                     }
                     YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
                     configuration.set("name", player.getName());
-                    configuration.set("karma", this.karma.getConfig().getInt("karma.default-karma"));
+                    configuration.set("karma", this.karma.getConfig().getDouble("karma.default-karma"));
                     try {
                         configuration.save(file);
                         setTierToPlayer(player);

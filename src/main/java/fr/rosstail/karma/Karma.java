@@ -27,33 +27,45 @@ public class Karma extends JavaPlugin {
     public String host, database, username, password;
     public int port;
 
+    @Override
+    public void onLoad() {
+        if (Bukkit.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
+            new WGPreps().worldGuardHook();
+        }
+    }
+
     public void onEnable() {
         INSTANCE = this;
 
         this.saveDefaultConfig();
 
         if (this.getConfig().getBoolean("mysql.active")) {
-            host = this.getConfig().getString("mysql.host");
-            database = this.getConfig().getString("mysql.database");
-            username = this.getConfig().getString("mysql.username");
-            password = this.getConfig().getString("mysql.password");
-            port = this.getConfig().getInt("mysql.port");
-            try {
-                openConnection();
-                setTableToDataBase();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            prepareConnection();
+        } else {
+            this.createPlayerDataFolder();
         }
 
-        this.createPlayerDataFolder();
         this.createLangFiles();
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(), this);
         Bukkit.getPluginManager().registerEvents(new KillEvents(), this);
         Bukkit.getPluginManager().registerEvents(new HitEvents(), this);
         this.getCommand("karma").setExecutor(new KarmaCommand());
+    }
+
+    private void prepareConnection() {
+        host = this.getConfig().getString("mysql.host");
+        database = this.getConfig().getString("mysql.database");
+        username = this.getConfig().getString("mysql.username");
+        password = this.getConfig().getString("mysql.password");
+        port = this.getConfig().getInt("mysql.port");
+        try {
+            openConnection();
+            setTableToDataBase();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void openConnection() throws SQLException, ClassNotFoundException {
@@ -74,7 +86,7 @@ public class Karma extends JavaPlugin {
     public void setTableToDataBase() {
         String sql = "CREATE TABLE IF NOT EXISTS Karma ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
                 " NickName varchar(16) NOT NULL,\n" +
-                " Karma integer,\n" +
+                " Karma double,\n" +
                 " Tier varchar(50));";
         try {
             if (connection != null && !connection.isClosed()) {

@@ -1,5 +1,6 @@
 package fr.rosstail.karma;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -25,9 +26,9 @@ public class HitEvents extends GetSet implements Listener {
      */
     @EventHandler
     public void onEntityHurt(EntityDamageByEntityEvent event) {
-        int reward = 0;
-        int attackerKarma = 0;
-        int attackerModifiedKarma = 0;
+        double reward = 0;
+        double attackerKarma = 0;
+        double attackerModifiedKarma = 0;
         LivingEntity livingEntity;
         String livingEntityName;
         attacker = null;
@@ -63,10 +64,19 @@ public class HitEvents extends GetSet implements Listener {
             return;
         }
 
-        reward = karma.getConfig().getInt("entities." + livingEntityName + ".hit-karma-reward");
+        reward = karma.getConfig().getDouble("entities." + livingEntityName + ".hit-karma-reward");
 
         if (!(reward == 0 || attacker == null)) {
             attackerKarma = getPlayerKarma(attacker);
+
+            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
+                    && karma.getConfig().getBoolean("general.use-worldguard")) {
+
+                WGPreps wgPreps = new WGPreps();
+                double mult = wgPreps.chekMulKarmFlag(attacker);
+                reward = reward * mult;
+            }
+
             attackerModifiedKarma = attackerKarma + reward;
 
             setKarmaToPlayer(attacker, attackerModifiedKarma);
@@ -85,24 +95,34 @@ public class HitEvents extends GetSet implements Listener {
      */
     public void onPlayerHurt() {
 
-        int attackerInitialKarma = getPlayerKarma(attacker);
-        int victimKarma = getPlayerKarma(victim);
+        double attackerInitialKarma = getPlayerKarma(attacker);
+        double victimKarma = getPlayerKarma(victim);
 
         if (!victim.getName().equals(attacker.getName()) && victim.getLastDamage() >= 1d) {
-            int arg1 = karma.getConfig().getInt("pvp.hit-reward-variables.1");
+            double arg1 = karma.getConfig().getDouble("pvp.hit-reward-variables.1");
             String arg2Str = karma.getConfig().getString("pvp.hit-reward-variables.2");
-            int arg2 = 0;
-            int arg3 = karma.getConfig().getInt("pvp.hit-reward-variables.3");
-            int arg4 = karma.getConfig().getInt("pvp.hit-reward-variables.4");
+            double arg2 = 0;
+            double arg3 = karma.getConfig().getDouble("pvp.hit-reward-variables.3");
+            double arg4 = karma.getConfig().getDouble("pvp.hit-reward-variables.4");
 
             if (arg2Str != null) {
                 if (arg2Str.equals("<victimKarma>")) {
                     arg2 = victimKarma;
                 } else
-                    arg2 = Integer.parseInt(arg2Str);
+                    arg2 = Double.parseDouble(arg2Str);
             }
 
-            int attackerNewKarma = attackerInitialKarma + arg1 * (arg2 + arg3) / arg4;
+            double formula = arg1 * (arg2 + arg3) / arg4;
+
+            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
+                    && karma.getConfig().getBoolean("general.use-worldguard")) {
+
+                WGPreps wgPreps = new WGPreps();
+                double mult = wgPreps.chekMulKarmFlag(attacker);
+                formula = formula * mult;
+            }
+
+            double attackerNewKarma = attackerInitialKarma + formula;
 
             setKarmaToPlayer(attacker, attackerNewKarma);
             setTierToPlayer(attacker);

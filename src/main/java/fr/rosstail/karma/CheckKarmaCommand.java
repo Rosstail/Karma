@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
  */
-public class CheckKarmaCommand extends GetSet{
+public class CheckKarmaCommand extends GetSet {
     private Karma karma = Karma.get();
     String message = null;
 
@@ -33,7 +33,7 @@ public class CheckKarmaCommand extends GetSet{
 
         if (player != null && player.isOnline()) {
             message = configurationLang.getString("check-other-karma");
-            int targetKarma = getPlayerKarma(player);
+            double targetKarma = getPlayerKarma(player);
             String targetTierDisplay = getPlayerDisplayTier(player);
 
             message = message.replaceAll("<karma>", String.valueOf(targetKarma));
@@ -56,7 +56,7 @@ public class CheckKarmaCommand extends GetSet{
     public void karmaSelf(CommandSender commandSender)
     {
         Player player = (Player) commandSender;
-        int playerKarma = getPlayerKarma(player);
+        double playerKarma = getPlayerKarma(player);
         String playerTierDisplay = getPlayerDisplayTier(player);
 
         message = configurationLang.getString("check-own-karma");

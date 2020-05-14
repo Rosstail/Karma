@@ -1,5 +1,6 @@
 package fr.rosstail.karma;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -12,6 +13,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 public class KillEvents extends GetSet implements Listener {
     private Karma karma = Karma.get();
     AdaptMessage adaptMessage = new AdaptMessage();
+
     String message = null;
 
     /**
@@ -21,8 +23,8 @@ public class KillEvents extends GetSet implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         Player killer = null;
-        int killerKarma = 0;
-        int reward = 0;
+        double killerKarma = 0;
+        double reward = 0;
         LivingEntity livingEntity;
         String livingEntityName;
 
@@ -44,6 +46,14 @@ public class KillEvents extends GetSet implements Listener {
         if (reward != 0) {
             killerKarma = getPlayerKarma(killer);
 
+            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
+                    && karma.getConfig().getBoolean("general.use-worldguard")) {
+                WGPreps wgPreps = new WGPreps();
+
+                double mult = wgPreps.chekMulKarmFlag(killer);
+                reward = reward * mult;
+            }
+
             setKarmaToPlayer(killer,killerKarma + reward);
             setTierToPlayer(killer);
         }
@@ -64,16 +74,16 @@ public class KillEvents extends GetSet implements Listener {
         if (killer == null || !getTime(killer))
             return;
 
-        int killerInitialKarma = getPlayerKarma(killer);
-        int victimKarma = getPlayerKarma(victim);
+        double killerInitialKarma = getPlayerKarma(killer);
+        double victimKarma = getPlayerKarma(victim);
 
         if (!victim.getName().equals(killer.getName())) {
 
-            int arg1 = karma.getConfig().getInt("pvp.kill-reward-variables.1");
+            double arg1 = karma.getConfig().getInt("pvp.kill-reward-variables.1");
             String arg2Str = karma.getConfig().getString("pvp.kill-reward-variables.2");
-            int arg2 = 0;
-            int arg3 = karma.getConfig().getInt("pvp.kill-reward-variables.3");
-            int arg4 = karma.getConfig().getInt("pvp.kill-reward-variables.4");
+            double arg2 = 0;
+            double arg3 = karma.getConfig().getInt("pvp.kill-reward-variables.3");
+            double arg4 = karma.getConfig().getInt("pvp.kill-reward-variables.4");
 
             if (arg2Str != null) {
                 if (arg2Str.equals("<victimKarma>")) {
@@ -82,7 +92,17 @@ public class KillEvents extends GetSet implements Listener {
                     arg2 = Integer.parseInt(arg2Str);
             }
 
-            int killerNewKarma = killerInitialKarma + arg1 * (arg2 + arg3) / arg4;
+            double reward = arg1 * (arg2 + arg3) / arg4;
+
+            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
+                    && karma.getConfig().getBoolean("general.use-worldguard")) {
+                WGPreps wgPreps = new WGPreps();
+
+                double mult = wgPreps.chekMulKarmFlag(killer);
+                reward = reward * mult;
+            }
+
+            double killerNewKarma = killerInitialKarma + reward;
 
             setKarmaToPlayer(killer,killerNewKarma);
             setTierToPlayer(killer);
@@ -95,7 +115,7 @@ public class KillEvents extends GetSet implements Listener {
                 message = karma.getConfig().getString("pvp.kill-message-on-karma-decrease");
             }
             if (message != null) {
-                adaptMessage.getPlayerKillMessage(message, killer, killerInitialKarma, killerNewKarma);
+                adaptMessage.getPlayerKillMessage(message, killer, killerInitialKarma);
             }
         }
 

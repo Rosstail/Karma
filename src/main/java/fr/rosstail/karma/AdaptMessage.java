@@ -12,12 +12,12 @@ public class AdaptMessage extends GetSet {
     private Map<String, Long> cooldown = new HashMap<String, Long>();
 
 
-    public void editKarmaMessage(CommandSender commandSender, Player player, String message, int value) {
+    public void editKarmaMessage(CommandSender commandSender, Player player, String message, double value) {
         if (message != null) {
             message = message.replaceAll("<player>", player.getName());
-            message = message.replaceAll("<newKarma>", Integer.toString(getPlayerKarma(player)));
+            message = message.replaceAll("<newKarma>", Double.toString(getPlayerKarma(player)));
             message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
-            message = message.replaceAll("<value>", Integer.toString(value));
+            message = message.replaceAll("<value>", Double.toString(value));
             message = ChatColor.translateAlternateColorCodes('&', message);
             commandSender.sendMessage(message);
         }
@@ -30,20 +30,20 @@ public class AdaptMessage extends GetSet {
      * @param reward
      * @return
      */
-    private String setEntityHitMessage(String message, Player player, int reward) {
+    private String setEntityHitMessage(String message, Player player, double reward) {
         message = message.replaceAll("<attacker>", player.getName());
-        message = message.replaceAll("<reward>", Integer.toString(reward));
-        message = message.replaceAll("<previousKarma>", Integer.toString(getPlayerKarma(player) - reward));
-        message = message.replaceAll("<karma>", Integer.toString(getPlayerKarma(player)));
+        message = message.replaceAll("<reward>", Double.toString(reward));
+        message = message.replaceAll("<previousKarma>", Double.toString(getPlayerKarma(player) - reward));
+        message = message.replaceAll("<karma>", Double.toString(getPlayerKarma(player)));
         message = ChatColor.translateAlternateColorCodes('&', message);
         return message;
     }
 
-    public void getEntityHitMessage(String message, Player player, int reward) {
+    public void getEntityHitMessage(String message, Player player, double reward) {
 
         if (cooldown.containsKey(player.getName())) {
-            int seconds = this.karma.getConfig().getInt("general.delay-between-hit-messages");
-            long timeLeft = ((cooldown.get(player.getName())) / 1000 + seconds) - (System.currentTimeMillis() / 1000);
+            double seconds = this.karma.getConfig().getDouble("general.delay-between-hit-messages");
+            double timeLeft = ((cooldown.get(player.getName())) / 1000f + seconds) - (System.currentTimeMillis() / 1000f);
             if (timeLeft > 0) {
                 return;
             }
@@ -65,20 +65,20 @@ public class AdaptMessage extends GetSet {
      * @param reward
      * @return
      */
-    private String setEntityKillMessage(String message, Player player, int reward) {
+    private String setEntityKillMessage(String message, Player player, double reward) {
         message = message.replaceAll("<attacker>", player.getName());
-        message = message.replaceAll("<reward>", Integer.toString(reward));
-        message = message.replaceAll("<previousKarma>", Integer.toString(getPlayerKarma(player) - reward));
-        message = message.replaceAll("<karma>", Integer.toString(getPlayerKarma(player)));
+        message = message.replaceAll("<reward>", Double.toString(reward));
+        message = message.replaceAll("<previousKarma>", Double.toString(getPlayerKarma(player) - reward));
+        message = message.replaceAll("<karma>", Double.toString(getPlayerKarma(player)));
         message = ChatColor.translateAlternateColorCodes('&', message);
         return message;
     }
 
-    public void getEntityKillMessage(String message, Player player, int reward) {
+    public void getEntityKillMessage(String message, Player player, double reward) {
 
         if (cooldown.containsKey(player.getName())) {
-            int seconds = this.karma.getConfig().getInt("general.delay-between-kill-messages");
-            long timeLeft = ((cooldown.get(player.getName())) / 1000 + seconds) - (System.currentTimeMillis() / 1000);
+            double seconds = this.karma.getConfig().getDouble("general.delay-between-kill-messages");
+            double timeLeft = ((cooldown.get(player.getName())) / 1000f + seconds) - (System.currentTimeMillis() / 1000f);
             if (timeLeft > 0) {
                 return;
             }
@@ -101,18 +101,18 @@ public class AdaptMessage extends GetSet {
      * @param initialKarma
      * @return
      */
-    private String setPlayerHitMessage(String message, Player attacker, int initialKarma) {
+    private String setPlayerHitMessage(String message, Player attacker, double initialKarma) {
         message = message.replaceAll("<attacker>", attacker.getName());
-        message = message.replaceAll("<previousKarma>", Integer.toString(initialKarma));
-        message = message.replaceAll("<karma>", Integer.toString(getPlayerKarma(attacker)));
+        message = message.replaceAll("<previousKarma>", Double.toString(initialKarma));
+        message = message.replaceAll("<karma>", Double.toString(getPlayerKarma(attacker)));
         message = ChatColor.translateAlternateColorCodes('&', message);
         return message;
     }
 
-    public void getPlayerHitMessage(String message, Player player, int initialKarma) {
+    public void getPlayerHitMessage(String message, Player player, double initialKarma) {
         if (cooldown.containsKey(player.getName())) {
-            int seconds = this.karma.getConfig().getInt("general.delay-between-hit-messages");
-            long timeLeft = ((cooldown.get(player.getName())) / 1000 + seconds) - (System.currentTimeMillis() / 1000);
+            double seconds = this.karma.getConfig().getDouble("general.delay-between-hit-messages");
+            double timeLeft = ((cooldown.get(player.getName())) / 1000f + seconds) - (System.currentTimeMillis() / 1000f);
             if (timeLeft > 0) {
                 return;
             }
@@ -134,18 +134,18 @@ public class AdaptMessage extends GetSet {
      * @param initialKarma
      * @return
      */
-    private String setPlayerKillMessage(String message, Player killer, int initialKarma) {
+    private String setPlayerKillMessage(String message, Player killer, double initialKarma) {
         message = message.replaceAll("<killer>", killer.getName());
-        message = message.replaceAll("<previousKarma>", Integer.toString(initialKarma));
-        message = message.replaceAll("<karma>", Integer.toString(getPlayerKarma(killer)));
+        message = message.replaceAll("<previousKarma>", Double.toString(initialKarma));
+        message = message.replaceAll("<karma>", Double.toString(getPlayerKarma(killer)));
         message = ChatColor.translateAlternateColorCodes('&', message);
         return message;
     }
 
-    public void getPlayerKillMessage(String message, Player player, int initialKarma, int newKarma) {
+    public void getPlayerKillMessage(String message, Player player, double initialKarma) {
         if (cooldown.containsKey(player.getName())) {
-            int seconds = this.karma.getConfig().getInt("general.delay-between-kill-messages");
-            long timeLeft = ((cooldown.get(player.getName())) / 1000 + seconds) - (System.currentTimeMillis() / 1000);
+            double seconds = this.karma.getConfig().getDouble("general.delay-between-kill-messages");
+            double timeLeft = ((cooldown.get(player.getName())) / 1000f + seconds) - (System.currentTimeMillis() / 1000f);
             if (timeLeft > 0) {
                 return;
             }

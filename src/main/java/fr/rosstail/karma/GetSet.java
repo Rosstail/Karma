@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -45,15 +44,15 @@ public class GetSet {
      * @param player
      * @return
      */
-    public int getPlayerKarma(Player player) {
+    public double getPlayerKarma(Player player) {
         try {
             if (karma.connection != null && !karma.connection.isClosed()) {
                 Statement statement = karma.connection.createStatement();
                 String UUID = String.valueOf(player.getUniqueId());
                 ResultSet result = statement.executeQuery("SELECT Karma FROM Karma WHERE UUID = '" + UUID + "';");
-                int karma = 0;
+                double karma = 0;
                 while (result.next()) {
-                    karma = result.getInt("Karma");
+                    karma = result.getDouble("Karma");
                 }
                 statement.close();
                 return karma;
@@ -61,7 +60,7 @@ public class GetSet {
             else {
                 File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                return playerConfig.getInt("karma");
+                return playerConfig.getDouble("karma");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -112,10 +111,10 @@ public class GetSet {
      * @param tier
      * @return
      */
-    public int[] getTierLimits(String tier) {
-        int tierMinimumKarma = karma.getConfig().getInt("tiers." + tier + ".tier-minimum-karma");
-        int tierMaximumKarma = karma.getConfig().getInt("tiers." + tier + ".tier-maximum-karma");
-        return new int[]{tierMinimumKarma, tierMaximumKarma};
+    public double[] getTierLimits(String tier) {
+        double tierMinimumKarma = karma.getConfig().getInt("tiers." + tier + ".tier-minimum-karma");
+        double tierMaximumKarma = karma.getConfig().getInt("tiers." + tier + ".tier-maximum-karma");
+        return new double[]{tierMinimumKarma, tierMaximumKarma};
     }
 
     public String[] getSystemTimeLimits(String time) {
@@ -207,7 +206,7 @@ public class GetSet {
      */
     public void initPlayerData(Player player) {
         if (!ifPlayerExistsInDTB(player)) {
-            int value = karma.getConfig().getInt("karma.default-karma");
+            double value = karma.getConfig().getInt("karma.default-karma");
             try {
                 if (karma.connection != null && !karma.connection.isClosed()) {
                     PreparedStatement preparedStatement = karma.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier)\n" +
@@ -215,7 +214,7 @@ public class GetSet {
 
                     preparedStatement.setString(1, String.valueOf(player.getUniqueId()));
                     preparedStatement.setString(2, player.getName());
-                    preparedStatement.setInt(3, value);
+                    preparedStatement.setDouble(3, value);
                     preparedStatement.setString(4, null);
 
                     preparedStatement.execute();
@@ -248,14 +247,14 @@ public class GetSet {
      * @param player -> the player
      * @param value -> The new karma amoutn of the player
      */
-    public void setKarmaToPlayer(Player player, int value) {
+    public void setKarmaToPlayer(Player player, double value) {
         try {
             if (karma.connection != null && !karma.connection.isClosed()) {
 
                 String query = "UPDATE Karma SET Karma = ? WHERE UUID = ?;";
                 PreparedStatement preparedStatement = karma.connection.prepareStatement(query);
 
-                preparedStatement.setInt(1, value);
+                preparedStatement.setDouble(1, value);
                 preparedStatement.setString(2, player.getUniqueId().toString());
 
                 preparedStatement.executeUpdate();
@@ -287,7 +286,7 @@ public class GetSet {
         Set<String> path = karma.getConfig().getConfigurationSection("tiers").getKeys(false);
         try {
             if (karma.connection != null && !karma.connection.isClosed()) {
-                int[] tierLimits;
+                double[] tierLimits;
                 String tier = getPlayerTier(player);
                 for (String tierList : path) {
                     tierLimits = getTierLimits(tierList);
@@ -311,7 +310,7 @@ public class GetSet {
                 File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
 
-                int[] tierLimits;
+                double[] tierLimits;
                 String tier = getPlayerTier(player);
                 for (String tierList : path) {
                     tierLimits = getTierLimits(tierList);
@@ -342,9 +341,9 @@ public class GetSet {
      * @param player The player
      */
     public void setKarmaToLimit(Player player) {
-        int playerKarma = getPlayerKarma(player);
-        int min = this.karma.getConfig().getInt("karma.minimum-karma");
-        int max = this.karma.getConfig().getInt("karma.maximum-karma");
+        double playerKarma = getPlayerKarma(player);
+        double min = this.karma.getConfig().getInt("karma.minimum-karma");
+        double max = this.karma.getConfig().getInt("karma.maximum-karma");
 
         if (playerKarma < min) {
             setKarmaToPlayer(player, min);
@@ -377,7 +376,7 @@ public class GetSet {
                 line = line.replaceAll("<player>", player.getName());
             }
             if (line.contains("karma")) {
-                line = line.replaceAll("<karma>", Integer.toString(getPlayerKarma(player)));
+                line = line.replaceAll("<karma>", Double.toString(getPlayerKarma(player)));
             }
             if (line.contains("<tier>")) {
                 line = line.replaceAll("<tier>", getPlayerDisplayTier(player));

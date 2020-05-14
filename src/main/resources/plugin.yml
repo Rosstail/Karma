@@ -1,9 +1,11 @@
 name: Karma
-version: 1.3.1
+version: 1.4.0
 description: Make your players actions have consequences !
+api-version: 1.15
+author: Rosstail
+website: https://www.spigotmc.org/resources/karma.76077
 softdepend:
-  - worldguard
-  - sentinels
+  - WorldGuard
 main: fr.rosstail.karma.Karma
 commands:
   karma:

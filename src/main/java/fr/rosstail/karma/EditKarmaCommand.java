@@ -1,7 +1,6 @@
 package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -30,13 +29,13 @@ public class EditKarmaCommand extends GetSet {
     public void karmaSet(CommandSender commandSender, String[] args)
     {
         Player player = Bukkit.getServer().getPlayer(args[1]);
-        int value = Integer.parseInt(args[2]);
+        double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
 
             setKarmaToPlayer(player, value);
 
             message = configurationLang.getString("set-karma");
-            adaptMessage.editKarmaMessage(commandSender, player, message, 0);
+            adaptMessage.editKarmaMessage(commandSender, player, message, value);
         }
         else {
             disconnectedPlayer(commandSender, args);
@@ -52,9 +51,9 @@ public class EditKarmaCommand extends GetSet {
     public void karmaAdd(CommandSender commandSender, String[] args)
     {
         Player player = Bukkit.getServer().getPlayer(args[1]);
-        int value = Integer.parseInt(args[2]);
+        double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            int targetNewKarma = getPlayerKarma(player) + value;
+            double targetNewKarma = getPlayerKarma(player) + value;
 
             setKarmaToPlayer(player, targetNewKarma);
             setTierToPlayer(player);
@@ -76,9 +75,9 @@ public class EditKarmaCommand extends GetSet {
     public void karmaRemove(CommandSender commandSender, String[] args)
     {
         Player player = Bukkit.getServer().getPlayer(args[1]);
-        int value = Integer.parseInt(args[2]);
+        double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            int targetNewKarma = getPlayerKarma(player) - value;
+            double targetNewKarma = getPlayerKarma(player) - value;
 
             setKarmaToPlayer(player, targetNewKarma);
 
@@ -98,7 +97,7 @@ public class EditKarmaCommand extends GetSet {
     public void karmaReset(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         if (player != null && player.isOnline()) {
-            int resKarma = this.karma.getConfig().getInt("karma.default-karma");
+            double resKarma = this.karma.getConfig().getDouble("karma.default-karma");
 
             setKarmaToPlayer(player, resKarma);
 
