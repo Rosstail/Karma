@@ -23,8 +23,8 @@ public class KillEvents extends GetSet implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         Player killer = null;
-        double killerKarma = 0;
-        double reward = 0;
+        double killerKarma = 0F;
+        double reward = 0F;
         LivingEntity livingEntity;
         String livingEntityName;
 
@@ -48,8 +48,8 @@ public class KillEvents extends GetSet implements Listener {
 
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
                     && karma.getConfig().getBoolean("general.use-worldguard")) {
-                WGPreps wgPreps = new WGPreps();
 
+                WGPreps wgPreps = new WGPreps();
                 double mult = wgPreps.chekMulKarmFlag(killer);
                 reward = reward * mult;
             }
@@ -96,8 +96,9 @@ public class KillEvents extends GetSet implements Listener {
 
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
                     && karma.getConfig().getBoolean("general.use-worldguard")) {
-                WGPreps wgPreps = new WGPreps();
+                //WGPreps wgPreps = new WGPreps();
 
+                WGPreps wgPreps = new WGPreps();
                 double mult = wgPreps.chekMulKarmFlag(killer);
                 reward = reward * mult;
             }

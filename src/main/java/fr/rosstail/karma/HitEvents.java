@@ -26,9 +26,9 @@ public class HitEvents extends GetSet implements Listener {
      */
     @EventHandler
     public void onEntityHurt(EntityDamageByEntityEvent event) {
-        double reward = 0;
-        double attackerKarma = 0;
-        double attackerModifiedKarma = 0;
+        double reward = 0F;
+        double attackerKarma = 0F;
+        double attackerModifiedKarma = 0F;
         LivingEntity livingEntity;
         String livingEntityName;
         attacker = null;
@@ -53,7 +53,7 @@ public class HitEvents extends GetSet implements Listener {
         else
             return;
 
-        if (!getTime(attacker)) {
+        if ( !(getTime(attacker)) ) {
             return;
         }
 

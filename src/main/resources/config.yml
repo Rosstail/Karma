@@ -1,4 +1,4 @@
-Config-version: 1.4
+Config-version: 1.5
 
 mysql:
   active: false
