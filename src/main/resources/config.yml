@@ -79,18 +79,26 @@ times:
   #BOTH check WORLDS AND SYSTEM. both must be TRUE.
   worlds-times: #use the time where the attacker / killer is You can add all the time-X you want with custom name
     time-1:
-      starting-time: "08:00"
-      ending-time: "12:00"
+      starting-time: "09:00"
+      ending-time: "20:00"
+      chance: 100
     time-2:
-      starting-time: "13:00"
-      ending-time: "21:00"
+      starting-time: "20:00"
+      ending-time: "22:00"
+      chance: 66
+    time-3:
+      starting-time: "22:00"
+      ending-time: "01:00"
+      chance: 30
   system-times: #use the server real life time. You can add all the time-X you want, with custom name
     time-1:
       starting-time: "08:00"
       ending-time: "12:00"
+      chance: 100
     time-2:
       starting-time: "13:00"
       ending-time: "21:00"
+      chance: 30
 
 pvp:
   # The 2nd argument must be <victimKarma> OR a number, inside brackets.

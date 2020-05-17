@@ -144,12 +144,12 @@ public class GetSet {
 
     public boolean getTime(Player player) {
         String type = karma.getConfig().getString("times.use-both-system-and-worlds-time");
-        if (type != null && !type.equals("NONE")) {
+        if (type != null && !type.equalsIgnoreCase("NONE")) {
             if (type.equals("BOTH")) {
                 return getSystemTime() && getWorldTime(player);
-            } else if (type.equals("SYSTEM")) {
+            } else if (type.equalsIgnoreCase("SYSTEM")) {
                 return getSystemTime();
-            } else if (type.equals("WORLDS")) {
+            } else if (type.equalsIgnoreCase("WORLDS")) {
                 return getWorldTime(player);
             }
         }
@@ -167,11 +167,15 @@ public class GetSet {
             timeLimits = getSystemTimeLimits(timeList);
             if (timeLimits[1].compareTo(timeLimits[0]) >= 0) {
                 if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 && timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
-                    return true;
+                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.system-times." + timeList + ".chance")) {
+                        return true;
+                    }
                 }
             } else {
                 if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 || timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
-                    return true;
+                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.system-times." + timeList + ".chance")) {
+                        return true;
+                    }
                 }
             }
         }
@@ -189,11 +193,15 @@ public class GetSet {
             timeLimits = getWorldTimeLimits(timeList);
             if (timeLimits[0] <= timeLimits[1]) {
                 if (timeLimits[0] <= worldTime && timeLimits[1] >= worldTime) {
-                    return true;
+                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.worlds-times." + timeList + ".chance")) {
+                        return true;
+                    }
                 }
             } else {
                 if (timeLimits[0] <= worldTime || timeLimits[1] >= worldTime) {
-                    return true;
+                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.worlds-times." + timeList + ".chance")) {
+                        return true;
+                    }
                 }
             }
         }
