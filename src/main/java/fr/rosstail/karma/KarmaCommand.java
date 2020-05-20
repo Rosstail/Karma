@@ -25,21 +25,21 @@ public class KarmaCommand implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         if (args.length >= 3) {
-            if (args[0].equals("set")) {
+            if (args[0].equalsIgnoreCase("set")) {
                 if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.set")) {
                     editKarmaCommand.karmaSet(commandSender, args);
                 } else {
                     permissionDenied(commandSender);
                 }
             }
-            else if (args[0].equals("add")) {
+            else if (args[0].equalsIgnoreCase("add")) {
                 if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.add")) {
                     editKarmaCommand.karmaAdd(commandSender, args);
                 } else {
                     permissionDenied(commandSender);
                 }
             }
-            else if (args[0].equals("remove")) {
+            else if (args[0].equalsIgnoreCase("remove")) {
                 if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.remove")) {
                 editKarmaCommand.karmaRemove(commandSender, args);
                 } else {
@@ -48,7 +48,7 @@ public class KarmaCommand implements CommandExecutor {
             }
         }
         else if (args.length == 2) {
-            if (args[0].equals("reset")) {
+            if (args[0].equalsIgnoreCase("reset")) {
                 if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.reset")) {
                 editKarmaCommand.karmaReset(commandSender, args);
                 } else {
@@ -57,7 +57,7 @@ public class KarmaCommand implements CommandExecutor {
             }
         }
         else if (args.length == 1) {
-            if (args[0].equals("reload")) {
+            if (args[0].equalsIgnoreCase("reload")) {
                 if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.reload")) {
                     commandSender.sendMessage("Karma can't be reload alone for now. Please wait a future update.");
                 } else {

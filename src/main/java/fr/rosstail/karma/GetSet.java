@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -292,12 +293,15 @@ public class GetSet {
      */
     public void setTierToPlayer(Player player) {
         Set<String> path = karma.getConfig().getConfigurationSection("tiers").getKeys(false);
+        ArrayList<String> array = new ArrayList<String>();
         try {
             if (karma.connection != null && !karma.connection.isClosed()) {
                 double[] tierLimits;
                 String tier = getPlayerTier(player);
+
                 for (String tierList : path) {
                     tierLimits = getTierLimits(tierList);
+
                     if (getPlayerKarma(player) >=  tierLimits[0] && getPlayerKarma(player) <= tierLimits[1] && !tierList.equals(tier)) {
 
                         String query = "UPDATE Karma SET Tier = ? WHERE UUID = ?;";
@@ -310,8 +314,15 @@ public class GetSet {
                         preparedStatement.close();
                         changePlayerTierMessage(player);
                         tierCommandsLauncher(player);
+                        if (array.contains(tier)) {
+                            tierCommandsLauncherOnUp(player);
+                        } else {
+                            tierCommandsLauncherOnDown(player);
+                        }
                         break;
                     }
+
+                    array.add(tierList);
                 }
 
             } else {
@@ -320,8 +331,10 @@ public class GetSet {
 
                 double[] tierLimits;
                 String tier = getPlayerTier(player);
+
                 for (String tierList : path) {
                     tierLimits = getTierLimits(tierList);
+
                     if (getPlayerKarma(player) >=  tierLimits[0] && getPlayerKarma(player) <= tierLimits[1] && !tierList.equals(tier)) {
                         playerConfig.set("tier", tierList);
 
@@ -332,9 +345,16 @@ public class GetSet {
                         }
 
                         changePlayerTierMessage(player);
+                        if (array.contains(tier)) {
+                            tierCommandsLauncherOnUp(player);
+                        } else {
+                            tierCommandsLauncherOnDown(player);
+                        }
                         tierCommandsLauncher(player);
                         break;
                     }
+
+                    array.add(tierList);
                 }
             }
         } catch (SQLException e) {
@@ -378,28 +398,57 @@ public class GetSet {
     private void tierCommandsLauncher(Player player) {
         String tier = getPlayerTier(player);
         List<String> list = (List<String>) karma.getConfig().getList("tiers." + tier + ".commands");
-        for (String line : list) {
-
-            if (line.contains("<player>")) {
-                line = line.replaceAll("<player>", player.getName());
-            }
-            if (line.contains("karma")) {
-                line = line.replaceAll("<karma>", Double.toString(getPlayerKarma(player)));
-            }
-            if (line.contains("<tier>")) {
-                line = line.replaceAll("<tier>", getPlayerDisplayTier(player));
-            }
-            line = ChatColor.translateAlternateColorCodes('&', line);
-
-            if (line.startsWith("<@>")) {
-                line = line.replaceAll("<@>", "");
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), line);
-            }
-            else {
-                Bukkit.dispatchCommand(player, line);
+        if (list != null) {
+            for (String line : list) {
+                if (line != null) {
+                    placeCommands(player, line);
+                }
             }
         }
     }
 
+    private void tierCommandsLauncherOnUp(Player player) {
+        String tier = getPlayerTier(player);
+        List<String> list = (List<String>) karma.getConfig().getList("tiers." + tier + ".commands-on-up");
+        if (list != null) {
+            for (String line : list) {
+                if (line != null) {
+                    placeCommands(player, line);
+                }
+            }
+        }
+    }
+
+    private void tierCommandsLauncherOnDown(Player player) {
+        String tier = getPlayerTier(player);
+        List<String> list = (List<String>) karma.getConfig().getList("tiers." + tier + ".commands-on-down");
+        if (list != null) {
+            for (String line : list) {
+                if (line != null) {
+                    placeCommands(player, line);
+                }
+            }
+        }
+    }
+
+    private void placeCommands(Player player, String command) {
+        if (command.contains("<player>")) {
+            command = command.replaceAll("<player>", player.getName());
+        }
+        if (command.contains("karma")) {
+            command = command.replaceAll("<karma>", Double.toString(getPlayerKarma(player)));
+        }
+        if (command.contains("<tier>")) {
+            command = command.replaceAll("<tier>", getPlayerDisplayTier(player));
+        }
+        command = ChatColor.translateAlternateColorCodes('&', command);
+
+        if (command.startsWith("<@>")) {
+            command = command.replaceAll("<@>", "");
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        } else {
+            Bukkit.dispatchCommand(player, command);
+        }
+    }
 
 }
