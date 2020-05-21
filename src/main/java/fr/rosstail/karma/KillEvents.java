@@ -7,6 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import java.util.List;
+
 /**
  * Changes the attacker karma when killing living entities
  */
@@ -40,6 +42,10 @@ public class KillEvents extends GetSet implements Listener {
         }
         else
             return;
+
+        if (killer.hasMetadata("NPC")) {
+            return;
+        }
 
         reward = karma.getConfig().getInt("entities." + livingEntityName + ".kill-karma-reward");
 
@@ -77,6 +83,10 @@ public class KillEvents extends GetSet implements Listener {
         double killerInitialKarma = getPlayerKarma(killer);
         double victimKarma = getPlayerKarma(victim);
 
+        if (killer.hasMetadata("NPC")) {
+            return;
+        }
+
         if (!victim.getName().equals(killer.getName())) {
 
             double arg1 = karma.getConfig().getInt("pvp.kill-reward-variables.1");
@@ -87,16 +97,19 @@ public class KillEvents extends GetSet implements Listener {
 
             if (arg2Str != null) {
                 if (arg2Str.equals("<victimKarma>")) {
-                    arg2 = victimKarma;
+                    if (!victim.hasMetadata("NPC")) {
+                        arg2 = victimKarma;
+                    } else {
+                        return;
+                    }
                 } else
-                    arg2 = Integer.parseInt(arg2Str);
+                    arg2 = Double.parseDouble(arg2Str);
             }
 
             double reward = arg1 * (arg2 + arg3) / arg4;
 
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
                     && karma.getConfig().getBoolean("general.use-worldguard")) {
-                //WGPreps wgPreps = new WGPreps();
 
                 WGPreps wgPreps = new WGPreps();
                 double mult = wgPreps.chekMulKarmFlag(killer);

@@ -8,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import java.util.List;
+
 
 /**
  * Changes the attacker karma when attacking entities
@@ -45,13 +47,16 @@ public class HitEvents extends GetSet implements Listener {
                     return;
                 }
             }
-            else if (event.getDamager() instanceof Player)
+            else if (event.getDamager() instanceof Player) {
                 attacker = (Player) event.getDamager();
-            else
+            } else
                 return;
-        }
-        else
+        } else
             return;
+
+        if (attacker.hasMetadata("NPC")) {
+            return;
+        }
 
         if ( !(getTime(attacker)) ) {
             return;
@@ -107,7 +112,11 @@ public class HitEvents extends GetSet implements Listener {
 
             if (arg2Str != null) {
                 if (arg2Str.equals("<victimKarma>")) {
-                    arg2 = victimKarma;
+                    if (!victim.hasMetadata("NPC")) {
+                        arg2 = victimKarma;
+                    } else {
+                        return;
+                    }
                 } else
                     arg2 = Double.parseDouble(arg2Str);
             }
