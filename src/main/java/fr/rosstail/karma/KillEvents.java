@@ -7,8 +7,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
-import java.util.List;
-
 /**
  * Changes the attacker karma when killing living entities
  */
@@ -99,6 +97,8 @@ public class KillEvents extends GetSet implements Listener {
                 if (arg2Str.equals("<victimKarma>")) {
                     if (!victim.hasMetadata("NPC")) {
                         arg2 = victimKarma;
+                    } else if (victim.getMetadata("Karma").get(0) != null) {
+                        arg2 = victim.getMetadata("Karma").get(0).asDouble();
                     } else {
                         return;
                     }

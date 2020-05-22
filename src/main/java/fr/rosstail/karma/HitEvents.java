@@ -7,6 +7,7 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.metadata.MetadataValue;
 
 import java.util.List;
 
@@ -114,6 +115,8 @@ public class HitEvents extends GetSet implements Listener {
                 if (arg2Str.equals("<victimKarma>")) {
                     if (!victim.hasMetadata("NPC")) {
                         arg2 = victimKarma;
+                    } else if (victim.getMetadata("Karma").get(0) != null) {
+                        arg2 = victim.getMetadata("Karma").get(0).asDouble();
                     } else {
                         return;
                     }
