@@ -1,15 +1,16 @@
 package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.metadata.MetadataValue;
 
-import java.util.List;
+import java.io.File;
 
 
 /**
@@ -19,8 +20,12 @@ public class HitEvents extends GetSet implements Listener {
     private Karma karma = Karma.get();
     AdaptMessage adaptMessage = new AdaptMessage();
 
+    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
+    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+
     Player attacker = null;
     Player victim = null;
+    Double damage = 0D;
     String message;
 
     /**
@@ -38,6 +43,7 @@ public class HitEvents extends GetSet implements Listener {
 
         if (event.getEntity() instanceof LivingEntity && event.getFinalDamage() >= 1d && ((LivingEntity) event.getEntity()).getHealth() - event.getFinalDamage() > 0)
         {
+            damage = event.getFinalDamage();
             livingEntity = (LivingEntity) event.getEntity();
             livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             if (event.getDamager() instanceof Projectile) {
@@ -104,7 +110,7 @@ public class HitEvents extends GetSet implements Listener {
         double attackerInitialKarma = getPlayerKarma(attacker);
         double victimKarma = getPlayerKarma(victim);
 
-        if (!victim.getName().equals(attacker.getName()) && victim.getLastDamage() >= 1d) {
+        if (!(victim.getName().equals(attacker.getName())) && damage >= 1d) {
             double arg1 = karma.getConfig().getDouble("pvp.hit-reward-variables.1");
             String arg2Str = karma.getConfig().getString("pvp.hit-reward-variables.2");
             double arg2 = 0;
@@ -115,13 +121,17 @@ public class HitEvents extends GetSet implements Listener {
                 if (arg2Str.equals("<victimKarma>")) {
                     if (!victim.hasMetadata("NPC")) {
                         arg2 = victimKarma;
-                    } else if (victim.getMetadata("Karma").get(0) != null) {
-                        arg2 = victim.getMetadata("Karma").get(0).asDouble();
-                    } else {
-                        return;
                     }
-                } else
+                    else if (victim.hasMetadata("Karma")) {
+                        if (victim.getMetadata("Karma").get(0) != null) {
+                            arg2 = victim.getMetadata("Karma").get(0).asDouble();
+                        } else {
+                            return;
+                        }
+                    }
+                } else {
                     arg2 = Double.parseDouble(arg2Str);
+                }
             }
 
             double formula = arg1 * (arg2 + arg3) / arg4;
@@ -136,6 +146,44 @@ public class HitEvents extends GetSet implements Listener {
 
             double attackerNewKarma = attackerInitialKarma + formula;
 
+            if (karma.getConfig().getBoolean("pvp.crime-time.enable") && !(attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
+                Long timeStamp = System.currentTimeMillis();
+                Long delay = karma.getConfig().getLong("pvp.crime-time.delay");
+
+                Long attackEnd = getPlayerLastAttack(attacker) + delay * 1000;
+                Long victimEnd = getPlayerLastAttack(victim) + delay * 1000;
+
+                if (getPlayerLastAttack(attacker) != 0L && getPlayerLastAttack(victim) != 0L) {
+                    if ( (timeStamp >= getPlayerLastAttack(attacker) && timeStamp <= attackEnd)
+                            || timeStamp > victimEnd ) {
+                        setLastAttackToPlayer(attacker);
+                    } else {
+                        if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
+                            message = configurationLang.getString("self-defending-off");
+                            adaptMessage.selfDefendMessage(message, attacker);
+                            return;
+                        }
+                        message = configurationLang.getString("self-defending-on");
+                        adaptMessage.selfDefendMessage(message, attacker);
+                    }
+                } else if (getPlayerLastAttack(victim) == 0L) {
+                    setLastAttackToPlayer(attacker);
+                } else if (getPlayerLastAttack(victim) != 0L) {
+                    if (timeStamp >= getPlayerLastAttack(victim) && timeStamp <= victimEnd) {
+                        if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
+                            message = configurationLang.getString("self-defending-off");
+                            adaptMessage.selfDefendMessage(message, attacker);
+                            return;
+                        }
+                        message = configurationLang.getString("self-defending-on");
+                        adaptMessage.selfDefendMessage(message, attacker);
+                    } else {
+                        setLastAttackToPlayer(attacker);
+                    }
+                }
+
+            }
+
             setKarmaToPlayer(attacker, attackerNewKarma);
             setTierToPlayer(attacker);
 
@@ -149,6 +197,16 @@ public class HitEvents extends GetSet implements Listener {
             if (message != null) {
                 adaptMessage.getPlayerHitMessage(message, attacker, attackerInitialKarma);
             }
+        }
+    }
+
+    private boolean doesDefendChangeKarma(double attackerInitialKarma, double attackerNewKarma) {
+        if (attackerNewKarma > attackerInitialKarma) {
+            return karma.getConfig().getBoolean("pvp.crime-time.active-on-up");
+        } else if (attackerNewKarma == attackerInitialKarma) {
+            return karma.getConfig().getBoolean("pvp.crime-time.active-on-still");
+        } else {
+            return karma.getConfig().getBoolean("pvp.crime-time.active-on-down");
         }
     }
 }

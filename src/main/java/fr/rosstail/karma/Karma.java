@@ -92,7 +92,8 @@ public class Karma extends JavaPlugin {
         String sql = "CREATE TABLE IF NOT EXISTS Karma ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
                 " NickName varchar(16) NOT NULL,\n" +
                 " Karma double,\n" +
-                " Tier varchar(50));";
+                " Tier varchar(50),\n" +
+                " Last_Attack int);";
         try {
             if (connection != null && !connection.isClosed()) {
                 Statement statement = connection.createStatement();
@@ -165,6 +166,8 @@ public class Karma extends JavaPlugin {
         configuration.set("remove-karma", "[Karma] &cRemoved &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier.");
         configuration.set("reset-karma", "[Karma] &6<player>&r's karma has been reset. Karma : &6<newKarma> &rand tier is &6<tier>&r.");
         configuration.set("tier-change", "[Karma] You are now a &6<tier> &r!");
+        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Uarma unchanged.");
+        configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma change.");
         configuration.set("permission-denied", "[Karma] &cYou don't have permission !");
 
         try {
@@ -193,6 +196,8 @@ public class Karma extends JavaPlugin {
         configuration.set("remove-karma", "[Karma] &cDiminution de &6<value> &rkarma pour &6<player> &rpour un total de &6<newKarma> &rkarma et l'alignement <tier>.");
         configuration.set("reset-karma", "[Karma] Le karma du joueur &6<player> &rest réinitialisé. Karma : &6<newKarma> &ret Alignement : &6<tier>&r.");
         configuration.set("tier-change", "[Karma] Vous êtes désormais un(e) &6<tier> &r!");
+        configuration.set("self-defending-off", "[Karma] Vous êtes en train de vous défendre ! Karma inchangé.");
+        configuration.set("self-defending-on", "[Karma] Vous vous défendez mais votre Karma change tout de même.");
         configuration.set("permission-denied", "[Karma] &cVous n'avez pas la permission !");
 
         try {
@@ -221,6 +226,8 @@ public class Karma extends JavaPlugin {
         configuration.set("remove-karma", "[Karma] &cEliminado &6<value> &rKarma a &6<player> &rcon un total de &6<newKarma> &rkarma y tier <tier>.");
         configuration.set("reset-karma", "[Karma] &rEl karma de &6<player>&r se ha reiniciado. Karma : &6<newKarma> &ry el tier es &6<tier>&r.");
         configuration.set("tier-change", "[Karma] ¡ Ahora eres &6<tier> &r!");
+        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Uarma unchanged.");
+        configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma change.");
         configuration.set("permission-denied", "[Karma] &c¡No tienes permiso!");
 
         try {
@@ -249,6 +256,8 @@ public class Karma extends JavaPlugin {
         configuration.set("remove-karma", "[Karma] &cAti scos &6<value> &rkarma de la &6<player> &rpentru un total de &6<newKarma> &rsi tier-ul <tier>.");
         configuration.set("reset-karma", "[Karma] &fKarma-ul lui &a<player>&fa fost resetat. Noul sau Karma este &a<newKarma>;Tier &2<tier>&r.");
         configuration.set("tier-change", "[Karma] Ai ajuns la tier &a<tier> &r!");
+        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Uarma unchanged.");
+        configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma change.");
         configuration.set("permission-denied", "[Karma] &fDin pacate nu ai &apermisiunea !");
 
         try {

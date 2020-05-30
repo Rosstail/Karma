@@ -6,15 +6,15 @@
 
     <groupId>io.github.Rosstail</groupId>
     <artifactId>Karma</artifactId>
-    <version>1.4.4</version>
+    <version>1.4.5</version>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>7</source>
-                    <target>7</target>
+                    <source>8</source>
+                    <target>8</target>
                 </configuration>
             </plugin>
         </plugins>

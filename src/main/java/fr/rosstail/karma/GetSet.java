@@ -99,6 +99,39 @@ public class GetSet {
     }
 
     /**
+     * Returns the Tier identifier of the player
+     * @param player
+     * @return
+     */
+    public Long getPlayerLastAttack(Player player) {
+        try {
+            if (!player.hasMetadata("NPC")) {
+                if (karma.connection != null && !karma.connection.isClosed()) {
+                    Statement statement = karma.connection.createStatement();
+                    String UUID = String.valueOf(player.getUniqueId());
+                    ResultSet result = statement.executeQuery("SELECT Last_Attack FROM Karma WHERE UUID = '" + UUID + "';");
+                    Long dateTime = 0L;
+                    while (result.next()) {
+                        dateTime = result.getLong("Last_Attack");
+                    }
+                    statement.close();
+                    return dateTime;
+                } else {
+                    String UUID = String.valueOf(player.getUniqueId());
+                    File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + UUID + ".yml");
+                    YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+                    return playerConfig.getLong("last-attack");
+                }
+            } else {
+                return 0L;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0L;
+    }
+
+    /**
      * return the displaying name of the tier.
      * @param player
      * @return
@@ -219,12 +252,13 @@ public class GetSet {
             try {
                 if (karma.connection != null && !karma.connection.isClosed()) {
                     PreparedStatement preparedStatement = karma.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier)\n" +
-                            "VALUES (?, ?, ?, ?);");
+                            "VALUES (?, ?, ?, ?, ?);");
 
                     preparedStatement.setString(1, String.valueOf(player.getUniqueId()));
                     preparedStatement.setString(2, player.getName());
                     preparedStatement.setDouble(3, value);
                     preparedStatement.setString(4, null);
+                    preparedStatement.setString(5, null);
 
                     preparedStatement.execute();
                     preparedStatement.close();
@@ -254,7 +288,7 @@ public class GetSet {
      * Update the new karma of the player if change is needed.
      * Uses local files or Database if connection is active
      * @param player -> the player
-     * @param value -> The new karma amoutn of the player
+     * @param value -> The new karma amount of the player
      */
     public void setKarmaToPlayer(Player player, double value) {
         try {
@@ -361,6 +395,35 @@ public class GetSet {
             e.printStackTrace();
         }
 
+    }
+
+    public void setLastAttackToPlayer(Player player) {
+        try {
+            if (!player.hasMetadata("NPC")) {
+                if (karma.connection != null && !karma.connection.isClosed()) {
+                    String query = "UPDATE Karma SET Last_Attack = ? WHERE UUID = ?;";
+                    PreparedStatement preparedStatement = karma.connection.prepareStatement(query);
+
+                    preparedStatement.setString(1, "NOW()");
+                    preparedStatement.executeUpdate();
+                    preparedStatement.close();
+                } else {
+                    File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+                    YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+                    playerConfig.set("last-attack", System.currentTimeMillis());
+                    try {
+                        playerConfig.save(playerFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            else {
+                return;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

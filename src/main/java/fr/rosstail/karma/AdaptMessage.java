@@ -23,6 +23,16 @@ public class AdaptMessage extends GetSet {
         }
     }
 
+    public void selfDefendMessage(String message, Player player) {
+        if (message != null) {
+            message = message.replaceAll("<player>", player.getName());
+            message = message.replaceAll("<newKarma>", Double.toString(getPlayerKarma(player)));
+            message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
+            message = ChatColor.translateAlternateColorCodes('&', message);
+            player.sendMessage(message);
+        }
+    }
+
     /**
      * Replaces every placeholders when a player hit an entity
      * @param message

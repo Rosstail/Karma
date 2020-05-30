@@ -1,5 +1,3 @@
-Config-version: 1.5.1
-
 mysql:
   active: false
   host: "localhost"
@@ -132,6 +130,14 @@ pvp:
     2: "<victimKarma>"
     3: 3000
     4: 10
+  crime-time: #if a player attacks another one, everybody can attack him back without karma changes (unless if the defender is an agressor)
+    enable: false
+    delay: 300 #delay in second that a player is an agressor.
+    # Enable or not the karma change if the defender won/less some karma or stay at the same karma.
+    # Useful for avoid messages in a future update too.
+    active-on-up: true
+    active-on-still: false
+    active-on-down: false
   #Sends a message to <attacker> when hitting / killing another player. You can use <attacker>, <attackerKarma>, <victim> and <victimKarma>.
   hit-message-on-karma-increase: "&aThat scum will not escape from that !"
   kill-message-on-karma-increase: "&bThat bastard is now finished !"
