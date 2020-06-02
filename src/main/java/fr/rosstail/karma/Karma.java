@@ -4,14 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -93,7 +88,7 @@ public class Karma extends JavaPlugin {
                 " NickName varchar(16) NOT NULL,\n" +
                 " Karma double,\n" +
                 " Tier varchar(50),\n" +
-                " Last_Attack int);";
+                " Last_Attack bigint(20));";
         try {
             if (connection != null && !connection.isClosed()) {
                 Statement statement = connection.createStatement();
@@ -157,16 +152,16 @@ public class Karma extends JavaPlugin {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         configuration.set("by-player-only", "[Karma] This command must be send by a player.");
         configuration.set("creating-playerdata-folder", "[Karma] &9playerdata/ folder doesn't exists. &aCreating it&7.");
-        configuration.set("creating-player", "[Karma] &9Creating player file for &a<player>&9.");
-        configuration.set("disconnected-player", "[Karma] &c<player> is not connected or does not exists.");
-        configuration.set("check-own-karma", "[Karma] Your karma is &a<karma> &rand your tier is &6<tier>&r.");
-        configuration.set("check-other-karma", "[Karma] &6<player>'s &rkarma is &6<karma> &rand his tier is &6<tier>&r.");
-        configuration.set("set-karma", "[Karma] &9<player>'s &rKarma is now &9<newKarma> &rand his Tier is &9<tier>&r.");
-        configuration.set("add-karma", "[Karma] &aAdded &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier.");
-        configuration.set("remove-karma", "[Karma] &cRemoved &6<value> &rKarma to &6<player> &rfor a total of &6<newKarma> &rkarma and the <tier> tier.");
-        configuration.set("reset-karma", "[Karma] &6<player>&r's karma has been reset. Karma : &6<newKarma> &rand tier is &6<tier>&r.");
-        configuration.set("tier-change", "[Karma] You are now a &6<tier> &r!");
-        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Uarma unchanged.");
+        configuration.set("creating-player", "[Karma] &9Creating player file for &a<PLAYER>&9.");
+        configuration.set("disconnected-player", "[Karma] &c<PLAYER> is not connected or does not exists.");
+        configuration.set("check-own-karma", "[Karma] Your karma is &a<KARMA> &rand your tier is &6<TIER>&r.");
+        configuration.set("check-other-karma", "[Karma] &6<PLAYER>'s &rkarma is &6<KARMA> &rand his tier is &6<TIER>&r.");
+        configuration.set("set-karma", "[Karma] &9<PLAYER>'s &rKarma is now &9<KARMA> &rand his Tier is &9<TIER>&r.");
+        configuration.set("add-karma", "[Karma] &aAdded &6<VALUE> &rKarma to &6<PLAYER> &rfor a total of &6<KARMA> &rkarma and the <TIER> tier.");
+        configuration.set("remove-karma", "[Karma] &cRemoved &6<VALUE> &rKarma to &6<PLAYER> &rfor a total of &6<KARMA> &rkarma and the <TIER> tier.");
+        configuration.set("reset-karma", "[Karma] &6<PLAYER>&r's karma has been reset. Karma : &6<KARMA> &rand tier is &6<TIER>&r.");
+        configuration.set("tier-change", "[Karma] You are now a &6<TIER> &r!");
+        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Karma unchanged.");
         configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma change.");
         configuration.set("permission-denied", "[Karma] &cYou don't have permission !");
 
@@ -187,15 +182,15 @@ public class Karma extends JavaPlugin {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         configuration.set("by-player-only", "[Karma] Cette commande doit être lancée par un joueur.");
         configuration.set("creating-playerdata-folder", "[Karma] Le dossier &9playerdata/ &rn'existe pas. &aCréation&7...");
-        configuration.set("creating-player", "[Karma] &9Création du fichier de joueur pour &a<player>&9.");
-        configuration.set("disconnected-player", "[Karma] &c<player> est déconnecté ou n'existe pas.");
-        configuration.set("check-own-karma", "[Karma] Votre karma est de &a<karma> &ret votre alignement est &6<tier>&r.");
-        configuration.set("check-other-karma", "[Karma] Le karma de &6<player> &rest &6<karma> &ret son alignement est &6<tier>&r.");
-        configuration.set("set-karma", "[Karma] Le karma de &9<player> &rest désormais de &9<newKarma> &ret son alignement est &9<tier>&r.");
-        configuration.set("add-karma", "[Karma] &aAjout de &6<value> &rde karma à &6<player> &rpour un total de &6<newKarma> &rkarma et l'alignement <tier>.");
-        configuration.set("remove-karma", "[Karma] &cDiminution de &6<value> &rkarma pour &6<player> &rpour un total de &6<newKarma> &rkarma et l'alignement <tier>.");
-        configuration.set("reset-karma", "[Karma] Le karma du joueur &6<player> &rest réinitialisé. Karma : &6<newKarma> &ret Alignement : &6<tier>&r.");
-        configuration.set("tier-change", "[Karma] Vous êtes désormais un(e) &6<tier> &r!");
+        configuration.set("creating-player", "[Karma] &9Création du fichier de joueur pour &a<PLAYER>&9.");
+        configuration.set("disconnected-player", "[Karma] &c<PLAYER> est déconnecté ou n'existe pas.");
+        configuration.set("check-own-karma", "[Karma] Votre karma est de &a<KARMA> &ret votre alignement est &6<TIER>&r.");
+        configuration.set("check-other-karma", "[Karma] Le karma de &6<PLAYER> &rest &6<KARMA> &ret son alignement est &6<TIER>&r.");
+        configuration.set("set-karma", "[Karma] Le karma de &9<PLAYER> &rest désormais de &9<KARMA> &ret son alignement est &9<TIER>&r.");
+        configuration.set("add-karma", "[Karma] &aAjout de &6<VALUE> &rde karma à &6<PLAYER> &rpour un total de &6<KARMA> &rkarma et l'alignement <TIER>.");
+        configuration.set("remove-karma", "[Karma] &cDiminution de &6<VALUE> &rkarma pour &6<PLAYER> &rpour un total de &6<KARMA> &rkarma et l'alignement <TIER>.");
+        configuration.set("reset-karma", "[Karma] Le karma du joueur &6<PLAYER> &rest réinitialisé. Karma : &6<KARMA> &ret Alignement : &6<TIER>&r.");
+        configuration.set("tier-change", "[Karma] Vous êtes désormais un(e) &6<TIER> &r!");
         configuration.set("self-defending-off", "[Karma] Vous êtes en train de vous défendre ! Karma inchangé.");
         configuration.set("self-defending-on", "[Karma] Vous vous défendez mais votre Karma change tout de même.");
         configuration.set("permission-denied", "[Karma] &cVous n'avez pas la permission !");
@@ -217,16 +212,16 @@ public class Karma extends JavaPlugin {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         configuration.set("by-player-only", "[Karma] Este comando es solo para jugadores.");
         configuration.set("creating-playerdata-folder", "[Karma] &9Carpeta playerdata/ no exite. &aCreandola&7.");
-        configuration.set("creating-player", "[Karma] &9Creando un archivo de jugador para &a<player>&9.");
-        configuration.set("disconnected-player", "[Karma] &c<player> no esta conectado o no exite.");
-        configuration.set("check-own-karma", "[Karma] Tu karma es &a<karma> &ry tu Tier es &6<tier>&r.");
-        configuration.set("check-other-karma", "[Karma] &rEl karma de &6<player> &res &6<karma> &ry su Tier es &6<tier>&r.");
-        configuration.set("set-karma", "[Karma] &rEl karma de &9<player>'s &rahora es &9<newKarma> &ry su Tier es &9<tier>&r.");
-        configuration.set("add-karma", "[Karma] &aSe añadido &6<value> &rKarma a &6<player> &rcon un total de &6<newKarma> &rkarma y tier <tier>.");
-        configuration.set("remove-karma", "[Karma] &cEliminado &6<value> &rKarma a &6<player> &rcon un total de &6<newKarma> &rkarma y tier <tier>.");
-        configuration.set("reset-karma", "[Karma] &rEl karma de &6<player>&r se ha reiniciado. Karma : &6<newKarma> &ry el tier es &6<tier>&r.");
-        configuration.set("tier-change", "[Karma] ¡ Ahora eres &6<tier> &r!");
-        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Uarma unchanged.");
+        configuration.set("creating-player", "[Karma] &9Creando un archivo de jugador para &a<PLAYER>&9.");
+        configuration.set("disconnected-player", "[Karma] &c<PLAYER> no esta conectado o no exite.");
+        configuration.set("check-own-karma", "[Karma] Tu karma es &a<KARMA> &ry tu Tier es &6<TIER>&r.");
+        configuration.set("check-other-karma", "[Karma] &rEl karma de &6<PLAYER> &res &6<KARMA> &ry su Tier es &6<TIER>&r.");
+        configuration.set("set-karma", "[Karma] &rEl karma de &9<PLAYER>'s &rahora es &9<KARMA> &ry su Tier es &9<TIER>&r.");
+        configuration.set("add-karma", "[Karma] &aSe añadido &6<VALUE> &rKarma a &6<PLAYER> &rcon un total de &6<KARMA> &rkarma y tier <TIER>.");
+        configuration.set("remove-karma", "[Karma] &cEliminado &6<VALUE> &rKarma a &6<PLAYER> &rcon un total de &6<KARMA> &rkarma y tier <TIER>.");
+        configuration.set("reset-karma", "[Karma] &rEl karma de &6<PLAYER>&r se ha reiniciado. Karma : &6<KARMA> &ry el tier es &6<TIER>&r.");
+        configuration.set("tier-change", "[Karma] ¡ Ahora eres &6<TIER> &r!");
+        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Karma unchanged.");
         configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma change.");
         configuration.set("permission-denied", "[Karma] &c¡No tienes permiso!");
 
@@ -247,16 +242,16 @@ public class Karma extends JavaPlugin {
         YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         configuration.set("by-player-only", "[Karma] &fComanda aceasta trebuie executata de catre un jucator!");
         configuration.set("creating-playerdata-folder", "[Karma] &fNu exista \"playerdata\", asa ca creem noi!");
-        configuration.set("creating-player", "[Karma] &fCreem un jucator cu numele &a<player>");
-        configuration.set("disconnected-player", "[Karma] &a<player> nu este pe server, sau nu exista.");
-        configuration.set("check-own-karma", "[Karma] Karma-ul tau este &a<karma> &fsi tier-ul tau este &2<tier>&r.");
-        configuration.set("check-other-karma", "[Karma] &a<player> &fdetine &a<karma> &fKarma si tier-ul sau este &2<tier>&r.");
-        configuration.set("set-karma", "[Karma] &9<player>''s &rAi setat karma &a<newKarma> &rsi tier &2<tier>&r.");
-        configuration.set("add-karma", "[Karma] &fAi scos &a<value> &rKarma de la &2<player> &rel acum detine de &a<newKarma> &rKarma si tier-ul&2 <tier>.");
-        configuration.set("remove-karma", "[Karma] &cAti scos &6<value> &rkarma de la &6<player> &rpentru un total de &6<newKarma> &rsi tier-ul <tier>.");
-        configuration.set("reset-karma", "[Karma] &fKarma-ul lui &a<player>&fa fost resetat. Noul sau Karma este &a<newKarma>;Tier &2<tier>&r.");
-        configuration.set("tier-change", "[Karma] Ai ajuns la tier &a<tier> &r!");
-        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Uarma unchanged.");
+        configuration.set("creating-player", "[Karma] &fCreem un jucator cu numele &a<PLAYER>");
+        configuration.set("disconnected-player", "[Karma] &a<PLAYER> nu este pe server, sau nu exista.");
+        configuration.set("check-own-karma", "[Karma] Karma-ul tau este &a<KARMA> &fsi tier-ul tau este &2<TIER>&r.");
+        configuration.set("check-other-karma", "[Karma] &a<PLAYER> &fdetine &a<KARMA> &fKarma si tier-ul sau este &2<TIER>&r.");
+        configuration.set("set-karma", "[Karma] &9<PLAYER>''s &rAi setat karma &a<KARMA> &rsi tier &2<TIER>&r.");
+        configuration.set("add-karma", "[Karma] &fAi scos &a<VALUE> &rKarma de la &2<PLAYER> &rel acum detine de &a<KARMA> &rKarma si tier-ul&2 <TIER>.");
+        configuration.set("remove-karma", "[Karma] &cAti scos &6<VALUE> &rkarma de la &6<PLAYER> &rpentru un total de &6<KARMA> &rsi tier-ul <TIER>.");
+        configuration.set("reset-karma", "[Karma] &fKarma-ul lui &a<PLAYER>&fa fost resetat. Noul sau Karma este &a<KARMA>;Tier &2<TIER>&r.");
+        configuration.set("tier-change", "[Karma] Ai ajuns la tier &a<TIER> &r!");
+        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Karma unchanged.");
         configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma change.");
         configuration.set("permission-denied", "[Karma] &fDin pacate nu ai &apermisiunea !");
 

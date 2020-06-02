@@ -1,7 +1,6 @@
 package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -97,8 +96,8 @@ public class HitEvents extends GetSet implements Listener {
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".hit-message");
 
-        if (!(message == null || attacker == null)) {
-            adaptMessage.getEntityHitMessage(message, attacker, reward);
+        if (attacker != null) {
+            adaptMessage.entityHitMessage(message, attacker, reward);
         }
     }
 
@@ -118,7 +117,7 @@ public class HitEvents extends GetSet implements Listener {
             double arg4 = karma.getConfig().getDouble("pvp.hit-reward-variables.4");
 
             if (arg2Str != null) {
-                if (arg2Str.equals("<victimKarma>")) {
+                if (arg2Str.equalsIgnoreCase("<VICTIM_KARMA>")) {
                     if (!victim.hasMetadata("NPC")) {
                         arg2 = victimKarma;
                     }
@@ -160,11 +159,11 @@ public class HitEvents extends GetSet implements Listener {
                     } else {
                         if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
                             message = configurationLang.getString("self-defending-off");
-                            adaptMessage.selfDefendMessage(message, attacker);
+                            adaptMessage.message(null, attacker, 0, message);
                             return;
                         }
                         message = configurationLang.getString("self-defending-on");
-                        adaptMessage.selfDefendMessage(message, attacker);
+                        adaptMessage.message(null, attacker, 0, message);
                     }
                 } else if (getPlayerLastAttack(victim) == 0L) {
                     setLastAttackToPlayer(attacker);
@@ -172,11 +171,11 @@ public class HitEvents extends GetSet implements Listener {
                     if (timeStamp >= getPlayerLastAttack(victim) && timeStamp <= victimEnd) {
                         if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
                             message = configurationLang.getString("self-defending-off");
-                            adaptMessage.selfDefendMessage(message, attacker);
+                            adaptMessage.message(null, attacker, 0, message);
                             return;
                         }
                         message = configurationLang.getString("self-defending-on");
-                        adaptMessage.selfDefendMessage(message, attacker);
+                        adaptMessage.message(null, attacker, 0, message);
                     } else {
                         setLastAttackToPlayer(attacker);
                     }
@@ -195,7 +194,7 @@ public class HitEvents extends GetSet implements Listener {
                 message = karma.getConfig().getString("pvp.hit-message-on-karma-decrease");
             }
             if (message != null) {
-                adaptMessage.getPlayerHitMessage(message, attacker, attackerInitialKarma);
+                adaptMessage.playerHitMessage(message, attacker, victim, attackerInitialKarma);
             }
         }
     }

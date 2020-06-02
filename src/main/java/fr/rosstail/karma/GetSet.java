@@ -22,6 +22,7 @@ public class GetSet {
 
     private File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
     private YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+    private int nbDec = karma.getConfig().getInt("general.decimal-number-to-show");
 
     public boolean ifPlayerExistsInDTB(Player player) {
         try {
@@ -124,6 +125,7 @@ public class GetSet {
                 }
             } else {
                 return 0L;
+                //return player.getMetadata("Last_Attack").get(0).asLong();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -251,7 +253,7 @@ public class GetSet {
             double value = karma.getConfig().getInt("karma.default-karma");
             try {
                 if (karma.connection != null && !karma.connection.isClosed()) {
-                    PreparedStatement preparedStatement = karma.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier)\n" +
+                    PreparedStatement preparedStatement = karma.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier, Last_Attack)\n" +
                             "VALUES (?, ?, ?, ?, ?);");
 
                     preparedStatement.setString(1, String.valueOf(player.getUniqueId()));
@@ -379,10 +381,12 @@ public class GetSet {
                         }
 
                         changePlayerTierMessage(player);
-                        if (array.contains(tier)) {
-                            tierCommandsLauncherOnUp(player);
-                        } else {
-                            tierCommandsLauncherOnDown(player);
+                        if (tier != null) {
+                            if (array.contains(tier)) {
+                                tierCommandsLauncherOnUp(player);
+                            } else {
+                                tierCommandsLauncherOnDown(player);
+                            }
                         }
                         tierCommandsLauncher(player);
                         break;
@@ -452,7 +456,7 @@ public class GetSet {
     private void changePlayerTierMessage(Player player) {
         String message = configurationLang.getString("tier-change");
         if (message != null) {
-            message = message.replaceAll("<tier>", getPlayerDisplayTier(player));
+            message = message.replaceAll("<TIER>", getPlayerDisplayTier(player));
             message = ChatColor.translateAlternateColorCodes('&', message);
             player.sendMessage(message);
         }
@@ -495,15 +499,9 @@ public class GetSet {
     }
 
     private void placeCommands(Player player, String command) {
-        if (command.contains("<player>")) {
-            command = command.replaceAll("<player>", player.getName());
-        }
-        if (command.contains("karma")) {
-            command = command.replaceAll("<karma>", Double.toString(getPlayerKarma(player)));
-        }
-        if (command.contains("<tier>")) {
-            command = command.replaceAll("<tier>", getPlayerDisplayTier(player));
-        }
+            command = command.replaceAll("<PLAYER>", player.getName());
+            command = command.replaceAll("<KARMA>", String.format("%." + nbDec + "f", getPlayerKarma(player)));
+            command = command.replaceAll("<TIER>", getPlayerDisplayTier(player));
         command = ChatColor.translateAlternateColorCodes('&', command);
 
         if (command.startsWith("<@>")) {

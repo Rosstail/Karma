@@ -72,7 +72,7 @@ public class KillEvents extends GetSet implements Listener {
         }
 
         message = karma.getConfig().getString("entities." + livingEntityName + ".kill-message");
-        adaptMessage.getEntityKillMessage(message, killer, reward);
+        adaptMessage.entityKillMessage(message, killer, reward);
     }
 
     /**
@@ -103,7 +103,7 @@ public class KillEvents extends GetSet implements Listener {
             double arg4 = karma.getConfig().getInt("pvp.kill-reward-variables.4");
 
             if (arg2Str != null) {
-                if (arg2Str.equals("<victimKarma>")) {
+                if (arg2Str.equalsIgnoreCase("<VICTIM_KARMA>")) {
                     if (!victim.hasMetadata("NPC")) {
                         arg2 = victimKarma;
                     }
@@ -145,11 +145,11 @@ public class KillEvents extends GetSet implements Listener {
                     } else {
                         if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
                             message = configurationLang.getString("self-defending-off");
-                            adaptMessage.selfDefendMessage(message, killer);
+                            adaptMessage.message(null, killer, 0, message);
                             return;
                         }
                         message = configurationLang.getString("self-defending-on");
-                        adaptMessage.selfDefendMessage(message, killer);
+                        adaptMessage.message(null, killer, 0, message);
                     }
                 } else if (getPlayerLastAttack(victim) == 0L) {
                     setLastAttackToPlayer(killer);
@@ -157,11 +157,11 @@ public class KillEvents extends GetSet implements Listener {
                     if (timeStamp >= getPlayerLastAttack(victim) && timeStamp <= victimEnd) {
                         if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
                             message = configurationLang.getString("self-defending-off");
-                            adaptMessage.selfDefendMessage(message, killer);
+                            adaptMessage.message(null, killer, 0, message);
                             return;
                         }
                         message = configurationLang.getString("self-defending-on");
-                        adaptMessage.selfDefendMessage(message, killer);
+                        adaptMessage.message(null, killer, 0, message);
                     } else {
                         setLastAttackToPlayer(killer);
                     }
@@ -179,9 +179,7 @@ public class KillEvents extends GetSet implements Listener {
             else if (killerNewKarma < killerInitialKarma) {
                 message = karma.getConfig().getString("pvp.kill-message-on-karma-decrease");
             }
-            if (message != null) {
-                adaptMessage.getPlayerKillMessage(message, killer, killerInitialKarma);
-            }
+            adaptMessage.playerKillMessage(message, killer, victim, killerInitialKarma);
         }
     }
 

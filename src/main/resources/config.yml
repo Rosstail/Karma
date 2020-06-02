@@ -8,13 +8,14 @@ mysql:
 
 general:
   lang: "en_EN"
+  decimal-number-to-show: 2
   delay-between-hit-messages: 5
   delay-between-kill-messages: 10
   use-worldguard: false #works only for Worldguard 7+
 
 karma:
   default-karma:       0
-  minimum-karma: -500000
+  minimum-karma: -300000
   maximum-karma:  300000
 
 tiers:
@@ -23,7 +24,7 @@ tiers:
     tier-minimum-karma: -300000
     tier-maximum-karma: -150000
     commands:
-      - "me &8is the baddest <tier>."
+      - "me &8is the baddest <TIER>."
       - "me another command"
       - "<@>me command from console"
   tier-2:
@@ -53,7 +54,7 @@ tiers:
     tier-maximum-karma:    4999
     commands:
       - "me &7is the neutral neutral alignment."
-      - "<@>me &6<player> &aHey ! Your karma is &6<karma> &r!"
+      - "<@>me &6<PLAYER> &aHey ! Your karma is &6<KARMA> &r!"
     commands-on-up:
       - "me I'm not a thug anymore !"
     commands-on-down:
@@ -149,7 +150,7 @@ entities:
     hit-karma-reward:      1
     hit-message: "Run villager, RUN !!!"
     kill-karma-reward:     3
-    kill-message: "<attacker> : You captured a bee ! &5*Animal Crossing MLG music* &a<previousKarma> + <reward> = <karma>"
+    kill-message: "<ATTACKER> : You captured a bee ! &5*Animal Crossing MLG music* &a<OLD_KARMA> + <VALUE> = <KARMA>"
   Cat:
     hit-karma-reward:    -10
     hit-message: "&cYou DARE put a hand on your Master ?!!"
@@ -173,8 +174,8 @@ entities:
     hit-karma-reward:    -34
     kill-karma-reward:  -651
   Wolf:
-    hit-message: "Hunt a wolf doesn't change your karma : &d<karma>"
-    kill-message: "You successfully hunt the wolf : &5<karma>"
+    hit-message: "Hunt a wolf doesn't change your karma : &d<KARMA>"
+    kill-message: "You successfully hunt the wolf : &5<KARMA>"
   Zombie:
     hit-karma-reward:      5
     hit-message: "Aim his head !"

@@ -35,7 +35,7 @@ public class EditKarmaCommand extends GetSet {
             setKarmaToPlayer(player, value);
 
             message = configurationLang.getString("set-karma");
-            adaptMessage.editKarmaMessage(commandSender, player, message, value);
+            adaptMessage.message(commandSender, player, value, message);
         }
         else {
             disconnectedPlayer(commandSender, args);
@@ -59,7 +59,7 @@ public class EditKarmaCommand extends GetSet {
             setTierToPlayer(player);
 
             message = configurationLang.getString("add-karma");
-            adaptMessage.editKarmaMessage(commandSender, player, message, value);
+            adaptMessage.message(commandSender, player, value, message);
 
         } else {
             disconnectedPlayer(commandSender, args);
@@ -82,7 +82,7 @@ public class EditKarmaCommand extends GetSet {
             setKarmaToPlayer(player, targetNewKarma);
 
             message = configurationLang.getString("remove-karma");
-            adaptMessage.editKarmaMessage(commandSender, player, message, value);
+            adaptMessage.message(commandSender, player, value, message);
 
         } else {
             disconnectedPlayer(commandSender, args);
@@ -102,7 +102,7 @@ public class EditKarmaCommand extends GetSet {
             setKarmaToPlayer(player, resKarma);
 
             message = configurationLang.getString("reset-karma");
-            adaptMessage.editKarmaMessage(commandSender, player, message, 0);
+            adaptMessage.message(commandSender, player, 0, message);
         }
         else {
             disconnectedPlayer(commandSender, args);
@@ -116,6 +116,6 @@ public class EditKarmaCommand extends GetSet {
     private void disconnectedPlayer(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         message = configurationLang.getString("disconnected-player");
-        adaptMessage.editKarmaMessage(commandSender, player, message, 0);
+        adaptMessage.message(commandSender, player, 0, message);
     }
 }

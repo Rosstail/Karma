@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,6 +16,7 @@ public class PlayerConnect extends GetSet implements Listener {
     private Karma karma = Karma.get();
     String message = null;
 
+    AdaptMessage adaptMessage = new AdaptMessage();
     File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
     YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
 
@@ -56,11 +56,7 @@ public class PlayerConnect extends GetSet implements Listener {
                     }
 
                     message = configurationLang.getString("creating-player");
-                    if (message != null) {
-                        message = message.replaceAll("<player>", player.getName());
-                        message = ChatColor.translateAlternateColorCodes('&', message);
-                        System.out.println(message);
-                    }
+                    adaptMessage.message(null, player, 0, message);
                 }
             }
         } catch (

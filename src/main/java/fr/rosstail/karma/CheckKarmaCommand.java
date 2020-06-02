@@ -1,7 +1,6 @@
 package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -14,7 +13,7 @@ import java.io.File;
 public class CheckKarmaCommand extends GetSet {
     private Karma karma = Karma.get();
     String message = null;
-
+    AdaptMessage adaptMessage = new AdaptMessage();
     File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
     YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
 
@@ -33,40 +32,21 @@ public class CheckKarmaCommand extends GetSet {
 
         if (player != null && player.isOnline()) {
             message = configurationLang.getString("check-other-karma");
-            double targetKarma = getPlayerKarma(player);
-            String targetTierDisplay = getPlayerDisplayTier(player);
-
-            message = message.replaceAll("<karma>", String.valueOf(targetKarma));
-            message = message.replaceAll("<tier>", String.valueOf(targetTierDisplay));
         } else {
             message = configurationLang.getString("disconnected-player");
         }
-
-        if (message != null) {
-            message = message.replaceAll("<player>", args[0]);
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            commandSender.sendMessage(message);
-        }
+        adaptMessage.message(commandSender, player, 0, message);
     }
 
     /**
      * Used when a player use /karma without argument behind
-     * @param commandSender
+     * @param sender
      */
-    public void karmaSelf(CommandSender commandSender)
+    public void karmaSelf(CommandSender sender)
     {
-        Player player = (Player) commandSender;
-        double playerKarma = getPlayerKarma(player);
-        String playerTierDisplay = getPlayerDisplayTier(player);
+        Player player = (Player) sender;
 
         message = configurationLang.getString("check-own-karma");
-        if (message != null) {
-            message = message.replaceAll("<player>", player.getName());
-            message = message.replaceAll("<karma>", String.valueOf(playerKarma));
-            message = message.replaceAll("<tier>", String.valueOf(playerTierDisplay));
-
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            player.sendMessage(message);
-        }
+        adaptMessage.message(player, player, 0, message);
     }
 }

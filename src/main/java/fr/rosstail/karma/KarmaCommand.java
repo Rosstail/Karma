@@ -23,59 +23,59 @@ public class KarmaCommand implements CommandExecutor {
     public KarmaCommand() {
     }
 
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length >= 3) {
             if (args[0].equalsIgnoreCase("set")) {
-                if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.set")) {
-                    editKarmaCommand.karmaSet(commandSender, args);
+                if (!(sender instanceof Player) || sender.hasPermission("karma.set")) {
+                    editKarmaCommand.karmaSet(sender, args);
                 } else {
-                    permissionDenied(commandSender);
+                    permissionDenied(sender);
                 }
             }
             else if (args[0].equalsIgnoreCase("add")) {
-                if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.add")) {
-                    editKarmaCommand.karmaAdd(commandSender, args);
+                if (!(sender instanceof Player) || sender.hasPermission("karma.add")) {
+                    editKarmaCommand.karmaAdd(sender, args);
                 } else {
-                    permissionDenied(commandSender);
+                    permissionDenied(sender);
                 }
             }
             else if (args[0].equalsIgnoreCase("remove")) {
-                if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.remove")) {
-                editKarmaCommand.karmaRemove(commandSender, args);
+                if (!(sender instanceof Player) || sender.hasPermission("karma.remove")) {
+                editKarmaCommand.karmaRemove(sender, args);
                 } else {
-                    permissionDenied(commandSender);
+                    permissionDenied(sender);
                 }
             }
         }
         else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("reset")) {
-                if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.reset")) {
-                editKarmaCommand.karmaReset(commandSender, args);
+                if (!(sender instanceof Player) || sender.hasPermission("karma.reset")) {
+                editKarmaCommand.karmaReset(sender, args);
                 } else {
-                    permissionDenied(commandSender);
+                    permissionDenied(sender);
                 }
             }
         }
         else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")) {
-                if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.reload")) {
-                    commandSender.sendMessage("Karma can't be reload alone for now. Please wait a future update.");
+                if (!(sender instanceof Player) || sender.hasPermission("karma.reload")) {
+                    sender.sendMessage("Karma can't be reload alone for now. Please wait a future update.");
                 } else {
-                    permissionDenied(commandSender);
+                    permissionDenied(sender);
                 }
             }
-            else if (!(commandSender instanceof Player) || commandSender.hasPermission("karma.other")) {
-                checkKarmaCommand.karmaOther(commandSender, args);
+            else if (!(sender instanceof Player) || sender.hasPermission("karma.other")) {
+                checkKarmaCommand.karmaOther(sender, args);
             }
             else {
-                permissionDenied(commandSender);
+                permissionDenied(sender);
             }
         }
-        else if (commandSender instanceof Player) {
-            if (commandSender.hasPermission("karma.own")) {
-                checkKarmaCommand.karmaSelf(commandSender);
+        else if (sender instanceof Player) {
+            if (sender.hasPermission("karma.own")) {
+                checkKarmaCommand.karmaSelf(sender);
             } else {
-                permissionDenied(commandSender);
+                permissionDenied(sender);
             }
         }
         else {
@@ -83,14 +83,13 @@ public class KarmaCommand implements CommandExecutor {
 
             if (message != null) {
                 message = ChatColor.translateAlternateColorCodes('&', message);
-                commandSender.sendMessage(message);
+                sender.sendMessage(message);
             }
         }
         return true;
     }
 
     private void permissionDenied(CommandSender commandSender) {
-
         String message = configurationLang.getString("permission-denied");
         if (message != null) {
             message = ChatColor.translateAlternateColorCodes('&', message);
