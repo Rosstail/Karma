@@ -19,6 +19,7 @@ import java.util.Set;
  */
 public class GetSet {
     private Karma karma = Karma.get();
+    private PAPI papi = new PAPI();
 
     private File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
     private YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
@@ -458,6 +459,7 @@ public class GetSet {
         if (message != null) {
             message = message.replaceAll("<TIER>", getPlayerDisplayTier(player));
             message = ChatColor.translateAlternateColorCodes('&', message);
+            message = papi.setPlaceholdersOnMessage(message, player);
             player.sendMessage(message);
         }
     }
@@ -499,10 +501,11 @@ public class GetSet {
     }
 
     private void placeCommands(Player player, String command) {
-            command = command.replaceAll("<PLAYER>", player.getName());
-            command = command.replaceAll("<KARMA>", String.format("%." + nbDec + "f", getPlayerKarma(player)));
-            command = command.replaceAll("<TIER>", getPlayerDisplayTier(player));
+        command = command.replaceAll("<PLAYER>", player.getName());
+        command = command.replaceAll("<KARMA>", String.format("%." + nbDec + "f", getPlayerKarma(player)));
+        command = command.replaceAll("<TIER>", getPlayerDisplayTier(player));
         command = ChatColor.translateAlternateColorCodes('&', command);
+        command = papi.setPlaceholdersOnMessage(command, player);
 
         if (command.startsWith("<@>")) {
             command = command.replaceAll("<@>", "");

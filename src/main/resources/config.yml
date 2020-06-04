@@ -12,6 +12,7 @@ general:
   delay-between-hit-messages: 5
   delay-between-kill-messages: 10
   use-worldguard: false #works only for Worldguard 7+
+  use-action-bar-for-actions: true
 
 karma:
   default-karma:       0
@@ -120,15 +121,15 @@ times:
       chance: 30
 
 pvp:
-  # The 2nd argument must be <victimKarma> OR a number, inside brackets.
+  # The 2nd argument must be <VICTIM_KARMA> OR a number, inside brackets.
   hit-reward-variables: #FORMULA IS     attackerKarma + [1] * ([2] + [3]) / [4]
     1: -1
-    2: "<victimKarma>"
+    2: "<VICTIM_KARMA>"
     3: 3000
     4: 50
   kill-reward-variables: #FORMULA IS     attackerKarma + [1] * ([2] + [3]) / [4]
     1: -1
-    2: "<victimKarma>"
+    2: "<VICTIM_KARMA>"
     3: 3000
     4: 10
   crime-time: #if a player attacks another one, everybody can attack him back without karma changes (unless if the defender is an agressor)

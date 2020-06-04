@@ -14,6 +14,8 @@ import java.io.File;
  */
 public class KarmaCommand implements CommandExecutor {
     private Karma karma = Karma.get();
+    private PAPI papi = new PAPI();
+
     CheckKarmaCommand checkKarmaCommand = new CheckKarmaCommand();
     EditKarmaCommand editKarmaCommand = new EditKarmaCommand();
 
@@ -59,7 +61,7 @@ public class KarmaCommand implements CommandExecutor {
         else if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")) {
                 if (!(sender instanceof Player) || sender.hasPermission("karma.reload")) {
-                    sender.sendMessage("Karma can't be reload alone for now. Please wait a future update.");
+                    sender.sendMessage("Karma can't be reloaded by itself for now. Please wait a future update.");
                 } else {
                     permissionDenied(sender);
                 }
@@ -83,17 +85,19 @@ public class KarmaCommand implements CommandExecutor {
 
             if (message != null) {
                 message = ChatColor.translateAlternateColorCodes('&', message);
+                message = papi.setPlaceholdersOnMessage(message, (Player) sender);
                 sender.sendMessage(message);
             }
         }
         return true;
     }
 
-    private void permissionDenied(CommandSender commandSender) {
+    private void permissionDenied(CommandSender sender) {
         String message = configurationLang.getString("permission-denied");
         if (message != null) {
             message = ChatColor.translateAlternateColorCodes('&', message);
-            commandSender.sendMessage(message);
+            message = papi.setPlaceholdersOnMessage(message, (Player) sender);
+            sender.sendMessage(message);
         }
     }
 }

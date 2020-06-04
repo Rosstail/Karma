@@ -1,5 +1,9 @@
 package fr.rosstail.karma;
 
+import me.clip.placeholderapi.PlaceholderAPI;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -9,8 +13,11 @@ import java.util.Map;
 
 public class AdaptMessage extends GetSet {
     private Karma karma = Karma.get();
+    private PAPI papi = new PAPI();
+
     private Map<String, Long> cooldown = new HashMap<String, Long>();
     private int nbDec = karma.getConfig().getInt("general.decimal-number-to-show");
+    private boolean msgStyle = karma.getConfig().getBoolean("general.use-action-bar-on-actions");
 
     /**
      * Sends automatically the message to the sender with some parameters
@@ -32,6 +39,7 @@ public class AdaptMessage extends GetSet {
                 message = message.replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
             }
 
+            message = papi.setPlaceholdersOnMessage(message, player);
             message = ChatColor.translateAlternateColorCodes('&', message);
             if (message != null) {
                 if (sender != null) {
@@ -51,6 +59,8 @@ public class AdaptMessage extends GetSet {
             message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", value));
             message = message.replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
             message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
+
+            message = papi.setPlaceholdersOnMessage(message, player);
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
@@ -64,7 +74,11 @@ public class AdaptMessage extends GetSet {
 
         cooldown.put(player.getName(), System.currentTimeMillis());
         if (message != null) {
-            player.sendMessage(message);
+            if (msgStyle) {
+                sendActionBar(player, message);
+            } else {
+                player.sendMessage(message);
+            }
         }
     }
 
@@ -77,6 +91,8 @@ public class AdaptMessage extends GetSet {
             message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", value));
             message = message.replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
             message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
+
+            message = papi.setPlaceholdersOnMessage(message, player);
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
@@ -91,7 +107,11 @@ public class AdaptMessage extends GetSet {
 
         cooldown.put(player.getName(), System.currentTimeMillis());
         if (message != null) {
-            player.sendMessage(message);
+            if (msgStyle) {
+                sendActionBar(player, message);
+            } else {
+                player.sendMessage(message);
+            }
         }
     }
 
@@ -110,6 +130,7 @@ public class AdaptMessage extends GetSet {
             message = message.replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
             message = message.replaceAll("<VICTIM_TIER>", getPlayerDisplayTier(victim));
 
+            message = papi.setPlaceholdersOnMessage(message, attacker);
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
@@ -123,7 +144,11 @@ public class AdaptMessage extends GetSet {
 
         cooldown.put(attacker.getName(), System.currentTimeMillis());
         if (message != null) {
-            attacker.sendMessage(message);
+            if (msgStyle) {
+                sendActionBar(attacker, message);
+            } else {
+                attacker.sendMessage(message);
+            }
         }
     }
 
@@ -142,6 +167,7 @@ public class AdaptMessage extends GetSet {
             message = message.replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
             message = message.replaceAll("<VICTIM_TIER>", getPlayerDisplayTier(victim));
 
+            message = papi.setPlaceholdersOnMessage(message, killer);
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
@@ -155,8 +181,16 @@ public class AdaptMessage extends GetSet {
 
         cooldown.put(killer.getName(), System.currentTimeMillis());
         if (message != null) {
-            killer.sendMessage(message);
+            if (msgStyle) {
+                sendActionBar(killer, message);
+            } else {
+                killer.sendMessage(message);
+            }
         }
+    }
+
+    public static void sendActionBar(Player player, String message) {
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
     }
 
 }

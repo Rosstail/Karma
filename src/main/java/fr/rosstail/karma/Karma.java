@@ -7,12 +7,13 @@ import java.sql.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Main class and methods of the plugin
  */
-public class Karma extends JavaPlugin {
+public class Karma extends JavaPlugin implements Listener {
 
     public Karma() {
     }
@@ -38,6 +39,16 @@ public class Karma extends JavaPlugin {
         INSTANCE = this;
 
         this.saveDefaultConfig();
+
+        if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+
+                Bukkit.getPluginManager().registerEvents(this, this);
+
+            } else {
+                throw new RuntimeException("Could not find PlaceholderAPI!! Plugin can not work without it!");
+            }
+        }
 
         if (this.getConfig().getBoolean("mysql.active")) {
             prepareConnection();
