@@ -12,7 +12,7 @@ general:
   delay-between-hit-messages: 5
   delay-between-kill-messages: 10
   use-worldguard: false #works only for Worldguard 7+
-  use-action-bar-for-actions: true
+  use-action-bar-on-actions: true
 
 karma:
   default-karma:       0

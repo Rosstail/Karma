@@ -10,14 +10,17 @@ import java.io.File;
 /**
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
  */
-public class CheckKarmaCommand extends GetSet {
-    private Karma karma = Karma.get();
+public class CheckKarmaCommand {
     String message = null;
-    AdaptMessage adaptMessage = new AdaptMessage();
-    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
 
-    public CheckKarmaCommand() {
+    private final File langFile;
+    private final YamlConfiguration configLang;
+    private final AdaptMessage adaptMessage;
+
+    public CheckKarmaCommand(Karma plugin) {
+        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        this.adaptMessage = new AdaptMessage(plugin);
     }
 
     /**
@@ -31,9 +34,9 @@ public class CheckKarmaCommand extends GetSet {
         Player player = Bukkit.getServer().getPlayer(args[0]);
 
         if (player != null && player.isOnline()) {
-            message = configurationLang.getString("check-other-karma");
+            message = configLang.getString("check-other-karma");
         } else {
-            message = configurationLang.getString("disconnected-player");
+            message = configLang.getString("disconnected-player");
         }
         adaptMessage.message(commandSender, player, 0, message);
     }
@@ -46,7 +49,7 @@ public class CheckKarmaCommand extends GetSet {
     {
         Player player = (Player) sender;
 
-        message = configurationLang.getString("check-own-karma");
+        message = configLang.getString("check-own-karma");
         adaptMessage.message(player, player, 0, message);
     }
 }

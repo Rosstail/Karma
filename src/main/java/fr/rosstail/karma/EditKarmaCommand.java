@@ -10,15 +10,23 @@ import java.io.File;
 /**
  * Change the karma of the target, check the limit fork and new tier after.
  */
-public class EditKarmaCommand extends GetSet {
-    private Karma karma = Karma.get();
-    AdaptMessage adaptMessage = new AdaptMessage();
+public class EditKarmaCommand {
     String message = null;
 
-    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+    private final Karma plugin;
+    private final File langFile;
+    private final YamlConfiguration configLang;
+    private final AdaptMessage adaptMessage;
+    private final GetSet getSet;
+    private final PAPI papi;
 
-    public EditKarmaCommand() {
+    public EditKarmaCommand(Karma plugin) {
+        this.plugin = plugin;
+        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        this.adaptMessage = new AdaptMessage(plugin);
+        this.getSet = new GetSet(plugin);
+        this.papi = new PAPI();
     }
 
     /**
@@ -32,12 +40,11 @@ public class EditKarmaCommand extends GetSet {
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
 
-            setKarmaToPlayer(player, value);
+            getSet.setKarmaToPlayer(player, value);
 
-            message = configurationLang.getString("set-karma");
+            message = configLang.getString("set-karma");
             adaptMessage.message(commandSender, player, value, message);
-        }
-        else {
+        } else {
             disconnectedPlayer(commandSender, args);
         }
     }
@@ -53,12 +60,12 @@ public class EditKarmaCommand extends GetSet {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            double targetNewKarma = getPlayerKarma(player) + value;
+            double targetNewKarma = getSet.getPlayerKarma(player) + value;
 
-            setKarmaToPlayer(player, targetNewKarma);
-            setTierToPlayer(player);
+            getSet.setKarmaToPlayer(player, targetNewKarma);
+            getSet.setTierToPlayer(player);
 
-            message = configurationLang.getString("add-karma");
+            message = configLang.getString("add-karma");
             adaptMessage.message(commandSender, player, value, message);
 
         } else {
@@ -77,11 +84,11 @@ public class EditKarmaCommand extends GetSet {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            double targetNewKarma = getPlayerKarma(player) - value;
+            double targetNewKarma = getSet.getPlayerKarma(player) - value;
 
-            setKarmaToPlayer(player, targetNewKarma);
+            getSet.setKarmaToPlayer(player, targetNewKarma);
 
-            message = configurationLang.getString("remove-karma");
+            message = configLang.getString("remove-karma");
             adaptMessage.message(commandSender, player, value, message);
 
         } else {
@@ -97,11 +104,11 @@ public class EditKarmaCommand extends GetSet {
     public void karmaReset(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         if (player != null && player.isOnline()) {
-            double resKarma = this.karma.getConfig().getDouble("karma.default-karma");
+            double resKarma = plugin.getConfig().getDouble("karma.default-karma");
 
-            setKarmaToPlayer(player, resKarma);
+            getSet.setKarmaToPlayer(player, resKarma);
 
-            message = configurationLang.getString("reset-karma");
+            message = configLang.getString("reset-karma");
             adaptMessage.message(commandSender, player, 0, message);
         }
         else {
@@ -115,7 +122,7 @@ public class EditKarmaCommand extends GetSet {
      */
     private void disconnectedPlayer(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
-        message = configurationLang.getString("disconnected-player");
+        message = configLang.getString("disconnected-player");
         adaptMessage.message(commandSender, player, 0, message);
     }
 }

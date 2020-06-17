@@ -11,33 +11,39 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 
-public class PlayerConnect extends GetSet implements Listener {
+public class PlayerConnect implements Listener {
+    private final Karma plugin;
+    private final File langFile;
+    private final YamlConfiguration configLang;
+    private final AdaptMessage adaptMessage;
+    private final GetSet getSet;
 
-    private Karma karma = Karma.get();
-    String message = null;
-
-    AdaptMessage adaptMessage = new AdaptMessage();
-    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
-
-    public PlayerConnect() {
+    PlayerConnect(Karma plugin) {
+        this.plugin = plugin;
+        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        this.adaptMessage = new AdaptMessage(plugin);
+        this.getSet = new GetSet(plugin);
     }
 
+    String message = null;
+
     @EventHandler
-    public void onCheckPlayerJoinNumber(PlayerJoinEvent event) {
+    public void onPlayerJoin(PlayerJoinEvent event) {
         this.createPlayerData(event.getPlayer());
     }
 
     /**
      * Create the player datas inside Karma/playerdata/ folder if his file doens't already exists.
      * Check on connection if his karma is in the limit fork.
+     *
      * @param player
      */
     public void createPlayerData(Player player) {
-        File file = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+        File file = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         try {
-            if (karma.connection != null && !karma.connection.isClosed()) {
-                initPlayerData(player);
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                getSet.initPlayerData(player);
             } else {
                 if (!file.exists()) {
                     try {
@@ -47,15 +53,15 @@ public class PlayerConnect extends GetSet implements Listener {
                     }
                     YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
                     configuration.set("name", player.getName());
-                    configuration.set("karma", this.karma.getConfig().getDouble("karma.default-karma"));
+                    configuration.set("karma", plugin.getConfig().getDouble("karma.default-karma"));
                     try {
                         configuration.save(file);
-                        setTierToPlayer(player);
+                        getSet.setTierToPlayer(player);
                     } catch (IOException var4) {
                         var4.printStackTrace();
                     }
 
-                    message = configurationLang.getString("creating-player");
+                    message = configLang.getString("creating-player");
                     adaptMessage.message(null, player, 0, message);
                 }
             }

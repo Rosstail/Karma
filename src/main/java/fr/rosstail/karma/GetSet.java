@@ -18,17 +18,23 @@ import java.util.Set;
  * Gonna be used to optimize the research of values
  */
 public class GetSet {
-    private Karma karma = Karma.get();
     private PAPI papi = new PAPI();
+    private final Karma plugin;
+    private final File langFile;
+    private final YamlConfiguration configLang;
+    private final int nbDec;
 
-    private File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-    private YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
-    private int nbDec = karma.getConfig().getInt("general.decimal-number-to-show");
+    public GetSet(Karma plugin) {
+        this.plugin = plugin;
+        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        this.nbDec = plugin.getConfig().getInt("general.decimal-number-to-show");
+    }
 
     public boolean ifPlayerExistsInDTB(Player player) {
         try {
-            if (karma.connection != null && !karma.connection.isClosed()) {
-                Statement statement = karma.connection.createStatement();
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                Statement statement = plugin.connection.createStatement();
                 String UUID = String.valueOf(player.getUniqueId());
                 ResultSet result = statement.executeQuery("SELECT UUID FROM Karma WHERE UUID = '" + UUID + "';");
                 if (result.next()) {
@@ -49,8 +55,8 @@ public class GetSet {
      */
     public double getPlayerKarma(Player player) {
         try {
-            if (karma.connection != null && !karma.connection.isClosed()) {
-                Statement statement = karma.connection.createStatement();
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                Statement statement = plugin.connection.createStatement();
                 String UUID = String.valueOf(player.getUniqueId());
                 ResultSet result = statement.executeQuery("SELECT Karma FROM Karma WHERE UUID = '" + UUID + "';");
                 double karma = 0;
@@ -61,7 +67,7 @@ public class GetSet {
                 return karma;
             }
             else {
-                File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+                File playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                 return playerConfig.getDouble("karma");
             }
@@ -78,8 +84,8 @@ public class GetSet {
      */
     public String getPlayerTier(Player player) {
         try {
-            if (karma.connection != null && !karma.connection.isClosed()) {
-                Statement statement = karma.connection.createStatement();
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                Statement statement = plugin.connection.createStatement();
                 String UUID = String.valueOf(player.getUniqueId());
                 ResultSet result = statement.executeQuery("SELECT Tier FROM Karma WHERE UUID = '" + UUID + "';");
                 String tier = null;
@@ -90,7 +96,7 @@ public class GetSet {
                 return tier;
             } else {
                 String UUID = String.valueOf(player.getUniqueId());
-                File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + UUID + ".yml");
+                File playerFile = new File(plugin.getDataFolder(), "playerdata/" + UUID + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                 return playerConfig.getString("tier");
             }
@@ -108,8 +114,8 @@ public class GetSet {
     public Long getPlayerLastAttack(Player player) {
         try {
             if (!player.hasMetadata("NPC")) {
-                if (karma.connection != null && !karma.connection.isClosed()) {
-                    Statement statement = karma.connection.createStatement();
+                if (plugin.connection != null && !plugin.connection.isClosed()) {
+                    Statement statement = plugin.connection.createStatement();
                     String UUID = String.valueOf(player.getUniqueId());
                     ResultSet result = statement.executeQuery("SELECT Last_Attack FROM Karma WHERE UUID = '" + UUID + "';");
                     Long dateTime = 0L;
@@ -120,7 +126,7 @@ public class GetSet {
                     return dateTime;
                 } else {
                     String UUID = String.valueOf(player.getUniqueId());
-                    File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + UUID + ".yml");
+                    File playerFile = new File(plugin.getDataFolder(), "playerdata/" + UUID + ".yml");
                     YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                     return playerConfig.getLong("last-attack");
                 }
@@ -140,7 +146,7 @@ public class GetSet {
      * @return
      */
     public String getPlayerDisplayTier(Player player) {
-        return karma.getConfig().getString("tiers." + getPlayerTier(player) + ".tier-display-name");
+        return plugin.getConfig().getString("tiers." + getPlayerTier(player) + ".tier-display-name");
     }
 
     /**
@@ -149,20 +155,20 @@ public class GetSet {
      * @return
      */
     public double[] getTierLimits(String tier) {
-        double tierMinimumKarma = karma.getConfig().getInt("tiers." + tier + ".tier-minimum-karma");
-        double tierMaximumKarma = karma.getConfig().getInt("tiers." + tier + ".tier-maximum-karma");
+        double tierMinimumKarma = plugin.getConfig().getInt("tiers." + tier + ".tier-minimum-karma");
+        double tierMaximumKarma = plugin.getConfig().getInt("tiers." + tier + ".tier-maximum-karma");
         return new double[]{tierMinimumKarma, tierMaximumKarma};
     }
 
     public String[] getSystemTimeLimits(String time) {
-        String minimumHourMin = karma.getConfig().getString("times.system-times." + time + ".starting-time");
-        String maximumHourMin = karma.getConfig().getString("times.system-times." + time + ".ending-time");
+        String minimumHourMin = plugin.getConfig().getString("times.system-times." + time + ".starting-time");
+        String maximumHourMin = plugin.getConfig().getString("times.system-times." + time + ".ending-time");
         return new String[]{minimumHourMin, maximumHourMin};
     }
 
     public Long[] getWorldTimeLimits(String time) {
-        String minimumHourMin = karma.getConfig().getString("times.worlds-times." + time + ".starting-time");
-        String maximumHourMin = karma.getConfig().getString("times.worlds-times." + time + ".ending-time");
+        String minimumHourMin = plugin.getConfig().getString("times.worlds-times." + time + ".starting-time");
+        String maximumHourMin = plugin.getConfig().getString("times.worlds-times." + time + ".ending-time");
 
         assert minimumHourMin != null;
         assert maximumHourMin != null;
@@ -180,7 +186,7 @@ public class GetSet {
     }
 
     public boolean getTime(Player player) {
-        String type = karma.getConfig().getString("times.use-both-system-and-worlds-time");
+        String type = plugin.getConfig().getString("times.use-both-system-and-worlds-time");
         if (type != null && !type.equalsIgnoreCase("NONE")) {
             if (type.equals("BOTH")) {
                 return getSystemTime() && getWorldTime(player);
@@ -194,7 +200,7 @@ public class GetSet {
     }
 
     public boolean getSystemTime() {
-        Set<String> path = karma.getConfig().getConfigurationSection("times.system-times").getKeys(false);
+        Set<String> path = plugin.getConfig().getConfigurationSection("times.system-times").getKeys(false);
         Date now = new Date(System.currentTimeMillis());
         SimpleDateFormat hhmmFormat = new SimpleDateFormat("HH:mm");
 
@@ -204,13 +210,13 @@ public class GetSet {
             timeLimits = getSystemTimeLimits(timeList);
             if (timeLimits[1].compareTo(timeLimits[0]) >= 0) {
                 if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 && timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
-                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.system-times." + timeList + ".chance")) {
+                    if ((int) (Math.random() * 100) <= plugin.getConfig().getInt("times.system-times." + timeList + ".chance")) {
                         return true;
                     }
                 }
             } else {
                 if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0 || timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
-                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.system-times." + timeList + ".chance")) {
+                    if ((int) (Math.random() * 100) <= plugin.getConfig().getInt("times.system-times." + timeList + ".chance")) {
                         return true;
                     }
                 }
@@ -221,7 +227,7 @@ public class GetSet {
     }
 
     public boolean getWorldTime(Player player) {
-        Set<String> path = karma.getConfig().getConfigurationSection("times.worlds-times").getKeys(false);
+        Set<String> path = plugin.getConfig().getConfigurationSection("times.worlds-times").getKeys(false);
         World world = player.getWorld();
         Long worldTime = world.getTime();
         Long[] timeLimits;
@@ -230,13 +236,13 @@ public class GetSet {
             timeLimits = getWorldTimeLimits(timeList);
             if (timeLimits[0] <= timeLimits[1]) {
                 if (timeLimits[0] <= worldTime && timeLimits[1] >= worldTime) {
-                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.worlds-times." + timeList + ".chance")) {
+                    if ((int) (Math.random() * 100) <= plugin.getConfig().getInt("times.worlds-times." + timeList + ".chance")) {
                         return true;
                     }
                 }
             } else {
                 if (timeLimits[0] <= worldTime || timeLimits[1] >= worldTime) {
-                    if ((int) (Math.random() * 100) <= karma.getConfig().getInt("times.worlds-times." + timeList + ".chance")) {
+                    if ((int) (Math.random() * 100) <= plugin.getConfig().getInt("times.worlds-times." + timeList + ".chance")) {
                         return true;
                     }
                 }
@@ -251,10 +257,10 @@ public class GetSet {
      */
     public void initPlayerData(Player player) {
         if (!ifPlayerExistsInDTB(player)) {
-            double value = karma.getConfig().getInt("karma.default-karma");
+            double value = plugin.getConfig().getInt("karma.default-karma");
             try {
-                if (karma.connection != null && !karma.connection.isClosed()) {
-                    PreparedStatement preparedStatement = karma.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier, Last_Attack)\n" +
+                if (plugin.connection != null && !plugin.connection.isClosed()) {
+                    PreparedStatement preparedStatement = plugin.connection.prepareStatement("INSERT INTO Karma (UUID, NickName, Karma, Tier, Last_Attack)\n" +
                             "VALUES (?, ?, ?, ?, ?);");
 
                     preparedStatement.setString(1, String.valueOf(player.getUniqueId()));
@@ -270,7 +276,7 @@ public class GetSet {
                     setTierToPlayer(player);
 
                 } else {
-                    File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+                    File playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                     YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                     playerConfig.set("karma", value);
                     try {
@@ -295,10 +301,10 @@ public class GetSet {
      */
     public void setKarmaToPlayer(Player player, double value) {
         try {
-            if (karma.connection != null && !karma.connection.isClosed()) {
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
 
                 String query = "UPDATE Karma SET Karma = ? WHERE UUID = ?;";
-                PreparedStatement preparedStatement = karma.connection.prepareStatement(query);
+                PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
 
                 preparedStatement.setDouble(1, value);
                 preparedStatement.setString(2, player.getUniqueId().toString());
@@ -307,7 +313,7 @@ public class GetSet {
                 preparedStatement.close();
 
             } else {
-                File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+                File playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                 playerConfig.set("karma", value);
                 try {
@@ -329,10 +335,10 @@ public class GetSet {
      * @param player
      */
     public void setTierToPlayer(Player player) {
-        Set<String> path = karma.getConfig().getConfigurationSection("tiers").getKeys(false);
+        Set<String> path = plugin.getConfig().getConfigurationSection("tiers").getKeys(false);
         ArrayList<String> array = new ArrayList<String>();
         try {
-            if (karma.connection != null && !karma.connection.isClosed()) {
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
                 double[] tierLimits;
                 String tier = getPlayerTier(player);
 
@@ -342,7 +348,7 @@ public class GetSet {
                     if (getPlayerKarma(player) >=  tierLimits[0] && getPlayerKarma(player) <= tierLimits[1] && !tierList.equals(tier)) {
 
                         String query = "UPDATE Karma SET Tier = ? WHERE UUID = ?;";
-                        PreparedStatement preparedStatement = karma.connection.prepareStatement(query);
+                        PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
 
                         preparedStatement.setString(1, tierList);
                         preparedStatement.setString(2, player.getUniqueId().toString());
@@ -363,7 +369,7 @@ public class GetSet {
                 }
 
             } else {
-                File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+                File playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
 
                 double[] tierLimits;
@@ -405,15 +411,15 @@ public class GetSet {
     public void setLastAttackToPlayer(Player player) {
         try {
             if (!player.hasMetadata("NPC")) {
-                if (karma.connection != null && !karma.connection.isClosed()) {
+                if (plugin.connection != null && !plugin.connection.isClosed()) {
                     String query = "UPDATE Karma SET Last_Attack = ? WHERE UUID = ?;";
-                    PreparedStatement preparedStatement = karma.connection.prepareStatement(query);
+                    PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
 
                     preparedStatement.setString(1, "NOW()");
                     preparedStatement.executeUpdate();
                     preparedStatement.close();
                 } else {
-                    File playerFile = new File(this.karma.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+                    File playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                     YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                     playerConfig.set("last-attack", System.currentTimeMillis());
                     try {
@@ -438,8 +444,8 @@ public class GetSet {
      */
     public void setKarmaToLimit(Player player) {
         double playerKarma = getPlayerKarma(player);
-        double min = this.karma.getConfig().getInt("karma.minimum-karma");
-        double max = this.karma.getConfig().getInt("karma.maximum-karma");
+        double min = plugin.getConfig().getInt("karma.minimum-karma");
+        double max = plugin.getConfig().getInt("karma.maximum-karma");
 
         if (playerKarma < min) {
             setKarmaToPlayer(player, min);
@@ -455,7 +461,7 @@ public class GetSet {
      * @param player the player who gonna receive the message
      */
     private void changePlayerTierMessage(Player player) {
-        String message = configurationLang.getString("tier-change");
+        String message = configLang.getString("tier-change");
         if (message != null) {
             message = message.replaceAll("<TIER>", getPlayerDisplayTier(player));
             message = ChatColor.translateAlternateColorCodes('&', message);
@@ -466,7 +472,7 @@ public class GetSet {
 
     private void tierCommandsLauncher(Player player) {
         String tier = getPlayerTier(player);
-        List<String> list = (List<String>) karma.getConfig().getList("tiers." + tier + ".commands");
+        List<String> list = (List<String>) plugin.getConfig().getList("tiers." + tier + ".commands");
         if (list != null) {
             for (String line : list) {
                 if (line != null) {
@@ -478,7 +484,7 @@ public class GetSet {
 
     private void tierCommandsLauncherOnUp(Player player) {
         String tier = getPlayerTier(player);
-        List<String> list = (List<String>) karma.getConfig().getList("tiers." + tier + ".commands-on-up");
+        List<String> list = (List<String>) plugin.getConfig().getList("tiers." + tier + ".commands-on-up");
         if (list != null) {
             for (String line : list) {
                 if (line != null) {
@@ -490,7 +496,7 @@ public class GetSet {
 
     private void tierCommandsLauncherOnDown(Player player) {
         String tier = getPlayerTier(player);
-        List<String> list = (List<String>) karma.getConfig().getList("tiers." + tier + ".commands-on-down");
+        List<String> list = (List<String>) plugin.getConfig().getList("tiers." + tier + ".commands-on-down");
         if (list != null) {
             for (String line : list) {
                 if (line != null) {

@@ -13,40 +13,47 @@ import java.io.File;
  * Checking what method/class will be used on command, depending of command Sender and number of args.
  */
 public class KarmaCommand implements CommandExecutor {
-    private Karma karma = Karma.get();
     private PAPI papi = new PAPI();
+    private final File langFile;
+    private final YamlConfiguration configLang;
+    private final AdaptMessage adaptMessage;
+    private final CheckKarmaCommand checkKarmaCommand;
+    private final EditKarmaCommand editKarmaCommand;
 
-    CheckKarmaCommand checkKarmaCommand = new CheckKarmaCommand();
-    EditKarmaCommand editKarmaCommand = new EditKarmaCommand();
-
-    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
-
-    public KarmaCommand() {
+    KarmaCommand(Karma plugin) {
+        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.adaptMessage = new AdaptMessage(plugin);
+        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        this.checkKarmaCommand = new CheckKarmaCommand(plugin);
+        this.editKarmaCommand = new EditKarmaCommand(plugin);
     }
 
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         if (args.length >= 3) {
-            if (args[0].equalsIgnoreCase("set")) {
-                if (!(sender instanceof Player) || sender.hasPermission("karma.set")) {
-                    editKarmaCommand.karmaSet(sender, args);
-                } else {
-                    permissionDenied(sender);
+            try {
+                Double.parseDouble(args[2]);
+                if (args[0].equalsIgnoreCase("set")) {
+                    if (!(sender instanceof Player) || sender.hasPermission("karma.set")) {
+                        editKarmaCommand.karmaSet(sender, args);
+                    } else {
+                        permissionDenied(sender);
+                    }
+                } else if (args[0].equalsIgnoreCase("add")) {
+                    if (!(sender instanceof Player) || sender.hasPermission("karma.add")) {
+                        editKarmaCommand.karmaAdd(sender, args);
+                    } else {
+                        permissionDenied(sender);
+                    }
+                } else if (args[0].equalsIgnoreCase("remove")) {
+                    if (!(sender instanceof Player) || sender.hasPermission("karma.remove")) {
+                        editKarmaCommand.karmaRemove(sender, args);
+                    } else {
+                        permissionDenied(sender);
+                    }
                 }
-            }
-            else if (args[0].equalsIgnoreCase("add")) {
-                if (!(sender instanceof Player) || sender.hasPermission("karma.add")) {
-                    editKarmaCommand.karmaAdd(sender, args);
-                } else {
-                    permissionDenied(sender);
-                }
-            }
-            else if (args[0].equalsIgnoreCase("remove")) {
-                if (!(sender instanceof Player) || sender.hasPermission("karma.remove")) {
-                editKarmaCommand.karmaRemove(sender, args);
-                } else {
-                    permissionDenied(sender);
-                }
+            } catch (NumberFormatException e) {
+                String message = configLang.getString("wrong-value");
+                adaptMessage.message(sender, null, 0, message);
             }
         }
         else if (args.length == 2) {
@@ -81,11 +88,10 @@ public class KarmaCommand implements CommandExecutor {
             }
         }
         else {
-            String message = configurationLang.getString("by-player-only");
+            String message = configLang.getString("by-player-only");
 
             if (message != null) {
                 message = ChatColor.translateAlternateColorCodes('&', message);
-                message = papi.setPlaceholdersOnMessage(message, (Player) sender);
                 sender.sendMessage(message);
             }
         }
@@ -93,7 +99,7 @@ public class KarmaCommand implements CommandExecutor {
     }
 
     private void permissionDenied(CommandSender sender) {
-        String message = configurationLang.getString("permission-denied");
+        String message = configLang.getString("permission-denied");
         if (message != null) {
             message = ChatColor.translateAlternateColorCodes('&', message);
             message = papi.setPlaceholdersOnMessage(message, (Player) sender);

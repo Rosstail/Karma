@@ -14,12 +14,21 @@ import java.io.File;
 /**
  * Changes the attacker karma when killing living entities
  */
-public class KillEvents extends GetSet implements Listener {
-    private Karma karma = Karma.get();
-    AdaptMessage adaptMessage = new AdaptMessage();
+public class KillEvents implements Listener {
 
-    File lang = new File(this.karma.getDataFolder(), "lang/" + karma.getConfig().getString("general.lang") + ".yml");
-    YamlConfiguration configurationLang = YamlConfiguration.loadConfiguration(lang);
+    private final Karma plugin;
+    private final File langFile;
+    private final YamlConfiguration configLang;
+    private AdaptMessage adaptMessage;
+    private final GetSet getSet;
+
+    KillEvents(Karma plugin) {
+        this.plugin = plugin;
+        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        this.adaptMessage = new AdaptMessage(plugin);
+        this.getSet = new GetSet(plugin);
+    }
 
     Player killer = null;
     Player victim = null;
@@ -42,7 +51,7 @@ public class KillEvents extends GetSet implements Listener {
         {
             livingEntity = (LivingEntity) event.getEntity();
             killer = livingEntity.getKiller();
-            if (killer != null && getTime(killer))
+            if (killer != null && getSet.getTime(killer))
                 livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             else
                 return;
@@ -54,24 +63,24 @@ public class KillEvents extends GetSet implements Listener {
             return;
         }
 
-        reward = karma.getConfig().getInt("entities." + livingEntityName + ".kill-karma-reward");
+        reward = plugin.getConfig().getInt("entities." + livingEntityName + ".kill-karma-reward");
 
         if (reward != 0) {
-            killerKarma = getPlayerKarma(killer);
+            killerKarma = getSet.getPlayerKarma(killer);
 
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
-                    && karma.getConfig().getBoolean("general.use-worldguard")) {
+                    && plugin.getConfig().getBoolean("general.use-worldguard")) {
 
                 WGPreps wgPreps = new WGPreps();
                 double mult = wgPreps.chekMulKarmFlag(killer);
                 reward = reward * mult;
             }
 
-            setKarmaToPlayer(killer,killerKarma + reward);
-            setTierToPlayer(killer);
+            getSet.setKarmaToPlayer(killer,killerKarma + reward);
+            getSet.setTierToPlayer(killer);
         }
 
-        message = karma.getConfig().getString("entities." + livingEntityName + ".kill-message");
+        message = plugin.getConfig().getString("entities." + livingEntityName + ".kill-message");
         adaptMessage.entityKillMessage(message, killer, reward);
     }
 
@@ -84,11 +93,11 @@ public class KillEvents extends GetSet implements Listener {
         victim = event.getEntity();
         killer = victim.getKiller();
 
-        if (killer == null || !getTime(killer))
+        if (killer == null || !getSet.getTime(killer))
             return;
 
-        double killerInitialKarma = getPlayerKarma(killer);
-        double victimKarma = getPlayerKarma(victim);
+        double killerInitialKarma = getSet.getPlayerKarma(killer);
+        double victimKarma = getSet.getPlayerKarma(victim);
 
         if (killer.hasMetadata("NPC")) {
             return;
@@ -96,18 +105,17 @@ public class KillEvents extends GetSet implements Listener {
 
         if (!victim.getName().equals(killer.getName())) {
 
-            double arg1 = karma.getConfig().getInt("pvp.kill-reward-variables.1");
-            String arg2Str = karma.getConfig().getString("pvp.kill-reward-variables.2");
+            double arg1 = plugin.getConfig().getInt("pvp.kill-reward-variables.1");
+            String arg2Str = plugin.getConfig().getString("pvp.kill-reward-variables.2");
             double arg2 = 0;
-            double arg3 = karma.getConfig().getInt("pvp.kill-reward-variables.3");
-            double arg4 = karma.getConfig().getInt("pvp.kill-reward-variables.4");
+            double arg3 = plugin.getConfig().getInt("pvp.kill-reward-variables.3");
+            double arg4 = plugin.getConfig().getInt("pvp.kill-reward-variables.4");
 
             if (arg2Str != null) {
                 if (arg2Str.equalsIgnoreCase("<VICTIM_KARMA>")) {
                     if (!victim.hasMetadata("NPC")) {
                         arg2 = victimKarma;
-                    }
-                    else if (victim.hasMetadata("Karma")) {
+                    } else if (victim.hasMetadata("Karma")) {
                         if (victim.getMetadata("Karma").get(0) != null) {
                             arg2 = victim.getMetadata("Karma").get(0).asDouble();
                         } else {
@@ -122,7 +130,7 @@ public class KillEvents extends GetSet implements Listener {
             double reward = arg1 * (arg2 + arg3) / arg4;
 
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
-                    && karma.getConfig().getBoolean("general.use-worldguard")) {
+                    && plugin.getConfig().getBoolean("general.use-worldguard")) {
 
                 WGPreps wgPreps = new WGPreps();
                 double mult = wgPreps.chekMulKarmFlag(killer);
@@ -131,53 +139,53 @@ public class KillEvents extends GetSet implements Listener {
 
             double killerNewKarma = killerInitialKarma + reward;
 
-            if (karma.getConfig().getBoolean("pvp.crime-time.enable") && !(killer.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
+            if (plugin.getConfig().getBoolean("pvp.crime-time.enable") && !(killer.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
                 Long timeStamp = System.currentTimeMillis();
-                Long delay = karma.getConfig().getLong("pvp.crime-time.delay");
+                Long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
 
-                Long attackEnd = getPlayerLastAttack(killer) + delay * 1000;
-                Long victimEnd = getPlayerLastAttack(victim) + delay * 1000;
+                Long attackEnd = getSet.getPlayerLastAttack(killer) + delay * 1000;
+                Long victimEnd = getSet.getPlayerLastAttack(victim) + delay * 1000;
 
-                if (getPlayerLastAttack(killer) != 0L && getPlayerLastAttack(victim) != 0L) {
-                    if ( (timeStamp >= getPlayerLastAttack(killer) && timeStamp <= attackEnd)
+                if (getSet.getPlayerLastAttack(killer) != 0L && getSet.getPlayerLastAttack(victim) != 0L) {
+                    if ( (timeStamp >= getSet.getPlayerLastAttack(killer) && timeStamp <= attackEnd)
                             || timeStamp > victimEnd ) {
-                        setLastAttackToPlayer(killer);
+                        getSet.setLastAttackToPlayer(killer);
                     } else {
                         if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
-                            message = configurationLang.getString("self-defending-off");
+                            message = configLang.getString("self-defending-off");
                             adaptMessage.message(null, killer, 0, message);
                             return;
                         }
-                        message = configurationLang.getString("self-defending-on");
+                        message = configLang.getString("self-defending-on");
                         adaptMessage.message(null, killer, 0, message);
                     }
-                } else if (getPlayerLastAttack(victim) == 0L) {
-                    setLastAttackToPlayer(killer);
-                } else if (getPlayerLastAttack(victim) != 0L) {
-                    if (timeStamp >= getPlayerLastAttack(victim) && timeStamp <= victimEnd) {
+                } else if (getSet.getPlayerLastAttack(victim) == 0L) {
+                    getSet.setLastAttackToPlayer(killer);
+                } else if (getSet.getPlayerLastAttack(victim) != 0L) {
+                    if (timeStamp >= getSet.getPlayerLastAttack(victim) && timeStamp <= victimEnd) {
                         if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
-                            message = configurationLang.getString("self-defending-off");
+                            message = configLang.getString("self-defending-off");
                             adaptMessage.message(null, killer, 0, message);
                             return;
                         }
-                        message = configurationLang.getString("self-defending-on");
+                        message = configLang.getString("self-defending-on");
                         adaptMessage.message(null, killer, 0, message);
                     } else {
-                        setLastAttackToPlayer(killer);
+                        getSet.setLastAttackToPlayer(killer);
                     }
                 }
 
             }
 
-            setKarmaToPlayer(killer,killerNewKarma);
-            setTierToPlayer(killer);
+            getSet.setKarmaToPlayer(killer,killerNewKarma);
+            getSet.setTierToPlayer(killer);
 
             message = null;
             if (killerNewKarma > killerInitialKarma) {
-                message = karma.getConfig().getString("pvp.kill-message-on-karma-increase");
+                message = plugin.getConfig().getString("pvp.kill-message-on-karma-increase");
             }
             else if (killerNewKarma < killerInitialKarma) {
-                message = karma.getConfig().getString("pvp.kill-message-on-karma-decrease");
+                message = plugin.getConfig().getString("pvp.kill-message-on-karma-decrease");
             }
             adaptMessage.playerKillMessage(message, killer, victim, killerInitialKarma);
         }
@@ -185,11 +193,11 @@ public class KillEvents extends GetSet implements Listener {
 
     private boolean doesDefendChangeKarma(double attackerInitialKarma, double attackerNewKarma) {
         if (attackerNewKarma > attackerInitialKarma) {
-            return karma.getConfig().getBoolean("pvp.crime-time.active-on-up");
+            return plugin.getConfig().getBoolean("pvp.crime-time.active-on-up");
         } else if (attackerNewKarma == attackerInitialKarma) {
-            return karma.getConfig().getBoolean("pvp.crime-time.active-on-still");
+            return plugin.getConfig().getBoolean("pvp.crime-time.active-on-still");
         } else {
-            return karma.getConfig().getBoolean("pvp.crime-time.active-on-down");
+            return plugin.getConfig().getBoolean("pvp.crime-time.active-on-down");
         }
     }
 }
