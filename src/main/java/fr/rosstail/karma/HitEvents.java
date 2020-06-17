@@ -87,7 +87,7 @@ public class HitEvents implements Listener {
                 .getConfig().getBoolean("general.use-worldguard")) {
 
                 WGPreps wgPreps = new WGPreps();
-                double mult = wgPreps.chekMulKarmFlag(attacker);
+                double mult = wgPreps.checkMultipleKarmaFlags(attacker);
                 reward = reward * mult;
             }
 
@@ -142,7 +142,7 @@ public class HitEvents implements Listener {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
             .getConfig().getBoolean("general.use-worldguard")) {
             WGPreps wgPreps = new WGPreps();
-            double mult = wgPreps.chekMulKarmFlag(attacker);
+            double mult = wgPreps.checkMultipleKarmaFlags(attacker);
             formula = formula * mult;
         }
 

@@ -71,7 +71,7 @@ public class KillEvents implements Listener {
             .getConfig().getBoolean("general.use-worldguard")) {
 
             WGPreps wgPreps = new WGPreps();
-            double mult = wgPreps.chekMulKarmFlag(killer);
+            double mult = wgPreps.checkMultipleKarmaFlags(killer);
             reward = reward * mult;
         }
 
@@ -131,7 +131,7 @@ public class KillEvents implements Listener {
                 .getConfig().getBoolean("general.use-worldguard")) {
 
                 WGPreps wgPreps = new WGPreps();
-                double mult = wgPreps.chekMulKarmFlag(killer);
+                double mult = wgPreps.checkMultipleKarmaFlags(killer);
                 reward = reward * mult;
             }
 

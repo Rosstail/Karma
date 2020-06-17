@@ -12,6 +12,7 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 
 public class WGPreps {
@@ -59,13 +60,13 @@ public class WGPreps {
         }
     }
 
-    public double chekMulKarmFlag(Player player) {
+    public double checkMultipleKarmaFlags(Player player) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         com.sk89q.worldedit.util.Location location = localPlayer.getLocation();
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
 
-        if (!((int) (Math.random() * 100) <= checkChangeKarmaFlag(player))) {
+        if (ThreadLocalRandom.current().nextInt(0, 100) >= checkChangeKarmaFlag(player)) {
             return 0;
         }
         Double value = query.queryValue(location, localPlayer, KARMA_MULTIPLICATOR);
