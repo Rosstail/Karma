@@ -19,7 +19,7 @@ public class AdaptMessage {
     private final YamlConfiguration configLang;
     private int nbDec;
     private boolean msgStyle;
-    private GetSet getSet;
+    private final GetSet getSet;
 
     AdaptMessage(Karma plugin) {
         this.plugin = plugin;
@@ -32,35 +32,37 @@ public class AdaptMessage {
 
     private Map<String, Long> cooldown = new HashMap<String, Long>();
 
+    public static void sendActionBar(Player player, String message) {
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+    }
+
     /**
      * Sends automatically the message to the sender with some parameters
-     * @param sender the sender, can be console, player or null.
-     * @param player the player targetted
-     * @param value the value. Can be reward or a simple value
+     *
+     * @param sender  the sender, can be console, player or null.
+     * @param player  the player targeted
+     * @param value   the value. Can be reward or a simple value
      * @param message the content of the message
      */
     public void message(CommandSender sender, Player player, double value, String message) {
+        if (message == null || player == null) {
+            return;
+        }
 
-        if (message != null) {
+        double playerKarma = getSet.getPlayerKarma(player);
+        message = message.replaceAll("<PLAYER>", player.getName());
+        message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
+        message = message.replaceAll("<TIER>", getSet.getPlayerDisplayTier(player));
+        message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", value));
+        message = message
+            .replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
 
-            if (player != null) {
-                double playerKarma = getSet.getPlayerKarma(player);
-                message = message.replaceAll("<PLAYER>", player.getName());
-                message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
-                message = message.replaceAll("<TIER>", getSet.getPlayerDisplayTier(player));
-                message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", value));
-                message = message.replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
-            }
-
-            message = papi.setPlaceholdersOnMessage(message, player);
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            if (message != null) {
-                if (sender != null) {
-                    sender.sendMessage(message);
-                } else {
-                    player.sendMessage(message);
-                }
-            }
+        message = papi.setPlaceholdersOnMessage(message, player);
+        message = ChatColor.translateAlternateColorCodes('&', message);
+        if (sender != null) {
+            sender.sendMessage(message);
+        } else {
+            player.sendMessage(message);
         }
     }
 
@@ -70,7 +72,8 @@ public class AdaptMessage {
         if (message != null) {
             message = message.replaceAll("<ATTACKER>", player.getName());
             message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", value));
-            message = message.replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
+            message = message
+                .replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
             message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
 
             message = papi.setPlaceholdersOnMessage(message, player);
@@ -78,8 +81,9 @@ public class AdaptMessage {
         }
 
         if (cooldown.containsKey(player.getName())) {
-            double seconds = plugin.getConfig().getDouble("general.delay-between-hit-messages");
-            double timeLeft = cooldown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
+            double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
+            double timeLeft =
+                cooldown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
@@ -102,7 +106,8 @@ public class AdaptMessage {
         if (message != null) {
             message = message.replaceAll("<ATTACKER>", player.getName());
             message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", value));
-            message = message.replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
+            message = message
+                .replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerKarma - value));
             message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
 
             message = papi.setPlaceholdersOnMessage(message, player);
@@ -110,9 +115,10 @@ public class AdaptMessage {
         }
 
         if (cooldown.containsKey(player.getName())) {
-            double seconds = plugin.getConfig().getDouble("general.delay-between-kill-messages");
-            double timeLeft = cooldown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
-
+            double seconds =
+                this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
+            double timeLeft =
+                cooldown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
@@ -135,12 +141,16 @@ public class AdaptMessage {
         if (message != null) {
             message = message.replaceAll("<ATTACKER>", attacker.getName());
             message = message.replaceAll("<VICTIM>", victim.getName());
-            message = message.replaceAll("<ATTACKER_OLD_KARMA>", String.format("%." + nbDec + "f", value));
-            message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", attackerKarma - value));
-            message = message.replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", attackerKarma));
+            message = message
+                .replaceAll("<ATTACKER_OLD_KARMA>", String.format("%." + nbDec + "f", value));
+            message = message
+                .replaceAll("<VALUE>", String.format("%." + nbDec + "f", attackerKarma - value));
+            message = message
+                .replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", attackerKarma));
             message = message.replaceAll("<ATTACKER_TIER>", getSet.getPlayerDisplayTier(attacker));
 
-            message = message.replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
+            message = message
+                .replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
             message = message.replaceAll("<VICTIM_TIER>", getSet.getPlayerDisplayTier(victim));
 
             message = papi.setPlaceholdersOnMessage(message, attacker);
@@ -148,8 +158,9 @@ public class AdaptMessage {
         }
 
         if (cooldown.containsKey(attacker.getName())) {
-            double seconds = plugin.getConfig().getDouble("general.delay-between-hit-messages");
-            double timeLeft = cooldown.get(attacker.getName()) - System.currentTimeMillis() + seconds * 1000f;
+            double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
+            double timeLeft =
+                cooldown.get(attacker.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
@@ -172,12 +183,16 @@ public class AdaptMessage {
         if (message != null) {
             message = message.replaceAll("<ATTACKER>", killer.getName());
             message = message.replaceAll("<VICTIM>", victim.getName());
-            message = message.replaceAll("<ATTACKER_OLD_KARMA>", String.format("%." + nbDec + "f", value));
-            message = message.replaceAll("<VALUE>", String.format("%." + nbDec + "f", killerKarma - value));
-            message = message.replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", killerKarma));
+            message = message
+                .replaceAll("<ATTACKER_OLD_KARMA>", String.format("%." + nbDec + "f", value));
+            message = message
+                .replaceAll("<VALUE>", String.format("%." + nbDec + "f", killerKarma - value));
+            message = message
+                .replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", killerKarma));
             message = message.replaceAll("<ATTACKER_TIER>", getSet.getPlayerDisplayTier(killer));
 
-            message = message.replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
+            message = message
+                .replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
             message = message.replaceAll("<VICTIM_TIER>", getSet.getPlayerDisplayTier(victim));
 
             message = papi.setPlaceholdersOnMessage(message, killer);
@@ -185,8 +200,10 @@ public class AdaptMessage {
         }
 
         if (cooldown.containsKey(killer.getName())) {
-            double seconds = plugin.getConfig().getDouble("general.delay-between-kill-messages");
-            double timeLeft = cooldown.get(killer.getName()) - System.currentTimeMillis() + seconds * 1000f;
+            double seconds =
+                this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
+            double timeLeft =
+                cooldown.get(killer.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
@@ -200,10 +217,6 @@ public class AdaptMessage {
                 killer.sendMessage(message);
             }
         }
-    }
-
-    public static void sendActionBar(Player player, String message) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
     }
 
 }
