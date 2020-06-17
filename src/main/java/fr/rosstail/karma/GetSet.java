@@ -91,10 +91,10 @@ public class GetSet {
     public String getPlayerTier(Player player) {
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
-                Statement statement = plugin.connection.createStatement();
                 String UUID = String.valueOf(player.getUniqueId());
+                PreparedStatement statement = plugin.connection.prepareStatement("SELECT Tier FROM Karma WHERE UUID = '" + UUID + "';");
                 ResultSet result =
-                    statement.executeQuery("SELECT Tier FROM Karma WHERE UUID = '" + UUID + "';");
+                    statement.executeQuery();
                 String tier = null;
                 while (result.next()) {
                     tier = result.getString("Tier");
