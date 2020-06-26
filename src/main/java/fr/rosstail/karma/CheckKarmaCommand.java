@@ -1,5 +1,7 @@
 package fr.rosstail.karma;
 
+import fr.rosstail.karma.lang.LangManager;
+import fr.rosstail.karma.lang.LangMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,13 +15,13 @@ import java.io.File;
 public class CheckKarmaCommand {
     String message = null;
 
-    private final File langFile;
-    private final YamlConfiguration configLang;
+    //private final File langFile;
+    //private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
 
     public CheckKarmaCommand(Karma plugin) {
-        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
-        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        //this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        //this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.adaptMessage = new AdaptMessage(plugin);
     }
 
@@ -34,9 +36,9 @@ public class CheckKarmaCommand {
         Player player = Bukkit.getServer().getPlayer(args[0]);
 
         if (player != null && player.isOnline()) {
-            message = configLang.getString("check-other-karma");
+            message = LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA); // INSTEAD OF configLang.getString("check-other-karma");
         } else {
-            message = configLang.getString("disconnected-player");
+            message = LangManager.getMessage(LangMessage.DISCONNECTED_PLAYER); // INSTEAD OF configLang.getString("disconnected-player");
         }
         adaptMessage.message(commandSender, player, 0, message);
     }
@@ -49,7 +51,7 @@ public class CheckKarmaCommand {
     {
         Player player = (Player) sender;
 
-        message = configLang.getString("check-own-karma");
+        message = LangManager.getMessage(LangMessage.CHECK_OWN_KARMA); // INSTEAD OF configLang.getString("check-own-karma");
         adaptMessage.message(player, player, 0, message);
     }
 }

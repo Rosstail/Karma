@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 
+import fr.rosstail.karma.lang.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,6 +15,16 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Main class and methods of the plugin
  */
 public class Karma extends JavaPlugin implements Listener {
+
+    private static Karma instance;
+
+    /**
+     * @return the plugin instance from anywhere
+     */
+    public static Karma getInstance() {
+        return instance;
+    }
+
 
     public Connection connection;
     public String host, database, username, password;
@@ -27,7 +38,7 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onEnable() {
-
+        instance = this;
         this.saveDefaultConfig();
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -128,6 +139,7 @@ public class Karma extends JavaPlugin implements Listener {
             setSpanishLang();
             setRomanianLang();
         }
+        LangManager.initCurrentLang();
     }
 
     public void onDisable() {
