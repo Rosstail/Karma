@@ -1,14 +1,13 @@
 package fr.rosstail.karma;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+
+import java.io.File;
+import java.sql.SQLException;
 
 
 public class PlayerConnect implements Listener {
@@ -16,20 +15,17 @@ public class PlayerConnect implements Listener {
     private final File langFile;
     private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
-    private final GetSet getSet;
 
     PlayerConnect(Karma plugin) {
         this.plugin = plugin;
-        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.langFile = new File(plugin.getDataFolder(),
+            "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
         this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.adaptMessage = new AdaptMessage(plugin);
-        this.getSet = new GetSet(plugin);
     }
 
-    String message = null;
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    @EventHandler public void onPlayerJoin(PlayerJoinEvent event) {
         this.createPlayerData(event.getPlayer());
     }
 
@@ -40,33 +36,17 @@ public class PlayerConnect implements Listener {
      * @param player
      */
     public void createPlayerData(Player player) {
+        GetSet playerData = GetSet.gets(player, plugin);
         File file = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                getSet.initPlayerData(player);
+            if (file.exists() || plugin.connection != null && !plugin.connection.isClosed()) {
+                playerData.initPlayerData();
             } else {
-                if (!file.exists()) {
-                    try {
-                        file.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-                    configuration.set("name", player.getName());
-                    configuration.set("karma", plugin.getConfig().getDouble("karma.default-karma"));
-                    try {
-                        configuration.save(file);
-                        getSet.setTierToPlayer(player);
-                    } catch (IOException var4) {
-                        var4.printStackTrace();
-                    }
-
-                    message = configLang.getString("creating-player");
-                    adaptMessage.message(null, player, 0, message);
-                }
+                playerData.createPlayerLocaleFile(player, file);
+                String message = configLang.getString("creating-player");
+                adaptMessage.message(null, player, 0, message);
             }
-        } catch (
-            SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 

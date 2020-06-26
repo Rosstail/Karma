@@ -62,9 +62,7 @@ public class Karma extends JavaPlugin implements Listener {
         try {
             openConnection();
             setTableToDataBase();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -166,7 +164,12 @@ public class Karma extends JavaPlugin implements Listener {
         configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma changes.");
         configuration.set("permission-denied", "[Karma] &cYou don't have permission !");
         configuration.set("wrong-value", "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c.");
-
+        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
+                "&6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n" +
+                "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n" +
+                "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n" +
+                "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n" +
+                "&6/karma reset [player] &8: &rSet the targeted player karma to the default one.");
         try {
             configuration.save(file);
         } catch (IOException e) {
@@ -197,6 +200,12 @@ public class Karma extends JavaPlugin implements Listener {
         configuration.set("self-defending-on", "[Karma] Vous vous défendez mais votre Karma change tout de même.");
         configuration.set("permission-denied", "[Karma] &cVous n'avez pas la permission !");
         configuration.set("wrong-value", "&c[Karma] Vous devez renseigner un nombre. Exemple : &f\"/karma add Notch 15\"&c.");
+        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
+                "&6/karma (joueur) &8: &rAffiche le karma et l'alignement du joueur ciblé ou par défaut.\n" +
+                "&6/karma set [joueur] [valeur] &8: &rApplique la valeur spécifiée au karma du joueur ciblé\n" +
+                "&6/karma add [joueur] [valeur] &8: &rAjoute la valeur spécifiée au karma du joueur ciblé\n" +
+                "&6/karma remove [joueur] [valeur] &8: &rSoustrait la valeur indiquée du karma du joueur ciblé\n" +
+                "&6/karma reset [joueur] &8: &rRéinitialise le karma du joueur ciblé.");
 
         try {
             configuration.save(file);
@@ -228,6 +237,12 @@ public class Karma extends JavaPlugin implements Listener {
         configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma changes.");
         configuration.set("permission-denied", "[Karma] &c¡No tienes permiso!");
         configuration.set("wrong-value", "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c.");
+        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
+                "&6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n" +
+                "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n" +
+                "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n" +
+                "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n" +
+                "&6/karma reset [player] &8: &rSet the targeted player karma to the default one.");
 
         try {
             configuration.save(file);
@@ -259,6 +274,12 @@ public class Karma extends JavaPlugin implements Listener {
         configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma changes.");
         configuration.set("permission-denied", "[Karma] &fDin pacate nu ai &apermisiunea !");
         configuration.set("wrong-value", "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c.");
+        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
+                "&6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n" +
+                "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n" +
+                "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n" +
+                "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n" +
+                "&6/karma reset [player] &8: &rSet the targeted player karma to the default one.");
 
         try {
             configuration.save(file);

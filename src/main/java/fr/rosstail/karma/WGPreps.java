@@ -12,6 +12,9 @@ import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
 import org.bukkit.entity.Player;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+
 public class WGPreps {
 
     public static DoubleFlag KARMA_MULTIPLICATOR;
@@ -31,7 +34,8 @@ public class WGPreps {
             if (existing instanceof DoubleFlag) {
                 KARMA_MULTIPLICATOR = (DoubleFlag) existing;
             } else {
-                System.out.println("[WARNING] CONFLICT BETWEEN KARMA karma-multiplier FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
+                Karma.getPlugin(Karma.class).getLogger().log(Level.WARNING,
+                    "[WARNING] CONFLICT BETWEEN KARMA karma-multiplier FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
                 // types don't match - this is bad news! some other plugin conflicts with you
                 // hopefully this never actually happens
             }
@@ -48,37 +52,34 @@ public class WGPreps {
             if (existing instanceof IntegerFlag) {
                 KARMA_CHANGE_CHANCE = (IntegerFlag) existing;
             } else {
-                System.out.println("[WARNING] CONFLICT BETWEEN KARMA karma-change-chance FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
+                Karma.getPlugin(Karma.class).getLogger().log(Level.WARNING,
+                    "[WARNING] CONFLICT BETWEEN KARMA karma-change-chance FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
                 // types don't match - this is bad news! some other plugin conflicts with you
                 // hopefully this never actually happens
             }
         }
     }
 
-    public double chekMulKarmFlag(Player player) {
+    public double checkMultipleKarmaFlags(Player player) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         com.sk89q.worldedit.util.Location location = localPlayer.getLocation();
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
 
-        if (!((int) (Math.random() * 100) <= chekChangKarmFlag(player))) {
+        if (ThreadLocalRandom.current().nextInt(0, 100) >= checkChangeKarmaFlag(player)) {
             return 0;
         }
-        if (query.queryValue(location, localPlayer, KARMA_MULTIPLICATOR) != null) {
-            return query.queryValue(location, localPlayer, KARMA_MULTIPLICATOR);
-        }
-        return 1;
+        Double value = query.queryValue(location, localPlayer, KARMA_MULTIPLICATOR);
+        return value == null ? 1 : value;
     }
 
-    public int chekChangKarmFlag(Player player) {
+    public int checkChangeKarmaFlag(Player player) {
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         com.sk89q.worldedit.util.Location location = localPlayer.getLocation();
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
         RegionQuery query = container.createQuery();
 
-        if (query.queryValue(location, localPlayer, KARMA_CHANGE_CHANCE) != null) {
-            return query.queryValue(location, localPlayer, KARMA_CHANGE_CHANCE);
-        }
-        return 100;
+        Integer value = query.queryValue(location, localPlayer, KARMA_CHANGE_CHANCE);
+        return value == null ? 100 : value;
     }
 }

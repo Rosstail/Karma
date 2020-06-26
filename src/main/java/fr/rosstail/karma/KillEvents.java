@@ -2,7 +2,8 @@ package fr.rosstail.karma;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.*;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -19,66 +20,62 @@ public class KillEvents implements Listener {
     private final Karma plugin;
     private final File langFile;
     private final YamlConfiguration configLang;
-    private AdaptMessage adaptMessage;
-    private final GetSet getSet;
-
-    KillEvents(Karma plugin) {
-        this.plugin = plugin;
-        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
-        this.configLang = YamlConfiguration.loadConfiguration(langFile);
-        this.adaptMessage = new AdaptMessage(plugin);
-        this.getSet = new GetSet(plugin);
-    }
-
     Player killer = null;
     Player victim = null;
     String message = null;
+    private AdaptMessage adaptMessage;
+
+    KillEvents(Karma plugin) {
+        this.plugin = plugin;
+        this.langFile = new File(plugin.getDataFolder(),
+            "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        this.configLang = YamlConfiguration.loadConfiguration(langFile);
+        this.adaptMessage = new AdaptMessage(plugin);
+    }
 
     /**
      * Check and apply karma when a non-pLayer livingEntity is killed by a Player
+     *
      * @param event
      */
-    @EventHandler
-    public void onEntityDeath(EntityDeathEvent event) {
-        Player killer = null;
-        double killerKarma = 0F;
-        double reward = 0F;
-        LivingEntity livingEntity;
-        String livingEntityName;
+    @EventHandler public void onEntityDeath(EntityDeathEvent event) {
 
-        event.getEntity();
-        if (event.getEntity().getKiller() != null)
-        {
-            livingEntity = (LivingEntity) event.getEntity();
-            killer = livingEntity.getKiller();
-            if (killer != null && getSet.getTime(killer))
+        double killerKarma;
+        double reward;
+        LivingEntity livingEntity = event.getEntity();
+        killer = livingEntity.getKiller();
+        String livingEntityName;
+        GetSet playerData;
+        if (event.getEntity().getKiller() != null) {
+            playerData = GetSet.gets(killer, plugin);
+            if (killer != null && playerData.getTime()) {
                 livingEntityName = livingEntity.toString().replaceAll("Craft", "");
-            else
+            } else {
                 return;
-        }
-        else
+            }
+        } else {
             return;
+        }
 
         if (killer.hasMetadata("NPC")) {
             return;
         }
 
         reward = plugin.getConfig().getInt("entities." + livingEntityName + ".kill-karma-reward");
-
-        if (reward != 0) {
-            killerKarma = getSet.getPlayerKarma(killer);
-
-            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
-                    && plugin.getConfig().getBoolean("general.use-worldguard")) {
-
-                WGPreps wgPreps = new WGPreps();
-                double mult = wgPreps.chekMulKarmFlag(killer);
-                reward = reward * mult;
-            }
-
-            getSet.setKarmaToPlayer(killer,killerKarma + reward);
-            getSet.setTierToPlayer(killer);
+        if (reward == 0) {
+            return;
         }
+        killerKarma = playerData.playerKarma;
+
+        if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
+            .getConfig().getBoolean("general.use-worldguard")) {
+
+            WGPreps wgPreps = new WGPreps();
+            double mult = wgPreps.checkMultipleKarmaFlags(killer);
+            reward = reward * mult;
+        }
+
+        playerData.setKarmaToPlayer(killerKarma + reward);
 
         message = plugin.getConfig().getString("entities." + livingEntityName + ".kill-message");
         adaptMessage.entityKillMessage(message, killer, reward);
@@ -86,18 +83,26 @@ public class KillEvents implements Listener {
 
     /**
      * Apply a new karma to the Player KILLER when he kills another player
+     *
      * @param event
      */
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
+    @EventHandler public void onPlayerDeath(PlayerDeathEvent event) {
         victim = event.getEntity();
         killer = victim.getKiller();
 
-        if (killer == null || !getSet.getTime(killer))
+        if (killer == null) {
             return;
+        }
 
-        double killerInitialKarma = getSet.getPlayerKarma(killer);
-        double victimKarma = getSet.getPlayerKarma(victim);
+        GetSet killerData = GetSet.gets(killer, plugin);
+        GetSet victimData = GetSet.gets(victim, plugin);
+
+        if (!killerData.getTime()) {
+            return;
+        }
+
+        double killerInitialKarma = killerData.playerKarma;
+        double victimKarma = victimData.playerKarma;
 
         if (killer.hasMetadata("NPC")) {
             return;
@@ -113,43 +118,50 @@ public class KillEvents implements Listener {
 
             if (arg2Str != null) {
                 if (arg2Str.equalsIgnoreCase("<VICTIM_KARMA>")) {
-                    if (!victim.hasMetadata("NPC")) {
+                    if (!isVictimNPC()) {
                         arg2 = victimKarma;
-                    } else if (victim.hasMetadata("Karma")) {
-                        if (victim.getMetadata("Karma").get(0) != null) {
-                            arg2 = victim.getMetadata("Karma").get(0).asDouble();
-                        } else {
-                            return;
-                        }
+                    } else if (isVictimNPCHaveKarma()){
+                        arg2 = victim.getMetadata("Karma").get(0).asDouble();
+                    } else {
+                        return;
                     }
                 } else {
-                    arg2 = Double.parseDouble(arg2Str);
+                    try {
+                        arg2 = Double.parseDouble(arg2Str);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Player" + victim.getName() + " has wrong Karma value.");
+                        return;
+                    }
                 }
             }
 
             double reward = arg1 * (arg2 + arg3) / arg4;
 
-            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard")
-                    && plugin.getConfig().getBoolean("general.use-worldguard")) {
+            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
+                .getConfig().getBoolean("general.use-worldguard")) {
 
                 WGPreps wgPreps = new WGPreps();
-                double mult = wgPreps.chekMulKarmFlag(killer);
+                double mult = wgPreps.checkMultipleKarmaFlags(killer);
                 reward = reward * mult;
             }
 
             double killerNewKarma = killerInitialKarma + reward;
 
-            if (plugin.getConfig().getBoolean("pvp.crime-time.enable") && !(killer.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
-                Long timeStamp = System.currentTimeMillis();
-                Long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
+            if (plugin.getConfig().getBoolean("pvp.crime-time.enable") && !(
+                killer.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
+                long timeStamp = System.currentTimeMillis();
+                long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
 
-                Long attackEnd = getSet.getPlayerLastAttack(killer) + delay * 1000;
-                Long victimEnd = getSet.getPlayerLastAttack(victim) + delay * 1000;
+                long attackStart = killerData.playerLastAttack;
+                long victimStart = victimData.playerLastAttack;
+                long attackEnd = killerData.playerLastAttack + delay * 1000;
+                long victimEnd = victimData.playerLastAttack + delay * 1000;
 
-                if (getSet.getPlayerLastAttack(killer) != 0L && getSet.getPlayerLastAttack(victim) != 0L) {
-                    if ( (timeStamp >= getSet.getPlayerLastAttack(killer) && timeStamp <= attackEnd)
-                            || timeStamp > victimEnd ) {
-                        getSet.setLastAttackToPlayer(killer);
+                if (attackStart != 0L
+                    && victimStart != 0L) {
+                    if ((timeStamp >= attackStart && timeStamp <= attackEnd)
+                        || timeStamp > victimEnd) {
+                        killerData.setLastAttackToPlayer();
                     } else {
                         if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
                             message = configLang.getString("self-defending-off");
@@ -159,10 +171,10 @@ public class KillEvents implements Listener {
                         message = configLang.getString("self-defending-on");
                         adaptMessage.message(null, killer, 0, message);
                     }
-                } else if (getSet.getPlayerLastAttack(victim) == 0L) {
-                    getSet.setLastAttackToPlayer(killer);
-                } else if (getSet.getPlayerLastAttack(victim) != 0L) {
-                    if (timeStamp >= getSet.getPlayerLastAttack(victim) && timeStamp <= victimEnd) {
+                } else if (victimStart == 0L) {
+                    killerData.setLastAttackToPlayer();
+                } else if (victimStart != 0L) {
+                    if (timeStamp >= victimStart && timeStamp <= victimEnd) {
                         if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
                             message = configLang.getString("self-defending-off");
                             adaptMessage.message(null, killer, 0, message);
@@ -171,24 +183,32 @@ public class KillEvents implements Listener {
                         message = configLang.getString("self-defending-on");
                         adaptMessage.message(null, killer, 0, message);
                     } else {
-                        getSet.setLastAttackToPlayer(killer);
+                        killerData.setLastAttackToPlayer();
                     }
                 }
 
             }
 
-            getSet.setKarmaToPlayer(killer,killerNewKarma);
-            getSet.setTierToPlayer(killer);
+            killerData.setKarmaToPlayer(killerNewKarma);
 
             message = null;
             if (killerNewKarma > killerInitialKarma) {
                 message = plugin.getConfig().getString("pvp.kill-message-on-karma-increase");
-            }
-            else if (killerNewKarma < killerInitialKarma) {
+            } else if (killerNewKarma < killerInitialKarma) {
                 message = plugin.getConfig().getString("pvp.kill-message-on-karma-decrease");
             }
-            adaptMessage.playerKillMessage(message, killer, victim, killerInitialKarma);
+            if (message != null) {
+                adaptMessage.playerKillMessage(message, killer, victim, killerInitialKarma);
+            }
         }
+    }
+
+    private boolean isVictimNPC() {
+        return victim.hasMetadata("NPC");
+    }
+
+    private boolean isVictimNPCHaveKarma() {
+        return victim.hasMetadata("Karma") && victim.getMetadata("Karma").get(0) != null;
     }
 
     private boolean doesDefendChangeKarma(double attackerInitialKarma, double attackerNewKarma) {

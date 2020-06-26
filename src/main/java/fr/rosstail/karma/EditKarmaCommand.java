@@ -17,16 +17,12 @@ public class EditKarmaCommand {
     private final File langFile;
     private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
-    private final GetSet getSet;
-    private final PAPI papi;
 
     public EditKarmaCommand(Karma plugin) {
         this.plugin = plugin;
         this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
         this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.adaptMessage = new AdaptMessage(plugin);
-        this.getSet = new GetSet(plugin);
-        this.papi = new PAPI();
     }
 
     /**
@@ -39,8 +35,8 @@ public class EditKarmaCommand {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-
-            getSet.setKarmaToPlayer(player, value);
+            GetSet playerData = GetSet.gets(player, plugin);
+            playerData.setKarmaToPlayer(value);
 
             message = configLang.getString("set-karma");
             adaptMessage.message(commandSender, player, value, message);
@@ -60,10 +56,13 @@ public class EditKarmaCommand {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            double targetNewKarma = getSet.getPlayerKarma(player) + value;
+            GetSet playerData = GetSet.gets(player, plugin);
+            double targetNewKarma = playerData.playerKarma + value;
 
-            getSet.setKarmaToPlayer(player, targetNewKarma);
-            getSet.setTierToPlayer(player);
+            playerData.setKarmaToPlayer(targetNewKarma);
+            System.out.println("KARMA AJOUTÉ : " + targetNewKarma);
+
+            System.out.println("GET getVarPlayerKarma DEPUIS EditKarmaCommand : " + playerData.getVarPlayerKarma());
 
             message = configLang.getString("add-karma");
             adaptMessage.message(commandSender, player, value, message);
@@ -82,11 +81,13 @@ public class EditKarmaCommand {
     public void karmaRemove(CommandSender commandSender, String[] args)
     {
         Player player = Bukkit.getServer().getPlayer(args[1]);
+
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            double targetNewKarma = getSet.getPlayerKarma(player) - value;
+            GetSet playerData = GetSet.gets(player, plugin);
+            double targetNewKarma = playerData.playerKarma - value;
 
-            getSet.setKarmaToPlayer(player, targetNewKarma);
+            playerData.setKarmaToPlayer(targetNewKarma);
 
             message = configLang.getString("remove-karma");
             adaptMessage.message(commandSender, player, value, message);
@@ -104,9 +105,10 @@ public class EditKarmaCommand {
     public void karmaReset(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         if (player != null && player.isOnline()) {
+            GetSet playerData = GetSet.gets(player, plugin);
             double resKarma = plugin.getConfig().getDouble("karma.default-karma");
 
-            getSet.setKarmaToPlayer(player, resKarma);
+            playerData.setKarmaToPlayer(resKarma);
 
             message = configLang.getString("reset-karma");
             adaptMessage.message(commandSender, player, 0, message);
