@@ -45,9 +45,9 @@ public class KillEvents implements Listener {
         LivingEntity livingEntity = event.getEntity();
         killer = livingEntity.getKiller();
         String livingEntityName;
-        GetSet playerData;
+        DataHandler playerData;
         if (event.getEntity().getKiller() != null) {
-            playerData = GetSet.gets(killer, plugin);
+            playerData = DataHandler.gets(killer, plugin);
             if (killer != null && playerData.getTime()) {
                 livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             } else {
@@ -65,7 +65,7 @@ public class KillEvents implements Listener {
         if (reward == 0) {
             return;
         }
-        killerKarma = playerData.playerKarma;
+        killerKarma = playerData.getPlayerKarma();
 
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
             .getConfig().getBoolean("general.use-worldguard")) {
@@ -94,15 +94,15 @@ public class KillEvents implements Listener {
             return;
         }
 
-        GetSet killerData = GetSet.gets(killer, plugin);
-        GetSet victimData = GetSet.gets(victim, plugin);
+        DataHandler killerData = DataHandler.gets(killer, plugin);
+        DataHandler victimData = DataHandler.gets(victim, plugin);
 
         if (!killerData.getTime()) {
             return;
         }
 
-        double killerInitialKarma = killerData.playerKarma;
-        double victimKarma = victimData.playerKarma;
+        double killerInitialKarma = killerData.getPlayerKarma();
+        double victimKarma = victimData.getPlayerKarma();
 
         if (killer.hasMetadata("NPC")) {
             return;
@@ -152,10 +152,10 @@ public class KillEvents implements Listener {
                 long timeStamp = System.currentTimeMillis();
                 long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
 
-                long attackStart = killerData.playerLastAttack;
-                long victimStart = victimData.playerLastAttack;
-                long attackEnd = killerData.playerLastAttack + delay * 1000;
-                long victimEnd = victimData.playerLastAttack + delay * 1000;
+                double attackStart = killerData.getPlayerLastAttack();
+                double victimStart = victimData.getPlayerLastAttack();
+                double attackEnd = killerData.getPlayerLastAttack() + delay * 1000;
+                double victimEnd = victimData.getPlayerLastAttack() + delay * 1000;
 
                 if (attackStart != 0L
                     && victimStart != 0L) {

@@ -5,7 +5,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,54 +17,53 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Gonna be used to optimize the research of values
  */
-public class GetSet {
+public class DataHandler {
     private final Karma plugin;
     private final File langFile;
     private final YamlConfiguration configLang;
     private final int nbDec;
     private PAPI papi = new PAPI();
 
-    private static Map<Player, GetSet> getSets = new HashMap<Player, GetSet>();
-    public Player player;
-    public double playerKarma;
-    public String playerTier;
-    public String playerDisplayTier;
-    public long playerLastAttack;
+    private static Map<Player, DataHandler> getSets = new HashMap<Player, DataHandler>();
+    private Player player;
+    private double playerKarma;
+    private String playerTier;
+    private String playerDisplayTier;
+    private long playerLastAttack;
 
-    private GetSet(Karma plugin, Player player) {
+    private DataHandler(Karma plugin, Player player) {
         this.plugin = plugin;
         this.langFile = new File(plugin.getDataFolder(),
                 "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
         this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.nbDec = plugin.getConfig().getInt("general.decimal-number-to-show");
         this.player = player;
-        this.playerKarma = getPlayerKarma();
-        this.playerTier = getPlayerTier();
-        this.playerDisplayTier = getPlayerDisplayTier();
-        this.playerLastAttack = getPlayerLastAttack();
+        this.playerKarma = loadPlayerKarma();
+        this.playerTier = loadPlayerTier();
+        this.playerDisplayTier = loadPlayerDisplayTier();
+        this.playerLastAttack = loadPlayerLastAttack();
     }
 
-    public static GetSet gets(Player player, Karma plugin) {
+    public static DataHandler gets(Player player, Karma plugin) {
         if(!getSets.containsKey(player)){ // If player doesn't have instance
-            getSets.put(player, new GetSet(plugin, player));
+            getSets.put(player, new DataHandler(plugin, player));
         }
         return getSets.get(player);
     }
 
-    public double getVarPlayerKarma() {
-        System.out.println("getVarPlayerKarma = " + playerKarma);
+    public double getPlayerKarma() {
         return playerKarma;
     }
 
-    public String getVarPlayerTier() {
+    public String getPlayerTier() {
         return playerTier;
     }
 
-    public String getVarPlayerDisplayTier() {
+    public String getPlayerDisplayTier() {
         return playerDisplayTier;
     }
 
-    public double getVarPlayerLastAttack() {
+    public double getPlayerLastAttack() {
         return playerLastAttack;
     }
 
@@ -92,29 +90,27 @@ public class GetSet {
     }
 
     /**
-     * Returns the amount of Karma of the player
+     * Request the player karma inside file or database
      *
      * @return
      */
-    public double getPlayerKarma() {
+    public double loadPlayerKarma() {
         String UUID = String.valueOf(player.getUniqueId());
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
                 PreparedStatement statement = plugin.connection
                     .prepareStatement("SELECT Karma FROM Karma WHERE UUID = '" + UUID + "';");
                 ResultSet result = statement.executeQuery();
-                double karma = 0;
+                double karma = plugin.getConfig().getDouble("karma.default-karma");
                 while (result.next()) {
                     karma = result.getDouble("Karma");
                 }
                 statement.close();
-                this.playerKarma = karma;
                 return karma;
             } else {
                 File playerFile =
                     new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                this.playerKarma = playerConfig.getDouble("karma");
                 return playerConfig.getDouble("karma");
             }
         } catch (SQLException e) {
@@ -124,43 +120,43 @@ public class GetSet {
     }
 
     /**
-     * Returns the Tier identifier of the player
+     * Request the player Tier inside file or database
      *
      * @return
      */
-    public String getPlayerTier() {
+    public String loadPlayerTier() {
+        String tier = null;
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
                 String UUID = String.valueOf(player.getUniqueId());
                 PreparedStatement statement = plugin.connection.prepareStatement("SELECT Tier FROM Karma WHERE UUID = '" + UUID + "';");
                 ResultSet result =
                     statement.executeQuery();
-                String tier = null;
                 while (result.next()) {
                     tier = result.getString("Tier");
                 }
                 statement.close();
-                this.playerTier = tier;
-                return tier;
             } else {
                 String UUID = String.valueOf(player.getUniqueId());
                 File playerFile = new File(plugin.getDataFolder(), "playerdata/" + UUID + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                this.playerTier = playerConfig.getString("tier");
-                return playerConfig.getString("tier");
+                tier = playerConfig.getString("tier");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        if (tier == null) {
+            tier = getPlayerTier();
+        }
+        return tier;
     }
 
     /**
-     * Returns the Tier identifier of the player
+     * Returns the player last attack long
      *
      * @return
      */
-    public long getPlayerLastAttack() {
+    public long loadPlayerLastAttack() {
         if (!player.hasMetadata("NPC")) {
             return 0L;
         }
@@ -175,12 +171,10 @@ public class GetSet {
                     dateTime = result.getLong("Last_Attack");
                 }
                 statement.close();
-                this.playerLastAttack = dateTime;
                 return dateTime;
             } else {
                 File playerFile = new File(plugin.getDataFolder(), "playerdata/" + UUID + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                this.playerLastAttack = playerConfig.getLong("last-attack");
                 return playerConfig.getLong("last-attack");
             }
         } catch (SQLException e) {
@@ -194,7 +188,7 @@ public class GetSet {
      *
      * @return
      */
-    public String getPlayerDisplayTier() {
+    public String loadPlayerDisplayTier() {
         playerDisplayTier = plugin.getConfig()
                 .getString("tiers." + playerTier + ".tier-display-name");
         return playerDisplayTier;
@@ -205,11 +199,11 @@ public class GetSet {
      *
      * @return
      */
-    public double[] getTierLimits() {
+    public double[] getTierLimits(String tier) {
         double tierMinimumKarma =
-            plugin.getConfig().getDouble("tiers." + playerTier + ".tier-minimum-karma");
+            plugin.getConfig().getDouble("tiers." + tier + ".tier-minimum-karma");
         double tierMaximumKarma =
-            plugin.getConfig().getDouble("tiers." + playerTier + ".tier-maximum-karma");
+            plugin.getConfig().getDouble("tiers." + tier + ".tier-maximum-karma");
         return new double[] {tierMinimumKarma, tierMaximumKarma};
     }
 
@@ -353,6 +347,10 @@ public class GetSet {
         }
 
         double finalValue = value;
+
+        this.playerKarma = value;
+        setTierToPlayer();
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
@@ -372,7 +370,6 @@ public class GetSet {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                setTierToPlayer();
             }
         });
     }
@@ -436,6 +433,16 @@ public class GetSet {
      * @param value  -> The new karma amount of the player
      */
     public void setKarmaToPlayer(double value) {
+        double min = plugin.getConfig().getDouble("karma.minimum-karma");
+        double max = plugin.getConfig().getDouble("karma.maximum-karma");
+        if (value < min) {
+            value = min;
+        } else if (value > max) {
+            value = max;
+        }
+
+        this.playerKarma = value;
+
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
                 setPlayerKarmaDTB(value);
@@ -449,19 +456,8 @@ public class GetSet {
 
     private void setPlayerKarmaDTB(double value) {
         String UUID = player.getUniqueId().toString();
-        double min = plugin.getConfig().getDouble("karma.minimum-karma");
-        double max = plugin.getConfig().getDouble("karma.maximum-karma");
-
-        if (value < min) {
-            value = min;
-        } else if (value > max) {
-            value = max;
-        }
 
         double finalValue = value;
-        playerKarma = value;
-        System.out.println("Nouvelle valeur de playerKarma dans GetSet : " + playerKarma);
-        System.out.println("Valeur du getter dans GetSet" + getVarPlayerKarma());
         setTierToPlayer();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
@@ -483,17 +479,7 @@ public class GetSet {
     }
 
     private void setPlayerKarmaLocale(double value) {
-        double min = plugin.getConfig().getDouble("karma.minimum-karma");
-        double max = plugin.getConfig().getDouble("karma.maximum-karma");
-
-        if (value < min) {
-            value = min;
-        } else if (value > max) {
-            value = max;
-        }
-
         double finalValue = value;
-        playerKarma = value;
         setTierToPlayer();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
@@ -517,115 +503,88 @@ public class GetSet {
      *
      */
     public void setTierToPlayer() {
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                setPlayerTierDTB();
-            } else {
-                setPlayerTierLocale();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setPlayerTierDTB() {
         String UUID = player.getUniqueId().toString();
-        String tier = playerTier;
+        String startTier = getPlayerTier();
 
         Set<String> path = plugin.getConfig().getConfigurationSection("tiers").getKeys(false);
         ArrayList<String> array = new ArrayList<>();
         double[] tierLimits;
 
         for (String tierList : path) {
-            tierLimits = getTierLimits();
-
+            tierLimits = getTierLimits(tierList);
             if (getPlayerKarma() >= tierLimits[0]
-                    && getPlayerKarma() <= tierLimits[1] && !tierList.equals(tier)) {
-                playerTier = tierList;
-                playerDisplayTier = plugin.getConfig()
-                        .getString("tiers." + tierList + ".tier-display-name");
+                    && getPlayerKarma() <= tierLimits[1] && !tierList.equals(getPlayerTier())) {
+                this.playerTier = tierList;
+                this.playerDisplayTier = plugin.getConfig()
+                        .getString("tiers." + getPlayerTier() + ".tier-display-name");
 
                 changePlayerTierMessage();
                 tierCommandsLauncher();
-                if (array.contains(tier)) {
-                    tierCommandsLauncherOnUp();
-                } else {
-                    tierCommandsLauncherOnDown();
-                }
-
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            String query = "UPDATE Karma SET Tier = ? WHERE UUID = ?;";
-                            PreparedStatement preparedStatement =
-                                    plugin.connection.prepareStatement(query);
-
-                            preparedStatement.setString(1, tierList);
-                            preparedStatement.setString(2, UUID);
-
-                            preparedStatement.executeUpdate();
-                            preparedStatement.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
+                if (startTier != null) {
+                    if (array.contains(startTier)) {
+                        tierCommandsLauncherOnUp();
+                    } else {
+                        tierCommandsLauncherOnDown();
                     }
-                });
+                }
                 break;
             }
 
             array.add(tierList);
         }
+
+        try {
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                setPlayerTierDTB(UUID);
+            } else {
+                setPlayerTierLocale(UUID);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void setPlayerTierLocale() {
-        String UUID = player.getUniqueId().toString();
-        Set<String> path = plugin.getConfig().getConfigurationSection("tiers").getKeys(false);
+    private void setPlayerTierDTB(String UUID) {
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String query = "UPDATE Karma SET Tier = ? WHERE UUID = ?;";
+                    PreparedStatement preparedStatement =
+                            plugin.connection.prepareStatement(query);
+
+                    preparedStatement.setString(1, getPlayerTier());
+                    preparedStatement.setString(2, UUID);
+
+                    preparedStatement.executeUpdate();
+                    preparedStatement.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void setPlayerTierLocale(String UUID) {
         String tier = playerTier;
-        ArrayList<String> array = new ArrayList<>();
 
         File playerFile = new File(plugin.getDataFolder(),
                 "playerdata/" + UUID + ".yml");
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
 
-                double[] tierLimits;
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                playerConfig.set("tier", tier);
 
-                for (String tierList : path) {
-                    tierLimits = getTierLimits();
-
-                    if (getPlayerKarma() >= tierLimits[0]
-                            && getPlayerKarma() <= tierLimits[1] && !tierList.equals(tier)) {
-                        playerTier = tierList;
-                        playerDisplayTier = plugin.getConfig()
-                                .getString("tiers." + tierList + ".tier-display-name");
-
-                        changePlayerTierMessage();
-                        if (tier != null) {
-                            if (array.contains(tier)) {
-                                tierCommandsLauncherOnUp();
-                            } else {
-                                tierCommandsLauncherOnDown();
-                            }
-                        }
-                        tierCommandsLauncher();
-
-                        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                            @Override
-                            public void run() {
-                                playerConfig.set("tier", tierList);
-
-                                try {
-                                    playerConfig.save(playerFile);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                        break;
-                    }
-
-                    array.add(tierList);
+                try {
+                    playerConfig.save(playerFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+            }
+        });
     }
 
     /**
@@ -696,12 +655,12 @@ public class GetSet {
         configuration.set("karma", plugin.getConfig().getDouble("karma.default-karma"));
         this.playerKarma = plugin.getConfig().getDouble("karma.default-karma");
 
+        setTierToPlayer();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
                 try {
                     configuration.save(file);
-                    setTierToPlayer();
                 } catch (IOException var4) {
                     var4.printStackTrace();
                 }
@@ -709,18 +668,11 @@ public class GetSet {
         });
     }
 
-    /**
-     * MUST BE MOVED ON ANOTHER CLASS
-     * SEND A MESSAGE WITH THE SPECIFIED TIER TO THE PLAYER
-     *
-     */
     private void changePlayerTierMessage() {
         String message = configLang.getString("tier-change");
         if (message != null) {
-            message = message.replaceAll("<TIER>", playerDisplayTier);
-            message = ChatColor.translateAlternateColorCodes('&', message);
-            message = papi.setPlaceholdersOnMessage(message, player);
-            player.sendMessage(message);
+            AdaptMessage adaptMessage = new AdaptMessage(plugin);
+            adaptMessage.message(player, player, 0, message);
         }
     }
 
@@ -762,7 +714,11 @@ public class GetSet {
         command = ChatColor.translateAlternateColorCodes('&', command);
         command = papi.setPlaceholdersOnMessage(command, player);
 
-        if (command.startsWith("<@>")) {
+        if (command.startsWith("<MESSAGE>")) {
+            command = command.replaceAll("<MESSAGE>", "").trim();
+            AdaptMessage adaptMessage = new AdaptMessage(plugin);
+            adaptMessage.message(player, player, 0, command);
+        } else if (command.startsWith("<@>")) {
             command = command.replaceAll("<@>", "");
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
         } else {
