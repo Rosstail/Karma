@@ -35,7 +35,7 @@ public class EditKarmaCommand {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            GetSet playerData = GetSet.gets(player, plugin);
+            DataHandler playerData = DataHandler.gets(player, plugin);
             playerData.setKarmaToPlayer(value);
 
             message = configLang.getString("set-karma");
@@ -56,13 +56,10 @@ public class EditKarmaCommand {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            GetSet playerData = GetSet.gets(player, plugin);
-            double targetNewKarma = playerData.playerKarma + value;
+            DataHandler playerData = DataHandler.gets(player, plugin);
+            double targetNewKarma = playerData.getPlayerKarma() + value;
 
             playerData.setKarmaToPlayer(targetNewKarma);
-            System.out.println("KARMA AJOUTÉ : " + targetNewKarma);
-
-            System.out.println("GET getVarPlayerKarma DEPUIS EditKarmaCommand : " + playerData.getVarPlayerKarma());
 
             message = configLang.getString("add-karma");
             adaptMessage.message(commandSender, player, value, message);
@@ -84,8 +81,8 @@ public class EditKarmaCommand {
 
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            GetSet playerData = GetSet.gets(player, plugin);
-            double targetNewKarma = playerData.playerKarma - value;
+            DataHandler playerData = DataHandler.gets(player, plugin);
+            double targetNewKarma = playerData.getPlayerKarma() - value;
 
             playerData.setKarmaToPlayer(targetNewKarma);
 
@@ -105,7 +102,7 @@ public class EditKarmaCommand {
     public void karmaReset(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         if (player != null && player.isOnline()) {
-            GetSet playerData = GetSet.gets(player, plugin);
+            DataHandler playerData = DataHandler.gets(player, plugin);
             double resKarma = plugin.getConfig().getDouble("karma.default-karma");
 
             playerData.setKarmaToPlayer(resKarma);

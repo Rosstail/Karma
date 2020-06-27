@@ -48,10 +48,10 @@ public class AdaptMessage {
         }
 
         if (player != null && player.isOnline()) {
-            GetSet playerData = GetSet.gets(player, plugin);
-            double playerKarma = playerData.getVarPlayerKarma();
-            double playerOldKarma = playerData.getPlayerKarma();
-            String playerDisplayTier = playerData.getVarPlayerDisplayTier();
+            DataHandler playerData = DataHandler.gets(player, plugin);
+            double playerKarma = playerData.getPlayerKarma();
+            double playerOldKarma = playerData.loadPlayerKarma();
+            String playerDisplayTier = playerData.getPlayerDisplayTier();
             message = message.replaceAll("<PLAYER>", player.getName());
             message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
             message = message.replaceAll("<TIER>", playerDisplayTier);
@@ -71,8 +71,8 @@ public class AdaptMessage {
     }
 
     public void entityHitMessage(String message, Player player, double value) {
-        GetSet playerData = GetSet.gets(player, plugin);
-        double playerKarma = playerData.playerKarma;
+        DataHandler playerData = DataHandler.gets(player, plugin);
+        double playerKarma = playerData.getPlayerKarma();
 
         if (message != null) {
             message = message.replaceAll("<ATTACKER>", player.getName());
@@ -105,8 +105,8 @@ public class AdaptMessage {
     }
 
     public void entityKillMessage(String message, Player player, double value) {
-        GetSet playerData = GetSet.gets(player, plugin);
-        double playerKarma = playerData.playerKarma;
+        DataHandler playerData = DataHandler.gets(player, plugin);
+        double playerKarma = playerData.getPlayerKarma();
 
 
         if (message != null) {
@@ -141,10 +141,10 @@ public class AdaptMessage {
     }
 
     public void playerHitMessage(String message, Player attacker, Player victim, double value) {
-        GetSet attackerData = GetSet.gets(attacker, plugin);
-        GetSet victimData = GetSet.gets(victim, plugin);
-        double attackerKarma = attackerData.playerKarma;
-        double victimKarma = victimData.playerKarma;
+        DataHandler attackerData = DataHandler.gets(attacker, plugin);
+        DataHandler victimData = DataHandler.gets(victim, plugin);
+        double attackerKarma = attackerData.getPlayerKarma();
+        double victimKarma = victimData.getPlayerKarma();
 
         if (message != null) {
             message = message.replaceAll("<ATTACKER>", attacker.getName());
@@ -155,11 +155,11 @@ public class AdaptMessage {
                 .replaceAll("<VALUE>", String.format("%." + nbDec + "f", attackerKarma - value));
             message = message
                 .replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", attackerKarma));
-            message = message.replaceAll("<ATTACKER_TIER>", attackerData.playerDisplayTier);
+            message = message.replaceAll("<ATTACKER_TIER>", attackerData.getPlayerDisplayTier());
 
             message = message
                 .replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
-            message = message.replaceAll("<VICTIM_TIER>", victimData.playerDisplayTier);
+            message = message.replaceAll("<VICTIM_TIER>", victimData.getPlayerDisplayTier());
 
             message = papi.setPlaceholdersOnMessage(message, attacker);
             message = ChatColor.translateAlternateColorCodes('&', message);
@@ -185,8 +185,8 @@ public class AdaptMessage {
     }
 
     public void playerKillMessage(String message, Player killer, Player victim, double value) {
-        GetSet killerData = GetSet.gets(killer, plugin);
-        GetSet victimData = GetSet.gets(victim, plugin);
+        DataHandler killerData = DataHandler.gets(killer, plugin);
+        DataHandler victimData = DataHandler.gets(victim, plugin);
         double killerKarma = killerData.getPlayerKarma();
         double victimKarma = victimData.getPlayerKarma();
 
@@ -199,11 +199,11 @@ public class AdaptMessage {
                 .replaceAll("<VALUE>", String.format("%." + nbDec + "f", killerKarma - value));
             message = message
                 .replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", killerKarma));
-            message = message.replaceAll("<ATTACKER_TIER>", killerData.playerDisplayTier);
+            message = message.replaceAll("<ATTACKER_TIER>", killerData.getPlayerDisplayTier());
 
             message = message
                 .replaceAll("<VICTIM_KARMA>", String.format("%." + nbDec + "f", victimKarma));
-            message = message.replaceAll("<VICTIM_TIER>", victimData.playerDisplayTier);
+            message = message.replaceAll("<VICTIM_TIER>", victimData.getPlayerDisplayTier());
 
             message = papi.setPlaceholdersOnMessage(message, killer);
             message = ChatColor.translateAlternateColorCodes('&', message);

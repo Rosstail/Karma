@@ -50,6 +50,7 @@ public class HitEvents implements Listener {
             && ((LivingEntity) event.getEntity()).getHealth() - event.getFinalDamage() > 0)) {
             return;
         }
+
         damage = event.getFinalDamage();
         livingEntity = (LivingEntity) event.getEntity();
         livingEntityName = livingEntity.toString().replaceAll("Craft", "");
@@ -65,7 +66,8 @@ public class HitEvents implements Listener {
         } else {
             return;
         }
-        GetSet playerData = GetSet.gets(attacker, plugin);
+        DataHandler playerData = DataHandler.gets(attacker, plugin);
+
         if (attacker.hasMetadata("NPC") || !playerData.getTime()) {
             return;
         }
@@ -79,7 +81,7 @@ public class HitEvents implements Listener {
         reward = plugin.getConfig().getDouble("entities." + livingEntityName + ".hit-karma-reward");
 
         if (!(reward == 0 || attacker == null)) {
-            attackerKarma = playerData.playerKarma;
+            attackerKarma = playerData.getPlayerKarma();
 
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
                 .getConfig().getBoolean("general.use-worldguard")) {
@@ -105,11 +107,11 @@ public class HitEvents implements Listener {
      * Launch When a player is hurt by another player.
      */
     public void onPlayerHurt() {
-        GetSet attackerData = GetSet.gets(attacker, plugin);
-        GetSet victimData = GetSet.gets(victim, plugin);
+        DataHandler attackerData = DataHandler.gets(attacker, plugin);
+        DataHandler victimData = DataHandler.gets(victim, plugin);
 
-        double attackerInitialKarma = attackerData.playerKarma;
-        double victimKarma = victimData.playerKarma;
+        double attackerInitialKarma = attackerData.getPlayerKarma();
+        double victimKarma = victimData.getPlayerKarma();
 
         if (!(!(victim.getName().equals(attacker.getName())) && damage >= 1d)) {
             return;
@@ -155,10 +157,10 @@ public class HitEvents implements Listener {
             long timeStamp = System.currentTimeMillis();
             long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
 
-            long attackStart = attackerData.playerLastAttack;
-            long attackEnd = attackerData.playerLastAttack + delay * 1000;
-            long victimStart = victimData.playerLastAttack;
-            long victimEnd = victimData.playerLastAttack + delay * 1000;
+            double attackStart = attackerData.getPlayerLastAttack();
+            double attackEnd = attackerData.getPlayerLastAttack() + delay * 1000;
+            double victimStart = victimData.getPlayerLastAttack();
+            double victimEnd = victimData.getPlayerLastAttack() + delay * 1000;
 
             if (attackStart != 0L
                 && victimStart != 0L) {

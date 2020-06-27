@@ -36,7 +36,7 @@ public class PlayerConnect implements Listener {
      * @param player
      */
     public void createPlayerData(Player player) {
-        GetSet playerData = GetSet.gets(player, plugin);
+        DataHandler playerData = DataHandler.gets(player, plugin);
         File file = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         try {
             if (file.exists() || plugin.connection != null && !plugin.connection.isClosed()) {
