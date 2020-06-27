@@ -20,6 +20,7 @@ public class KillEvents implements Listener {
     private final Karma plugin;
     private final File langFile;
     private final YamlConfiguration configLang;
+
     Player killer = null;
     Player victim = null;
     String message = null;
@@ -43,12 +44,14 @@ public class KillEvents implements Listener {
         double killerKarma;
         double reward;
         LivingEntity livingEntity = event.getEntity();
+
         killer = livingEntity.getKiller();
         String livingEntityName;
         DataHandler playerData;
         if (event.getEntity().getKiller() != null) {
             playerData = DataHandler.gets(killer, plugin);
             if (killer != null && playerData.getTime()) {
+
                 livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             } else {
                 return;
@@ -65,6 +68,7 @@ public class KillEvents implements Listener {
         if (reward == 0) {
             return;
         }
+
         killerKarma = playerData.getPlayerKarma();
 
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin

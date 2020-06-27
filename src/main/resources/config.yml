@@ -25,6 +25,7 @@ tiers:
     tier-minimum-karma: -300000
     tier-maximum-karma: -150000
     commands:
+      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &8is the baddest <TIER>."
       - "me another command"
       - "<@>me command from console"
@@ -33,6 +34,7 @@ tiers:
     tier-minimum-karma: -149999
     tier-maximum-karma:  -30000
     commands:
+      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &cis really bad."
       - "me &cseriously guys."
     commands-on-up:
@@ -44,6 +46,7 @@ tiers:
     tier-minimum-karma:  -29999
     tier-maximum-karma:   -5000
     commands:
+      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &eis not gentle."
     commands-on-up:
       - "me But I'm better than some guys !"
@@ -54,9 +57,9 @@ tiers:
     tier-minimum-karma:   -4999
     tier-maximum-karma:    4999
     commands:
+      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &7is the neutral neutral alignment."
       - "<@>me &6<PLAYER> &aHey ! Your karma is &6<KARMA> &r!"
-      - "<MESSAGE> &6<PLAYER> &5Bonjour !"
     commands-on-up:
       - "me I'm not a thug anymore !"
     commands-on-down:
@@ -66,6 +69,7 @@ tiers:
     tier-minimum-karma:    5000
     tier-maximum-karma:   29999
     commands:
+      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &ais now a good guy who likes Streets of Rage games serie."
       - "me &ais a test, it will be sent by player."
       - "<@>me must not be sent by player but by console."
@@ -78,6 +82,7 @@ tiers:
     tier-minimum-karma:   30000
     tier-maximum-karma:  149999
     commands:
+      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &bhas right to kill anyone who mess him, yes."
     commands-on-up:
       - "me I AM THE LAW ! DROP YOU WEAPONS !"
@@ -88,6 +93,7 @@ tiers:
     tier-minimum-karma:  150000
     tier-maximum-karma:  300000
     commands:
+      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &6is the hero !"
       - "me &6another command !"
       - "<@>me You can create an infinite amount of commands and tiers !"

@@ -38,7 +38,11 @@ public class AdaptMessage {
      * Sends automatically the message to the sender with some parameters
      *
      * @param sender  the sender, can be console, player or null.
+<<<<<<< HEAD
      * @param player  the player targeted. If player is NULL,
+=======
+     * @param player  the player targeted
+>>>>>>> e3d89de63a1b0e124d1205ba225533194e0082ec
      * @param value   the value. Can be reward or a simple value
      * @param message the content of the message
      */
@@ -65,7 +69,7 @@ public class AdaptMessage {
 
         if (sender != null) {
             sender.sendMessage(message);
-        } else {
+        } else if (player != null){
             player.sendMessage(message);
         }
     }
@@ -155,6 +159,7 @@ public class AdaptMessage {
                 .replaceAll("<VALUE>", String.format("%." + nbDec + "f", attackerKarma - value));
             message = message
                 .replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", attackerKarma));
+
             message = message.replaceAll("<ATTACKER_TIER>", attackerData.getPlayerDisplayTier());
 
             message = message
@@ -199,6 +204,7 @@ public class AdaptMessage {
                 .replaceAll("<VALUE>", String.format("%." + nbDec + "f", killerKarma - value));
             message = message
                 .replaceAll("<ATTACKER_KARMA>", String.format("%." + nbDec + "f", killerKarma));
+
             message = message.replaceAll("<ATTACKER_TIER>", killerData.getPlayerDisplayTier());
 
             message = message

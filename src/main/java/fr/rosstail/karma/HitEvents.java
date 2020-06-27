@@ -20,6 +20,7 @@ public class HitEvents implements Listener {
     private final File langFile;
     private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
+
     private Player attacker;
     private Player victim;
     private double damage;
