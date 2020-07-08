@@ -38,20 +38,13 @@ public class AdaptMessage {
      * Sends automatically the message to the sender with some parameters
      *
      * @param sender  the sender, can be console, player or null.
-<<<<<<< HEAD
-     * @param player  the player targeted. If player is NULL,
-=======
-     * @param player  the player targeted
->>>>>>> e3d89de63a1b0e124d1205ba225533194e0082ec
-     * @param value   the value. Can be reward or a simple value
-     * @param message the content of the message
      */
     public void message(CommandSender sender, Player player, double value, String message) {
         if (message == null) {
             return;
         }
 
-        if (player != null && player.isOnline()) {
+        if (player != null) {
             DataHandler playerData = DataHandler.gets(player, plugin);
             double playerKarma = playerData.getPlayerKarma();
             double playerOldKarma = playerData.loadPlayerKarma();

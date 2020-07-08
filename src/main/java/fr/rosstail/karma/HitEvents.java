@@ -9,6 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.io.File;
 
 
@@ -110,6 +113,8 @@ public class HitEvents implements Listener {
     public void onPlayerHurt() {
         DataHandler attackerData = DataHandler.gets(attacker, plugin);
         DataHandler victimData = DataHandler.gets(victim, plugin);
+        Object resultSE = null;
+        double result = 0;
 
         double attackerInitialKarma = attackerData.getPlayerKarma();
         double victimKarma = victimData.getPlayerKarma();
@@ -117,94 +122,91 @@ public class HitEvents implements Listener {
         if (!(!(victim.getName().equals(attacker.getName())) && damage >= 1d)) {
             return;
         }
-        double arg1 = plugin.getConfig().getDouble("pvp.hit-reward-variables.1");
-        String arg2Str = plugin.getConfig().getString("pvp.hit-reward-variables.2");
-        double arg2 = 0;
-        double arg3 = plugin.getConfig().getDouble("pvp.hit-reward-variables.3");
-        double arg4 = plugin.getConfig().getDouble("pvp.hit-reward-variables.4");
 
-        if (arg2Str != null) {
-            if (arg2Str.equalsIgnoreCase("<VICTIM_KARMA>")) {
+        String expression = plugin.getConfig().getString("pvp.hit-reward-expression");
+
+        if (expression != null) {
+            if (expression.contains("<VICTIM_KARMA>")) {
                 if (!isVictimNPC()) {
-                    arg2 = victimKarma;
+                    expression = expression.replaceAll("<VICTIM_KARMA>", String.valueOf(victimKarma));
                 } else if (isVictimNPCHaveKarma()){
-                    arg2 = victim.getMetadata("Karma").get(0).asDouble();
+                    expression = expression.replaceAll("<VICTIM_KARMA>", String.valueOf(victim.getMetadata("Karma").get(0).asDouble()));
                 } else {
                     return;
                 }
-            } else {
-                try {
-                    arg2 = Double.parseDouble(arg2Str);
-                } catch (NumberFormatException e) {
-                    System.out.println("Player" + victim.getName() + " has wrong Karma value.");
-                    return;
-                }
             }
-        }
-
-        double formula = arg1 * (arg2 + arg3) / arg4;
-
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
-            .getConfig().getBoolean("general.use-worldguard")) {
-            WGPreps wgPreps = new WGPreps();
-            double mult = wgPreps.checkMultipleKarmaFlags(attacker);
-            formula = formula * mult;
-        }
-
-        double attackerNewKarma = attackerInitialKarma + formula;
-
-        if (plugin.getConfig().getBoolean("pvp.crime-time.enable") && !(attacker.hasMetadata("NPC")
-            || victim.hasMetadata("NPC"))) {
-            long timeStamp = System.currentTimeMillis();
-            long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
-
-            double attackStart = attackerData.getPlayerLastAttack();
-            double attackEnd = attackerData.getPlayerLastAttack() + delay * 1000;
-            double victimStart = victimData.getPlayerLastAttack();
-            double victimEnd = victimData.getPlayerLastAttack() + delay * 1000;
-
-            if (attackStart != 0L
-                && victimStart != 0L) {
-                if ((timeStamp >= attackStart && timeStamp <= attackEnd)
-                    || timeStamp > victimEnd) {
-                    attackerData.setLastAttackToPlayer();
-                } else {
-                    if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                        message = configLang.getString("self-defending-off");
-                        adaptMessage.message(null, attacker, 0, message);
-                        return;
-                    }
-                    message = configLang.getString("self-defending-on");
-                    adaptMessage.message(null, attacker, 0, message);
-                }
-            } else if (attackStart == 0L) {
-                attackerData.setLastAttackToPlayer();
-            } else if (victimStart != 0L) {
-                if (timeStamp >= victimStart && timeStamp <= victimEnd) {
-                    if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                        message = configLang.getString("self-defending-off");
-                        adaptMessage.message(null, attacker, 0, message);
-                        return;
-                    }
-                    message = configLang.getString("self-defending-on");
-                    adaptMessage.message(null, attacker, 0, message);
-                } else {
-                    attackerData.setLastAttackToPlayer();
-                }
+            ScriptEngine engine = new ScriptEngineManager().getEngineByExtension("js");
+            try {
+                // Evaluate the expression
+                resultSE = engine.eval(expression);
+            }
+            catch (ScriptException e) {
+                // Something went wrong
+                e.printStackTrace();
             }
 
-        }
+            if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
+                    .getConfig().getBoolean("general.use-worldguard")) {
+                WGPreps wgPreps = new WGPreps();
+                double mult = wgPreps.checkMultipleKarmaFlags(attacker);
+                result = Double.parseDouble(resultSE.toString()) * mult;
+            }
 
-        attackerData.setKarmaToPlayer(attackerNewKarma);
+            double attackerNewKarma = attackerInitialKarma + result;
 
-        message = null;
-        if (attackerNewKarma > attackerInitialKarma) {
-            message = plugin.getConfig().getString("pvp.hit-message-on-karma-increase");
-        } else if (attackerNewKarma < attackerInitialKarma) {
-            message = plugin.getConfig().getString("pvp.hit-message-on-karma-decrease");
-        }
-        if (message != null) {
-            adaptMessage.playerHitMessage(message, attacker, victim, attackerInitialKarma);
+            if (plugin.getConfig().getBoolean("pvp.crime-time.enable") && !(attacker.hasMetadata("NPC")
+                    || victim.hasMetadata("NPC"))) {
+                long timeStamp = System.currentTimeMillis();
+                long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
+
+                double attackStart = attackerData.getPlayerLastAttack();
+                double attackEnd = attackerData.getPlayerLastAttack() + delay * 1000;
+                double victimStart = victimData.getPlayerLastAttack();
+                double victimEnd = victimData.getPlayerLastAttack() + delay * 1000;
+
+                if (attackStart != 0L
+                        && victimStart != 0L) {
+                    if ((timeStamp >= attackStart && timeStamp <= attackEnd)
+                            || timeStamp > victimEnd) {
+                        attackerData.setLastAttackToPlayer();
+                    } else {
+                        if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
+                            message = configLang.getString("self-defending-off");
+                            adaptMessage.message(null, attacker, 0, message);
+                            return;
+                        }
+                        message = configLang.getString("self-defending-on");
+                        adaptMessage.message(null, attacker, 0, message);
+                    }
+                } else if (attackStart == 0L) {
+                    attackerData.setLastAttackToPlayer();
+                } else if (victimStart != 0L) {
+                    if (timeStamp >= victimStart && timeStamp <= victimEnd) {
+                        if (!doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
+                            message = configLang.getString("self-defending-off");
+                            adaptMessage.message(null, attacker, 0, message);
+                            return;
+                        }
+                        message = configLang.getString("self-defending-on");
+                        adaptMessage.message(null, attacker, 0, message);
+                    } else {
+                        attackerData.setLastAttackToPlayer();
+                    }
+                }
+
+            }
+
+            attackerData.setKarmaToPlayer(attackerNewKarma);
+
+            message = null;
+            if (attackerNewKarma > attackerInitialKarma) {
+                message = plugin.getConfig().getString("pvp.hit-message-on-karma-increase");
+            } else if (attackerNewKarma < attackerInitialKarma) {
+                message = plugin.getConfig().getString("pvp.hit-message-on-karma-decrease");
+            }
+            if (message != null) {
+                adaptMessage.playerHitMessage(message, attacker, victim, attackerInitialKarma);
+            }
         }
     }
 

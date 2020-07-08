@@ -318,18 +318,21 @@ public class DataHandler {
      *
      */
     public void initPlayerData() {
+        File playerFile =
+                new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+
         if (ifPlayerExistsInDTB()) {
             updatePlayerNameDTB();
-            return;
-        }
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                initPlayerDataDTB();
-            } else {
-                initPlayerDataLocale();
+        } else {
+            try {
+                if (plugin.connection != null && !plugin.connection.isClosed()) {
+                    initPlayerDataDTB();
+                } else if (!playerFile.exists()){
+                    initPlayerDataLocale();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
@@ -639,30 +642,6 @@ public class DataHandler {
                     playerConfig.save(playerFile);
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    public void createPlayerLocaleFile(Player player, File file) {
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        configuration.set("name", player.getName());
-        configuration.set("karma", plugin.getConfig().getDouble("karma.default-karma"));
-        this.playerKarma = plugin.getConfig().getDouble("karma.default-karma");
-
-        setTierToPlayer();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    configuration.save(file);
-                } catch (IOException var4) {
-                    var4.printStackTrace();
                 }
             }
         });

@@ -1,5 +1,5 @@
 name: Karma
-version: 1.4.8
+version: 1.4.9
 description: Make your players actions have consequences !
 api-version: 1.15
 author: Rosstail
@@ -9,6 +9,11 @@ softdepend:
   - PlaceholderAPI
 main: fr.rosstail.karma.Karma
 commands:
+  karma help:
+    description: Displays list of plugin commands
+    usage: /karma help
+    permission: karma.help
+    permission-message: You don't have permission !
   karma:
     description: Check karma of a player
     usage: /karma
@@ -40,6 +45,8 @@ commands:
     permission: karma.reload
     permission-message: You don't have permission !
 permissions:
+  karma.help:
+    default: true
   karma.own:
     default: true
   karma.other:
@@ -58,6 +65,7 @@ permissions:
     default: op
     description: Gives all karma plugin permissions
     children:
+      karma.help: true
       karma.own: true
       karma.other: true
       karma.set: true
