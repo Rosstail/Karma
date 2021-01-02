@@ -1,5 +1,10 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.events;
 
+import fr.rosstail.karma.datas.DataHandler;
+import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.datas.PlayerData;
+import fr.rosstail.karma.apis.WGPreps;
+import fr.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
@@ -21,18 +26,17 @@ import java.io.File;
 public class KillEvents implements Listener {
 
     private final Karma plugin;
-    private final File langFile;
     private final YamlConfiguration configLang;
 
     Player killer = null;
     Player victim = null;
     String message = null;
-    private AdaptMessage adaptMessage;
+    private final AdaptMessage adaptMessage;
 
-    KillEvents(Karma plugin) {
+    public KillEvents(Karma plugin) {
         this.plugin = plugin;
-        this.langFile = new File(plugin.getDataFolder(),
-            "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        File langFile = new File(plugin.getDataFolder(),
+                "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
         this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.adaptMessage = new AdaptMessage(plugin);
     }
@@ -50,10 +54,10 @@ public class KillEvents implements Listener {
 
         killer = livingEntity.getKiller();
         String livingEntityName;
-        DataHandler playerData;
+        PlayerData playerData;
         if (event.getEntity().getKiller() != null) {
-            playerData = DataHandler.gets(killer, plugin);
-            if (killer != null && playerData.getTime()) {
+            playerData = PlayerData.gets(killer, plugin);
+            if (killer != null && DataHandler.getTime(killer)) {
 
                 livingEntityName = livingEntity.toString().replaceAll("Craft", "");
             } else {
@@ -103,10 +107,10 @@ public class KillEvents implements Listener {
             return;
         }
 
-        DataHandler killerData = DataHandler.gets(killer, plugin);
-        DataHandler victimData = DataHandler.gets(victim, plugin);
+        PlayerData killerData = PlayerData.gets(killer, plugin);
+        PlayerData victimData = PlayerData.gets(victim, plugin);
 
-        if (!killerData.getTime()) {
+        if (!DataHandler.getTime(killer)) {
             return;
         }
 
@@ -143,8 +147,8 @@ public class KillEvents implements Listener {
                         .getConfig().getBoolean("general.use-worldguard")) {
 
                     WGPreps wgPreps = new WGPreps();
-                    double mult = wgPreps.checkMultipleKarmaFlags(killer);
-                    result = Double.parseDouble(resultSE.toString()) * mult;
+                    double multi = wgPreps.checkMultipleKarmaFlags(killer);
+                    result = Double.parseDouble(resultSE.toString()) * multi;
                 }
 
                 double killerNewKarma = killerInitialKarma + result;

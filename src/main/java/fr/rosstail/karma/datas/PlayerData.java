@@ -1,37 +1,38 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.datas;
 
+import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.apis.PAPI;
+import fr.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Gonna be used to optimize the research of values
  */
-public class DataHandler {
+public class PlayerData {
     private final Karma plugin;
     private final File langFile;
     private final YamlConfiguration configLang;
     private final int nbDec;
     private PAPI papi = new PAPI();
 
-    private static Map<Player, DataHandler> getSets = new HashMap<Player, DataHandler>();
+    private static Map<Player, PlayerData> getSets = new HashMap<Player, PlayerData>();
     private Player player;
     private double playerKarma;
     private String playerTier;
     private String playerDisplayTier;
     private long playerLastAttack;
 
-    private DataHandler(Karma plugin, Player player) {
+    private PlayerData(Karma plugin, Player player) {
         this.plugin = plugin;
         this.langFile = new File(plugin.getDataFolder(),
                 "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
@@ -44,9 +45,9 @@ public class DataHandler {
         this.playerLastAttack = loadPlayerLastAttack();
     }
 
-    public static DataHandler gets(Player player, Karma plugin) {
+    public static PlayerData gets(Player player, Karma plugin) {
         if(!getSets.containsKey(player)){ // If player doesn't have instance
-            getSets.put(player, new DataHandler(plugin, player));
+            getSets.put(player, new PlayerData(plugin, player));
         }
         return getSets.get(player);
     }
@@ -67,7 +68,7 @@ public class DataHandler {
         return playerLastAttack;
     }
 
-    public boolean ifPlayerExistsInDTB() {
+    private boolean ifPlayerExistsInDTB() {
         String UUID = String.valueOf(player.getUniqueId());
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
@@ -188,129 +189,10 @@ public class DataHandler {
      *
      * @return
      */
-    public String loadPlayerDisplayTier() {
+    private String loadPlayerDisplayTier() {
         playerDisplayTier = plugin.getConfig()
                 .getString("tiers." + playerTier + ".tier-display-name");
         return playerDisplayTier;
-    }
-
-    /**
-     * Get the karma limits of karma for specified tier in Config.yml
-     *
-     * @return
-     */
-    public double[] getTierLimits(String tier) {
-        double tierMinimumKarma =
-            plugin.getConfig().getDouble("tiers." + tier + ".tier-minimum-karma");
-        double tierMaximumKarma =
-            plugin.getConfig().getDouble("tiers." + tier + ".tier-maximum-karma");
-        return new double[] {tierMinimumKarma, tierMaximumKarma};
-    }
-
-    public String[] getSystemTimeLimits(String time) {
-        String minimumHourMin =
-            plugin.getConfig().getString("times.system-times." + time + ".starting-time");
-        String maximumHourMin =
-            plugin.getConfig().getString("times.system-times." + time + ".ending-time");
-        return new String[] {minimumHourMin, maximumHourMin};
-    }
-
-    public long[] getWorldTimeLimits(String time) {
-        String minimumHourMin =
-            plugin.getConfig().getString("times.worlds-times." + time + ".starting-time");
-        String maximumHourMin =
-            plugin.getConfig().getString("times.worlds-times." + time + ".ending-time");
-
-        assert minimumHourMin != null;
-        assert maximumHourMin != null;
-        String[] convMinHourMin = minimumHourMin.split(":", 2);
-        String[] convMaxHourMin = maximumHourMin.split(":", 2);
-        long minHour = (long) (1000 * Integer.parseInt(convMinHourMin[0]) + 16.66 * Integer
-            .parseInt(convMinHourMin[1])) + 18000L;
-        long maxHour = (long) (1000 * Integer.parseInt(convMaxHourMin[0]) + 16.66 * Integer
-            .parseInt(convMinHourMin[1])) + 18000L;
-        if (minHour > 24000) {
-            minHour -= 24000;
-        }
-        if (maxHour > 24000) {
-            maxHour -= 24000;
-        }
-        return new long[] {minHour, maxHour};
-    }
-
-    public boolean getTime() {
-        String type = plugin.getConfig().getString("times.use-both-system-and-worlds-time");
-        if (type != null && !type.equalsIgnoreCase("NONE")) {
-            if (type.equals("BOTH")) {
-                return getSystemTime() && getWorldTime();
-            } else if (type.equalsIgnoreCase("SYSTEM")) {
-                return getSystemTime();
-            } else if (type.equalsIgnoreCase("WORLDS")) {
-                return getWorldTime();
-            }
-        }
-        return true;
-    }
-
-    public boolean getSystemTime() {
-        Set<String> path =
-            plugin.getConfig().getConfigurationSection("times.system-times").getKeys(false);
-        Date now = new Date(System.currentTimeMillis());
-        SimpleDateFormat hhmmFormat = new SimpleDateFormat("HH:mm");
-
-        String[] timeLimits;
-
-        for (String timeList : path) {
-            timeLimits = getSystemTimeLimits(timeList);
-            if (timeLimits[1].compareTo(timeLimits[0]) >= 0) {
-                if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0
-                    && timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
-                    if (ThreadLocalRandom.current().nextInt(0, 100) <= plugin.getConfig()
-                        .getInt("times.system-times." + timeList + ".chance")) {
-                        return true;
-                    }
-                }
-            } else {
-                if (timeLimits[0].compareTo(hhmmFormat.format(now)) <= 0
-                    || timeLimits[1].compareTo(hhmmFormat.format(now)) >= 0) {
-                    if (ThreadLocalRandom.current().nextInt(0, 100) <= plugin.getConfig()
-                        .getInt("times.system-times." + timeList + ".chance")) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    public boolean getWorldTime() {
-        Set<String> path =
-            plugin.getConfig().getConfigurationSection("times.worlds-times").getKeys(false);
-        World world = player.getWorld();
-        long worldTime = world.getTime();
-        long[] timeLimits;
-
-        for (String timeList : path) {
-            timeLimits = getWorldTimeLimits(timeList);
-            if (timeLimits[0] <= timeLimits[1]) {
-                if (timeLimits[0] <= worldTime && timeLimits[1] >= worldTime) {
-                    if (ThreadLocalRandom.current().nextInt(0, 100) <= plugin.getConfig()
-                        .getInt("times.worlds-times." + timeList + ".chance")) {
-                        return true;
-                    }
-                }
-            } else {
-                if (timeLimits[0] <= worldTime || timeLimits[1] >= worldTime) {
-                    if (ThreadLocalRandom.current().nextInt(0, 100) <= plugin.getConfig()
-                        .getInt("times.worlds-times." + timeList + ".chance")) {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 
     /**
@@ -321,9 +203,7 @@ public class DataHandler {
         File playerFile =
                 new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
 
-        if (ifPlayerExistsInDTB()) {
-            updatePlayerNameDTB();
-        } else {
+        if (!ifPlayerExistsInDTB()) {
             try {
                 if (plugin.connection != null && !plugin.connection.isClosed()) {
                     initPlayerDataDTB();
@@ -338,7 +218,6 @@ public class DataHandler {
 
     private void initPlayerDataDTB() {
         String UUID = String.valueOf(player.getUniqueId());
-        String name = player.getName();
         double value = plugin.getConfig().getDouble("karma.default-karma");
         double min = plugin.getConfig().getDouble("karma.minimum-karma");
         double max = plugin.getConfig().getDouble("karma.maximum-karma");
@@ -359,14 +238,13 @@ public class DataHandler {
             public void run() {
                 try {
                     PreparedStatement preparedStatement = plugin.connection.prepareStatement(
-                            "INSERT INTO Karma (UUID, NickName, Karma, Tier, Last_Attack)\n"
-                                    + "VALUES (?, ?, ?, ?, ?);");
+                            "INSERT INTO Karma (UUID, Karma, Tier, Last_Attack)\n"
+                                    + "VALUES (?, ?, ?, ?);");
 
                     preparedStatement.setString(1, UUID);
-                    preparedStatement.setString(2, name);
-                    preparedStatement.setDouble(3, finalValue);
+                    preparedStatement.setDouble(2, finalValue);
+                    preparedStatement.setString(3, null);
                     preparedStatement.setString(4, null);
-                    preparedStatement.setString(5, null);
 
                     preparedStatement.execute();
                     preparedStatement.close();
@@ -402,26 +280,6 @@ public class DataHandler {
                 try {
                     playerConfig.save(playerFile);
                 } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void updatePlayerNameDTB() {
-        String nickName = player.getName();
-        String UUID = player.getUniqueId().toString();
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    PreparedStatement preparedStatement = plugin.connection.prepareStatement(
-                            "UPDATE Karma SET NickName = ? WHERE UUID = ?;\n"
-                                    + "VALUES (?, ?);");
-                    preparedStatement.setString(1, nickName);
-                    preparedStatement.setString(2, UUID);
-                } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
@@ -513,11 +371,11 @@ public class DataHandler {
         ArrayList<String> array = new ArrayList<>();
         double[] tierLimits;
 
-        for (String tierList : path) {
-            tierLimits = getTierLimits(tierList);
+        for (String tier : path) {
+            tierLimits = DataHandler.getTierLimits(tier);
             if (getPlayerKarma() >= tierLimits[0]
-                    && getPlayerKarma() <= tierLimits[1] && !tierList.equals(getPlayerTier())) {
-                this.playerTier = tierList;
+                    && getPlayerKarma() <= tierLimits[1] && !tier.equals(getPlayerTier())) {
+                this.playerTier = tier;
                 this.playerDisplayTier = plugin.getConfig()
                         .getString("tiers." + getPlayerTier() + ".tier-display-name");
 
@@ -533,7 +391,7 @@ public class DataHandler {
                 break;
             }
 
-            array.add(tierList);
+            array.add(tier);
         }
 
         try {

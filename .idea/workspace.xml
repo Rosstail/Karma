@@ -1,17 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="53d11734-8c26-4e6c-b126-b0e085e743e4" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/datas/DataHandler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/lang/en_EN.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/lang/es_ES.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/lang/fr_FR.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/lang/ro_RO.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/AdaptMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/AdaptMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/CheckKarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/CheckKarmaCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/DataHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/DataHandler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/PlayerConnect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/PlayerConnect.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/AdaptMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/lang/AdaptMessage.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/CheckKarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/commands/CheckKarmaCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/DataHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/EditKarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/commands/EditKarmaCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/HitEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/events/HitEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/commands/KarmaCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/KillEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/events/KillEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/PAPI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/apis/PAPI.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/PlayerConnect.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/events/PlayerConnect.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/WGPreps.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/apis/WGPreps.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,6 +81,13 @@
       </RecentBranches>
     </option>
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="D:\Logiciels\Intellij IDEA\plugins\maven\lib\maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectId" id="1VqXeR4hUcBWdCkAxujdGX73PMl" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -61,7 +96,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources/lang" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -69,6 +104,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\rosst\IdeaProjects\MAVEN-karma\src\main\resources\lang" />
       <recent name="C:\Users\rosst\IdeaProjects\Karma\src\main\resources" />
       <recent name="C:\Users\rosst\IdeaProjects\Karma" />
     </key>
@@ -76,21 +112,11 @@
       <recent name="fr.rosstail.karma" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\rosst\IdeaProjects\MAVEN-karma\src\main\resources\lang" />
       <recent name="C:\Users\rosst\IdeaProjects\Karma\src\main\resources\lang" />
     </key>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -104,70 +130,44 @@
     </task>
     <servers />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="WindowStateProjectService">
-    <state x="552" y="179" width="816" height="729" key="#Intentions" timestamp="1589487838527">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1609555522061">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="179" width="816" height="729" key="#Intentions/0.0.1920.1040@0.0.1920.1040" timestamp="1589487838527" />
-    <state x="552" y="179" key="#Project_Structure" timestamp="1589394266766">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1609555522061" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1609555522061">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="179" key="#Project_Structure/0.0.1920.1040@0.0.1920.1040" timestamp="1589394266766" />
-    <state x="690" y="276" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1590159373636">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1609555522061" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1609555522061">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="690" y="276" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1590159373636" />
-    <state x="828" y="352" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1593222598986">
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1609555522061" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1609555522061">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="828" y="352" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1593222598986" />
-    <state x="522" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1593122825283">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="522" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1593122825283" />
-    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1586646179905">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="690" y="268" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586646179905" />
-    <state x="740" y="276" key="FileChooserDialogImpl" timestamp="1592485607994">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="740" y="276" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1592485607994" />
-    <state width="1877" height="137" key="GridCell.Tab.0.bottom" timestamp="1594174044226">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="137" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1594174044226" />
-    <state width="1877" height="137" key="GridCell.Tab.0.center" timestamp="1594174044226">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="137" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1594174044226" />
-    <state width="1877" height="137" key="GridCell.Tab.0.left" timestamp="1594174044225">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="137" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1594174044225" />
-    <state width="1877" height="137" key="GridCell.Tab.0.right" timestamp="1594174044226">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="137" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1594174044226" />
-    <state x="620" y="138" key="NewModule_or_Project.wizard" timestamp="1592394282835">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="620" y="138" key="NewModule_or_Project.wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1592394282835" />
-    <state x="342" y="141" key="new project wizard" timestamp="1591629772103">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="342" y="141" key="new project wizard/0.0.1920.1040@0.0.1920.1040" timestamp="1591629772103" />
-    <state x="702" y="140" key="refactoring.ChangeSignatureDialog" timestamp="1591723783525">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="702" y="140" key="refactoring.ChangeSignatureDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1591723783525" />
-    <state x="616" y="240" width="672" height="677" key="run.anything.popup" timestamp="1593125303911">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="616" y="240" width="672" height="677" key="run.anything.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1593125303911" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1589752119940">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1589752119940" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1609555522061" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/fr/rosstail/karma/lang/LangManager.java</url>
+          <line>18</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

@@ -1,34 +1,31 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.lang;
 
+import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.apis.PAPI;
+import fr.rosstail.karma.datas.PlayerData;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AdaptMessage {
-    private PAPI papi = new PAPI();
+    private final PAPI papi = new PAPI();
 
     private final Karma plugin;
-    private final File langFile;
-    private final YamlConfiguration configLang;
-    private int nbDec;
-    private boolean msgStyle;
+    private final int nbDec;
+    private final boolean msgStyle;
 
-    AdaptMessage(Karma plugin) {
+    public AdaptMessage(Karma plugin) {
         this.plugin = plugin;
-        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
-        this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.nbDec = plugin.getConfig().getInt("general.decimal-number-to-show");
         this.msgStyle = plugin.getConfig().getBoolean("general.use-action-bar-on-actions");
     }
 
-    private Map<String, Long> cooldown = new HashMap<String, Long>();
+    private Map<String, Long> coolDown = new HashMap<String, Long>();
 
     public static void sendActionBar(Player player, String message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
@@ -45,7 +42,7 @@ public class AdaptMessage {
         }
 
         if (player != null) {
-            DataHandler playerData = DataHandler.gets(player, plugin);
+            PlayerData playerData = PlayerData.gets(player, plugin);
             double playerKarma = playerData.getPlayerKarma();
             double playerOldKarma = playerData.loadPlayerKarma();
             String playerDisplayTier = playerData.getPlayerDisplayTier();
@@ -68,7 +65,7 @@ public class AdaptMessage {
     }
 
     public void entityHitMessage(String message, Player player, double value) {
-        DataHandler playerData = DataHandler.gets(player, plugin);
+        PlayerData playerData = PlayerData.gets(player, plugin);
         double playerKarma = playerData.getPlayerKarma();
 
         if (message != null) {
@@ -82,16 +79,16 @@ public class AdaptMessage {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        if (cooldown.containsKey(player.getName())) {
+        if (coolDown.containsKey(player.getName())) {
             double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
             double timeLeft =
-                cooldown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        cooldown.put(player.getName(), System.currentTimeMillis());
+        coolDown.put(player.getName(), System.currentTimeMillis());
         if (message != null) {
             if (msgStyle) {
                 sendActionBar(player, message);
@@ -102,8 +99,7 @@ public class AdaptMessage {
     }
 
     public void entityKillMessage(String message, Player player, double value) {
-        DataHandler playerData = DataHandler.gets(player, plugin);
-        double playerKarma = playerData.getPlayerKarma();
+        double playerKarma = PlayerData.gets(player, plugin).getPlayerKarma();
 
 
         if (message != null) {
@@ -117,17 +113,17 @@ public class AdaptMessage {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        if (cooldown.containsKey(player.getName())) {
+        if (coolDown.containsKey(player.getName())) {
             double seconds =
                 this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
             double timeLeft =
-                cooldown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        cooldown.put(player.getName(), System.currentTimeMillis());
+        coolDown.put(player.getName(), System.currentTimeMillis());
         if (message != null) {
             if (msgStyle) {
                 sendActionBar(player, message);
@@ -138,8 +134,8 @@ public class AdaptMessage {
     }
 
     public void playerHitMessage(String message, Player attacker, Player victim, double value) {
-        DataHandler attackerData = DataHandler.gets(attacker, plugin);
-        DataHandler victimData = DataHandler.gets(victim, plugin);
+        PlayerData attackerData = PlayerData.gets(attacker, plugin);
+        PlayerData victimData = PlayerData.gets(victim, plugin);
         double attackerKarma = attackerData.getPlayerKarma();
         double victimKarma = victimData.getPlayerKarma();
 
@@ -163,16 +159,16 @@ public class AdaptMessage {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        if (cooldown.containsKey(attacker.getName())) {
+        if (coolDown.containsKey(attacker.getName())) {
             double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
             double timeLeft =
-                cooldown.get(attacker.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(attacker.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        cooldown.put(attacker.getName(), System.currentTimeMillis());
+        coolDown.put(attacker.getName(), System.currentTimeMillis());
         if (message != null) {
             if (msgStyle) {
                 sendActionBar(attacker, message);
@@ -183,8 +179,8 @@ public class AdaptMessage {
     }
 
     public void playerKillMessage(String message, Player killer, Player victim, double value) {
-        DataHandler killerData = DataHandler.gets(killer, plugin);
-        DataHandler victimData = DataHandler.gets(victim, plugin);
+        PlayerData killerData = PlayerData.gets(killer, plugin);
+        PlayerData victimData = PlayerData.gets(victim, plugin);
         double killerKarma = killerData.getPlayerKarma();
         double victimKarma = victimData.getPlayerKarma();
 
@@ -208,17 +204,17 @@ public class AdaptMessage {
             message = ChatColor.translateAlternateColorCodes('&', message);
         }
 
-        if (cooldown.containsKey(killer.getName())) {
+        if (coolDown.containsKey(killer.getName())) {
             double seconds =
                 this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
             double timeLeft =
-                cooldown.get(killer.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(killer.getName()) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        cooldown.put(killer.getName(), System.currentTimeMillis());
+        coolDown.put(killer.getName(), System.currentTimeMillis());
         if (message != null) {
             if (msgStyle) {
                 sendActionBar(killer, message);

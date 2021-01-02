@@ -1,5 +1,8 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.commands;
 
+import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.datas.PlayerData;
+import fr.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,13 +17,12 @@ public class EditKarmaCommand {
     String message = null;
 
     private final Karma plugin;
-    private final File langFile;
     private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
 
     public EditKarmaCommand(Karma plugin) {
         this.plugin = plugin;
-        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+        File langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
         this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.adaptMessage = new AdaptMessage(plugin);
     }
@@ -35,7 +37,7 @@ public class EditKarmaCommand {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            DataHandler playerData = DataHandler.gets(player, plugin);
+            PlayerData playerData = PlayerData.gets(player, plugin);
             playerData.setKarmaToPlayer(value);
 
             message = configLang.getString("set-karma");
@@ -56,7 +58,7 @@ public class EditKarmaCommand {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            DataHandler playerData = DataHandler.gets(player, plugin);
+            PlayerData playerData = PlayerData.gets(player, plugin);
             double targetNewKarma = playerData.getPlayerKarma() + value;
 
             playerData.setKarmaToPlayer(targetNewKarma);
@@ -81,7 +83,7 @@ public class EditKarmaCommand {
 
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
-            DataHandler playerData = DataHandler.gets(player, plugin);
+            PlayerData playerData = PlayerData.gets(player, plugin);
             double targetNewKarma = playerData.getPlayerKarma() - value;
 
             playerData.setKarmaToPlayer(targetNewKarma);
@@ -102,7 +104,7 @@ public class EditKarmaCommand {
     public void karmaReset(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
         if (player != null && player.isOnline()) {
-            DataHandler playerData = DataHandler.gets(player, plugin);
+            PlayerData playerData = PlayerData.gets(player, plugin);
             double resKarma = plugin.getConfig().getDouble("karma.default-karma");
 
             playerData.setKarmaToPlayer(resKarma);

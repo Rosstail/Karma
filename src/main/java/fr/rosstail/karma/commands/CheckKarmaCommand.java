@@ -1,13 +1,13 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.commands;
 
+import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.util.UUID;
 
 /**
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user

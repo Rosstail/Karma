@@ -1,5 +1,10 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.events;
 
+import fr.rosstail.karma.datas.DataHandler;
+import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.datas.PlayerData;
+import fr.rosstail.karma.apis.WGPreps;
+import fr.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
@@ -29,7 +34,7 @@ public class HitEvents implements Listener {
     private double damage;
     private String message;
 
-    HitEvents(Karma plugin) {
+    public HitEvents(Karma plugin) {
         super();
         this.plugin = plugin;
         this.langFile = new File(plugin.getDataFolder(),
@@ -70,9 +75,8 @@ public class HitEvents implements Listener {
         } else {
             return;
         }
-        DataHandler playerData = DataHandler.gets(attacker, plugin);
 
-        if (attacker.hasMetadata("NPC") || !playerData.getTime()) {
+        if (attacker.hasMetadata("NPC") || !DataHandler.getTime(attacker)) {
             return;
         }
 
@@ -81,11 +85,12 @@ public class HitEvents implements Listener {
             onPlayerHurt();
             return;
         }
+        PlayerData attackerData = PlayerData.gets(attacker, plugin);
 
         reward = plugin.getConfig().getDouble("entities." + livingEntityName + ".hit-karma-reward");
 
         if (!(reward == 0 || attacker == null)) {
-            attackerKarma = playerData.getPlayerKarma();
+            attackerKarma = attackerData.getPlayerKarma();
 
             if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
                 .getConfig().getBoolean("general.use-worldguard")) {
@@ -97,7 +102,7 @@ public class HitEvents implements Listener {
 
             attackerModifiedKarma = attackerKarma + reward;
 
-            playerData.setKarmaToPlayer(attackerModifiedKarma);
+            attackerData.setKarmaToPlayer(attackerModifiedKarma);
         }
 
         message = plugin.getConfig().getString("entities." + livingEntityName + ".hit-message");
@@ -111,8 +116,8 @@ public class HitEvents implements Listener {
      * Launch When a player is hurt by another player.
      */
     public void onPlayerHurt() {
-        DataHandler attackerData = DataHandler.gets(attacker, plugin);
-        DataHandler victimData = DataHandler.gets(victim, plugin);
+        PlayerData attackerData = PlayerData.gets(attacker, plugin);
+        PlayerData victimData = PlayerData.gets(victim, plugin);
         Object resultSE = null;
         double result = 0;
 

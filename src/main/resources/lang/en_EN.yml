@@ -1,0 +1,22 @@
+by-player-only: "[Karma] This command must be send by a player."
+creating-playerdata-folder: "[Karma] &9playerdata/ folder doesn't exists. &aCreating it&7."
+creating-player: "[Karma] &9Creating player file for &a<PLAYER>&9."
+disconnected-player: "[Karma] &cPlayer is not connected or does not exists."
+check-own-karma: "[Karma] Your karma is &a<KARMA> &rand your tier is &6<TIER>&r."
+check-other-karma: "[Karma] &6<PLAYER>'s &rkarma is &6<KARMA> &rand his tier is &6<TIER>&r."
+set-karma: "[Karma] &9<PLAYER>'s &rKarma is now &9<KARMA> &rand his Tier is &9<TIER>&r."
+add-karma: "[Karma] &aAdded &6<VALUE> &rKarma to &6<PLAYER> &rfor a total of &6<KARMA> &rkarma and the <TIER> tier."
+remove-karma: "[Karma] &cRemoved &6<VALUE> &rKarma to &6<PLAYER> &rfor a total of &6<KARMA> &rkarma and the <TIER> tier."
+reset-karma: "[Karma] &6<PLAYER>&r's karma has been reset. Karma : &6<KARMA> &rand tier is &6<TIER>&r."
+tier-change: "[Karma] You are now a &6<TIER> &r!"
+self-defending-off: "[Karma] You are defending yourself ! Karma unchanged."
+self-defending-on: "[Karma] You are defending yourself but your Karma changes."
+permission-denied: "[Karma] &cYou don't have permission !"
+wrong-value: "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c."
+help: |-
+  &b====== &6KARMA HELP &b======\n
+  &6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n
+  &6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n
+  &6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n
+  &6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n
+  &6/karma reset [player] &8: &rSet the targeted player karma to the default one.

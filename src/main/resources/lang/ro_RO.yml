@@ -1,0 +1,22 @@
+by-player-only: '[Karma] &fComanda aceasta trebuie executata de catre un jucator!'
+creating-playerdata-folder: '[Karma] &fNu exista "playerdata", asa ca creem noi!'
+creating-player: '[Karma] &fCreem un jucator cu numele &a<PLAYER>'
+disconnected-player: '[Karma] &aJucătorul nu este pe server, sau nu exista.'
+check-own-karma: '[Karma] Karma-ul tau este &a<KARMA> &fsi tier-ul tau este &2<TIER>&r.'
+check-other-karma: '[Karma] &a<PLAYER> &fdetine &a<KARMA> &fKarma si tier-ul sau este &2<TIER>&r.'
+set-karma: '[Karma] &9<PLAYER>''''s &rAi setat karma &a<KARMA> &rsi tier &2<TIER>&r.'
+add-karma: '[Karma] &fAi scos &a<VALUE> &rKarma de la &2<PLAYER> &rel acum detine de &a<KARMA> &rKarma si tier-ul&2 <TIER>.'
+remove-karma: '[Karma] &cAti scos &6<VALUE> &rkarma de la &6<PLAYER> &rpentru un total de &6<KARMA> &rsi tier-ul <TIER>.'
+reset-karma: '[Karma] &fKarma-ul lui &a<PLAYER>&fa fost resetat. Noul sau Karma este &a<KARMA>;Tier &2<TIER>&r.'
+tier-change: '[Karma] Ai ajuns la tier &a<TIER> &r!'
+self-defending-off: '[Karma] You are defending yourself ! Karma unchanged.'
+self-defending-on: '[Karma] You are defending yourself but your Karma changes.'
+permission-denied: '[Karma] &fDin pacate nu ai &apermisiunea !'
+wrong-value: '&c[Karma] You must indicate a number. Example : &f"/karma add Notch 15"&c.'
+help: |-
+  &b====== &6KARMA HELP &b======
+  &6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default
+  &6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value
+  &6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma
+  &6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma
+  &6/karma reset [player] &8: &rSet the targeted player karma to the default one.

@@ -5,6 +5,13 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 
+import fr.rosstail.karma.apis.WGPreps;
+import fr.rosstail.karma.commands.KarmaCommand;
+import fr.rosstail.karma.datas.FileResourcesUtils;
+import fr.rosstail.karma.events.HitEvents;
+import fr.rosstail.karma.events.KillEvents;
+import fr.rosstail.karma.events.PlayerConnect;
+import fr.rosstail.karma.lang.LangManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,6 +27,8 @@ public class Karma extends JavaPlugin implements Listener {
     public String host, database, username, password;
     public int port;
 
+    private static Karma instance;
+
     @Override
     public void onLoad() {
         if (Bukkit.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
@@ -28,8 +37,10 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onEnable() {
-
+        instance = this;
         this.saveDefaultConfig();
+        initDefaultConfigs();
+        LangManager.initCurrentLang();
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -47,7 +58,6 @@ public class Karma extends JavaPlugin implements Listener {
             this.createPlayerDataFolder();
         }
 
-        this.createLangFiles();
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(this), this);
         Bukkit.getPluginManager().registerEvents(new KillEvents(this), this);
         Bukkit.getPluginManager().registerEvents(new HitEvents(this), this);
@@ -85,7 +95,6 @@ public class Karma extends JavaPlugin implements Listener {
 
     public void setTableToDataBase() {
         String sql = "CREATE TABLE IF NOT EXISTS Karma ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
-                " NickName varchar(16) NOT NULL,\n" +
                 " Karma double,\n" +
                 " Tier varchar(50),\n" +
                 " Last_Attack bigint(20));";
@@ -116,21 +125,6 @@ public class Karma extends JavaPlugin implements Listener {
         }
     }
 
-    /**
-     * Create the subfolder and files for languages
-     */
-    public void createLangFiles() {
-        File file = new File(this.getDataFolder(), "lang/");
-        if (!file.exists()) {
-            file.mkdir();
-            getServer().getConsoleSender().sendMessage("&9Creating default language files");
-            setEnglishLang();
-            setFrenchLang();
-            setSpanishLang();
-            setRomanianLang();
-        }
-    }
-
     public void onDisable() {
         try {
             if (connection != null && !connection.isClosed()) {
@@ -142,74 +136,9 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
 
-    private void setEnglishLang() {
-        File file = new File(this.getDataFolder(), "lang/en_EN.yml");
+    private void initDefaultConfigs() {
         try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        configuration.set("by-player-only", "[Karma] This command must be send by a player.");
-        configuration.set("creating-playerdata-folder", "[Karma] &9playerdata/ folder doesn't exists. &aCreating it&7.");
-        configuration.set("creating-player", "[Karma] &9Creating player file for &a<PLAYER>&9.");
-        configuration.set("disconnected-player", "[Karma] &cPlayer is not connected or does not exists.");
-        configuration.set("check-own-karma", "[Karma] Your karma is &a<KARMA> &rand your tier is &6<TIER>&r.");
-        configuration.set("check-other-karma", "[Karma] &6<PLAYER>'s &rkarma is &6<KARMA> &rand his tier is &6<TIER>&r.");
-        configuration.set("set-karma", "[Karma] &9<PLAYER>'s &rKarma is now &9<KARMA> &rand his Tier is &9<TIER>&r.");
-        configuration.set("add-karma", "[Karma] &aAdded &6<VALUE> &rKarma to &6<PLAYER> &rfor a total of &6<KARMA> &rkarma and the <TIER> tier.");
-        configuration.set("remove-karma", "[Karma] &cRemoved &6<VALUE> &rKarma to &6<PLAYER> &rfor a total of &6<KARMA> &rkarma and the <TIER> tier.");
-        configuration.set("reset-karma", "[Karma] &6<PLAYER>&r's karma has been reset. Karma : &6<KARMA> &rand tier is &6<TIER>&r.");
-        configuration.set("tier-change", "[Karma] You are now a &6<TIER> &r!");
-        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Karma unchanged.");
-        configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma changes.");
-        configuration.set("permission-denied", "[Karma] &cYou don't have permission !");
-        configuration.set("wrong-value", "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c.");
-        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
-                "&6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n" +
-                "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n" +
-                "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n" +
-                "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n" +
-                "&6/karma reset [player] &8: &rSet the targeted player karma to the default one.");
-        try {
-            configuration.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setFrenchLang() {
-        File file = new File(this.getDataFolder(), "lang/fr_FR.yml");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        configuration.set("by-player-only", "[Karma] Cette commande doit être lancée par un joueur.");
-        configuration.set("creating-playerdata-folder", "[Karma] Le dossier &9playerdata/ &rn'existe pas. &aCréation&7...");
-        configuration.set("creating-player", "[Karma] &9Création du fichier de joueur pour &a<PLAYER>&9.");
-        configuration.set("disconnected-player", "[Karma] &cLe joueur est déconnecté ou n'existe pas.");
-        configuration.set("check-own-karma", "[Karma] Votre karma est de &a<KARMA> &ret votre alignement est &6<TIER>&r.");
-        configuration.set("check-other-karma", "[Karma] Le karma de &6<PLAYER> &rest &6<KARMA> &ret son alignement est &6<TIER>&r.");
-        configuration.set("set-karma", "[Karma] Le karma de &9<PLAYER> &rest désormais de &9<KARMA> &ret son alignement est &9<TIER>&r.");
-        configuration.set("add-karma", "[Karma] &aAjout de &6<VALUE> &rde karma à &6<PLAYER> &rpour un total de &6<KARMA> &rpoints et l'alignement <TIER>.");
-        configuration.set("remove-karma", "[Karma] &cDiminution de &6<VALUE> &rkarma pour &6<PLAYER> &rpour un total de &6<KARMA> &rpoints et l'alignement <TIER>.");
-        configuration.set("reset-karma", "[Karma] Le karma du joueur &6<PLAYER> &rest réinitialisé. Karma : &6<KARMA> &ret Alignement : &6<TIER>&r.");
-        configuration.set("tier-change", "[Karma] Vous êtes désormais un(e) &6<TIER> &r!");
-        configuration.set("self-defending-off", "[Karma] Vous êtes en train de vous défendre ! Karma inchangé.");
-        configuration.set("self-defending-on", "[Karma] Vous vous défendez mais votre Karma change tout de même.");
-        configuration.set("permission-denied", "[Karma] &cVous n'avez pas la permission !");
-        configuration.set("wrong-value", "&c[Karma] Vous devez renseigner un nombre. Exemple : &f\"/karma add Notch 15\"&c.");
-        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
-                "&6/karma (joueur) &8: &rAffiche le karma et l'alignement du joueur ciblé ou par défaut.\n" +
-                "&6/karma set [joueur] [valeur] &8: &rApplique la valeur spécifiée au karma du joueur ciblé\n" +
-                "&6/karma add [joueur] [valeur] &8: &rAjoute la valeur spécifiée au karma du joueur ciblé\n" +
-                "&6/karma remove [joueur] [valeur] &8: &rSoustrait la valeur indiquée du karma du joueur ciblé\n" +
-                "&6/karma reset [joueur] &8: &rRéinitialise le karma du joueur ciblé.");
-
-        try {
-            configuration.save(file);
+            FileResourcesUtils.main("lang",this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -287,5 +216,9 @@ public class Karma extends JavaPlugin implements Listener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Karma getInstance() {
+        return instance;
     }
 }

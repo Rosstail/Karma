@@ -1,5 +1,8 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.commands;
 
+import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.apis.PAPI;
+import fr.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,16 +16,15 @@ import java.io.File;
  * Checking what method/class will be used on command, depending of command Sender and number of args.
  */
 public class KarmaCommand implements CommandExecutor {
-    private final File langFile;
     private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
     private final CheckKarmaCommand checkKarmaCommand;
     private final EditKarmaCommand editKarmaCommand;
-    private PAPI papi = new PAPI();
+    private final PAPI papi = new PAPI();
 
-    KarmaCommand(Karma plugin) {
-        this.langFile = new File(plugin.getDataFolder(),
-            "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
+    public KarmaCommand(Karma plugin) {
+        File langFile = new File(plugin.getDataFolder(),
+                "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
         this.adaptMessage = new AdaptMessage(plugin);
         this.configLang = YamlConfiguration.loadConfiguration(langFile);
         this.checkKarmaCommand = new CheckKarmaCommand(plugin);

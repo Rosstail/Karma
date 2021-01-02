@@ -1,4 +1,4 @@
-package fr.rosstail.karma;
+package fr.rosstail.karma.apis;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;

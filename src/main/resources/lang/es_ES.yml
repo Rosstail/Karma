@@ -1,0 +1,22 @@
+by-player-only: '[Karma] Este comando es solo para jugadores.'
+creating-playerdata-folder: '[Karma] &9Carpeta playerdata/ no exite. &aCreandola&7.'
+creating-player: '[Karma] &9Creando un archivo de jugador para &a<PLAYER>&9.'
+disconnected-player: '[Karma] &cEl jugador no esta conectado o no exite.'
+check-own-karma: '[Karma] Tu karma es &a<KARMA> &ry tu Tier es &6<TIER>&r.'
+check-other-karma: '[Karma] &rEl karma de &6<PLAYER> &res &6<KARMA> &ry su Tier es &6<TIER>&r.'
+set-karma: '[Karma] &rEl karma de &9<PLAYER>''s &rahora es &9<KARMA> &ry su Tier es &9<TIER>&r.'
+add-karma: '[Karma] &aSe añadido &6<VALUE> &rKarma a &6<PLAYER> &rcon un total de &6<KARMA> &rkarma y tier <TIER>.'
+remove-karma: '[Karma] &cEliminado &6<VALUE> &rKarma a &6<PLAYER> &rcon un total de &6<KARMA> &rkarma y tier <TIER>.'
+reset-karma: '[Karma] &rEl karma de &6<PLAYER>&r se ha reiniciado. Karma : &6<KARMA> &ry el tier es &6<TIER>&r.'
+tier-change: '[Karma] ¡ Ahora eres &6<TIER> &r!'
+self-defending-off: '[Karma] You are defending yourself ! Karma unchanged.'
+self-defending-on: '[Karma] You are defending yourself but your Karma changes.'
+permission-denied: '[Karma] &c¡No tienes permiso!'
+wrong-value: '&c[Karma] You must indicate a number. Example : &f"/karma add Notch 15"&c.'
+help: |-
+  &b====== &6KARMA HELP &b======
+  &6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default
+  &6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value
+  &6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma
+  &6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma
+  &6/karma reset [player] &8: &rSet the targeted player karma to the default one.
