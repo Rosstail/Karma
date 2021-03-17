@@ -11,6 +11,7 @@ import fr.rosstail.karma.datas.FileResourcesUtils;
 import fr.rosstail.karma.events.HitEvents;
 import fr.rosstail.karma.events.KillEvents;
 import fr.rosstail.karma.events.PlayerConnect;
+import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.tiers.TierManager;
@@ -44,6 +45,8 @@ public class Karma extends JavaPlugin implements Listener {
             System.out.println("Preparing default config.yml");
             this.saveDefaultConfig();
         }
+
+        ConfigData.initKarmaValues(this.getConfig());
         TierManager.initTierManager(this);
         TimeManager.initTimeManager(this);
 

@@ -1,15 +1,11 @@
 package fr.rosstail.karma.commands;
 
-import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-
-import java.io.File;
 
 /**
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
@@ -17,28 +13,38 @@ import java.io.File;
 public class CheckKarmaCommand {
 
     private final AdaptMessage adaptMessage;
+    private final KarmaCommand karmaCommand;
 
-    public CheckKarmaCommand() {
+    public CheckKarmaCommand(KarmaCommand karmaCommand) {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
+        this.karmaCommand = karmaCommand;
     }
 
     /**
      * Is used when an argument is used with the command
      * Is necessary if commandSender isn't a player.
-     * @param commandSender
+     * @param sender
      * @param args
      */
-    public void karmaOther(CommandSender commandSender, String[] args)
+    public void karmaOther(CommandSender sender, String[] args)
     {
-        String message;
-        Player player = Bukkit.getServer().getPlayer(args[0]);
+        if (!karmaCommand.canLaunchCommand(sender, Commands.COMMAND_KARMA_OTHER)) {
+            return;
+        }
+        Player player;
+
+        try {
+            player = Bukkit.getServer().getPlayer(args[0]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            karmaCommand.errorMessage(sender, e);
+            return;
+        }
 
         if (player != null && player.isOnline()) {
-            message = LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA);
+            adaptMessage.message(sender, player, 0, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA));
         } else {
-            message = LangManager.getMessage(LangMessage.DISCONNECTED);
+            karmaCommand.disconnectedPlayer(sender, args);
         }
-        adaptMessage.message(commandSender, player, 0, message);
     }
 
     /**
@@ -47,7 +53,13 @@ public class CheckKarmaCommand {
      */
     public void karmaSelf(CommandSender sender)
     {
+        if (!(sender instanceof Player)) {
+            adaptMessage.message(sender, null, 0, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY));
+            return;
+        }
         Player player = (Player) sender;
-        adaptMessage.message(player, player, 0, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA));
+        if (karmaCommand.canLaunchCommand(player, Commands.COMMAND_KARMA)) {
+            adaptMessage.message(sender, player, 0, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA));
+        }
     }
 }

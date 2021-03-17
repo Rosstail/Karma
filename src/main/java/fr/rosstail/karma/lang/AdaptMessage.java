@@ -27,7 +27,7 @@ public class AdaptMessage {
         this.msgStyle = plugin.getConfig().getBoolean("general.use-action-bar-on-actions");
     }
 
-    private final Map<String, Long> coolDown = new HashMap<String, Long>();
+    private final Map<Player, Long> coolDown = new HashMap<>();
 
     public static void sendActionBar(Player player, String message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
@@ -49,6 +49,7 @@ public class AdaptMessage {
             double playerPreviousKarma = playerData.getPreviousKarma();
 
             Tier playerTier = playerData.getTier();
+            Tier playerPreviousTier = playerData.getPreviousTier();
 
             String playerDisplayTier;
             if (playerTier != null) {
@@ -56,8 +57,15 @@ public class AdaptMessage {
             } else {
                 playerDisplayTier = ChatColor.translateAlternateColorCodes('&', "&fNone");
             }
+            String playerPreviousDisplayTier;
+            if (playerPreviousTier != null) {
+                playerPreviousDisplayTier = playerPreviousTier.getDisplay();
+            } else {
+                playerPreviousDisplayTier = ChatColor.translateAlternateColorCodes('&', "&fNone");
+            }
 
             message = message.replaceAll("<TIER>", playerDisplayTier);
+            message = message.replaceAll("<PREVIOUS_TIER>", playerPreviousDisplayTier);
             message = message.replaceAll("<PLAYER>", player.getName());
             message = message.replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
             message = message.replaceAll("<OLD_KARMA>", String.format("%." + nbDec + "f", playerPreviousKarma));
@@ -90,16 +98,16 @@ public class AdaptMessage {
         message = papi.setPlaceholdersOnMessage(message, player);
         message = ChatColor.translateAlternateColorCodes('&', message);
 
-        if (coolDown.containsKey(player.getName())) {
+        if (coolDown.containsKey(player)) {
             double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
             double timeLeft =
-                coolDown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        coolDown.put(player.getName(), System.currentTimeMillis());
+        coolDown.put(player, System.currentTimeMillis());
         if (msgStyle) {
             sendActionBar(player, message);
         } else {
@@ -123,17 +131,17 @@ public class AdaptMessage {
         message = papi.setPlaceholdersOnMessage(message, player);
         message = ChatColor.translateAlternateColorCodes('&', message);
 
-        if (coolDown.containsKey(player.getName())) {
+        if (coolDown.containsKey(player)) {
             double seconds =
                 this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
             double timeLeft =
-                coolDown.get(player.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        coolDown.put(player.getName(), System.currentTimeMillis());
+        coolDown.put(player, System.currentTimeMillis());
         if (msgStyle) {
             sendActionBar(player, message);
         } else {
@@ -168,16 +176,16 @@ public class AdaptMessage {
         message = papi.setPlaceholdersOnMessage(message, attacker);
         message = ChatColor.translateAlternateColorCodes('&', message);
 
-        if (coolDown.containsKey(attacker.getName())) {
+        if (coolDown.containsKey(attacker)) {
             double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
             double timeLeft =
-                coolDown.get(attacker.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        coolDown.put(attacker.getName(), System.currentTimeMillis());
+        coolDown.put(attacker, System.currentTimeMillis());
         if (msgStyle) {
             sendActionBar(attacker, message);
         } else {
@@ -212,17 +220,17 @@ public class AdaptMessage {
         message = papi.setPlaceholdersOnMessage(message, killer);
         message = ChatColor.translateAlternateColorCodes('&', message);
 
-        if (coolDown.containsKey(killer.getName())) {
+        if (coolDown.containsKey(killer)) {
             double seconds =
                 this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
             double timeLeft =
-                coolDown.get(killer.getName()) - System.currentTimeMillis() + seconds * 1000f;
+                coolDown.get(killer) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        coolDown.put(killer.getName(), System.currentTimeMillis());
+        coolDown.put(killer, System.currentTimeMillis());
         if (msgStyle) {
             sendActionBar(killer, message);
         } else {

@@ -2,6 +2,7 @@ package fr.rosstail.karma.datas;
 
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.apis.PAPI;
+import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
@@ -9,7 +10,6 @@ import fr.rosstail.karma.tiers.Tier;
 import fr.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -26,8 +26,8 @@ import java.util.*;
  */
 public class PlayerData {
     private final Karma plugin;
-    private final int nbDec;
     private static final PAPI papi = new PAPI();
+    private static final ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
     private static final Map<Player, PlayerData> getSets = new HashMap<Player, PlayerData>();
@@ -43,7 +43,6 @@ public class PlayerData {
     private PlayerData(Karma plugin, Player player) {
         this.plugin = plugin;
         this.player = player;
-        this.nbDec = plugin.getConfig().getInt("general.decimal-number-to-show");
         playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         loadPlayerData();
         previousKarma = karma;
@@ -153,10 +152,9 @@ public class PlayerData {
 
     private void initPlayerDataDTB() {
         String UUID = String.valueOf(player.getUniqueId());
-        FileConfiguration config = plugin.getConfig();
-        double value = config.getDouble("karma.default");
-        double min = config.getDouble("karma.minimum");
-        double max = config.getDouble("karma.maximum");
+        double value = configData.getDefaultKarma();
+        double min = configData.getMinKarma();
+        double max = configData.getMaxKarma();
 
         if (value < min) {
             value = min;
@@ -192,10 +190,9 @@ public class PlayerData {
     }
 
     private void initPlayerDataLocale() {
-        FileConfiguration config = plugin.getConfig();
-        double value = config.getDouble("karma.default");
-        double min = config.getDouble("karma.minimum");
-        double max = config.getDouble("karma.maximum");
+        double value = configData.getDefaultKarma();
+        double min = configData.getMinKarma();
+        double max = configData.getMaxKarma();
 
         if (value < min) {
             value = min;
@@ -352,8 +349,7 @@ public class PlayerData {
 
     private void placeCommands(Player player, String command) {
         command = command.replaceAll("<PLAYER>", player.getName());
-        command = command
-            .replaceAll("<KARMA>", String.format("%." + nbDec + "f", karma));
+        command = command.replaceAll("<KARMA>", String.format("%." + configData.getDecNumber() + "f", karma));
         command = command.replaceAll("<TIER>", tier.getDisplay());
         command = ChatColor.translateAlternateColorCodes('&', command);
         command = papi.setPlaceholdersOnMessage(command, player);

@@ -1,5 +1,6 @@
 package fr.rosstail.karma.events;
 
+import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.datas.DataHandler;
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.datas.PlayerData;
@@ -8,6 +9,7 @@ import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,13 +28,15 @@ import javax.script.ScriptException;
 public class KillEvents implements Listener {
 
     private final Karma plugin;
-
+    private final FileConfiguration config;
     Player killer = null;
     Player victim = null;
     private final AdaptMessage adaptMessage;
+    private final ConfigData configData = ConfigData.getConfigData();
 
     public KillEvents(Karma plugin) {
         this.plugin = plugin;
+        this.config = plugin.getConfig();
         this.adaptMessage = AdaptMessage.getAdaptMessage();
     }
 
@@ -66,15 +70,14 @@ public class KillEvents implements Listener {
             return;
         }
 
-        reward = plugin.getConfig().getInt("entities." + livingEntityName + ".kill-karma-reward");
+        reward = config.getInt("entities." + livingEntityName + ".kill-karma-reward");
         if (reward == 0) {
             return;
         }
 
         killerKarma = playerData.getKarma();
 
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
-            .getConfig().getBoolean("general.use-worldguard")) {
+        if (configData.doesUseWorldGuard()) {
 
             WGPreps wgPreps = new WGPreps();
             double mult = wgPreps.checkMultipleKarmaFlags(killer);
@@ -83,7 +86,7 @@ public class KillEvents implements Listener {
 
         playerData.setKarma(killerKarma + reward);
 
-        adaptMessage.entityKillMessage(plugin.getConfig().getString("entities." + livingEntityName + ".kill-message"), killer);
+        adaptMessage.entityKillMessage(config.getString("entities." + livingEntityName + ".kill-message"), killer);
     }
 
     /**
@@ -117,7 +120,7 @@ public class KillEvents implements Listener {
 
         if (!victim.getName().equals(killer.getName())) {
 
-            String expression = plugin.getConfig().getString("pvp.kill-reward-expression");
+            String expression = configData.getPvpKillRewardExpression();
 
             if (expression != null) {
                 if (expression.contains("<VICTIM_KARMA>")) {
@@ -137,8 +140,7 @@ public class KillEvents implements Listener {
                     // Something went wrong
                     e.printStackTrace();
                 }
-                if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
-                        .getConfig().getBoolean("general.use-worldguard")) {
+                if (configData.doesUseWorldGuard()) {
 
                     WGPreps wgPreps = new WGPreps();
                     double multi = wgPreps.checkMultipleKarmaFlags(killer);
@@ -147,10 +149,10 @@ public class KillEvents implements Listener {
 
                 double killerNewKarma = killerInitialKarma + result;
 
-                if (plugin.getConfig().getBoolean("pvp.crime-time.enable") && !(
+                if (configData.isPvpCrimeTimeEnabled() && !(
                         killer.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
                     long timeStamp = System.currentTimeMillis();
-                    long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
+                    long delay = configData.getPvpCrimeTimeDelay();
 
                     double attackStart = killerData.getLastAttack();
                     double victimStart = victimData.getLastAttack();
@@ -189,9 +191,9 @@ public class KillEvents implements Listener {
 
                 String message = null;
                 if (killerNewKarma > killerInitialKarma) {
-                    message = plugin.getConfig().getString("pvp.kill-message-on-karma-increase");
+                    message = configData.getPvpKillMessageKarmaIncrease();
                 } else if (killerNewKarma < killerInitialKarma) {
-                    message = plugin.getConfig().getString("pvp.kill-message-on-karma-decrease");
+                    message = configData.getPvpKillMessageKarmaDecrease();
                 }
                 if (message != null) {
                     adaptMessage.playerKillMessage(message, killer, victim, killerInitialKarma);
@@ -211,11 +213,11 @@ public class KillEvents implements Listener {
 
     private boolean doesDefendChangeKarma(double attackerInitialKarma, double attackerNewKarma) {
         if (attackerNewKarma > attackerInitialKarma) {
-            return !plugin.getConfig().getBoolean("pvp.crime-time.active-on-up");
+            return !configData.isPvpCrimeTimeOnUp();
         } else if (attackerNewKarma == attackerInitialKarma) {
-            return !plugin.getConfig().getBoolean("pvp.crime-time.active-on-still");
+            return !configData.isPvpCrimeTimeOnStill();
         } else {
-            return !plugin.getConfig().getBoolean("pvp.crime-time.active-on-down");
+            return !configData.isPvpCrimeTimeOnDown();
         }
     }
 }
