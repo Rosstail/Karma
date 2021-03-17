@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 
 public class PlayerConnect implements Listener {
@@ -17,7 +18,18 @@ public class PlayerConnect implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        int delay = plugin.getConfig().getInt("data-save-delay") * 1000;
         Player player = event.getPlayer();
-        PlayerData.gets(player, plugin).initPlayerData();
+        PlayerData playerData = PlayerData.gets(player, plugin);
+        playerData.initPlayerData();
+        playerData.setTimer(delay);
+    }
+
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.gets(player, plugin);
+        playerData.getTimer().cancel();
+        playerData.updateData();
     }
 }

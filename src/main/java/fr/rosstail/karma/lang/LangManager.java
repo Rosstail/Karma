@@ -47,11 +47,11 @@ public class LangManager {
      * @return the string message in {@param lang} language
      */
     public static String getMessage(Lang lang, LangMessage message) {
-        return lang != null && lang.available() ? lang.getConfiguration().getString(message.getId()) : "no-lang selected";
+        return lang != null && lang.available() ? lang.getConfiguration().getString(message.getText()) : "no-lang selected";
     }
 
     public static List<String> getListMessage(Lang lang, LangMessage message) {
-        return lang != null && lang.available() ? lang.getConfiguration().getStringList(message.getId()) : Collections.singletonList("no-lang selected");
+        return lang != null && lang.available() ? lang.getConfiguration().getStringList(message.getText()) : Collections.singletonList("no-lang selected");
     }
 
 }

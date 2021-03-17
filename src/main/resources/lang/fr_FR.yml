@@ -1,7 +1,7 @@
 by-player-only: "[Karma] Cette commande doit être lancée par un joueur."
 creating-playerdata-folder: "[Karma] Le dossier &9playerdata/ &rn'existe pas. &aCréation&7..."
 creating-player: "[Karma] &9Création du fichier de joueur pour &a<PLAYER>&9."
-disconnected-player: "[Karma] &cLe joueur est déconnecté ou n'existe pas."
+disconnected: "[Karma] &cLe joueur est déconnecté ou n'existe pas."
 check-own-karma: "[Karma] Votre karma est de &a<KARMA> &ret votre alignement est &6<TIER>&r."
 check-other-karma: "[Karma] Le karma de &6<PLAYER> &rest &6<KARMA> &ret son alignement est &6<TIER>&r."
 set-karma: "[Karma] Le karma de &9<PLAYER> &rest désormais de &9<KARMA> &ret son alignement est &9<TIER>&r."

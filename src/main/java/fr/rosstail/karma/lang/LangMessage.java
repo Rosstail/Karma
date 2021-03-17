@@ -3,28 +3,26 @@ package fr.rosstail.karma.lang;
 public enum LangMessage {
 
     BY_PLAYER_ONLY("by-player-only"),
-    DISCONNECTED_PLAYER("disconnected-player"),
-    CREATING_PLAYER_DATA_FOLDER("creating-playerdata-folder"),
-    CREATING_PLAYER("creating-player"),
-    PERMISSION_DENIED("permission-denied"),
-    CHECK_ALL_STATS("check-all-stats"),
-    NO_CLASS("no-class"),
+    SET_KARMA("set-karma"),
+    ADD_KARMA("add-karma"),
+    REMOVE_KARMA("remove-karma"),
+    RESET_KARMA("reset-karma"),
+    DISCONNECTED("disconnected-player"),
     WRONG_VALUE("wrong-value"),
-    TOO_FEW_ARGUMENTS("too-few-arguments"),
-    CLASS_LEVEL_UP("class-level-up"),
-    CLASS_CHOICE_GUI("class-choice-gui"),
-    CLASS_GENERAL_INFO("class-general-info"),
-    CLASS_REQUREMENTS_INFO("class-requirement-info"),
-    CLASS_BASE_INFO("class-base-info"),
-    CLASS_MAXIMUM_INFO("class-max-info"),
-    CLASS_GROWTH_INFO("class-growth-info");
-    private final String id;
+    CHECK_OTHER_KARMA("check-other-karma"),
+    CHECK_OWN_KARMA("check-own-karma"),
+    HELP("help"),
+    PERMISSION_DENIED("permission-denied"),
+    TIER_CHANGE("tier-change"),
+    SELF_DEFENDING_OFF("self-defending-off"),
+    SELF_DEFENDING_ON("self-defending-on");
+    private final String text;
 
-    LangMessage(String id) {
-        this.id = id;
+    LangMessage(String text) {
+        this.text = text;
     }
 
-    String getId() {
-        return id;
+    String getText() {
+        return text;
     }
 }

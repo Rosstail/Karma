@@ -1,7 +1,7 @@
 by-player-only: '[Karma] Este comando es solo para jugadores.'
 creating-playerdata-folder: '[Karma] &9Carpeta playerdata/ no exite. &aCreandola&7.'
 creating-player: '[Karma] &9Creando un archivo de jugador para &a<PLAYER>&9.'
-disconnected-player: '[Karma] &cEl jugador no esta conectado o no exite.'
+disconnected: '[Karma] &cEl jugador no esta conectado o no exite.'
 check-own-karma: '[Karma] Tu karma es &a<KARMA> &ry tu Tier es &6<TIER>&r.'
 check-other-karma: '[Karma] &rEl karma de &6<PLAYER> &res &6<KARMA> &ry su Tier es &6<TIER>&r.'
 set-karma: '[Karma] &rEl karma de &9<PLAYER>''s &rahora es &9<KARMA> &ry su Tier es &9<TIER>&r.'

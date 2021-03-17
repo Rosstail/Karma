@@ -6,6 +6,8 @@ mysql:
   username: "root"
   password: ""
 
+data-save-delay: 300
+
 general:
   lang: "en_EN"
   decimal-number-to-show: 2
@@ -15,88 +17,88 @@ general:
   use-action-bar-on-actions: true
 
 karma:
-  default-karma:       0
-  minimum-karma: -300000
-  maximum-karma:  300000
+  default:       0
+  minimum: -300000
+  maximum:  300000
 
 tiers:
   tier-3:
-    tier-display-name: "&f[&4Criminal&f]&r"
-    tier-minimum-karma: -300000
-    tier-maximum-karma: -150000
-    commands:
+    display: "&f[&4Criminal&f]&r"
+    minimum: -300000
+    maximum: -150000
+    join-commands:
       - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &8is the baddest <TIER>."
       - "me another command"
       - "<@>me command from console"
   tier-2:
-    tier-display-name: "&f[&cVillain&f]&r"
-    tier-minimum-karma: -149999
-    tier-maximum-karma:  -30000
-    commands:
+    display: "&f[&cVillain&f]&r"
+    minimum: -149999
+    maximum:  -30000
+    join-commands:
       - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &cis really bad."
       - "me &cseriously guys."
-    commands-on-up:
+    join-on-up-commands:
       - "me I'm not the most wanted anymore... Better !"
-    commands-on-down:
+    join-on-down-commands:
       - "me I've made a big raberry today, ahah !"
   tier-1:
-    tier-display-name: "&f[&eThug&f]&r"
-    tier-minimum-karma:  -29999
-    tier-maximum-karma:   -5000
-    commands:
+    display: "&f[&eThug&f]&r"
+    minimum:  -29999
+    maximum:   -5000
+    join-commands:
       - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &eis not gentle."
-    commands-on-up:
+    join-on-up-commands:
       - "me But I'm better than some guys !"
-    commands-on-down:
+    join-on-down-commands:
       - "me But this wasn't me !"
   tier_0:
-    tier-display-name: "&f[&7Civilian&f]&r"
-    tier-minimum-karma:   -4999
-    tier-maximum-karma:    4999
-    commands:
+    display: "&f[&7Civilian&f]&r"
+    minimum:   -4999
+    maximum:    4999
+    join-commands:
       - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &7is the neutral neutral alignment."
       - "<@>me &6<PLAYER> &aHey ! Your karma is &6<KARMA> &r!"
-    commands-on-up:
+    join-on-up-commands:
       - "me I'm not a thug anymore !"
-    commands-on-down:
+    join-on-down-commands:
       - "me I've made some mistakes, back to normal."
   tier+1:
-    tier-display-name: "&f[&aVigilante&f]&r"
-    tier-minimum-karma:    5000
-    tier-maximum-karma:   29999
-    commands:
+    display: "&f[&aVigilante&f]&r"
+    minimum:    5000
+    maximum:   29999
+    join-commands:
       - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &ais now a good guy who likes Streets of Rage games serie."
       - "me &ais a test, it will be sent by player."
       - "<@>me must not be sent by player but by console."
-    commands-on-up:
+    join-on-up-commands:
       - "me I'm a good guy !"
-    commands-on-down:
+    join-on-down-commands:
       - "me I just loss my sheriff star..."
   tier+2:
-    tier-display-name: "&f[&bSheriff&f]&r"
-    tier-minimum-karma:   30000
-    tier-maximum-karma:  149999
-    commands:
+    display: "&f[&bSheriff&f]&r"
+    minimum:   30000
+    maximum:  149999
+    join-commands:
       - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &bhas right to kill anyone who mess him, yes."
-    commands-on-up:
+    join-on-up-commands:
       - "me I AM THE LAW ! DROP YOU WEAPONS !"
-    commands-on-down:
+    join-on-down-commands:
       - "me Heroes ? Nah."
   tier+3:
-    tier-display-name: "&f[&6Hero&f]&r"
-    tier-minimum-karma:  150000
-    tier-maximum-karma:  300000
-    commands:
+    display: "&f[&6Hero&f]&r"
+    minimum:  150000
+    maximum:  300000
+    join-commands:
       - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
       - "me &6is the hero !"
       - "me &6another command !"
-      - "<@>me You can create an infinite amount of commands and tiers !"
+      - "<@>me You can create an infinite amount of join-commands and tiers !"
 
 times:
   use-both-system-and-worlds-time: "NONE" #can be replaced by WORLDS, SYSTEM and BOTH or NONE
@@ -106,26 +108,26 @@ times:
   #BOTH check WORLDS AND SYSTEM. both must be TRUE.
   worlds-times: #use the time where the attacker / killer is You can add all the time-X you want with custom name
     time-1:
-      starting-time: "09:00"
-      ending-time: "20:00"
-      chance: 100
+      start-time: "09:00"
+      end-time: "20:00"
+      rate: 100
     time-2:
-      starting-time: "20:00"
-      ending-time: "22:00"
-      chance: 66
+      start-time: "20:00"
+      end-time: "22:00"
+      rate: 66
     time-3:
-      starting-time: "22:00"
-      ending-time: "01:00"
-      chance: 30
+      start-time: "22:00"
+      end-time: "01:00"
+      rate: 30
   system-times: #use the server real life time. You can add all the time-X you want, with custom name
     time-1:
-      starting-time: "08:00"
-      ending-time: "12:00"
-      chance: 100
+      start-time: "08:00"
+      end-time: "12:00"
+      rate: 100
     time-2:
-      starting-time: "13:00"
-      ending-time: "21:00"
-      chance: 30
+      start-time: "13:00"
+      end-time: "21:00"
+      rate: 30
 
 pvp:
   # You can make your own expression

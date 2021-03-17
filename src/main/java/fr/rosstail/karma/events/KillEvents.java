@@ -5,8 +5,9 @@ import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.lang.AdaptMessage;
+import fr.rosstail.karma.lang.LangManager;
+import fr.rosstail.karma.lang.LangMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,6 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.File;
 
 
 /**
@@ -26,19 +26,14 @@ import java.io.File;
 public class KillEvents implements Listener {
 
     private final Karma plugin;
-    private final YamlConfiguration configLang;
 
     Player killer = null;
     Player victim = null;
-    String message = null;
     private final AdaptMessage adaptMessage;
 
     public KillEvents(Karma plugin) {
         this.plugin = plugin;
-        File langFile = new File(plugin.getDataFolder(),
-                "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
-        this.configLang = YamlConfiguration.loadConfiguration(langFile);
-        this.adaptMessage = new AdaptMessage(plugin);
+        this.adaptMessage = AdaptMessage.getAdaptMessage();
     }
 
     /**
@@ -76,7 +71,7 @@ public class KillEvents implements Listener {
             return;
         }
 
-        killerKarma = playerData.getPlayerKarma();
+        killerKarma = playerData.getKarma();
 
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && plugin
             .getConfig().getBoolean("general.use-worldguard")) {
@@ -86,10 +81,9 @@ public class KillEvents implements Listener {
             reward = reward * mult;
         }
 
-        playerData.setKarmaToPlayer(killerKarma + reward);
+        playerData.setKarma(killerKarma + reward);
 
-        message = plugin.getConfig().getString("entities." + livingEntityName + ".kill-message");
-        adaptMessage.entityKillMessage(message, killer, reward);
+        adaptMessage.entityKillMessage(plugin.getConfig().getString("entities." + livingEntityName + ".kill-message"), killer);
     }
 
     /**
@@ -114,8 +108,8 @@ public class KillEvents implements Listener {
             return;
         }
 
-        double killerInitialKarma = killerData.getPlayerKarma();
-        double victimKarma = victimData.getPlayerKarma();
+        double killerInitialKarma = killerData.getKarma();
+        double victimKarma = victimData.getKarma();
 
         if (killer.hasMetadata("NPC")) {
             return;
@@ -158,10 +152,10 @@ public class KillEvents implements Listener {
                     long timeStamp = System.currentTimeMillis();
                     long delay = plugin.getConfig().getLong("pvp.crime-time.delay");
 
-                    double attackStart = killerData.getPlayerLastAttack();
-                    double victimStart = victimData.getPlayerLastAttack();
-                    double attackEnd = killerData.getPlayerLastAttack() + delay * 1000;
-                    double victimEnd = victimData.getPlayerLastAttack() + delay * 1000;
+                    double attackStart = killerData.getLastAttack();
+                    double victimStart = victimData.getLastAttack();
+                    double attackEnd = killerData.getLastAttack() + delay * 1000;
+                    double victimEnd = victimData.getLastAttack() + delay * 1000;
 
                     if (attackStart != 0L
                             && victimStart != 0L) {
@@ -169,25 +163,21 @@ public class KillEvents implements Listener {
                                 || timeStamp > victimEnd) {
                             killerData.setLastAttackToPlayer();
                         } else {
-                            if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
-                                message = configLang.getString("self-defending-off");
-                                adaptMessage.message(null, killer, 0, message);
+                            if (doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
+                                adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF));
                                 return;
                             }
-                            message = configLang.getString("self-defending-on");
-                            adaptMessage.message(null, killer, 0, message);
+                            adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON));
                         }
                     } else if (victimStart == 0L) {
                         killerData.setLastAttackToPlayer();
                     } else if (victimStart != 0L) {
                         if (timeStamp >= victimStart && timeStamp <= victimEnd) {
-                            if (!doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
-                                message = configLang.getString("self-defending-off");
-                                adaptMessage.message(null, killer, 0, message);
+                            if (doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
+                                adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF));
                                 return;
                             }
-                            message = configLang.getString("self-defending-on");
-                            adaptMessage.message(null, killer, 0, message);
+                            adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON));
                         } else {
                             killerData.setLastAttackToPlayer();
                         }
@@ -195,9 +185,9 @@ public class KillEvents implements Listener {
 
                 }
 
-                killerData.setKarmaToPlayer(killerNewKarma);
+                killerData.setKarma(killerNewKarma);
 
-                message = null;
+                String message = null;
                 if (killerNewKarma > killerInitialKarma) {
                     message = plugin.getConfig().getString("pvp.kill-message-on-karma-increase");
                 } else if (killerNewKarma < killerInitialKarma) {
@@ -221,11 +211,11 @@ public class KillEvents implements Listener {
 
     private boolean doesDefendChangeKarma(double attackerInitialKarma, double attackerNewKarma) {
         if (attackerNewKarma > attackerInitialKarma) {
-            return plugin.getConfig().getBoolean("pvp.crime-time.active-on-up");
+            return !plugin.getConfig().getBoolean("pvp.crime-time.active-on-up");
         } else if (attackerNewKarma == attackerInitialKarma) {
-            return plugin.getConfig().getBoolean("pvp.crime-time.active-on-still");
+            return !plugin.getConfig().getBoolean("pvp.crime-time.active-on-still");
         } else {
-            return plugin.getConfig().getBoolean("pvp.crime-time.active-on-down");
+            return !plugin.getConfig().getBoolean("pvp.crime-time.active-on-down");
         }
     }
 }

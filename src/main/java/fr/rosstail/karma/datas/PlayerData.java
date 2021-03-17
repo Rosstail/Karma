@@ -3,13 +3,19 @@ package fr.rosstail.karma.datas;
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.apis.PAPI;
 import fr.rosstail.karma.lang.AdaptMessage;
+import fr.rosstail.karma.lang.LangManager;
+import fr.rosstail.karma.lang.LangMessage;
+import fr.rosstail.karma.tiers.Tier;
+import fr.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,29 +26,28 @@ import java.util.*;
  */
 public class PlayerData {
     private final Karma plugin;
-    private final File langFile;
-    private final YamlConfiguration configLang;
     private final int nbDec;
-    private PAPI papi = new PAPI();
+    private static final PAPI papi = new PAPI();
+    private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
-    private static Map<Player, PlayerData> getSets = new HashMap<Player, PlayerData>();
-    private Player player;
-    private double playerKarma;
-    private String playerTier;
-    private String playerDisplayTier;
-    private long playerLastAttack;
+    private static final Map<Player, PlayerData> getSets = new HashMap<Player, PlayerData>();
+    private final File playerFile;
+    private final Player player;
+    private double karma;
+    private double previousKarma;
+    private Tier tier;
+    private Tier previousTier;
+    private long lastAttack;
+    private Timer timer;
 
     private PlayerData(Karma plugin, Player player) {
         this.plugin = plugin;
-        this.langFile = new File(plugin.getDataFolder(),
-                "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
-        this.configLang = YamlConfiguration.loadConfiguration(langFile);
-        this.nbDec = plugin.getConfig().getInt("general.decimal-number-to-show");
         this.player = player;
-        this.playerKarma = loadPlayerKarma();
-        this.playerTier = loadPlayerTier();
-        this.playerDisplayTier = loadPlayerDisplayTier();
-        this.playerLastAttack = loadPlayerLastAttack();
+        this.nbDec = plugin.getConfig().getInt("general.decimal-number-to-show");
+        playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
+        loadPlayerData();
+        previousKarma = karma;
+        previousTier = tier;
     }
 
     public static PlayerData gets(Player player, Karma plugin) {
@@ -52,20 +57,28 @@ public class PlayerData {
         return getSets.get(player);
     }
 
-    public double getPlayerKarma() {
-        return playerKarma;
+    public Timer getTimer() {
+        return timer;
     }
 
-    public String getPlayerTier() {
-        return playerTier;
+    public double getKarma() {
+        return karma;
     }
 
-    public String getPlayerDisplayTier() {
-        return playerDisplayTier;
+    public Tier getTier() {
+        return tier;
     }
 
-    public double getPlayerLastAttack() {
-        return playerLastAttack;
+    public double getLastAttack() {
+        return lastAttack;
+    }
+
+    public double getPreviousKarma() {
+        return previousKarma;
+    }
+
+    public Tier getPreviousTier() {
+        return previousTier;
     }
 
     private boolean ifPlayerExistsInDTB() {
@@ -76,13 +89,16 @@ public class PlayerData {
                     .prepareStatement("SELECT * FROM Karma WHERE UUID = '" + UUID + "';");
                 ResultSet result = statement.executeQuery();
                 if (result.next()) {
-                    playerKarma = result.getDouble("Karma");
-                    playerTier = result.getString("Tier");
-                    playerLastAttack = result.getLong("Last_Attack");
+                    karma = result.getDouble("Karma");
+
+                    String tierLabel = result.getString("Tier");
+                    if (TierManager.getTierManager().getTiers().containsKey(tierLabel)) {
+                        tier = TierManager.getTierManager().getTiers().get(tierLabel);
+                    }
+                    lastAttack = result.getLong("Last_Attack");
                     return true;
                 }
                 statement.close();
-                playerDisplayTier = getPlayerDisplayTier();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -91,108 +107,30 @@ public class PlayerData {
     }
 
     /**
-     * Request the player karma inside file or database
+     * Request the player Tier inside file or database
      *
-     * @return
      */
-    public double loadPlayerKarma() {
+    public void loadPlayerData() {
         String UUID = String.valueOf(player.getUniqueId());
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
-                PreparedStatement statement = plugin.connection
-                    .prepareStatement("SELECT Karma FROM Karma WHERE UUID = '" + UUID + "';");
+                PreparedStatement statement = plugin.connection.prepareStatement("SELECT * FROM Karma WHERE UUID = '" + UUID + "';");
                 ResultSet result = statement.executeQuery();
-                double karma = plugin.getConfig().getDouble("karma.default-karma");
-                while (result.next()) {
+                if (result.next()) {
                     karma = result.getDouble("Karma");
+                    tier = TierManager.getTierManager().getTiers().get(result.getString("Tier"));
+                    lastAttack = result.getLong("Last_Attack");
                 }
                 statement.close();
-                return karma;
             } else {
-                File playerFile =
-                    new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                return playerConfig.getDouble("karma");
+                karma = playerConfig.getDouble("karma");
+                tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
+                lastAttack = playerConfig.getLong("last-attack");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return 0;
-    }
-
-    /**
-     * Request the player Tier inside file or database
-     *
-     * @return
-     */
-    public String loadPlayerTier() {
-        String tier = null;
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                String UUID = String.valueOf(player.getUniqueId());
-                PreparedStatement statement = plugin.connection.prepareStatement("SELECT Tier FROM Karma WHERE UUID = '" + UUID + "';");
-                ResultSet result =
-                    statement.executeQuery();
-                while (result.next()) {
-                    tier = result.getString("Tier");
-                }
-                statement.close();
-            } else {
-                String UUID = String.valueOf(player.getUniqueId());
-                File playerFile = new File(plugin.getDataFolder(), "playerdata/" + UUID + ".yml");
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                tier = playerConfig.getString("tier");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        if (tier == null) {
-            tier = getPlayerTier();
-        }
-        return tier;
-    }
-
-    /**
-     * Returns the player last attack long
-     *
-     * @return
-     */
-    public long loadPlayerLastAttack() {
-        if (!player.hasMetadata("NPC")) {
-            return 0L;
-        }
-        try {
-            String UUID = String.valueOf(player.getUniqueId());
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                PreparedStatement statement = plugin.connection
-                    .prepareStatement("SELECT Last_Attack FROM Karma WHERE UUID = '" + UUID + "';");
-                ResultSet result = statement.executeQuery();
-                long dateTime = 0L;
-                while (result.next()) {
-                    dateTime = result.getLong("Last_Attack");
-                }
-                statement.close();
-                return dateTime;
-            } else {
-                File playerFile = new File(plugin.getDataFolder(), "playerdata/" + UUID + ".yml");
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                return playerConfig.getLong("last-attack");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0L;
-    }
-
-    /**
-     * return the displaying name of the tier.
-     *
-     * @return
-     */
-    private String loadPlayerDisplayTier() {
-        playerDisplayTier = plugin.getConfig()
-                .getString("tiers." + playerTier + ".tier-display-name");
-        return playerDisplayTier;
     }
 
     /**
@@ -200,27 +138,25 @@ public class PlayerData {
      *
      */
     public void initPlayerData() {
-        File playerFile =
-                new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
-
-        if (!ifPlayerExistsInDTB()) {
-            try {
-                if (plugin.connection != null && !plugin.connection.isClosed()) {
+        try {
+            if (plugin.connection != null && !plugin.connection.isClosed()) {
+                if (!ifPlayerExistsInDTB()) {
                     initPlayerDataDTB();
-                } else if (!playerFile.exists()){
-                    initPlayerDataLocale();
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } else if (!playerFile.exists()){
+                initPlayerDataLocale();
             }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
     }
 
     private void initPlayerDataDTB() {
         String UUID = String.valueOf(player.getUniqueId());
-        double value = plugin.getConfig().getDouble("karma.default-karma");
-        double min = plugin.getConfig().getDouble("karma.minimum-karma");
-        double max = plugin.getConfig().getDouble("karma.maximum-karma");
+        FileConfiguration config = plugin.getConfig();
+        double value = config.getDouble("karma.default");
+        double min = config.getDouble("karma.minimum");
+        double max = config.getDouble("karma.maximum");
 
         if (value < min) {
             value = min;
@@ -230,8 +166,8 @@ public class PlayerData {
 
         double finalValue = value;
 
-        this.playerKarma = value;
-        setTierToPlayer();
+        this.karma = value;
+        setTier();
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
@@ -256,10 +192,10 @@ public class PlayerData {
     }
 
     private void initPlayerDataLocale() {
-        String UUID = String.valueOf(player.getUniqueId());
-        double value = plugin.getConfig().getDouble("karma.default-karma");
-        double min = plugin.getConfig().getDouble("karma.minimum-karma");
-        double max = plugin.getConfig().getDouble("karma.maximum-karma");
+        FileConfiguration config = plugin.getConfig();
+        double value = config.getDouble("karma.default");
+        double min = config.getDouble("karma.minimum");
+        double max = config.getDouble("karma.maximum");
 
         if (value < min) {
             value = min;
@@ -267,12 +203,10 @@ public class PlayerData {
             value = max;
         }
 
-        File playerFile =
-                new File(plugin.getDataFolder(), "playerdata/" + UUID + ".yml");
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
         double finalValue = value;
-        playerKarma = finalValue;
-        setTierToPlayer();
+        karma = finalValue;
+        setTier();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
@@ -293,65 +227,64 @@ public class PlayerData {
      *
      * @param value  -> The new karma amount of the player
      */
-    public void setKarmaToPlayer(double value) {
-        double min = plugin.getConfig().getDouble("karma.minimum-karma");
-        double max = plugin.getConfig().getDouble("karma.maximum-karma");
+    public void setKarma(double value) {
+        double min = plugin.getConfig().getDouble("karma.minimum");
+        double max = plugin.getConfig().getDouble("karma.maximum");
         if (value < min) {
             value = min;
         } else if (value > max) {
             value = max;
         }
 
-        this.playerKarma = value;
+        setPreviousKarma(this.karma);
+        this.karma = value;
+        setTier();
+    }
 
+    public void setPreviousKarma(double previousKarma) {
+        this.previousKarma = previousKarma;
+    }
+
+    public void updateData() {
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
-                setPlayerKarmaDTB(value);
+                updateDB();
             } else {
-                setPlayerKarmaLocale(value);
+                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+
+                playerConfig.set("karma", karma);
+                if (tier != null) {
+                    playerConfig.set("tier", tier.getName());
+                } else {
+                    playerConfig.set("tier", null);
+                }
+                playerConfig.set("last-attack", lastAttack);
+
+                playerConfig.save(playerFile);
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void setPlayerKarmaDTB(double value) {
+    private void updateDB() {
         String UUID = player.getUniqueId().toString();
 
-        double finalValue = value;
-        setTierToPlayer();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run() {
                 try {
-                    String query = "UPDATE Karma SET Karma = ? WHERE UUID = ?;";
+                    String query = "UPDATE Karma SET Karma = ?, Tier = ?, Last_Attack = ? WHERE UUID = ?;";
                     PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
 
-                    preparedStatement.setDouble(1, finalValue);
-                    preparedStatement.setString(2, UUID);
+                    preparedStatement.setDouble(1, karma);
+                    preparedStatement.setString(2, tier.getName());
+                    preparedStatement.setDate(3, new Date(1000L * lastAttack));
+                    preparedStatement.setString(4, UUID);
 
                     preparedStatement.executeUpdate();
                     preparedStatement.close();
                 } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void setPlayerKarmaLocale(double value) {
-        double finalValue = value;
-        setTierToPlayer();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                File playerFile = new File(plugin.getDataFolder(),
-                        "playerdata/" + player.getUniqueId().toString() + ".yml");
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                playerConfig.set("karma", finalValue);
-                try {
-                    playerConfig.save(playerFile);
-                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -363,89 +296,34 @@ public class PlayerData {
      * Uses local files or Database if connection is active
      *
      */
-    public void setTierToPlayer() {
-        String UUID = player.getUniqueId().toString();
-        String startTier = getPlayerTier();
-
-        Set<String> path = plugin.getConfig().getConfigurationSection("tiers").getKeys(false);
-        ArrayList<String> array = new ArrayList<>();
-        double[] tierLimits;
-
-        for (String tier : path) {
-            tierLimits = DataHandler.getTierLimits(tier);
-            if (getPlayerKarma() >= tierLimits[0]
-                    && getPlayerKarma() <= tierLimits[1] && !tier.equals(getPlayerTier())) {
-                this.playerTier = tier;
-                this.playerDisplayTier = plugin.getConfig()
-                        .getString("tiers." + getPlayerTier() + ".tier-display-name");
+    public void setTier() {
+        for (Tier tier : TierManager.getTierManager().getTiers().values()) {
+            if (karma >= tier.getMinKarma() && karma <= tier.getMaxKarma() && !tier.equals(getTier())) {
+                previousTier = this.tier;
+                this.tier = tier;
 
                 changePlayerTierMessage();
-                tierCommandsLauncher();
-                if (startTier != null) {
-                    if (array.contains(startTier)) {
-                        tierCommandsLauncherOnUp();
+                tierCommandsLauncher(tier.getJoinCommands());
+                if (previousTier != null) {
+                    if (karma > previousKarma) {
+                        tierCommandsLauncher(tier.getJoinOnUpCommands());
                     } else {
-                        tierCommandsLauncherOnDown();
+                        tierCommandsLauncher(tier.getJoinOnDownCommands()); //maybe reverse ?
                     }
                 }
                 break;
             }
-
-            array.add(tier);
-        }
-
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                setPlayerTierDTB(UUID);
-            } else {
-                setPlayerTierLocale(UUID);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 
-    private void setPlayerTierDTB(String UUID) {
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+    public void setTimer(int delay) {
+        this.timer = new Timer();
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    String query = "UPDATE Karma SET Tier = ? WHERE UUID = ?;";
-                    PreparedStatement preparedStatement =
-                            plugin.connection.prepareStatement(query);
-
-                    preparedStatement.setString(1, getPlayerTier());
-                    preparedStatement.setString(2, UUID);
-
-                    preparedStatement.executeUpdate();
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+                updateData();
             }
-        });
-    }
-
-    private void setPlayerTierLocale(String UUID) {
-        String tier = playerTier;
-
-        File playerFile = new File(plugin.getDataFolder(),
-                "playerdata/" + UUID + ".yml");
-        YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                playerConfig.set("tier", tier);
-
-                try {
-                    playerConfig.save(playerFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        }, delay, delay);;
     }
 
     /**
@@ -456,104 +334,32 @@ public class PlayerData {
         if (player.hasMetadata("NPC")) {
             return;
         }
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                setPlayerLastAttackDTB();
-            } else {
-                setPlayerLastAttackLocale();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setPlayerLastAttackDTB() {
-        String UUID = player.getUniqueId().toString();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String query = "UPDATE Karma SET Last_Attack = ? WHERE UUID = ?;";
-                    PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
-
-                    preparedStatement.setString(1, "NOW()");
-                    preparedStatement.setString(2, UUID);
-                    preparedStatement.executeUpdate();
-                    preparedStatement.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    private void setPlayerLastAttackLocale() {
-        String UUID = player.getUniqueId().toString();
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run() {
-                File playerFile = new File(plugin.getDataFolder(),
-                        "playerdata/" + UUID + ".yml");
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                playerConfig.set("last-attack", System.currentTimeMillis());
-                try {
-                    playerConfig.save(playerFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        lastAttack = System.currentTimeMillis();
     }
 
     private void changePlayerTierMessage() {
-        String message = configLang.getString("tier-change");
+        String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
-            AdaptMessage adaptMessage = new AdaptMessage(plugin);
             adaptMessage.message(player, player, 0, message);
         }
     }
 
-    private void tierCommandsLauncher() {
-        String tier = getPlayerTier();
-        List<String> list = plugin.getConfig().getStringList("tiers." + tier + ".commands");
-        for (String line : list) {
-            if (line != null) {
-                placeCommands(player, line);
-            }
-        }
-    }
-
-    private void tierCommandsLauncherOnUp() {
-        String tier = getPlayerTier();
-        List<String> list = plugin.getConfig().getStringList("tiers." + tier + ".commands-on-up");
-        for (String line : list) {
-            if (line != null) {
-                placeCommands(player, line);
-            }
-        }
-    }
-
-    private void tierCommandsLauncherOnDown() {
-        String tier = getPlayerTier();
-        List<String> list = plugin.getConfig().getStringList("tiers." + tier + ".commands-on-down");
-        for (String line : list) {
-            if (line != null) {
-                placeCommands(player, line);
-            }
-        }
+    private void tierCommandsLauncher(List<String> commands) {
+        commands.forEach(s -> {
+            placeCommands(player, s);
+        });
     }
 
     private void placeCommands(Player player, String command) {
         command = command.replaceAll("<PLAYER>", player.getName());
         command = command
-            .replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerKarma));
-        command = command.replaceAll("<TIER>", playerDisplayTier);
+            .replaceAll("<KARMA>", String.format("%." + nbDec + "f", karma));
+        command = command.replaceAll("<TIER>", tier.getDisplay());
         command = ChatColor.translateAlternateColorCodes('&', command);
         command = papi.setPlaceholdersOnMessage(command, player);
 
         if (command.startsWith("<MESSAGE>")) {
             command = command.replaceAll("<MESSAGE>", "").trim();
-            AdaptMessage adaptMessage = new AdaptMessage(plugin);
             adaptMessage.message(player, player, 0, command);
         } else if (command.startsWith("<@>")) {
             command = command.replaceAll("<@>", "");

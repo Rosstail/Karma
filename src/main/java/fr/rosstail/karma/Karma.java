@@ -11,10 +11,12 @@ import fr.rosstail.karma.datas.FileResourcesUtils;
 import fr.rosstail.karma.events.HitEvents;
 import fr.rosstail.karma.events.KillEvents;
 import fr.rosstail.karma.events.PlayerConnect;
+import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
+import fr.rosstail.karma.tiers.TierManager;
+import fr.rosstail.karma.times.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -38,9 +40,16 @@ public class Karma extends JavaPlugin implements Listener {
 
     public void onEnable() {
         instance = this;
-        this.saveDefaultConfig();
+        if (!(new File("plugins/Karma/config.yml").exists())) {
+            System.out.println("Preparing default config.yml");
+            this.saveDefaultConfig();
+        }
+        TierManager.initTierManager(this);
+        TimeManager.initTimeManager(this);
+
         initDefaultConfigs();
         LangManager.initCurrentLang();
+        AdaptMessage.initAdaptMessage(this);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -54,9 +63,8 @@ public class Karma extends JavaPlugin implements Listener {
 
         if (this.getConfig().getBoolean("mysql.active")) {
             prepareConnection();
-        } else {
-            this.createPlayerDataFolder();
         }
+        this.createPlayerDataFolder();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(this), this);
         Bukkit.getPluginManager().registerEvents(new KillEvents(this), this);
@@ -88,7 +96,8 @@ public class Karma extends JavaPlugin implements Listener {
                 return;
             }
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database, this.username, this.password);
+            connection = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database,
+                    this.username, this.password);
         }
     }
 
@@ -139,80 +148,6 @@ public class Karma extends JavaPlugin implements Listener {
     private void initDefaultConfigs() {
         try {
             FileResourcesUtils.main("lang",this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setSpanishLang() {
-        File file = new File(this.getDataFolder(), "lang/es_ES.yml");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        configuration.set("by-player-only", "[Karma] Este comando es solo para jugadores.");
-        configuration.set("creating-playerdata-folder", "[Karma] &9Carpeta playerdata/ no exite. &aCreandola&7.");
-        configuration.set("creating-player", "[Karma] &9Creando un archivo de jugador para &a<PLAYER>&9.");
-        configuration.set("disconnected-player", "[Karma] &cEl jugador no esta conectado o no exite.");
-        configuration.set("check-own-karma", "[Karma] Tu karma es &a<KARMA> &ry tu Tier es &6<TIER>&r.");
-        configuration.set("check-other-karma", "[Karma] &rEl karma de &6<PLAYER> &res &6<KARMA> &ry su Tier es &6<TIER>&r.");
-        configuration.set("set-karma", "[Karma] &rEl karma de &9<PLAYER>'s &rahora es &9<KARMA> &ry su Tier es &9<TIER>&r.");
-        configuration.set("add-karma", "[Karma] &aSe añadido &6<VALUE> &rKarma a &6<PLAYER> &rcon un total de &6<KARMA> &rkarma y tier <TIER>.");
-        configuration.set("remove-karma", "[Karma] &cEliminado &6<VALUE> &rKarma a &6<PLAYER> &rcon un total de &6<KARMA> &rkarma y tier <TIER>.");
-        configuration.set("reset-karma", "[Karma] &rEl karma de &6<PLAYER>&r se ha reiniciado. Karma : &6<KARMA> &ry el tier es &6<TIER>&r.");
-        configuration.set("tier-change", "[Karma] ¡ Ahora eres &6<TIER> &r!");
-        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Karma unchanged.");
-        configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma changes.");
-        configuration.set("permission-denied", "[Karma] &c¡No tienes permiso!");
-        configuration.set("wrong-value", "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c.");
-        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
-                "&6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n" +
-                "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n" +
-                "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n" +
-                "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n" +
-                "&6/karma reset [player] &8: &rSet the targeted player karma to the default one.");
-
-        try {
-            configuration.save(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setRomanianLang() {
-        File file = new File(this.getDataFolder(), "lang/ro_RO.yml");
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
-        configuration.set("by-player-only", "[Karma] &fComanda aceasta trebuie executata de catre un jucator!");
-        configuration.set("creating-playerdata-folder", "[Karma] &fNu exista \"playerdata\", asa ca creem noi!");
-        configuration.set("creating-player", "[Karma] &fCreem un jucator cu numele &a<PLAYER>");
-        configuration.set("disconnected-player", "[Karma] &aJucătorul nu este pe server, sau nu exista.");
-        configuration.set("check-own-karma", "[Karma] Karma-ul tau este &a<KARMA> &fsi tier-ul tau este &2<TIER>&r.");
-        configuration.set("check-other-karma", "[Karma] &a<PLAYER> &fdetine &a<KARMA> &fKarma si tier-ul sau este &2<TIER>&r.");
-        configuration.set("set-karma", "[Karma] &9<PLAYER>''s &rAi setat karma &a<KARMA> &rsi tier &2<TIER>&r.");
-        configuration.set("add-karma", "[Karma] &fAi scos &a<VALUE> &rKarma de la &2<PLAYER> &rel acum detine de &a<KARMA> &rKarma si tier-ul&2 <TIER>.");
-        configuration.set("remove-karma", "[Karma] &cAti scos &6<VALUE> &rkarma de la &6<PLAYER> &rpentru un total de &6<KARMA> &rsi tier-ul <TIER>.");
-        configuration.set("reset-karma", "[Karma] &fKarma-ul lui &a<PLAYER>&fa fost resetat. Noul sau Karma este &a<KARMA>;Tier &2<TIER>&r.");
-        configuration.set("tier-change", "[Karma] Ai ajuns la tier &a<TIER> &r!");
-        configuration.set("self-defending-off", "[Karma] You are defending yourself ! Karma unchanged.");
-        configuration.set("self-defending-on", "[Karma] You are defending yourself but your Karma changes.");
-        configuration.set("permission-denied", "[Karma] &fDin pacate nu ai &apermisiunea !");
-        configuration.set("wrong-value", "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c.");
-        configuration.set("help", "&b====== &6KARMA HELP &b======\n" +
-                "&6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n" +
-                "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n" +
-                "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n" +
-                "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n" +
-                "&6/karma reset [player] &8: &rSet the targeted player karma to the default one.");
-
-        try {
-            configuration.save(file);
         } catch (IOException e) {
             e.printStackTrace();
         }

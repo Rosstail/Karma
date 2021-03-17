@@ -2,6 +2,8 @@ package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.lang.AdaptMessage;
+import fr.rosstail.karma.lang.LangManager;
+import fr.rosstail.karma.lang.LangMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -13,16 +15,11 @@ import java.io.File;
  * This command able the commandSender to see what is the Karma and Karma Tier of a conected user
  */
 public class CheckKarmaCommand {
-    String message = null;
 
-    private final File langFile;
-    private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
 
-    public CheckKarmaCommand(Karma plugin) {
-        this.langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
-        this.configLang = YamlConfiguration.loadConfiguration(langFile);
-        this.adaptMessage = new AdaptMessage(plugin);
+    public CheckKarmaCommand() {
+        this.adaptMessage = AdaptMessage.getAdaptMessage();
     }
 
     /**
@@ -33,12 +30,13 @@ public class CheckKarmaCommand {
      */
     public void karmaOther(CommandSender commandSender, String[] args)
     {
+        String message;
         Player player = Bukkit.getServer().getPlayer(args[0]);
 
         if (player != null && player.isOnline()) {
-            message = configLang.getString("check-other-karma");
+            message = LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA);
         } else {
-            message = configLang.getString("disconnected-player");
+            message = LangManager.getMessage(LangMessage.DISCONNECTED);
         }
         adaptMessage.message(commandSender, player, 0, message);
     }
@@ -50,8 +48,6 @@ public class CheckKarmaCommand {
     public void karmaSelf(CommandSender sender)
     {
         Player player = (Player) sender;
-
-        message = configLang.getString("check-own-karma");
-        adaptMessage.message(player, player, 0, message);
+        adaptMessage.message(player, player, 0, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA));
     }
 }

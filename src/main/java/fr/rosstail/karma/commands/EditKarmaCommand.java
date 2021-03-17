@@ -3,6 +3,8 @@ package fr.rosstail.karma.commands;
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.lang.AdaptMessage;
+import fr.rosstail.karma.lang.LangManager;
+import fr.rosstail.karma.lang.LangMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -14,17 +16,13 @@ import java.io.File;
  * Change the karma of the target, check the limit fork and new tier after.
  */
 public class EditKarmaCommand {
-    String message = null;
 
     private final Karma plugin;
-    private final YamlConfiguration configLang;
     private final AdaptMessage adaptMessage;
 
     public EditKarmaCommand(Karma plugin) {
         this.plugin = plugin;
-        File langFile = new File(plugin.getDataFolder(), "lang/" + plugin.getConfig().getString("general.lang") + ".yml");
-        this.configLang = YamlConfiguration.loadConfiguration(langFile);
-        this.adaptMessage = new AdaptMessage(plugin);
+        this.adaptMessage = AdaptMessage.getAdaptMessage();
     }
 
     /**
@@ -38,10 +36,8 @@ public class EditKarmaCommand {
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
             PlayerData playerData = PlayerData.gets(player, plugin);
-            playerData.setKarmaToPlayer(value);
-
-            message = configLang.getString("set-karma");
-            adaptMessage.message(commandSender, player, value, message);
+            playerData.setKarma(value);
+            adaptMessage.message(commandSender, player, value, LangManager.getMessage(LangMessage.SET_KARMA));
         } else {
             disconnectedPlayer(commandSender, args);
         }
@@ -59,12 +55,11 @@ public class EditKarmaCommand {
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
             PlayerData playerData = PlayerData.gets(player, plugin);
-            double targetNewKarma = playerData.getPlayerKarma() + value;
+            double targetNewKarma = playerData.getKarma() + value;
 
-            playerData.setKarmaToPlayer(targetNewKarma);
+            playerData.setKarma(targetNewKarma);
 
-            message = configLang.getString("add-karma");
-            adaptMessage.message(commandSender, player, value, message);
+            adaptMessage.message(commandSender, player, value, LangManager.getMessage(LangMessage.ADD_KARMA));
 
         } else {
             disconnectedPlayer(commandSender, args);
@@ -84,12 +79,11 @@ public class EditKarmaCommand {
         double value = Double.parseDouble(args[2]);
         if (player != null && player.isOnline()) {
             PlayerData playerData = PlayerData.gets(player, plugin);
-            double targetNewKarma = playerData.getPlayerKarma() - value;
+            double targetNewKarma = playerData.getKarma() - value;
 
-            playerData.setKarmaToPlayer(targetNewKarma);
+            playerData.setKarma(targetNewKarma);
 
-            message = configLang.getString("remove-karma");
-            adaptMessage.message(commandSender, player, value, message);
+            adaptMessage.message(commandSender, player, value, LangManager.getMessage(LangMessage.REMOVE_KARMA));
 
         } else {
             disconnectedPlayer(commandSender, args);
@@ -107,10 +101,9 @@ public class EditKarmaCommand {
             PlayerData playerData = PlayerData.gets(player, plugin);
             double resKarma = plugin.getConfig().getDouble("karma.default-karma");
 
-            playerData.setKarmaToPlayer(resKarma);
+            playerData.setKarma(resKarma);
 
-            message = configLang.getString("reset-karma");
-            adaptMessage.message(commandSender, player, 0, message);
+            adaptMessage.message(commandSender, player, 0, LangManager.getMessage(LangMessage.RESET_KARMA));
         }
         else {
             disconnectedPlayer(commandSender, args);
@@ -123,7 +116,6 @@ public class EditKarmaCommand {
      */
     private void disconnectedPlayer(CommandSender commandSender, String[] args) {
         Player player = Bukkit.getServer().getPlayer(args[1]);
-        message = configLang.getString("disconnected-player");
-        adaptMessage.message(commandSender, player, 0, message);
+        adaptMessage.message(commandSender, player, 0, LangManager.getMessage(LangMessage.DISCONNECTED));
     }
 }

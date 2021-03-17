@@ -1,7 +1,7 @@
 by-player-only: "[Karma] This command must be send by a player."
 creating-playerdata-folder: "[Karma] &9playerdata/ folder doesn't exists. &aCreating it&7."
 creating-player: "[Karma] &9Creating player file for &a<PLAYER>&9."
-disconnected-player: "[Karma] &cPlayer is not connected or does not exists."
+disconnected: "[Karma] &cPlayer is not connected or does not exists."
 check-own-karma: "[Karma] Your karma is &a<KARMA> &rand your tier is &6<TIER>&r."
 check-other-karma: "[Karma] &6<PLAYER>'s &rkarma is &6<KARMA> &rand his tier is &6<TIER>&r."
 set-karma: "[Karma] &9<PLAYER>'s &rKarma is now &9<KARMA> &rand his Tier is &9<TIER>&r."

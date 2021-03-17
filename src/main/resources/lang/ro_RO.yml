@@ -1,7 +1,7 @@
 by-player-only: '[Karma] &fComanda aceasta trebuie executata de catre un jucator!'
 creating-playerdata-folder: '[Karma] &fNu exista "playerdata", asa ca creem noi!'
 creating-player: '[Karma] &fCreem un jucator cu numele &a<PLAYER>'
-disconnected-player: '[Karma] &aJucătorul nu este pe server, sau nu exista.'
+disconnected: '[Karma] &aJucătorul nu este pe server, sau nu exista.'
 check-own-karma: '[Karma] Karma-ul tau este &a<KARMA> &fsi tier-ul tau este &2<TIER>&r.'
 check-other-karma: '[Karma] &a<PLAYER> &fdetine &a<KARMA> &fKarma si tier-ul sau este &2<TIER>&r.'
 set-karma: '[Karma] &9<PLAYER>''''s &rAi setat karma &a<KARMA> &rsi tier &2<TIER>&r.'
