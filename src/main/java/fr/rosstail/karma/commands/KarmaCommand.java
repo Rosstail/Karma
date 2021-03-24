@@ -2,7 +2,6 @@ package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.apis.PAPI;
-import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
@@ -52,10 +51,12 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
                 adaptMessage.message(sender, null, 0, LangManager.getMessage(LangMessage.HELP));
             }
-        } else if (canLaunchCommand(sender, COMMAND_KARMA_OTHER)) {
-            checkKarmaCommand.karmaOther(sender, args);
-        } else if (canLaunchCommand(sender, COMMAND_KARMA)) {
-            checkKarmaCommand.karmaSelf(sender);
+        } else if (string.startsWith(COMMAND_KARMA.getCommand())) {
+            if (string.length() >= 2) {
+                checkKarmaCommand.karmaOther(sender, args);
+            } else {
+                checkKarmaCommand.karmaSelf(sender);
+            }
         } else {
             Player playerSender = null;
             if (sender instanceof Player) {

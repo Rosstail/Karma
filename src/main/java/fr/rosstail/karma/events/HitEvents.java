@@ -54,7 +54,7 @@ public class HitEvents implements Listener {
         double reward;
         double attackerKarma;
         double attackerModifiedKarma;
-        LivingEntity livingEntity;
+        LivingEntity victimEntity;
         String livingEntityName;
         attacker = null;
         if (!(event.getEntity() instanceof LivingEntity && event.getFinalDamage() >= 1d
@@ -63,8 +63,13 @@ public class HitEvents implements Listener {
         }
 
         damage = event.getFinalDamage();
-        livingEntity = (LivingEntity) event.getEntity();
-        livingEntityName = livingEntity.toString().replaceAll("Craft", "");
+        victimEntity = (LivingEntity) event.getEntity();
+
+        if (!CustomFightWorlds.getEnabledWorlds().contains(victimEntity.getWorld())) {
+            return;
+        }
+
+        livingEntityName = victimEntity.toString().replaceAll("Craft", "");
         if (event.getDamager() instanceof Projectile) {
             Projectile projectile = (Projectile) event.getDamager();
             if (projectile.getShooter() instanceof Player) {
@@ -82,8 +87,8 @@ public class HitEvents implements Listener {
             return;
         }
 
-        if (livingEntity instanceof Player && attacker != null) {
-            victim = ((Player) livingEntity).getPlayer();
+        if (victimEntity instanceof Player && attacker != null) {
+            victim = ((Player) victimEntity).getPlayer();
             onPlayerHurt();
             return;
         }

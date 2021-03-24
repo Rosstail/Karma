@@ -21,6 +21,11 @@ karma:
   minimum: -300000
   maximum:  300000
 
+world-fight-system:
+  black-list: false
+  worlds:
+    - world
+
 tiers:
   tier-3:
     display: "&f[&4Criminal&f]&r"

@@ -45,20 +45,24 @@ public class KillEvents implements Listener {
      *
      * @param event
      */
-    @EventHandler public void onEntityDeath(EntityDeathEvent event) {
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event) {
+        LivingEntity victim = event.getEntity();
+        if (!CustomFightWorlds.getEnabledWorlds().contains(victim.getWorld())) {
+            return;
+        }
 
         double killerKarma;
         double reward;
-        LivingEntity livingEntity = event.getEntity();
 
-        killer = livingEntity.getKiller();
+        killer = victim.getKiller();
         String livingEntityName;
         PlayerData playerData;
         if (event.getEntity().getKiller() != null) {
             playerData = PlayerData.gets(killer, plugin);
             if (killer != null && DataHandler.getTime(killer)) {
 
-                livingEntityName = livingEntity.toString().replaceAll("Craft", "");
+                livingEntityName = victim.toString().replaceAll("Craft", "");
             } else {
                 return;
             }
@@ -94,9 +98,15 @@ public class KillEvents implements Listener {
      *
      * @param event
      */
-    @EventHandler public void onPlayerDeath(PlayerDeathEvent event) {
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
         victim = event.getEntity();
+
+        if (!CustomFightWorlds.getEnabledWorlds().contains(victim.getWorld())) {
+            return;
+        }
         killer = victim.getKiller();
+
         Object resultSE = null;
         double result = 0;
 

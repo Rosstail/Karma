@@ -8,6 +8,7 @@ import java.sql.*;
 import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.commands.KarmaCommand;
 import fr.rosstail.karma.datas.FileResourcesUtils;
+import fr.rosstail.karma.events.CustomFightWorlds;
 import fr.rosstail.karma.events.HitEvents;
 import fr.rosstail.karma.events.KillEvents;
 import fr.rosstail.karma.events.PlayerConnect;
@@ -45,7 +46,7 @@ public class Karma extends JavaPlugin implements Listener {
             System.out.println("Preparing default config.yml");
             this.saveDefaultConfig();
         }
-
+        CustomFightWorlds.setUp(this);
         ConfigData.initKarmaValues(this.getConfig());
         TierManager.initTierManager(this);
         TimeManager.initTimeManager(this);
