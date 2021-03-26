@@ -2,6 +2,7 @@ package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.apis.PAPI;
+import fr.rosstail.karma.commands.list.Commands;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
@@ -17,7 +18,7 @@ import org.bukkit.util.StringUtil;
 
 import java.util.*;
 
-import static fr.rosstail.karma.commands.Commands.*;
+import static fr.rosstail.karma.commands.list.Commands.*;
 /**
  * Checking what method/class will be used on command, depending of command Sender and number of args.
  */
@@ -35,11 +36,18 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
-        String string = Arrays.toString(args);
+        String string = String.join(" ", args);
         if (!canLaunchCommand(sender, COMMAND_KARMA)) {
             return false;
         }
-        if (string.startsWith(COMMAND_KARMA_SET.getCommand())) {
+
+        if (string.startsWith(COMMAND_KARMA_CHECK.getCommand())) {
+            if (args.length == 2) {
+                checkKarmaCommand.karmaOther(sender, args[1]);
+            } else {
+                checkKarmaCommand.karmaSelf(sender);
+            }
+        } else if (string.startsWith(COMMAND_KARMA_SET.getCommand())) {
             editKarmaCommand.karmaSet(sender, args);
         } else if (string.startsWith(COMMAND_KARMA_ADD.getCommand())) {
             editKarmaCommand.karmaAdd(sender, args);
@@ -49,20 +57,14 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             editKarmaCommand.karmaReset(sender, args);
         } else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
-                adaptMessage.message(sender, null, 0, LangManager.getMessage(LangMessage.HELP));
-            }
-        } else if (string.startsWith(COMMAND_KARMA.getCommand())) {
-            if (string.length() >= 2) {
-                checkKarmaCommand.karmaOther(sender, args);
-            } else {
-                checkKarmaCommand.karmaSelf(sender);
+                sender.sendMessage(adaptMessage.listMessage(null, 0, LangManager.getListMessage(LangMessage.HELP)));
             }
         } else {
             Player playerSender = null;
             if (sender instanceof Player) {
                 playerSender = ((Player) sender).getPlayer();
             }
-            adaptMessage.message(sender, playerSender, 0, LangManager.getMessage(LangMessage.HELP));
+            sender.sendMessage(adaptMessage.listMessage(playerSender, 0, LangManager.getListMessage(LangMessage.HELP)));
         }
         return true;
     }
@@ -75,14 +77,14 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
 
         if (args.length <= 1) {
             commands.add("set");
+            commands.add("check");
             commands.add("add");
             commands.add("remove");
             commands.add("reset");
             commands.add("help");
             StringUtil.copyPartialMatches(args[0], commands, completions);
         } else if (args.length == 2) {
-            if (string.startsWith(COMMAND_KARMA_SET.getCommand()) || string.startsWith(COMMAND_KARMA_ADD.getCommand())
-                    || string.startsWith(COMMAND_KARMA_REMOVE.getCommand()) || string.startsWith(COMMAND_KARMA_RESET.getCommand())) {
+            if (!string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
                 Bukkit.getOnlinePlayers().forEach(player -> commands.add(player.getName()));
             }
             StringUtil.copyPartialMatches(args[1], commands, completions);
@@ -111,20 +113,18 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     }
 
     /**
-     * @param commandSender
-     * @param args
+     * @param sender
      */
-    void disconnectedPlayer(CommandSender commandSender, String[] args) {
-        Player player = Bukkit.getServer().getPlayer(args[1]);
-        adaptMessage.message(commandSender, player, 0, LangManager.getMessage(LangMessage.DISCONNECTED));
+    void disconnectedPlayer(CommandSender sender) {
+        sender.sendMessage(adaptMessage.message(null, 0, LangManager.getMessage(LangMessage.DISCONNECTED)));
     }
 
     void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {
-            adaptMessage.message(sender, null, 0, LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS));
+            sender.sendMessage(adaptMessage.message(null, 0, LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS)));
         }
         if (e instanceof NumberFormatException) {
-            adaptMessage.message(sender, null, 0, LangManager.getMessage(LangMessage.WRONG_VALUE));
+            sender.sendMessage(adaptMessage.message(null, 0, LangManager.getMessage(LangMessage.WRONG_VALUE)));
         }
     }
 }

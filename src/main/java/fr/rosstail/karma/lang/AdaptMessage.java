@@ -11,7 +11,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdaptMessage {
@@ -31,15 +34,14 @@ public class AdaptMessage {
     private final Map<Player, Long> coolDown = new HashMap<>();
 
     public static void sendActionBar(Player player, String message) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(message));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(adaptMessage.message(player, 0D, message)));
     }
 
     /**
      * Sends automatically the message to the sender with some parameters
      *
-     * @param sender  the sender, can be console, player or null.
      */
-    public String message(CommandSender sender, Player player, double value, String message) {
+    public String message(Player player, double value, String message) {
         if (message == null) {
             return null;
         }
@@ -77,6 +79,14 @@ public class AdaptMessage {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    public String[] listMessage(Player player, double value, List<String> messages) {
+        ArrayList<String> newMessages = new ArrayList<>();
+        messages.forEach(s -> {
+            newMessages.add(message(player, value, s));
+        });
+        return newMessages.toArray(new String[0]);
+    }
+
     public void entityHitMessage(String message, Player player, double value) {
         if (message == null) {
             return;
@@ -98,7 +108,7 @@ public class AdaptMessage {
         message = message.replaceAll("<KARMA>", decimalFormat(playerKarma));
 
         message = papi.setPlaceholdersOnMessage(message, player);
-        message = ChatColor.translateAlternateColorCodes('&', message);
+        message = message(player, 0D, message);
 
         coolDown.put(player, System.currentTimeMillis());
         if (msgStyle) {
@@ -109,6 +119,14 @@ public class AdaptMessage {
     }
 
     public void entityKillMessage(String message, Player player) {
+        if (coolDown.containsKey(player)) {
+            double seconds = this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
+            double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
+            if (!(timeLeft <= 0)) {
+                return;
+            }
+        }
+
         PlayerData playerData = PlayerData.gets(player, plugin);
         double playerKarma = playerData.getKarma();
         double playerPreviousKarma = playerData.getPreviousKarma();
@@ -121,15 +139,7 @@ public class AdaptMessage {
         message = message.replaceAll("<KARMA>", decimalFormat(playerKarma));
 
         message = papi.setPlaceholdersOnMessage(message, player);
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
-        if (coolDown.containsKey(player)) {
-            double seconds = this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
-            double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
-            if (!(timeLeft <= 0)) {
-                return;
-            }
-        }
+        message = message(player, 0D, message);
 
         coolDown.put(player, System.currentTimeMillis());
         if (msgStyle) {
@@ -140,6 +150,15 @@ public class AdaptMessage {
     }
 
     public void playerHitMessage(String message, Player attacker, Player victim, double value) {
+        if (coolDown.containsKey(attacker)) {
+            double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
+            double timeLeft =
+                    coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
+            if (!(timeLeft <= 0)) {
+                return;
+            }
+        }
+
         PlayerData attackerData = PlayerData.gets(attacker, plugin);
         PlayerData victimData = PlayerData.gets(victim, plugin);
         double attackerKarma = attackerData.getKarma();
@@ -160,16 +179,7 @@ public class AdaptMessage {
         message = message.replaceAll("<VICTIM_TIER>", victimData.getTier().getDisplay());
 
         message = papi.setPlaceholdersOnMessage(message, attacker);
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
-        if (coolDown.containsKey(attacker)) {
-            double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
-            double timeLeft =
-                coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
-            if (!(timeLeft <= 0)) {
-                return;
-            }
-        }
+        message = message(null, 0D, message);
 
         coolDown.put(attacker, System.currentTimeMillis());
         if (msgStyle) {
@@ -180,6 +190,14 @@ public class AdaptMessage {
     }
 
     public void playerKillMessage(String message, Player killer, Player victim, double value) {
+        if (coolDown.containsKey(killer)) {
+            double seconds = this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
+            double timeLeft = coolDown.get(killer) - System.currentTimeMillis() + seconds * 1000f;
+            if (!(timeLeft <= 0)) {
+                return;
+            }
+        }
+
         PlayerData killerData = PlayerData.gets(killer, plugin);
         PlayerData victimData = PlayerData.gets(victim, plugin);
         double killerKarma = killerData.getKarma();
@@ -200,17 +218,7 @@ public class AdaptMessage {
         message = message.replaceAll("<VICTIM_TIER>", victimData.getTier().getDisplay());
 
         message = papi.setPlaceholdersOnMessage(message, killer);
-        message = ChatColor.translateAlternateColorCodes('&', message);
-
-        if (coolDown.containsKey(killer)) {
-            double seconds =
-                this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
-            double timeLeft =
-                coolDown.get(killer) - System.currentTimeMillis() + seconds * 1000f;
-            if (!(timeLeft <= 0)) {
-                return;
-            }
-        }
+        message = message(null, 0D, message);
 
         coolDown.put(killer, System.currentTimeMillis());
         if (msgStyle) {

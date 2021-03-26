@@ -337,7 +337,7 @@ public class PlayerData {
     private void changePlayerTierMessage() {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
-            adaptMessage.message(player, player, 0, message);
+            player.sendMessage(adaptMessage.message(player, 0, message));
         }
     }
 
@@ -356,7 +356,7 @@ public class PlayerData {
 
         if (command.startsWith("<MESSAGE>")) {
             command = command.replaceAll("<MESSAGE>", "").trim();
-            adaptMessage.message(player, player, 0, command);
+            player.sendMessage(adaptMessage.message(player, 0, command));
         } else if (command.startsWith("<@>")) {
             command = command.replaceAll("<@>", "");
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);

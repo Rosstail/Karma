@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 
-import static fr.rosstail.karma.commands.Commands.*;
+import static fr.rosstail.karma.commands.list.Commands.*;
 
 /**
  * Change the karma of the target, check the limit fork and new tier after.
@@ -49,9 +49,9 @@ public class EditKarmaCommand {
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(value);
-                adaptMessage.message(sender, player, value, LangManager.getMessage(LangMessage.SET_KARMA));
+                sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.SET_KARMA)));
             } else {
-                karmaCommand.disconnectedPlayer(sender, args);
+                karmaCommand.disconnectedPlayer(sender);
             }
         }
     }
@@ -76,9 +76,9 @@ public class EditKarmaCommand {
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(playerData.getKarma() + value);
-                adaptMessage.message(sender, player, value, LangManager.getMessage(LangMessage.ADD_KARMA));
+                sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.ADD_KARMA)));
             } else {
-                karmaCommand.disconnectedPlayer(sender, args);
+                karmaCommand.disconnectedPlayer(sender);
             }
         }
     }
@@ -103,9 +103,9 @@ public class EditKarmaCommand {
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(playerData.getKarma() - value);
-                adaptMessage.message(sender, player, value, LangManager.getMessage(LangMessage.REMOVE_KARMA));
+                sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.REMOVE_KARMA)));
             } else {
-                karmaCommand.disconnectedPlayer(sender, args);
+                karmaCommand.disconnectedPlayer(sender);
             }
         }
     }
@@ -130,9 +130,9 @@ public class EditKarmaCommand {
 
                 playerData.setKarma(resKarma);
 
-                adaptMessage.message(sender, player, 0, LangManager.getMessage(LangMessage.RESET_KARMA));
+                sender.sendMessage(adaptMessage.message(player, 0, LangManager.getMessage(LangMessage.RESET_KARMA)));
             } else {
-                karmaCommand.disconnectedPlayer(sender, args);
+                karmaCommand.disconnectedPlayer(sender);
             }
         }
     }

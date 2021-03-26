@@ -22,20 +22,31 @@ public class CustomFightWorlds {
     CustomFightWorlds(Karma plugin) {
         ArrayList<World> tempList = new ArrayList<>();
 
+        boolean isBlackList;
         FileConfiguration config = plugin.getConfig();
-        boolean isBlackList = config.getBoolean("world-fight-system.black-list");
+        boolean enabled = config.getString("world-fight-system.enable") != null
+                || config.getBoolean("world-fight-system.enable");
+        if (config.getString("world-fight-system.black-list") != null) {
+            isBlackList = config.getBoolean("world-fight-system.black-list");
+        } else {
+            isBlackList = false;
+        }
         List<String> configWorldsList = config.getStringList("world-fight-system.worlds");
 
-        for (World world : Bukkit.getWorlds()) {
-            if (!isBlackList) {
-                if (configWorldsList.contains(world.getName())) {
-                    tempList.add(world);
-                }
-            } else {
-                if (!configWorldsList.contains(world.getName())) {
-                    tempList.add(world);
+        if (enabled) {
+            for (World world : Bukkit.getWorlds()) {
+                if (!isBlackList) {
+                    if (configWorldsList.contains(world.getName())) {
+                        tempList.add(world);
+                    }
+                } else {
+                    if (!configWorldsList.contains(world.getName())) {
+                        tempList.add(world);
+                    }
                 }
             }
+        } else {
+            tempList.addAll(Bukkit.getWorlds());
         }
 
         enabledWorlds = tempList;

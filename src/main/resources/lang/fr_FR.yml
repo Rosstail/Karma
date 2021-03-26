@@ -13,10 +13,11 @@ self-defending-off: "[Karma] Vous êtes en train de vous défendre ! Karma incha
 self-defending-on: "[Karma] Vous vous défendez mais votre Karma change tout de même."
 permission-denied: "[Karma] &cVous n'avez pas la permission <PERMISSION> !"
 wrong-value: "&c[Karma] Vous devez renseigner un nombre. Exemple : &f\"/karma add Notch 15\"&c."
-help: |-
-  &b====== &6KARMA HELP &b======\n
-  &6/karma (joueur) &8: &rAffiche le karma et l'alignement du joueur ciblé ou par défaut.\n
-  &6/karma set [joueur] [valeur] &8: &rApplique la valeur spécifiée au karma du joueur ciblé\n
-  &6/karma add [joueur] [valeur] &8: &rAjoute la valeur spécifiée au karma du joueur ciblé\n
-  &6/karma remove [joueur] [valeur] &8: &rSoustrait la valeur indiquée du karma du joueur ciblé\n
-  &6/karma reset [joueur] &8: &rRéinitialise le karma du joueur ciblé.
+too-few-arguments: "&c[Karma] Trop peu d'arguments"
+help:
+    - "&b====== &6KARMA HELP &b======"
+    - "&6/karma check (joueur) &8: &rAffiche votre karma et votre alignement ou ceux du joueur ciblé."
+    - "&6/karma set [joueur] [valeur] &8: &rApplique la valeur spécifiée au karma du joueur ciblé"
+    - "&6/karma add [joueur] [valeur] &8: &rAjoute la valeur spécifiée au karma du joueur ciblé"
+    - "&6/karma remove [joueur] [valeur] &8: &rSoustrait la valeur indiquée du karma du joueur ciblé"
+    - "&6/karma reset [joueur] &8: &rRéinitialise le karma du joueur ciblé."

@@ -13,10 +13,11 @@ self-defending-off: "[Karma] You are defending yourself ! Karma unchanged."
 self-defending-on: "[Karma] You are defending yourself but your Karma changes."
 permission-denied: "[Karma] &cYou don't have <PERMISSION> permission !"
 wrong-value: "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c."
-help: |-
-  &b====== &6KARMA HELP &b======\n
-  &6/karma (player) &8: &rDisplays targeted player karma and tier or sender by default\n
-  &6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value\n
-  &6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma\n
-  &6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma\n
-  &6/karma reset [player] &8: &rSet the targeted player karma to the default one.
+too-few-arguments: "&c[Karma] Too few arguments"
+help:
+    - "&b====== &6KARMA HELP &b======"
+    - "&6/karma check (player) &8: &rDisplays targeted player karma and tier or sender by default"
+    - "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value"
+    - "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma"
+    - "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma"
+    - "&6/karma reset [player] &8: &rSet the targeted player karma to the default one."

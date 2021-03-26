@@ -14,6 +14,7 @@ import fr.rosstail.karma.events.KillEvents;
 import fr.rosstail.karma.events.PlayerConnect;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
+import fr.rosstail.karma.lang.Lang;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.tiers.TierManager;
 import fr.rosstail.karma.times.TimeManager;
@@ -52,7 +53,7 @@ public class Karma extends JavaPlugin implements Listener {
         TimeManager.initTimeManager(this);
 
         initDefaultConfigs();
-        LangManager.initCurrentLang();
+        LangManager.initCurrentLang(this.getConfig().getString("general.lang"));
         AdaptMessage.initAdaptMessage(this);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {

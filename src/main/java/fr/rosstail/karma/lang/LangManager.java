@@ -15,8 +15,9 @@ public class LangManager {
     /**
      * Initialize the current lang from the configuration
      */
-    public static void initCurrentLang() {
-        LangManager.currentLang = new Lang(Karma.getInstance().getConfig().getString("general.lang")); //file isn't found
+    public static void initCurrentLang(String lang) {
+        Lang.initLang(lang);
+        currentLang = Lang.getLang(); //file isn't found
         if (!currentLang.available()) {
             currentLang = null;
         }
@@ -47,11 +48,17 @@ public class LangManager {
      * @return the string message in {@param lang} language
      */
     public static String getMessage(Lang lang, LangMessage message) {
-        return lang != null && lang.available() ? lang.getConfiguration().getString(message.getText()) : "no-lang selected";
+        if (lang != null && lang.available()) {
+            return lang.getConfiguration().getString(message.getText());
+        }
+        return "no-lang selected";
     }
 
     public static List<String> getListMessage(Lang lang, LangMessage message) {
-        return lang != null && lang.available() ? lang.getConfiguration().getStringList(message.getText()) : Collections.singletonList("no-lang selected");
+        if (lang != null && lang.available()) {
+            return lang.getConfiguration().getStringList(message.getText());
+        }
+        return Collections.singletonList("no-lang selected");
     }
 
 }

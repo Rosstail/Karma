@@ -65,7 +65,7 @@ public class HitEvents implements Listener {
         damage = event.getFinalDamage();
         victimEntity = (LivingEntity) event.getEntity();
 
-        if (!CustomFightWorlds.getEnabledWorlds().contains(victimEntity.getWorld())) {
+        if (!CustomFightWorlds.isFightEnabledInWorld(victimEntity.getWorld())) {
             return;
         }
 
@@ -180,20 +180,20 @@ public class HitEvents implements Listener {
                         attackerData.setLastAttackToPlayer();
                     } else {
                         if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                            adaptMessage.message(null, attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF));
+                            attacker.sendMessage(adaptMessage.message(attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF)));
                             return;
                         }
-                        adaptMessage.message(null, attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON));
+                        attacker.sendMessage(adaptMessage.message(attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                     }
                 } else if (attackStart == 0L) {
                     attackerData.setLastAttackToPlayer();
                 } else if (victimStart != 0L) {
                     if (timeStamp >= victimStart && timeStamp <= victimEnd) {
                         if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                            adaptMessage.message(null, attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF));
+                            attacker.sendMessage(adaptMessage.message(attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF)));
                             return;
                         }
-                        adaptMessage.message(null, attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON));
+                        attacker.sendMessage(adaptMessage.message(attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                     } else {
                         attackerData.setLastAttackToPlayer();
                     }

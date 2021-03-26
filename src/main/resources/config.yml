@@ -22,6 +22,7 @@ karma:
   maximum:  300000
 
 world-fight-system:
+  enable: false
   black-list: false
   worlds:
     - world

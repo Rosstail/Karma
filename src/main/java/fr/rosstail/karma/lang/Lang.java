@@ -7,19 +7,21 @@ import java.io.File;
 
 public class Lang {
 
+    private static Lang lang = null;
     private final String langId;
     private String name;
 
     private final File file;
-    private YamlConfiguration configuration;
+    private final YamlConfiguration configuration;
 
     public Lang(String langId) {
         this.langId = langId;
         this.file = new File(Karma.getInstance().getDataFolder(), "lang/" + langId + ".yml");
-        if (this.file.exists()) {
+        if (available()) {
             this.configuration = YamlConfiguration.loadConfiguration(this.file);
-            this.name = this.configuration.getString("lang-name");
+            this.name = this.file.getName();
         } else {
+            this.configuration = null;
             System.out.println("[KARMA] The language file/" + langId + ".yml does not exists");
         }
     }
@@ -50,5 +52,15 @@ public class Lang {
      */
     public String getName() {
         return name;
+    }
+
+    public static Lang getLang() {
+        return lang;
+    }
+
+    public static void initLang(String langId) {
+        if (lang == null) {
+            lang = new Lang(langId);
+        }
     }
 }

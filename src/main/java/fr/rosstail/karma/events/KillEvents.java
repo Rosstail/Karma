@@ -48,7 +48,7 @@ public class KillEvents implements Listener {
     @EventHandler
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity victim = event.getEntity();
-        if (!CustomFightWorlds.getEnabledWorlds().contains(victim.getWorld())) {
+        if (!CustomFightWorlds.isFightEnabledInWorld(victim.getWorld())) {
             return;
         }
 
@@ -102,7 +102,7 @@ public class KillEvents implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         victim = event.getEntity();
 
-        if (!CustomFightWorlds.getEnabledWorlds().contains(victim.getWorld())) {
+        if (!CustomFightWorlds.isFightEnabledInWorld(victim.getWorld())) {
             return;
         }
         killer = victim.getKiller();
@@ -176,20 +176,20 @@ public class KillEvents implements Listener {
                             killerData.setLastAttackToPlayer();
                         } else {
                             if (doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
-                                adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF));
+                                killer.sendMessage(adaptMessage.message(killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF)));
                                 return;
                             }
-                            adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON));
+                            killer.sendMessage(adaptMessage.message(killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                         }
                     } else if (victimStart == 0L) {
                         killerData.setLastAttackToPlayer();
                     } else if (victimStart != 0L) {
                         if (timeStamp >= victimStart && timeStamp <= victimEnd) {
                             if (doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
-                                adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF));
+                                killer.sendMessage(adaptMessage.message(killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF)));
                                 return;
                             }
-                            adaptMessage.message(null, killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON));
+                            killer.sendMessage(adaptMessage.message(killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                         } else {
                             killerData.setLastAttackToPlayer();
                         }

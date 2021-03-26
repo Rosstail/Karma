@@ -7,7 +7,7 @@ public enum LangMessage {
     ADD_KARMA("add-karma"),
     REMOVE_KARMA("remove-karma"),
     RESET_KARMA("reset-karma"),
-    DISCONNECTED("disconnected-player"),
+    DISCONNECTED("disconnected"),
     WRONG_VALUE("wrong-value"),
     CHECK_OTHER_KARMA("check-other-karma"),
     CHECK_OWN_KARMA("check-own-karma"),
@@ -25,6 +25,6 @@ public enum LangMessage {
     }
 
     String getText() {
-        return text;
+        return this.text;
     }
 }
