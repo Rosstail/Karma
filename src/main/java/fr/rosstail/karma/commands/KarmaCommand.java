@@ -1,7 +1,6 @@
 package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
-import fr.rosstail.karma.apis.PAPI;
 import fr.rosstail.karma.commands.list.Commands;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
@@ -26,7 +25,6 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private final AdaptMessage adaptMessage;
     private final CheckKarmaCommand checkKarmaCommand;
     private final EditKarmaCommand editKarmaCommand;
-    private final PAPI papi = new PAPI();
 
     public KarmaCommand(Karma plugin) {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
@@ -107,7 +105,6 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             message = ChatColor.translateAlternateColorCodes('&', message);
             message = message.replaceAll("<COMMAND>", command.getCommand());
             message = message.replaceAll("<PERMISSION>", command.getPermission());
-            message = papi.setPlaceholdersOnMessage(message, (Player) sender);
             sender.sendMessage(message);
         }
     }

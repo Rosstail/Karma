@@ -1,7 +1,6 @@
 package fr.rosstail.karma.datas;
 
 import fr.rosstail.karma.Karma;
-import fr.rosstail.karma.apis.PAPI;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
@@ -26,11 +25,10 @@ import java.util.*;
  */
 public class PlayerData {
     private final Karma plugin;
-    private static final PAPI papi = new PAPI();
     private static final ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
-    private static final Map<Player, PlayerData> getSets = new HashMap<Player, PlayerData>();
+    private static final Map<Player, PlayerData> playerList = new HashMap<Player, PlayerData>();
     private final File playerFile;
     private final Player player;
     private double karma;
@@ -50,10 +48,10 @@ public class PlayerData {
     }
 
     public static PlayerData gets(Player player, Karma plugin) {
-        if(!getSets.containsKey(player)){ // If player doesn't have instance
-            getSets.put(player, new PlayerData(plugin, player));
+        if(!playerList.containsKey(player)){ // If player doesn't have instance
+            playerList.put(player, new PlayerData(plugin, player));
         }
-        return getSets.get(player);
+        return playerList.get(player);
     }
 
     public Timer getTimer() {
@@ -68,8 +66,8 @@ public class PlayerData {
         return tier;
     }
 
-    public double getLastAttack() {
-        return lastAttack;
+    public long getLastAttack() {
+        return lastAttack; //milliseconds are important only for calculations
     }
 
     public double getPreviousKarma() {
@@ -89,10 +87,15 @@ public class PlayerData {
                 ResultSet result = statement.executeQuery();
                 if (result.next()) {
                     karma = result.getDouble("Karma");
+                    previousKarma = result.getDouble("Previous_Karma");
 
                     String tierLabel = result.getString("Tier");
+                    String previousTierLabel = result.getString("Previous_Tier");
                     if (TierManager.getTierManager().getTiers().containsKey(tierLabel)) {
                         tier = TierManager.getTierManager().getTiers().get(tierLabel);
+                    }
+                    if (TierManager.getTierManager().getTiers().containsKey(previousTierLabel)) {
+                        previousTier = TierManager.getTierManager().getTiers().get(previousTierLabel);
                     }
                     lastAttack = result.getLong("Last_Attack");
                     return true;
@@ -117,14 +120,18 @@ public class PlayerData {
                 ResultSet result = statement.executeQuery();
                 if (result.next()) {
                     karma = result.getDouble("Karma");
+                    previousKarma = result.getDouble("Previous_Karma");
                     tier = TierManager.getTierManager().getTiers().get(result.getString("Tier"));
+                    previousTier = TierManager.getTierManager().getTiers().get(result.getString("Previous_Tier"));
                     lastAttack = result.getLong("Last_Attack");
                 }
                 statement.close();
             } else {
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                 karma = playerConfig.getDouble("karma");
+                previousKarma = playerConfig.getDouble("previous-karma");
                 tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
+                previousTier = TierManager.getTierManager().getTiers().get(playerConfig.getString("previous-tier"));
                 lastAttack = playerConfig.getLong("last-attack");
             }
         } catch (SQLException e) {
@@ -165,6 +172,7 @@ public class PlayerData {
         double finalValue = value;
 
         this.karma = value;
+        this.previousKarma = value;
         setTier();
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
@@ -172,13 +180,22 @@ public class PlayerData {
             public void run() {
                 try {
                     PreparedStatement preparedStatement = plugin.connection.prepareStatement(
-                            "INSERT INTO Karma (UUID, Karma, Tier, Last_Attack)\n"
-                                    + "VALUES (?, ?, ?, ?);");
+                            "INSERT INTO Karma (UUID, Karma, Previous_Karma, Tier, Previous_Tier)\n"
+                                    + "VALUES (?, ?, ?, ?, ?);");
 
                     preparedStatement.setString(1, UUID);
                     preparedStatement.setDouble(2, finalValue);
-                    preparedStatement.setString(3, null);
-                    preparedStatement.setString(4, null);
+                    preparedStatement.setDouble(3, finalValue);
+                    if (tier != null) {
+                        preparedStatement.setString(4, tier.getName());
+                    } else {
+                        preparedStatement.setString(4, null);
+                    }
+                    if (previousTier != null) {
+                        preparedStatement.setString(5, previousTier.getName());
+                    } else {
+                        preparedStatement.setString(5, null);
+                    }
 
                     preparedStatement.execute();
                     preparedStatement.close();
@@ -250,10 +267,16 @@ public class PlayerData {
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
 
                 playerConfig.set("karma", karma);
+                playerConfig.set("previous-karma", previousKarma);
                 if (tier != null) {
                     playerConfig.set("tier", tier.getName());
                 } else {
                     playerConfig.set("tier", null);
+                }
+                if (previousTier != null) {
+                    playerConfig.set("previous-tier", previousTier.getName());
+                } else {
+                    playerConfig.set("previous-tier", null);
                 }
                 playerConfig.set("last-attack", lastAttack);
 
@@ -271,13 +294,24 @@ public class PlayerData {
             @Override
             public void run() {
                 try {
-                    String query = "UPDATE Karma SET Karma = ?, Tier = ?, Last_Attack = ? WHERE UUID = ?;";
+                    String query = "UPDATE Karma SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Last_Attack = ? WHERE UUID = ?;";
                     PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
 
                     preparedStatement.setDouble(1, karma);
-                    preparedStatement.setString(2, tier.getName());
-                    preparedStatement.setDate(3, new Date(1000L * lastAttack));
-                    preparedStatement.setString(4, UUID);
+                    preparedStatement.setDouble(2, previousKarma);
+                    if (tier != null) {
+                        preparedStatement.setString(3, tier.getName());
+                    } else {
+                        preparedStatement.setString(3, null);
+                    }
+
+                    if (previousTier != null) {
+                        preparedStatement.setString(4, previousTier.getName());
+                    } else {
+                        preparedStatement.setString(4, null);
+                    }
+                    preparedStatement.setLong(5, lastAttack);
+                    preparedStatement.setString(6, UUID);
 
                     preparedStatement.executeUpdate();
                     preparedStatement.close();
@@ -352,7 +386,6 @@ public class PlayerData {
         command = command.replaceAll("<KARMA>", String.format("%." + configData.getDecNumber() + "f", karma));
         command = command.replaceAll("<TIER>", tier.getDisplay());
         command = ChatColor.translateAlternateColorCodes('&', command);
-        command = papi.setPlaceholdersOnMessage(command, player);
 
         if (command.startsWith("<MESSAGE>")) {
             command = command.replaceAll("<MESSAGE>", "").trim();
@@ -365,4 +398,7 @@ public class PlayerData {
         }
     }
 
+    public static Map<Player, PlayerData> getPlayerList() {
+        return playerList;
+    }
 }

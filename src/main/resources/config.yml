@@ -15,6 +15,7 @@ general:
   delay-between-kill-messages: 10
   use-worldguard: false #works only for Worldguard 7+
   use-action-bar-on-actions: true
+  date-time-format: "yyyy-MM-dd HH:mm:ss"
 
 karma:
   default:       0

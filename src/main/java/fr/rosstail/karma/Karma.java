@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.*;
 
+import fr.rosstail.karma.apis.PAPIExpansion;
 import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.commands.KarmaCommand;
 import fr.rosstail.karma.datas.FileResourcesUtils;
@@ -14,7 +15,6 @@ import fr.rosstail.karma.events.KillEvents;
 import fr.rosstail.karma.events.PlayerConnect;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
-import fr.rosstail.karma.lang.Lang;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.tiers.TierManager;
 import fr.rosstail.karma.times.TimeManager;
@@ -58,7 +58,7 @@ public class Karma extends JavaPlugin implements Listener {
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-
+                new PAPIExpansion(this).register();
                 Bukkit.getPluginManager().registerEvents(this, this);
 
             } else {
@@ -86,6 +86,7 @@ public class Karma extends JavaPlugin implements Listener {
         try {
             openConnection();
             setTableToDataBase();
+            updateTableToDataBase();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -110,8 +111,10 @@ public class Karma extends JavaPlugin implements Listener {
     public void setTableToDataBase() {
         String sql = "CREATE TABLE IF NOT EXISTS Karma ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
                 " Karma double,\n" +
+                " Previous_Karma double,\n" +
                 " Tier varchar(50),\n" +
-                " Last_Attack bigint(20));";
+                " Previous_Tier varchar(50),\n" +
+                " Last_Attack DATETIME);";
         try {
             if (connection != null && !connection.isClosed()) {
                 Statement statement = connection.createStatement();
@@ -120,6 +123,21 @@ public class Karma extends JavaPlugin implements Listener {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void updateTableToDataBase() {
+        String sql = "ALTER TABLE Karma " +
+                "ADD Previous_Karma double AFTER Karma," +
+                "ADD Previous_Tier varchar(50) AFTER Tier;";
+        try {
+            if (connection != null && !connection.isClosed()) {
+                Statement statement = connection.createStatement();
+                statement.execute(sql);
+                statement.close();
+                System.out.println("[Karma] Added Previous_Karma and Previous_Tier columns in database.");
+            }
+        } catch (SQLException e) {
         }
     }
 

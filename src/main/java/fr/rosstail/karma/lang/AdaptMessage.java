@@ -1,24 +1,21 @@
 package fr.rosstail.karma.lang;
 
 import fr.rosstail.karma.Karma;
-import fr.rosstail.karma.apis.PAPI;
+import fr.rosstail.karma.apis.PAPIExpansion;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.tiers.Tier;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class AdaptMessage {
-    private final PAPI papi = new PAPI();
 
     private static AdaptMessage adaptMessage;
     private final Karma plugin;
@@ -74,8 +71,6 @@ public class AdaptMessage {
             message = message.replaceAll("<OLD_KARMA>", decimalFormat(playerPreviousKarma));
         }
         message = message.replaceAll("<VALUE>", decimalFormat(value));
-
-        message = papi.setPlaceholdersOnMessage(message, player);
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
@@ -107,7 +102,6 @@ public class AdaptMessage {
         message = message.replaceAll("<OLD_KARMA>", decimalFormat(playerKarma - value));
         message = message.replaceAll("<KARMA>", decimalFormat(playerKarma));
 
-        message = papi.setPlaceholdersOnMessage(message, player);
         message = message(player, 0D, message);
 
         coolDown.put(player, System.currentTimeMillis());
@@ -138,7 +132,6 @@ public class AdaptMessage {
         message = message.replaceAll("<OLD_KARMA>", decimalFormat(playerPreviousKarma));
         message = message.replaceAll("<KARMA>", decimalFormat(playerKarma));
 
-        message = papi.setPlaceholdersOnMessage(message, player);
         message = message(player, 0D, message);
 
         coolDown.put(player, System.currentTimeMillis());
@@ -178,7 +171,6 @@ public class AdaptMessage {
         message = message.replaceAll("<VICTIM_KARMA>", decimalFormat(victimKarma));
         message = message.replaceAll("<VICTIM_TIER>", victimData.getTier().getDisplay());
 
-        message = papi.setPlaceholdersOnMessage(message, attacker);
         message = message(null, 0D, message);
 
         coolDown.put(attacker, System.currentTimeMillis());
@@ -217,7 +209,6 @@ public class AdaptMessage {
         message = message.replaceAll("<VICTIM_KARMA>", decimalFormat(victimKarma));
         message = message.replaceAll("<VICTIM_TIER>", victimData.getTier().getDisplay());
 
-        message = papi.setPlaceholdersOnMessage(message, killer);
         message = message(null, 0D, message);
 
         coolDown.put(killer, System.currentTimeMillis());

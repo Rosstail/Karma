@@ -21,6 +21,8 @@ public class ConfigData {
     private final boolean pvpCrimeTimeOnStill;
     private final boolean pvpCrimeTimeOnDown;
 
+
+    private final String dateTimeFormat;
     private final String pvpHitRewardExpression;
     private final String pvpKillRewardExpression;
     private final String pvpHitMessageKarmaIncrease;
@@ -54,6 +56,7 @@ public class ConfigData {
         pvpKillMessageKarmaIncrease = config.getString("pvp.kill-message-on-karma-increase");
         pvpHitMessageKarmaDecrease = config.getString("pvp.hit-message-on-karma-decrease");
         pvpKillMessageKarmaDecrease = config.getString("pvp.kill-message-on-karma-decrease");
+        dateTimeFormat = config.getString("general.date-time-format");
     }
 
     public static void initKarmaValues(FileConfiguration config) {
@@ -82,6 +85,13 @@ public class ConfigData {
 
     public int getSaveDelay() {
         return saveDelay;
+    }
+
+    public String getDateTimeFormat() {
+        if (dateTimeFormat == null) {
+            return "yyyy-MM-dd HH:mm:ss";
+        }
+        return dateTimeFormat;
     }
 
     public String getPvpHitRewardExpression() {
