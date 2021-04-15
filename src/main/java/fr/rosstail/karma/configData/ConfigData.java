@@ -18,8 +18,10 @@ public class ConfigData {
     private final boolean isOvertimeActive;
     private final long overtimeFirstDelay;
     private final long overtimeNextDelay;
-    private final double overtimeValue;
-    private final double overtimeLimit;
+    private final double overtimeDecreaseValue;
+    private final double overtimeDecreaseLimit;
+    private final double overtimeIncreaseValue;
+    private final double overtimeIncreaseLimit;
 
 
     private final boolean useWorldGuard;
@@ -53,10 +55,12 @@ public class ConfigData {
         pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");
 
         isOvertimeActive = config.getBoolean("overtime.active");
-        overtimeFirstDelay = config.getLong("overtime.first-delay");
-        overtimeNextDelay = config.getLong("overtime.next-delay");
-        overtimeValue = config.getDouble("overtime.value");
-        overtimeLimit = config.getDouble("overtime.limit");
+        overtimeFirstDelay = config.getLong("overtime.first-delay") * 20L;
+        overtimeNextDelay = config.getLong("overtime.next-delay") * 20L;
+        overtimeDecreaseValue = config.getDouble("overtime.values.decrease.value");
+        overtimeDecreaseLimit = config.getDouble("overtime.values.decrease.limit");
+        overtimeIncreaseValue = config.getDouble("overtime.values.increase.value");
+        overtimeIncreaseLimit = config.getDouble("overtime.values.increase.limit");
 
         useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard");
         pvpCrimeTimeEnabled = config.getBoolean("pvp.crime-time.enable");
@@ -118,12 +122,20 @@ public class ConfigData {
         return overtimeNextDelay;
     }
 
-    public double getOvertimeValue() {
-        return overtimeValue;
+    public double getOvertimeDecreaseValue() {
+        return overtimeDecreaseValue;
     }
 
-    public double getOvertimeLimit() {
-        return overtimeLimit;
+    public double getOvertimeDecreaseLimit() {
+        return overtimeDecreaseLimit;
+    }
+
+    public double getOvertimeIncreaseValue() {
+        return overtimeIncreaseValue;
+    }
+
+    public double getOvertimeIncreaseLimit() {
+        return overtimeIncreaseLimit;
     }
 
     public String getPvpHitRewardExpression() {
