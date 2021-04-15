@@ -28,6 +28,13 @@ world-fight-system:
   worlds:
     - world
 
+overtime: #Useful for GTA Wanted Level
+  active: false
+  first-delay: 60 #first occurrence after a karma change.
+  delay: 10 #every occurrences after the first one
+  value: -5 #Add this amount of karma
+  limit: 0
+
 tiers:
   tier-3:
     display: "&f[&4Criminal&f]&r"
@@ -38,6 +45,9 @@ tiers:
       - "me &8is the baddest <TIER>."
       - "me another command"
       - "<@>me command from console"
+    killed-commands:
+      - "<@>jail <PLAYER> gta-jail 3600"
+      - "<@>broadcast <PLAYER> &ahas been arrested !"
   tier-2:
     display: "&f[&cVillain&f]&r"
     minimum: -149999
@@ -50,6 +60,9 @@ tiers:
       - "me I'm not the most wanted anymore... Better !"
     join-on-down-commands:
       - "me I've made a big raberry today, ahah !"
+    killed-commands:
+      - "<@>jail <PLAYER> gta-jail 1800"
+      - "<@>broadcast <PLAYER> &ahas been arrested !"
   tier-1:
     display: "&f[&eThug&f]&r"
     minimum:  -29999

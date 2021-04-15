@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,7 +35,8 @@ public class PlayerData {
     private Tier tier;
     private Tier previousTier;
     private long lastAttack;
-    private Timer timer;
+    private Timer updateDataTimer;
+    private Timer overTimerChange;
 
     private PlayerData(Karma plugin, Player player) {
         this.plugin = plugin;
@@ -45,6 +45,7 @@ public class PlayerData {
         loadPlayerData();
         previousKarma = karma;
         previousTier = tier;
+        overTimerChange = new Timer();
     }
 
     public static PlayerData gets(Player player, Karma plugin) {
@@ -54,8 +55,8 @@ public class PlayerData {
         return playerList.get(player);
     }
 
-    public Timer getTimer() {
-        return timer;
+    public Timer getUpdateDataTimer() {
+        return updateDataTimer;
     }
 
     public double getKarma() {
@@ -76,6 +77,10 @@ public class PlayerData {
 
     public Tier getPreviousTier() {
         return previousTier;
+    }
+
+    public Timer getOverTimerChange() {
+        return overTimerChange;
     }
 
     private boolean ifPlayerExistsInDTB() {
@@ -347,9 +352,9 @@ public class PlayerData {
         }
     }
 
-    public void setTimer(int delay) {
-        this.timer = new Timer();
-        timer.schedule(new TimerTask() {
+    public void setUpdateDataTimer(int delay) {
+        this.updateDataTimer = new Timer();
+        updateDataTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 updateData();
@@ -357,11 +362,43 @@ public class PlayerData {
         }, delay, delay);;
     }
 
+    public void setOverTimerChange() {
+        stopOverTimer();
+        if (!ConfigData.getConfigData().isOvertimeActive()) {
+            return;
+        }
+        this.overTimerChange = new Timer();
+        this.overTimerChange.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                double karma;
+                double value = ConfigData.getConfigData().getOvertimeValue();
+                double limit = ConfigData.getConfigData().getOvertimeLimit();
+                karma = getKarma() + value;
+                if ((value > 0 && karma > limit) || (value < 0 && karma < limit)) {
+                    karma = limit;
+                }
+                setKarma(karma);
+            }
+        }, ConfigData.getConfigData().getOvertimeFirstDelay(), ConfigData.getConfigData().getOvertimeNextDelay());
+    }
+
+    public void stopOverTimer() {
+        if (this.overTimerChange != null) {
+            try {
+                this.overTimerChange.cancel();
+                this.overTimerChange = null;
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+
     /**
      * Set the timestamp of the player's attack moment if needed
      *
      */
-    public void setLastAttackToPlayer() {
+    public void setLastAttack() {
         if (player.hasMetadata("NPC")) {
             return;
         }
@@ -375,7 +412,7 @@ public class PlayerData {
         }
     }
 
-    private void tierCommandsLauncher(List<String> commands) {
+    public void tierCommandsLauncher(List<String> commands) {
         commands.forEach(s -> {
             placeCommands(player, s);
         });

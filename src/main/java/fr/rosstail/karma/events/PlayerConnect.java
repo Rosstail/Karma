@@ -23,14 +23,16 @@ public class PlayerConnect implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerData.gets(player, plugin);
         playerData.initPlayerData();
-        playerData.setTimer(delay);
+        playerData.setUpdateDataTimer(delay);
+        playerData.setOverTimerChange();
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerData.gets(player, plugin);
-        playerData.getTimer().cancel();
+        playerData.getUpdateDataTimer().cancel();
         playerData.updateData();
+        playerData.stopOverTimer();
     }
 }

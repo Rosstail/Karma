@@ -108,7 +108,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      */
     @Override
     public String getVersion(){
-        return "1.5.2";
+        return plugin.getDescription().getVersion();
     }
 
     /**
