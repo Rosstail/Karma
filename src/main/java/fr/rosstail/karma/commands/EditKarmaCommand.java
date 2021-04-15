@@ -49,6 +49,7 @@ public class EditKarmaCommand {
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(value);
+                playerData.setOverTimerChange();
                 sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.SET_KARMA)));
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -76,6 +77,7 @@ public class EditKarmaCommand {
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(playerData.getKarma() + value);
+                playerData.setOverTimerChange();
                 sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.ADD_KARMA)));
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -103,6 +105,7 @@ public class EditKarmaCommand {
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(playerData.getKarma() - value);
+                playerData.setOverTimerChange();
                 sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.REMOVE_KARMA)));
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -129,6 +132,7 @@ public class EditKarmaCommand {
                 double resKarma = karmaValues.getDefaultKarma();
 
                 playerData.setKarma(resKarma);
+                playerData.setOverTimerChange();
 
                 sender.sendMessage(adaptMessage.message(player, 0, LangManager.getMessage(LangMessage.RESET_KARMA)));
             } else {

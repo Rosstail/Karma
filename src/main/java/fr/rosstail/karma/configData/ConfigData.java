@@ -15,12 +15,18 @@ public class ConfigData {
 
     private final long pvpCrimeTimeDelay;
 
+    private final boolean isOvertimeActive;
+    private final long overtimeFirstDelay;
+    private final long overtimeNextDelay;
+    private final double overtimeValue;
+    private final double overtimeLimit;
+
+
     private final boolean useWorldGuard;
     private final boolean pvpCrimeTimeEnabled;
     private final boolean pvpCrimeTimeOnUp;
     private final boolean pvpCrimeTimeOnStill;
     private final boolean pvpCrimeTimeOnDown;
-
 
     private final String dateTimeFormat;
     private final String pvpHitRewardExpression;
@@ -45,6 +51,12 @@ public class ConfigData {
 
         pvpHitRewardExpression = config.getString("pvp.hit-reward-expression");
         pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");
+
+        isOvertimeActive = config.getBoolean("overtime.active");
+        overtimeFirstDelay = config.getLong("overtime.first-delay");
+        overtimeNextDelay = config.getLong("overtime.next-delay");
+        overtimeValue = config.getDouble("overtime.value");
+        overtimeLimit = config.getDouble("overtime.limit");
 
         useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard");
         pvpCrimeTimeEnabled = config.getBoolean("pvp.crime-time.enable");
@@ -92,6 +104,26 @@ public class ConfigData {
             return "yyyy-MM-dd HH:mm:ss";
         }
         return dateTimeFormat;
+    }
+
+    public boolean isOvertimeActive() {
+        return isOvertimeActive;
+    }
+
+    public long getOvertimeFirstDelay() {
+        return overtimeFirstDelay;
+    }
+
+    public long getOvertimeNextDelay() {
+        return overtimeNextDelay;
+    }
+
+    public double getOvertimeValue() {
+        return overtimeValue;
+    }
+
+    public double getOvertimeLimit() {
+        return overtimeLimit;
     }
 
     public String getPvpHitRewardExpression() {

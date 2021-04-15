@@ -8,9 +8,7 @@ import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -21,7 +19,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.File;
 
 
 /**
@@ -108,6 +105,7 @@ public class HitEvents implements Listener {
             attackerModifiedKarma = attackerKarma + reward;
 
             attackerData.setKarma(attackerModifiedKarma);
+            attackerData.setOverTimerChange();
         }
 
         message = config.getString("entities." + livingEntityName + ".hit-message");
@@ -177,7 +175,7 @@ public class HitEvents implements Listener {
                         && victimStart != 0L) {
                     if ((timeStamp >= attackStart && timeStamp <= attackEnd)
                             || timeStamp > victimEnd) {
-                        attackerData.setLastAttackToPlayer();
+                        attackerData.setLastAttack();
                     } else {
                         if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
                             attacker.sendMessage(adaptMessage.message(attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF)));
@@ -186,7 +184,7 @@ public class HitEvents implements Listener {
                         attacker.sendMessage(adaptMessage.message(attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                     }
                 } else if (attackStart == 0L) {
-                    attackerData.setLastAttackToPlayer();
+                    attackerData.setLastAttack();
                 } else if (victimStart != 0L) {
                     if (timeStamp >= victimStart && timeStamp <= victimEnd) {
                         if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
@@ -195,13 +193,14 @@ public class HitEvents implements Listener {
                         }
                         attacker.sendMessage(adaptMessage.message(attacker, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                     } else {
-                        attackerData.setLastAttackToPlayer();
+                        attackerData.setLastAttack();
                     }
                 }
 
             }
 
             attackerData.setKarma(attackerNewKarma);
+            attackerData.setOverTimerChange();
 
             message = null;
             if (attackerNewKarma > attackerInitialKarma) {

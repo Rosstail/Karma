@@ -8,7 +8,6 @@ import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -89,6 +88,7 @@ public class KillEvents implements Listener {
         }
 
         playerData.setKarma(killerKarma + reward);
+        playerData.setOverTimerChange();
 
         adaptMessage.entityKillMessage(config.getString("entities." + livingEntityName + ".kill-message"), killer);
     }
@@ -116,6 +116,10 @@ public class KillEvents implements Listener {
 
         PlayerData killerData = PlayerData.gets(killer, plugin);
         PlayerData victimData = PlayerData.gets(victim, plugin);
+
+        if (victimData.getTier() != null) {
+            victimData.tierCommandsLauncher(victimData.getTier().getKilledCommands());;
+        }
 
         if (!DataHandler.getTime(killer)) {
             return;
@@ -173,7 +177,7 @@ public class KillEvents implements Listener {
                             && victimStart != 0L) {
                         if ((timeStamp >= attackStart && timeStamp <= attackEnd)
                                 || timeStamp > victimEnd) {
-                            killerData.setLastAttackToPlayer();
+                            killerData.setLastAttack();
                         } else {
                             if (doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
                                 killer.sendMessage(adaptMessage.message(killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF)));
@@ -182,7 +186,7 @@ public class KillEvents implements Listener {
                             killer.sendMessage(adaptMessage.message(killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                         }
                     } else if (victimStart == 0L) {
-                        killerData.setLastAttackToPlayer();
+                        killerData.setLastAttack();
                     } else if (victimStart != 0L) {
                         if (timeStamp >= victimStart && timeStamp <= victimEnd) {
                             if (doesDefendChangeKarma(killerInitialKarma, killerNewKarma)) {
@@ -191,13 +195,14 @@ public class KillEvents implements Listener {
                             }
                             killer.sendMessage(adaptMessage.message(killer, 0, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON)));
                         } else {
-                            killerData.setLastAttackToPlayer();
+                            killerData.setLastAttack();
                         }
                     }
 
                 }
 
                 killerData.setKarma(killerNewKarma);
+                killerData.setOverTimerChange();
 
                 String message = null;
                 if (killerNewKarma > killerInitialKarma) {

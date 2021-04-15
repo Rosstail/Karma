@@ -15,6 +15,10 @@ public class Tier {
     private final List<String> joinOnDownCommands;
     private final List<String> joinOnUpCommands;
 
+    private final List<String> killedCommands;
+
+
+
     Tier(ConfigurationSection section, String name) {
         this.name = name;
 
@@ -28,6 +32,7 @@ public class Tier {
         this.joinCommands = section.getStringList("join-commands");
         this.joinOnDownCommands = section.getStringList("join-on-down-commands");
         this.joinOnUpCommands = section.getStringList("join-on-up-commands");
+        this.killedCommands = section.getStringList("killed-commands");
     }
 
     public String getName() {
@@ -56,5 +61,9 @@ public class Tier {
 
     public List<String> getJoinOnUpCommands() {
         return joinOnUpCommands;
+    }
+
+    public List<String> getKilledCommands() {
+        return killedCommands;
     }
 }
