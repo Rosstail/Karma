@@ -87,7 +87,7 @@ public class PlayerData {
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
                 PreparedStatement statement = plugin.connection
-                    .prepareStatement("SELECT * FROM Karma WHERE UUID = '" + UUID + "';");
+                    .prepareStatement("SELECT * FROM " + plugin.getName() + " WHERE UUID = '" + UUID + "';");
                 ResultSet result = statement.executeQuery();
                 if (result.next()) {
                     karma = result.getDouble("Karma");
@@ -120,7 +120,7 @@ public class PlayerData {
         String UUID = String.valueOf(player.getUniqueId());
         try {
             if (plugin.connection != null && !plugin.connection.isClosed()) {
-                PreparedStatement statement = plugin.connection.prepareStatement("SELECT * FROM Karma WHERE UUID = '" + UUID + "';");
+                PreparedStatement statement = plugin.connection.prepareStatement("SELECT * FROM " + plugin.getName() + " WHERE UUID = '" + UUID + "';");
                 ResultSet result = statement.executeQuery();
                 if (result.next()) {
                     karma = result.getDouble("Karma");
@@ -184,7 +184,7 @@ public class PlayerData {
             public void run() {
                 try {
                     PreparedStatement preparedStatement = plugin.connection.prepareStatement(
-                            "INSERT INTO Karma (UUID, Karma, Previous_Karma, Tier, Previous_Tier)\n"
+                            "INSERT INTO " + plugin.getName() + " (UUID, Karma, Previous_Karma, Tier, Previous_Tier)\n"
                                     + "VALUES (?, ?, ?, ?, ?);");
 
                     preparedStatement.setString(1, UUID);
@@ -298,7 +298,7 @@ public class PlayerData {
             @Override
             public void run() {
                 try {
-                    String query = "UPDATE Karma SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Last_Attack = ? WHERE UUID = ?;";
+                    String query = "UPDATE " + plugin.getName() + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Last_Attack = ? WHERE UUID = ?;";
                     PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
 
                     preparedStatement.setDouble(1, karma);

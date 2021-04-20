@@ -43,7 +43,7 @@ public class Karma extends JavaPlugin implements Listener {
 
     public void onEnable() {
         instance = this;
-        if (!(new File("plugins/Karma/config.yml").exists())) {
+        if (!(new File("plugins/" + this.getName() + "/config.yml").exists())) {
             System.out.println("Preparing default config.yml");
             this.saveDefaultConfig();
         }
@@ -74,7 +74,7 @@ public class Karma extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(this), this);
         Bukkit.getPluginManager().registerEvents(new KillEvents(this), this);
         Bukkit.getPluginManager().registerEvents(new HitEvents(this), this);
-        this.getCommand("karma").setExecutor(new KarmaCommand(this));
+        this.getCommand(this.getName().toLowerCase()).setExecutor(new KarmaCommand(this));
     }
 
     private void prepareConnection() {
@@ -109,7 +109,7 @@ public class Karma extends JavaPlugin implements Listener {
 
 
     public void setTableToDataBase() {
-        String sql = "CREATE TABLE IF NOT EXISTS Karma ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
+        String sql = "CREATE TABLE IF NOT EXISTS " + this.getName() + " ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
                 " Karma double,\n" +
                 " Previous_Karma double,\n" +
                 " Tier varchar(50),\n" +
@@ -127,7 +127,7 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void updateTableToDataBase() {
-        String sql = "ALTER TABLE Karma " +
+        String sql = "ALTER TABLE " + this.getName() + " " +
                 "ADD Previous_Karma double AFTER Karma," +
                 "ADD Previous_Tier varchar(50) AFTER Tier;";
         try {

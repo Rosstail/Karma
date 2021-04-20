@@ -81,7 +81,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      */
     @Override
     public String getIdentifier(){
-        return "karma";
+        return plugin.getName().toLowerCase();
     }
 
     /**
@@ -97,7 +97,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      */
     @Override
     public String getRequiredPlugin(){
-        return "Karma";
+        return plugin.getName();
     }
 
     /**
@@ -126,38 +126,42 @@ public class PAPIExpansion extends PlaceholderExpansion {
      */
     @Override
     public String onPlaceholderRequest(Player player, String identifier){
-        if(player == null){
-            return "";
-        }
-        PlayerData playerData = PlayerData.getPlayerList().get(player);
-        // %karma_value% here
-        if(identifier.equals("karma")){
-            return String.valueOf(playerData.getKarma());
-        }
-        if(identifier.equals("previous_karma")){
-            return String.valueOf(playerData.getPreviousKarma());
-        }
-        if(identifier.equals("tier")){
-            return playerData.getTier().getName();
-        }
-        if(identifier.equals("tier_display")){
-            return playerData.getTier().getDisplay();
-        }
-        if(identifier.equals("previous_tier")){
-            return playerData.getPreviousTier().getName();
-        }
-        if(identifier.equals("previous_tier_display")){
-            return playerData.getPreviousTier().getDisplay();
-        }
-        if (identifier.equals("last_attack")) {
-            long time = playerData.getLastAttack();
-            if (time > 0f) {
-                Date date = new Date(time);
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
-                return simpleDateFormat.format(date);
+        if (player != null) {
+            PlayerData playerData = PlayerData.getPlayerList().get(player);
+            // %karma_value% here
+            if(identifier.equals("player_karma")){
+                return String.valueOf(playerData.getKarma());
             }
-            return "N/A";
+            if(identifier.equals("player_previous_karma")){
+                return String.valueOf(playerData.getPreviousKarma());
+            }
+            if(identifier.equals("player_tier")){
+                return playerData.getTier().getName();
+            }
+            if(identifier.equals("player_tier_display")){
+                return playerData.getTier().getDisplay();
+            }
+            if(identifier.equals("player_previous_tier")){
+                return playerData.getPreviousTier().getName();
+            }
+            if(identifier.equals("player_previous_tier_display")){
+                return playerData.getPreviousTier().getDisplay();
+            }
+            if (identifier.equals("player_last_attack")) {
+                long time = playerData.getLastAttack();
+                if (time > 0f) {
+                    Date date = new Date(time);
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
+                    return simpleDateFormat.format(date);
+                }
+                return "N/A";
+            }
         }
+
+        if (identifier.equals("test")) {
+            return "GENERAL PLACEHOLDER";
+        }
+
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
         // was provided
         return null;

@@ -25,7 +25,7 @@ public class CustomFightWorlds {
         boolean isBlackList;
         FileConfiguration config = plugin.getConfig();
         boolean enabled = config.getString("world-fight-system.enable") != null
-                || config.getBoolean("world-fight-system.enable");
+                && config.getBoolean("world-fight-system.enable");
         if (config.getString("world-fight-system.black-list") != null) {
             isBlackList = config.getBoolean("world-fight-system.black-list");
         } else {

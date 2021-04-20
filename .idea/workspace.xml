@@ -24,9 +24,12 @@
   <component name="ChangeListManager">
     <list default="true" id="53d11734-8c26-4e6c-b126-b0e085e743e4" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/configData/ConfigData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/configData/ConfigData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/Karma.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/apis/PAPIExpansion.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/apis/PAPIExpansion.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/datas/PlayerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/datas/PlayerData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/events/HitEvents.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/fr/rosstail/karma/events/HitEvents.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,22 +143,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="361" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1618506145691" />
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1618520108670">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1618953476035">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1618520108670" />
-    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1618520108670">
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1618953476035" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1618953476035">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1618520108670" />
-    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1618520108670">
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1618953476035" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1618953476035">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1618520108670" />
-    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1618520108670">
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1618953476035" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1618953476035">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1618520108670" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1618953476035" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

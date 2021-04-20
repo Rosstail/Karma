@@ -61,7 +61,6 @@ public class HitEvents implements Listener {
 
         damage = event.getFinalDamage();
         victimEntity = (LivingEntity) event.getEntity();
-
         if (!CustomFightWorlds.isFightEnabledInWorld(victimEntity.getWorld())) {
             return;
         }
