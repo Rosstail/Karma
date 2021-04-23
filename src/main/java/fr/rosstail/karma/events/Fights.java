@@ -153,7 +153,6 @@ public class Fights {
 
         attackerData.setKarma(killerKarma + reward);
         attackerData.setOverTimerChange();
-
         adaptMessage.entityHitMessage(config.getString("entities." + entityName + "." + hitKill + "-message"), attacker, hitKill);
     }
 

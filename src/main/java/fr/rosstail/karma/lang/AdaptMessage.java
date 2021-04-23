@@ -82,7 +82,7 @@ public class AdaptMessage {
             return;
         }
         if (coolDown.containsKey(player)) {
-            double seconds = this.plugin.getCustomConfig().getDouble("general.delay-between-" + hitKill + "-messages");
+            double seconds = plugin.getCustomConfig().getDouble("general.delay-between-" + hitKill + "-messages");
             double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
@@ -104,7 +104,7 @@ public class AdaptMessage {
             return;
         }
         if (coolDown.containsKey(attacker)) {
-            double seconds = this.plugin.getCustomConfig().getDouble("general.delay-between-" + hitKill + "-messages");
+            double seconds = plugin.getCustomConfig().getDouble("general.delay-between-" + hitKill + "-messages");
             double timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
