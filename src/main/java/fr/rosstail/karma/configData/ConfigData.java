@@ -44,7 +44,7 @@ public class ConfigData {
         maxKarma = config.getDouble("karma.maximum");
 
         decNumber = config.getInt("general.decimal-number-to-show");
-        pvpCrimeTimeDelay = config.getLong("pvp.crime-time.delay");
+        pvpCrimeTimeDelay = config.getLong("pvp.crime-time.delay") * 1000;
         int saveDelay = config.getInt("data-save-delay");
         if (saveDelay == 0) {
             saveDelay = 300;

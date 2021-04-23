@@ -5,10 +5,12 @@ import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
+import fr.rosstail.karma.lang.PlayerType;
 import fr.rosstail.karma.tiers.Tier;
 import fr.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -63,7 +65,10 @@ public class PlayerData {
     }
 
     public Tier getTier() {
-        return tier;
+        if (tier != null) {
+            return tier;
+        }
+        return TierManager.getNoTier();
     }
 
     public long getLastAttack() {
@@ -75,11 +80,10 @@ public class PlayerData {
     }
 
     public Tier getPreviousTier() {
-        return previousTier;
-    }
-
-    public int getOverTimerChange() {
-        return overTimerScheduler;
+        if (previousTier != null) {
+            return previousTier;
+        }
+        return TierManager.getNoTier();
     }
 
     private boolean ifPlayerExistsInDTB() {
@@ -246,8 +250,8 @@ public class PlayerData {
      * @param value  -> The new karma amount of the player
      */
     public void setKarma(double value) {
-        double min = plugin.getConfig().getDouble("karma.minimum");
-        double max = plugin.getConfig().getDouble("karma.maximum");
+        double min = ConfigData.getConfigData().getMinKarma();
+        double max = ConfigData.getConfigData().getMaxKarma();
         if (value < min) {
             value = min;
         } else if (value > max) {
@@ -334,21 +338,25 @@ public class PlayerData {
     public void setTier() {
         for (Tier tier : TierManager.getTierManager().getTiers().values()) {
             if (karma >= tier.getMinKarma() && karma <= tier.getMaxKarma() && !tier.equals(getTier())) {
-                previousTier = this.tier;
+                setPreviousTier(this.tier);
                 this.tier = tier;
 
                 changePlayerTierMessage();
-                tierCommandsLauncher(tier.getJoinCommands());
+                tierCommandsLauncher(player, tier.getJoinCommands());
                 if (previousTier != null) {
                     if (karma > previousKarma) {
-                        tierCommandsLauncher(tier.getJoinOnUpCommands());
+                        tierCommandsLauncher(player, tier.getJoinOnUpCommands());
                     } else {
-                        tierCommandsLauncher(tier.getJoinOnDownCommands()); //maybe reverse ?
+                        tierCommandsLauncher(player, tier.getJoinOnDownCommands());
                     }
                 }
                 break;
             }
         }
+    }
+
+    public void setPreviousTier(Tier previousTier) {
+        this.previousTier = previousTier;
     }
 
     public void setUpdateDataTimer(int delay) {
@@ -417,30 +425,64 @@ public class PlayerData {
     private void changePlayerTierMessage() {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
-            player.sendMessage(adaptMessage.message(player, 0, message));
+            player.sendMessage(adaptMessage.message(player, message, PlayerType.player.getId()));
         }
     }
 
-    public void tierCommandsLauncher(List<String> commands) {
-        commands.forEach(s -> {
-            placeCommands(player, s);
-        });
+    public static void tierCommandsLauncher(Player player, List<String> commands) {
+        if (commands != null) {
+            commands.forEach(s -> {
+                placeCommands(player, s);
+            });
+        }
     }
 
-    private void placeCommands(Player player, String command) {
-        command = command.replaceAll("<PLAYER>", player.getName());
-        command = command.replaceAll("<KARMA>", String.format("%." + configData.getDecNumber() + "f", karma));
-        command = command.replaceAll("<TIER>", tier.getDisplay());
+    public static void tierCommandsLauncher(Player attacker, Player victim, List<String> commands) {
+        if (commands != null) {
+            commands.forEach(s -> {
+                placeCommands(attacker, victim, s);
+            });
+        }
+    }
+
+    private static void placeCommands(Player player, String command) {
+        command = adaptMessage.message(player, command, PlayerType.player.getId());
         command = ChatColor.translateAlternateColorCodes('&', command);
 
-        if (command.startsWith("<MESSAGE>")) {
-            command = command.replaceAll("<MESSAGE>", "").trim();
-            player.sendMessage(adaptMessage.message(player, 0, command));
-        } else if (command.startsWith("<@>")) {
-            command = command.replaceAll("<@>", "");
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        CommandSender senderOrTarget = Bukkit.getConsoleSender();
+
+        if (command.startsWith(PlayerType.player.getId())) {
+            command = command.replaceFirst(PlayerType.player.getId(), "");
+            senderOrTarget = player;
+        }
+
+        if (command.startsWith("%message%")) {
+            command = command.replaceFirst("%message%", "").trim();
+            senderOrTarget.sendMessage(command);
         } else {
-            Bukkit.dispatchCommand(player, command);
+            Bukkit.dispatchCommand(senderOrTarget, command);
+        }
+    }
+
+    private static void placeCommands(Player attacker, Player victim, String command) {
+        command = adaptMessage.message(attacker, command, PlayerType.attacker.getId());
+        command = adaptMessage.message(victim, command, PlayerType.victim.getId());
+        command = ChatColor.translateAlternateColorCodes('&', command);
+
+        CommandSender senderOrTarget = Bukkit.getConsoleSender();
+        if (command.startsWith(PlayerType.victim.getId())) {
+            command = command.replaceFirst(PlayerType.victim.getId(), "");
+            senderOrTarget = victim;
+        } else if (command.startsWith(PlayerType.attacker.getId())) {
+            command = command.replaceFirst(PlayerType.attacker.getId(), "");
+            senderOrTarget = attacker;
+        }
+
+        if (command.startsWith("%message%")) {
+            command = command.replaceFirst("%message%", "").trim();
+            senderOrTarget.sendMessage(command);
+        } else {
+            Bukkit.dispatchCommand(senderOrTarget, command);
         }
     }
 

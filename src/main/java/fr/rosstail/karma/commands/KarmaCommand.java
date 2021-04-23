@@ -5,6 +5,7 @@ import fr.rosstail.karma.commands.list.Commands;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
+import fr.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -55,14 +56,14 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             editKarmaCommand.karmaReset(sender, args);
         } else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
-                sender.sendMessage(adaptMessage.listMessage(null, 0, LangManager.getListMessage(LangMessage.HELP)));
+                sender.sendMessage(adaptMessage.listMessage(null, LangManager.getListMessage(LangMessage.HELP)));
             }
         } else {
             Player playerSender = null;
             if (sender instanceof Player) {
                 playerSender = ((Player) sender).getPlayer();
             }
-            sender.sendMessage(adaptMessage.listMessage(playerSender, 0, LangManager.getListMessage(LangMessage.HELP)));
+            sender.sendMessage(adaptMessage.listMessage(playerSender, LangManager.getListMessage(LangMessage.HELP)));
         }
         return true;
     }
@@ -113,15 +114,15 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
      * @param sender
      */
     void disconnectedPlayer(CommandSender sender) {
-        sender.sendMessage(adaptMessage.message(null, 0, LangManager.getMessage(LangMessage.DISCONNECTED)));
+        sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.DISCONNECTED), null));
     }
 
     void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {
-            sender.sendMessage(adaptMessage.message(null, 0, LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS)));
+            sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS), null));
         }
         if (e instanceof NumberFormatException) {
-            sender.sendMessage(adaptMessage.message(null, 0, LangManager.getMessage(LangMessage.WRONG_VALUE)));
+            sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.WRONG_VALUE), null));
         }
     }
 }

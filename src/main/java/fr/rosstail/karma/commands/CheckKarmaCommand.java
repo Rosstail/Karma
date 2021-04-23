@@ -4,6 +4,7 @@ import fr.rosstail.karma.commands.list.Commands;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
+import fr.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class CheckKarmaCommand {
         }
 
         if (player != null && player.isOnline()) {
-            sender.sendMessage(adaptMessage.message(player, 0, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA)));
+            sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.player.getId()));
         } else {
             karmaCommand.disconnectedPlayer(sender);
         }
@@ -55,12 +56,12 @@ public class CheckKarmaCommand {
     public void karmaSelf(CommandSender sender)
     {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(adaptMessage.message(null, 0, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY)));
+            sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.player.getId()));
             return;
         }
         Player player = (Player) sender;
         if (karmaCommand.canLaunchCommand(player, Commands.COMMAND_KARMA_CHECK)) {
-            sender.sendMessage(adaptMessage.message(player, 0, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA)));
+            sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.player.getId()));
         }
     }
 }

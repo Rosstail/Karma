@@ -18,8 +18,17 @@ import java.util.logging.Level;
 
 public class WGPreps {
 
+    public static WGPreps wgPreps;
     public static DoubleFlag KARMA_MULTIPLICATOR;
     public static IntegerFlag KARMA_CHANGE_CHANCE;
+
+    public static void initWGPreps() {
+        wgPreps = new WGPreps();
+    }
+
+    public static WGPreps getWgPreps() {
+        return wgPreps;
+    }
 
     public void worldGuardHook() {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();

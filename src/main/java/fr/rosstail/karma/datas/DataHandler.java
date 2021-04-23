@@ -13,7 +13,7 @@ import org.bukkit.entity.Player;
  */
 public class DataHandler {
     private static final Karma plugin = Karma.getInstance();
-    private static final FileConfiguration config = plugin.getConfig();
+    private static final FileConfiguration config = plugin.getCustomConfig();
     private static final int nbDec = config.getInt("general.decimal-number-to-show");
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
@@ -29,25 +29,6 @@ public class DataHandler {
             }
         }
         return true;
-    }
-
-    private static void placeCommands(Player player, String command) {
-        PlayerData playerData = PlayerData.gets(player, plugin);
-        command = command.replaceAll("<PLAYER>", player.getName());
-        command = command
-            .replaceAll("<KARMA>", String.format("%." + nbDec + "f", playerData.getKarma()));
-        command = command.replaceAll("<TIER>", playerData.getTier().getDisplay());
-        command = ChatColor.translateAlternateColorCodes('&', command);
-
-        if (command.startsWith("<MESSAGE>")) {
-            command = command.replaceAll("<MESSAGE>", "").trim();
-            player.sendMessage(adaptMessage.message(player, 0, command));
-        } else if (command.startsWith("<@>")) {
-            command = command.replaceAll("<@>", "");
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
-        } else {
-            Bukkit.dispatchCommand(player, command);
-        }
     }
 
 }

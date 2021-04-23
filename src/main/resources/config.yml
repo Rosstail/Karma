@@ -18,9 +18,9 @@ general:
   date-time-format: "yyyy-MM-dd HH:mm:ss"
 
 karma:
-  default:       0
-  minimum: -300000
-  maximum:  300000
+  default:     0
+  minimum: -3000
+  maximum:  1500
 
 world-fight-system:
   enable: false
@@ -41,89 +41,64 @@ overtime: #Useful for GTA Wanted Level. Reset when karma changes from fights and
       limit: 0
 
 tiers:
-  tier-3:
-    display: "&f[&4Criminal&f]&r"
-    minimum: -300000
-    maximum: -150000
-    join-commands:
-      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
-      - "me &8is the baddest <TIER>."
-      - "me another command"
-      - "<@>me command from console"
-    killed-commands:
-      - "<@>jail <PLAYER> gta-jail 3600"
-      - "<@>broadcast <PLAYER> &ahas been arrested !"
-  tier-2:
-    display: "&f[&cVillain&f]&r"
-    minimum: -149999
-    maximum:  -30000
-    join-commands:
-      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
-      - "me &cis really bad."
-      - "me &cseriously guys."
-    join-on-up-commands:
-      - "me I'm not the most wanted anymore... Better !"
-    join-on-down-commands:
-      - "me I've made a big raberry today, ahah !"
-    killed-commands:
-      - "<@>jail <PLAYER> gta-jail 1800"
-      - "<@>broadcast <PLAYER> &ahas been arrested !"
-  tier-1:
-    display: "&f[&eThug&f]&r"
-    minimum:  -29999
-    maximum:   -5000
-    join-commands:
-      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
-      - "me &eis not gentle."
-    join-on-up-commands:
-      - "me But I'm better than some guys !"
-    join-on-down-commands:
-      - "me But this wasn't me !"
-  tier_0:
-    display: "&f[&7Civilian&f]&r"
-    minimum:   -4999
-    maximum:    4999
-    join-commands:
-      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
-      - "me &7is the neutral neutral alignment."
-      - "<@>me &6<PLAYER> &aHey ! Your karma is &6<KARMA> &r!"
-    join-on-up-commands:
-      - "me I'm not a thug anymore !"
-    join-on-down-commands:
-      - "me I've made some mistakes, back to normal."
-  tier+1:
-    display: "&f[&aVigilante&f]&r"
-    minimum:    5000
-    maximum:   29999
-    join-commands:
-      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
-      - "me &ais now a good guy who likes Streets of Rage games serie."
-      - "me &ais a test, it will be sent by player."
-      - "<@>me must not be sent by player but by console."
-    join-on-up-commands:
-      - "me I'm a good guy !"
-    join-on-down-commands:
-      - "me I just loss my sheriff star..."
-  tier+2:
-    display: "&f[&bSheriff&f]&r"
-    minimum:   30000
-    maximum:  149999
-    join-commands:
-      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
-      - "me &bhas right to kill anyone who mess him, yes."
-    join-on-up-commands:
-      - "me I AM THE LAW ! DROP YOU WEAPONS !"
-    join-on-down-commands:
-      - "me Heroes ? Nah."
-  tier+3:
-    display: "&f[&6Hero&f]&r"
-    minimum:  150000
-    maximum:  300000
-    join-commands:
-      - "<MESSAGE> &6<PLAYER>&r, you are now a <TIER> &r!"
-      - "me &6is the hero !"
-      - "me &6another command !"
-      - "<@>me You can create an infinite amount of join-commands and tiers !"
+  none-display: "&f[&8None&f]&r"
+  list:
+    criminal:
+      display: "&4Criminal"
+      minimum: -3000
+      maximum: -1500
+      join-commands:
+        - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
+      join-on-down-commands:
+        - "%message% &cEverybody is now trying to kill you."
+      killed-commands:
+        - "jail %victim% jail %karma_victim_karma%"
+        - "karma set %victim% -3000"
+        - "broadcast %victim% &ahas been arrested for %karma_victim_previous_karma% minutes by %attacker% !"
+    thug:
+      display: "&5Thug"
+      minimum: -1499
+      maximum: -50
+      join-commands:
+        - "%message% &fYou are now a filthy %karma_player_tier% &r."
+        - "%player% me&5is now in the dark side of the law."
+      join-on-down-commands:
+        - "%message% &bThe police is now hunting you."
+      join-on-up-commands:
+        - "%message% &aKeep a low profile."
+      killed-commands:
+        - "jail %victim% jail %karma_victim_karma%"
+        - "karma set %victim% -1499"
+        - "broadcast %victim% loss a fight against %attacker% with the tier identifier %karma_attacker_tier%!"
+    citizen:
+      display: "&fCitizen"
+      minimum: -49
+      maximum: 500
+      join-commands:
+        - "%message% &fYou are a %karma_player_tier_display% &r."
+        - "%message% &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
+    vigilante:
+      display: "&aVigilante"
+      minimum: 501
+      maximum: 1250
+      join-commands:
+        - "%message% &fYour are a %karma_player_tier_display% &r."
+      join-on-up-commands:
+        - "%message% &bYou can help the police now."
+      join-on-down-commands:
+        - "%message% &bYou have been demoted from the police forces."
+      killed-commands:
+        - "%attacker%%message% You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
+    sheriff:
+      display: "&6Sheriff"
+      minimum: 1251
+      maximum: 1500
+      join-commands:
+        - "%message% &fYour wanted level is now %karma_player_tier_display% &r."
+      join-on-up-commands:
+        - "%message% &bYou are got promoted from %karma_player_previous_tier_display%."
+      killed-commands:
+        - "broadcast %victim% as been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
 
 times:
   use-both-system-and-worlds-time: "NONE" #can be replaced by WORLDS, SYSTEM and BOTH or NONE
@@ -156,8 +131,8 @@ times:
 
 pvp:
   # You can make your own expression
-  hit-reward-expression:  (-1 * (<VICTIM_KARMA> + 3000) / 50)
-  kill-reward-expression:  (-1 * (<VICTIM_KARMA> + 3000) / 10)
+  hit-reward-expression:  (-1 * (%karma_victim_karma% + 3000) / 50)
+  kill-reward-expression:  (-1 * (%karma_victim_karma% + 3000) / 10)
   crime-time: #if a player attacks another one, everybody can attack him back without karma changes (unless if the defender is an agressor)
     enable: false
     delay: 300 #delay in second that a player is an agressor.
@@ -177,7 +152,7 @@ entities:
     hit-karma-reward:      1
     hit-message: "Run villager, RUN !!!"
     kill-karma-reward:     3
-    kill-message: "<ATTACKER> : You captured a bee ! &5*Animal Crossing MLG music* &a<OLD_KARMA> + <VALUE> = <KARMA>"
+    kill-message: "%attacker% : You captured a bee ! &5*Animal Crossing MLG music* &a%karma_attacker_previous_karma% + %karma_attacker_diff_karma% = %karma_attacker_karma%"
   Cat:
     hit-karma-reward:    -10
     hit-message: "&cYou DARE put a hand on your Master ?!!"
@@ -201,8 +176,8 @@ entities:
     hit-karma-reward:    -34
     kill-karma-reward:  -651
   Wolf:
-    hit-message: "Hunt a wolf doesn't change your karma : &d<KARMA>"
-    kill-message: "You successfully hunt the wolf : &5<KARMA>"
+    hit-message: "Hunt a wolf doesn't change your karma : &d%karma_attacker_karma%"
+    kill-message: "You successfully hunt the wolf : &5%karma_attacker_karma%"
   Zombie:
     hit-karma-reward:      5
     hit-message: "Aim his head !"

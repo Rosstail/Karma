@@ -3,6 +3,7 @@ package fr.rosstail.karma.tiers;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Tier {
@@ -33,6 +34,20 @@ public class Tier {
         this.joinOnDownCommands = section.getStringList("join-on-down-commands");
         this.joinOnUpCommands = section.getStringList("join-on-up-commands");
         this.killedCommands = section.getStringList("killed-commands");
+    }
+
+    /**
+     * NULL TIER
+     */
+    Tier(String display) {
+        this.name = "none";
+        this.display = ChatColor.translateAlternateColorCodes('&', display);
+        this.minKarma = 0;
+        this.maxKarma = 0;
+        this.joinCommands = new ArrayList<>();
+        this.joinOnDownCommands = new ArrayList<>();
+        this.joinOnUpCommands = new ArrayList<>();
+        this.killedCommands = new ArrayList<>();
     }
 
     public String getName() {

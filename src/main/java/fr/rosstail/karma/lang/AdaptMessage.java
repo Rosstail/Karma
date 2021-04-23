@@ -1,7 +1,6 @@
 package fr.rosstail.karma.lang;
 
 import fr.rosstail.karma.Karma;
-import fr.rosstail.karma.apis.PAPIExpansion;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.tiers.Tier;
@@ -24,85 +23,73 @@ public class AdaptMessage {
 
     public AdaptMessage(Karma plugin) {
         this.plugin = plugin;
-        this.msgStyle = plugin.getConfig().getBoolean("general.use-action-bar-on-actions");
+        this.msgStyle = plugin.getCustomConfig().getBoolean("general.use-action-bar-on-actions");
         configData = ConfigData.getConfigData();
     }
 
     private final Map<Player, Long> coolDown = new HashMap<>();
 
     public static void sendActionBar(Player player, String message) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(adaptMessage.message(player, 0D, message)));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(adaptMessage.message(player, message, PlayerType.player.getId())));
     }
 
     /**
      * Sends automatically the message to the sender with some parameters
      *
      */
-    public String message(Player player, double value, String message) {
+    public String message(Player player, String message, String playerType) {
         if (message == null) {
             return null;
         }
 
+        String pluginName = plugin.getName().toLowerCase();
+
         if (player != null) {
-            PlayerData playerData = PlayerData.gets(player, plugin);
-            double playerKarma = playerData.getKarma();
-            double playerPreviousKarma = playerData.getPreviousKarma();
+            message = message.replaceAll("%" + playerType + "%", player.getName());
+            if (!player.hasMetadata("NPC")) {
+                PlayerData playerData = PlayerData.gets(player, plugin);
+                double playerKarma = playerData.getKarma();
+                double playerPreviousKarma = playerData.getPreviousKarma();
 
-            Tier playerTier = playerData.getTier();
-            Tier playerPreviousTier = playerData.getPreviousTier();
+                Tier playerTier = playerData.getTier();
+                Tier playerPreviousTier = playerData.getPreviousTier();
 
-            String playerDisplayTier;
-            if (playerTier != null) {
-                playerDisplayTier = playerTier.getDisplay();
+
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(playerKarma));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_karma%", decimalFormat(playerPreviousKarma));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_diff_karma%", decimalFormat(playerKarma - playerPreviousKarma));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier%", playerTier.getName());
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier%", playerPreviousTier.getName());
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier_display%", playerTier.getDisplay());
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_display%", playerPreviousTier.getDisplay());
             } else {
-                playerDisplayTier = ChatColor.translateAlternateColorCodes('&', "&fNone");
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble()));
             }
-            String playerPreviousDisplayTier;
-            if (playerPreviousTier != null) {
-                playerPreviousDisplayTier = playerPreviousTier.getDisplay();
-            } else {
-                playerPreviousDisplayTier = ChatColor.translateAlternateColorCodes('&', "&fNone");
-            }
-
-            message = message.replaceAll("<TIER>", playerDisplayTier);
-            message = message.replaceAll("<PREVIOUS_TIER>", playerPreviousDisplayTier);
-            message = message.replaceAll("<PLAYER>", player.getName());
-            message = message.replaceAll("<KARMA>", decimalFormat(playerKarma));
-            message = message.replaceAll("<OLD_KARMA>", decimalFormat(playerPreviousKarma));
         }
-        message = message.replaceAll("<VALUE>", decimalFormat(value));
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
-    public String[] listMessage(Player player, double value, List<String> messages) {
+    public String[] listMessage(Player player, List<String> messages) {
         ArrayList<String> newMessages = new ArrayList<>();
         messages.forEach(s -> {
-            newMessages.add(message(player, value, s));
+            newMessages.add(message(player, s, PlayerType.player.getId()));
         });
         return newMessages.toArray(new String[0]);
     }
 
-    public void entityHitMessage(String message, Player player, double value) {
+    public void entityHitMessage(String message, Player player, String hitKill) {
         if (message == null) {
             return;
         }
         if (coolDown.containsKey(player)) {
-            double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
+            double seconds = this.plugin.getCustomConfig().getDouble("general.delay-between-" + hitKill + "-messages");
             double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        PlayerData playerData = PlayerData.gets(player, plugin);
-        double playerKarma = playerData.getKarma();
-
-        message = message.replaceAll("<ATTACKER>", player.getName());
-        message = message.replaceAll("<VALUE>", decimalFormat(value));
-        message = message.replaceAll("<OLD_KARMA>", decimalFormat(playerKarma - value));
-        message = message.replaceAll("<KARMA>", decimalFormat(playerKarma));
-
-        message = message(player, 0D, message);
+        message = message(player, message, PlayerType.attacker.getId());
 
         coolDown.put(player, System.currentTimeMillis());
         if (msgStyle) {
@@ -112,110 +99,26 @@ public class AdaptMessage {
         }
     }
 
-    public void entityKillMessage(String message, Player player) {
-        if (coolDown.containsKey(player)) {
-            double seconds = this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
-            double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
-            if (!(timeLeft <= 0)) {
-                return;
-            }
-        }
-
-        PlayerData playerData = PlayerData.gets(player, plugin);
-        double playerKarma = playerData.getKarma();
-        double playerPreviousKarma = playerData.getPreviousKarma();
+    public void playerHitMessage(String message, Player attacker, Player victim, String hitKill) {
         if (message == null) {
             return;
         }
-        message = message.replaceAll("<ATTACKER>", player.getName());
-        message = message.replaceAll("<VALUE>", decimalFormat(playerKarma - playerPreviousKarma));
-        message = message.replaceAll("<OLD_KARMA>", decimalFormat(playerPreviousKarma));
-        message = message.replaceAll("<KARMA>", decimalFormat(playerKarma));
-
-        message = message(player, 0D, message);
-
-        coolDown.put(player, System.currentTimeMillis());
-        if (msgStyle) {
-            sendActionBar(player, message);
-        } else {
-            player.sendMessage(message);
-        }
-    }
-
-    public void playerHitMessage(String message, Player attacker, Player victim, double value) {
         if (coolDown.containsKey(attacker)) {
-            double seconds = this.plugin.getConfig().getDouble("general.delay-between-hit-messages");
-            double timeLeft =
-                    coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
+            double seconds = this.plugin.getCustomConfig().getDouble("general.delay-between-" + hitKill + "-messages");
+            double timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
         }
 
-        PlayerData attackerData = PlayerData.gets(attacker, plugin);
-        PlayerData victimData = PlayerData.gets(victim, plugin);
-        double attackerKarma = attackerData.getKarma();
-        double victimKarma = victimData.getKarma();
-
-        if (message == null) {
-            return;
-        }
-        message = message.replaceAll("<ATTACKER>", attacker.getName());
-        message = message.replaceAll("<VICTIM>", victim.getName());
-        message = message.replaceAll("<ATTACKER_OLD_KARMA>", decimalFormat(value));
-        message = message.replaceAll("<VALUE>", decimalFormat(attackerKarma - value));
-        message = message.replaceAll("<ATTACKER_KARMA>", decimalFormat(attackerKarma));
-
-        message = message.replaceAll("<ATTACKER_TIER>", attackerData.getTier().getDisplay());
-
-        message = message.replaceAll("<VICTIM_KARMA>", decimalFormat(victimKarma));
-        message = message.replaceAll("<VICTIM_TIER>", victimData.getTier().getDisplay());
-
-        message = message(null, 0D, message);
+        message = message(attacker, message, PlayerType.attacker.getId());
+        message = message(victim, message, PlayerType.victim.getId());
 
         coolDown.put(attacker, System.currentTimeMillis());
         if (msgStyle) {
             sendActionBar(attacker, message);
         } else {
             attacker.sendMessage(message);
-        }
-    }
-
-    public void playerKillMessage(String message, Player killer, Player victim, double value) {
-        if (coolDown.containsKey(killer)) {
-            double seconds = this.plugin.getConfig().getDouble("general.delay-between-kill-messages");
-            double timeLeft = coolDown.get(killer) - System.currentTimeMillis() + seconds * 1000f;
-            if (!(timeLeft <= 0)) {
-                return;
-            }
-        }
-
-        PlayerData killerData = PlayerData.gets(killer, plugin);
-        PlayerData victimData = PlayerData.gets(victim, plugin);
-        double killerKarma = killerData.getKarma();
-        double victimKarma = victimData.getKarma();
-
-        if (message == null) {
-            return;
-        }
-        message = message.replaceAll("<ATTACKER>", killer.getName());
-        message = message.replaceAll("<VICTIM>", victim.getName());
-        message = message.replaceAll("<ATTACKER_OLD_KARMA>", decimalFormat(value));
-        message = message.replaceAll("<VALUE>", decimalFormat(killerKarma - value));
-        message = message.replaceAll("<ATTACKER_KARMA>", decimalFormat(killerKarma));
-
-        message = message.replaceAll("<ATTACKER_TIER>", killerData.getTier().getDisplay());
-
-        message = message.replaceAll("<VICTIM_KARMA>", decimalFormat(victimKarma));
-        message = message.replaceAll("<VICTIM_TIER>", victimData.getTier().getDisplay());
-
-        message = message(null, 0D, message);
-
-        coolDown.put(killer, System.currentTimeMillis());
-        if (msgStyle) {
-            sendActionBar(killer, message);
-        } else {
-            killer.sendMessage(message);
         }
     }
 

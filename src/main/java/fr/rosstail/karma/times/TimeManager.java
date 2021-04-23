@@ -25,7 +25,7 @@ public class TimeManager {
     }
 
     TimeManager(Karma plugin) {
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = plugin.getCustomConfig();
         ArrayList<SystemTimes> systemTimes = new ArrayList<>();
         for (String timeName : config.getConfigurationSection("times.system-times").getKeys(false)) {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("times.system-times." + timeName);

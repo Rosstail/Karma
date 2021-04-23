@@ -6,6 +6,7 @@ import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
+import fr.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class EditKarmaCommand {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(value);
                 playerData.setOverTimerChange();
-                sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.SET_KARMA)));
+                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.SET_KARMA), PlayerType.player.getId()));
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }
@@ -78,7 +79,7 @@ public class EditKarmaCommand {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(playerData.getKarma() + value);
                 playerData.setOverTimerChange();
-                sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.ADD_KARMA)));
+                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.ADD_KARMA), PlayerType.player.getId()));
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }
@@ -106,7 +107,7 @@ public class EditKarmaCommand {
                 PlayerData playerData = PlayerData.gets(player, plugin);
                 playerData.setKarma(playerData.getKarma() - value);
                 playerData.setOverTimerChange();
-                sender.sendMessage(adaptMessage.message(player, value, LangManager.getMessage(LangMessage.REMOVE_KARMA)));
+                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.REMOVE_KARMA), PlayerType.player.getId()));
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }
@@ -134,7 +135,7 @@ public class EditKarmaCommand {
                 playerData.setKarma(resKarma);
                 playerData.setOverTimerChange();
 
-                sender.sendMessage(adaptMessage.message(player, 0, LangManager.getMessage(LangMessage.RESET_KARMA)));
+                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.RESET_KARMA), PlayerType.player.getId()));
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }

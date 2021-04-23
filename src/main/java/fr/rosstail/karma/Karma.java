@@ -10,8 +10,7 @@ import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.commands.KarmaCommand;
 import fr.rosstail.karma.datas.FileResourcesUtils;
 import fr.rosstail.karma.events.CustomFightWorlds;
-import fr.rosstail.karma.events.HitEvents;
-import fr.rosstail.karma.events.KillEvents;
+import fr.rosstail.karma.events.FightEvents;
 import fr.rosstail.karma.events.PlayerConnect;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
@@ -20,6 +19,7 @@ import fr.rosstail.karma.tiers.TierManager;
 import fr.rosstail.karma.times.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,28 +32,33 @@ public class Karma extends JavaPlugin implements Listener {
     public String host, database, username, password;
     public int port;
 
+    private YamlConfiguration config;
     private static Karma instance;
 
     @Override
     public void onLoad() {
         if (Bukkit.getServer().getPluginManager().getPlugin("WorldGuard") != null) {
-            new WGPreps().worldGuardHook();
+            WGPreps.initWGPreps();
+            WGPreps.getWgPreps().worldGuardHook();
         }
     }
 
     public void onEnable() {
         instance = this;
-        if (!(new File("plugins/" + this.getName() + "/config.yml").exists())) {
+        File fileConfig = new File("plugins/" + getName() + "/config.yml");
+        if (!(fileConfig.exists())) {
             System.out.println("Preparing default config.yml");
             this.saveDefaultConfig();
         }
+
+        config = YamlConfiguration.loadConfiguration(fileConfig);
         CustomFightWorlds.setUp(this);
-        ConfigData.initKarmaValues(this.getConfig());
+        ConfigData.initKarmaValues(this.getCustomConfig());
         TierManager.initTierManager(this);
         TimeManager.initTimeManager(this);
 
         initDefaultConfigs();
-        LangManager.initCurrentLang(this.getConfig().getString("general.lang"));
+        LangManager.initCurrentLang(this.getCustomConfig().getString("general.lang"));
         AdaptMessage.initAdaptMessage(this);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -66,23 +71,22 @@ public class Karma extends JavaPlugin implements Listener {
             }
         }
 
-        if (this.getConfig().getBoolean("mysql.active")) {
+        if (this.getCustomConfig().getBoolean("mysql.active")) {
             prepareConnection();
         }
         this.createPlayerDataFolder();
 
         Bukkit.getPluginManager().registerEvents(new PlayerConnect(this), this);
-        Bukkit.getPluginManager().registerEvents(new KillEvents(this), this);
-        Bukkit.getPluginManager().registerEvents(new HitEvents(this), this);
-        this.getCommand(this.getName().toLowerCase()).setExecutor(new KarmaCommand(this));
+        Bukkit.getPluginManager().registerEvents(new FightEvents(), this);
+        this.getCommand(getName().toLowerCase()).setExecutor(new KarmaCommand(this));
     }
 
     private void prepareConnection() {
-        host = this.getConfig().getString("mysql.host");
-        database = this.getConfig().getString("mysql.database");
-        username = this.getConfig().getString("mysql.username");
-        password = this.getConfig().getString("mysql.password");
-        port = this.getConfig().getInt("mysql.port");
+        host = this.getCustomConfig().getString("mysql.host");
+        database = this.getCustomConfig().getString("mysql.database");
+        username = this.getCustomConfig().getString("mysql.username");
+        password = this.getCustomConfig().getString("mysql.password");
+        port = this.getCustomConfig().getInt("mysql.port");
         try {
             openConnection();
             setTableToDataBase();
@@ -109,7 +113,7 @@ public class Karma extends JavaPlugin implements Listener {
 
 
     public void setTableToDataBase() {
-        String sql = "CREATE TABLE IF NOT EXISTS " + this.getName() + " ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
+        String sql = "CREATE TABLE IF NOT EXISTS " + getName() + " ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
                 " Karma double,\n" +
                 " Previous_Karma double,\n" +
                 " Tier varchar(50),\n" +
@@ -127,7 +131,7 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void updateTableToDataBase() {
-        String sql = "ALTER TABLE " + this.getName() + " " +
+        String sql = "ALTER TABLE " + getName() + " " +
                 "ADD Previous_Karma double AFTER Karma," +
                 "ADD Previous_Tier varchar(50) AFTER Tier;";
         try {
@@ -147,7 +151,7 @@ public class Karma extends JavaPlugin implements Listener {
     public void createPlayerDataFolder() {
         File folder = new File(this.getDataFolder(), "playerdata/");
         if (!folder.exists()) {
-            String message = this.getConfig().getString("messages.creating-playerdata-folder");
+            String message = this.getCustomConfig().getString("messages.creating-playerdata-folder");
             if (message != null) {
                 message = ChatColor.translateAlternateColorCodes('&', message);
 
@@ -178,5 +182,9 @@ public class Karma extends JavaPlugin implements Listener {
 
     public static Karma getInstance() {
         return instance;
+    }
+
+    public YamlConfiguration getCustomConfig() {
+        return config;
     }
 }

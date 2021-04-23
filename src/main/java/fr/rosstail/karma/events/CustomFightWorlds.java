@@ -23,7 +23,7 @@ public class CustomFightWorlds {
         ArrayList<World> tempList = new ArrayList<>();
 
         boolean isBlackList;
-        FileConfiguration config = plugin.getConfig();
+        FileConfiguration config = plugin.getCustomConfig();
         boolean enabled = config.getString("world-fight-system.enable") != null
                 && config.getBoolean("world-fight-system.enable");
         if (config.getString("world-fight-system.black-list") != null) {
