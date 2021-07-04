@@ -3,9 +3,12 @@ package fr.rosstail.karma.lang;
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.datas.PlayerData;
+import fr.rosstail.karma.events.Reasons;
 import fr.rosstail.karma.tiers.Tier;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
@@ -66,7 +69,7 @@ public class AdaptMessage {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble()));
             }
         }
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
     }
 
     public String[] listMessage(Player player, List<String> messages) {
@@ -77,12 +80,12 @@ public class AdaptMessage {
         return newMessages.toArray(new String[0]);
     }
 
-    public void entityHitMessage(String message, Player player, String hitKill) {
+    public void entityHitMessage(String message, Player player, Reasons reason) {
         if (message == null) {
             return;
         }
         if (coolDown.containsKey(player)) {
-            double seconds = plugin.getCustomConfig().getDouble("general.delay-between-" + hitKill + "-messages");
+            double seconds = plugin.getCustomConfig().getDouble("general.delay-between-" + reason.getText() + "-messages");
             double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
@@ -132,5 +135,12 @@ public class AdaptMessage {
 
     public static void initAdaptMessage(Karma plugin) {
         adaptMessage = new AdaptMessage(plugin);
+    }
+
+    private String setPlaceholderMessage(Player player, String message) {
+        if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            return PlaceholderAPI.setPlaceholders(player, message);
+        }
+        return message;
     }
 }

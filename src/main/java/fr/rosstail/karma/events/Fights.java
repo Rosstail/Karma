@@ -22,14 +22,13 @@ public class Fights {
     private static final Karma plugin = Karma.getInstance();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
-    public static void pvpHandler(Player attacker, Player victim, String hitKill) {
-        Object resultSE;
-        double result = 0;
+    public static void pvpHandler(Player attacker, Player victim, Reasons reason) {
 
-        PlayerData attackerData = PlayerData.gets(attacker, plugin);
         PlayerData victimData = PlayerData.gets(victim, plugin);
 
-        PlayerData.tierCommandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());;
+        if (reason.equals(Reasons.KILL)) {
+            PlayerData.tierCommandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
+        }
 
         if (!DataHandler.getTime(attacker)) {
             return;
@@ -39,18 +38,21 @@ public class Fights {
             return;
         }
 
+        PlayerData attackerData = PlayerData.gets(attacker, plugin);
         double attackerInitialKarma = attackerData.getKarma();
 
-        ConfigData configData = ConfigData.getConfigData();
-
         if (!victim.getName().equals(attacker.getName())) {
-
+            ConfigData configData = ConfigData.getConfigData();
             String expression;
-            if (hitKill.equals("hit")) {
+
+            if (reason.equals(Reasons.HIT)) {
                 expression = configData.getPvpHitRewardExpression();
             } else {
                 expression = configData.getPvpKillRewardExpression();
             }
+
+            Object resultSE;
+            double result = 0D;
 
             if (expression != null) {
                 expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
@@ -68,9 +70,13 @@ public class Fights {
                 }
                 if (configData.doesUseWorldGuard()) {
                     double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
+                    System.out.println("MULT " + multi);
                     result = Double.parseDouble(resultSE.toString()) * multi;
+                } else {
+                    result = Double.parseDouble(resultSE.toString());
                 }
 
+                System.out.println("TEST " + attackerInitialKarma + " Result " + result);
                 double attackerNewKarma = attackerInitialKarma + result;
 
                 System.out.println("New karma = " + attackerNewKarma);
@@ -89,20 +95,24 @@ public class Fights {
                             attackerData.setLastAttack();
                         } else {
                             if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                                attacker.sendMessage(adaptMessage.message(attacker, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
+                                attacker.sendMessage(adaptMessage.message(attacker,
+                                        LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
                                 return;
                             }
-                            attacker.sendMessage(adaptMessage.message(attacker, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
+                            attacker.sendMessage(adaptMessage.message(attacker,
+                                    LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
                         }
                     } else if (victimStart == 0L) {
                         attackerData.setLastAttack();
                     } else if (victimStart != 0L) {
                         if (timeStamp >= victimStart && timeStamp <= victimEnd) {
                             if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                                attacker.sendMessage(adaptMessage.message(attacker, LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
+                                attacker.sendMessage(adaptMessage.message(attacker,
+                                        LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
                                 return;
                             }
-                            attacker.sendMessage(adaptMessage.message(attacker, LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
+                            attacker.sendMessage(adaptMessage.message(attacker,
+                                    LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
                         } else {
                             attackerData.setLastAttack();
                         }
@@ -115,31 +125,31 @@ public class Fights {
 
                 String message = null;
                 if (attackerNewKarma > attackerInitialKarma) {
-                    if (hitKill.equals("hit")) {
+                    if (reason.equals(Reasons.HIT)) {
                         message = configData.getPvpHitMessageKarmaIncrease();
                     } else {
                         message = configData.getPvpKillMessageKarmaIncrease();
                     }
                 } else if (attackerNewKarma < attackerInitialKarma) {
-                    if (hitKill.equals("hit")) {
+                    if (reason.equals(Reasons.HIT)) {
                     message = configData.getPvpHitMessageKarmaDecrease();
                     } else {
                         message = configData.getPvpKillMessageKarmaDecrease();
                     }
                 }
                 if (message != null) {
-                    adaptMessage.playerHitMessage(message, attacker, victim, hitKill);
+                    adaptMessage.playerHitMessage(message, attacker, victim, reason.getText());
                 }
 
             }
         }
     }
 
-    public static void pveHandler(Player attacker, LivingEntity entity, String hitKill) {
+    public static void pveHandler(Player attacker, LivingEntity entity, Reasons reason) {
         String entityName = entity.getName();
         YamlConfiguration config = plugin.getCustomConfig();
         ConfigData configData = ConfigData.getConfigData();
-        double reward = config.getInt("entities." + entityName + "." + hitKill  + "-karma-reward");
+        double reward = config.getInt("entities." + entityName + "." + reason.getText()  + "-karma-reward");
         if (reward == 0) {
             return;
         }
@@ -153,7 +163,7 @@ public class Fights {
 
         attackerData.setKarma(killerKarma + reward);
         attackerData.setOverTimerChange();
-        adaptMessage.entityHitMessage(config.getString("entities." + entityName + "." + hitKill + "-message"), attacker, hitKill);
+        adaptMessage.entityHitMessage(config.getString("entities." + entityName + "." + reason.getText() + "-message"), attacker, reason);
     }
 
     public static boolean isPlayerNPC(Player player) {

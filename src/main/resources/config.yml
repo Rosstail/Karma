@@ -134,7 +134,7 @@ pvp:
   hit-reward-expression:  (-1 * (%karma_victim_karma% + 3000) / 50)
   kill-reward-expression:  (-1 * (%karma_victim_karma% + 3000) / 10)
   crime-time: #if a player attacks another one, everybody can attack him back without karma changes (unless if the defender is an agressor)
-    enable: false
+    enable: true
     delay: 300 #delay in second that a player is an agressor.
     # Enable or not the karma change if the defender won/less some karma or stay at the same karma.
     # Useful for avoid messages in a future update too.

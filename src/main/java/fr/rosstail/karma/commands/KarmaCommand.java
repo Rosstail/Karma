@@ -104,8 +104,8 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         String message = LangManager.getMessage(LangMessage.PERMISSION_DENIED);
         if (message != null) {
             message = ChatColor.translateAlternateColorCodes('&', message);
-            message = message.replaceAll("<COMMAND>", command.getCommand());
-            message = message.replaceAll("<PERMISSION>", command.getPermission());
+            message = message.replaceAll("%command%", command.getCommand());
+            message = message.replaceAll("%permission%", command.getPermission());
             sender.sendMessage(message);
         }
     }

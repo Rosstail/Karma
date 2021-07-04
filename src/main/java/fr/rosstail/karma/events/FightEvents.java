@@ -60,10 +60,10 @@ public class FightEvents implements Listener {
         }
 
         if (victimEntity instanceof Player) {
-            Fights.pvpHandler(attacker, (Player) victimEntity, "hit");
+            Fights.pvpHandler(attacker, (Player) victimEntity, Reasons.HIT);
             return;
         }
-        Fights.pveHandler(attacker, victimEntity, "hit");
+        Fights.pveHandler(attacker, victimEntity, Reasons.HIT);
     }
 
     /**
@@ -80,7 +80,7 @@ public class FightEvents implements Listener {
         }
 
         if (!(killer == null || Fights.isPlayerNPC(killer))) {
-            Fights.pveHandler(killer, victim, "kill");
+            Fights.pveHandler(killer, victim, Reasons.KILL);
         }
     }
 
@@ -97,7 +97,7 @@ public class FightEvents implements Listener {
         }
         Player killer = victim.getKiller();
         if (!(killer == null || Fights.isPlayerNPC(killer))) {
-            Fights.pvpHandler(killer, victim, "kill");
+            Fights.pvpHandler(killer, victim, Reasons.KILL);
         }
     }
 }
