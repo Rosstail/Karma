@@ -50,7 +50,7 @@ tiers:
       join-commands:
         - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
       join-on-down-commands:
-        - "%message% &cEverybody is now trying to kill you."
+        - "%player%%message% &cEverybody is now trying to kill you."
       killed-commands:
         - "jail %victim% jail %karma_victim_karma%"
         - "karma set %victim% -3000"
@@ -60,12 +60,12 @@ tiers:
       minimum: -1499
       maximum: -50
       join-commands:
-        - "%message% &fYou are now a filthy %karma_player_tier% &r."
+        - "%player%%message% &fYou are now a filthy %karma_player_tier% &r."
         - "%player% me&5is now in the dark side of the law."
       join-on-down-commands:
-        - "%message% &bThe police is now hunting you."
+        - "%player%%message% &bThe police is now hunting you."
       join-on-up-commands:
-        - "%message% &aKeep a low profile."
+        - "%player%%message% &aKeep a low profile."
       killed-commands:
         - "jail %victim% jail %karma_victim_karma%"
         - "karma set %victim% -1499"
@@ -75,28 +75,28 @@ tiers:
       minimum: -49
       maximum: 500
       join-commands:
-        - "%message% &fYou are a %karma_player_tier_display% &r."
-        - "%message% &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
+        - "%player%%message% &fYou are a %karma_player_tier_display% &r."
+        - "%player%%message% &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
     vigilante:
       display: "&aVigilante"
       minimum: 501
       maximum: 1250
       join-commands:
-        - "%message% &fYour are a %karma_player_tier_display% &r."
+        - "%player%%message% &fYour are a %karma_player_tier_display% &r."
       join-on-up-commands:
-        - "%message% &bYou can help the police now."
+        - "%player%%message% &bYou can help the police now."
       join-on-down-commands:
-        - "%message% &bYou have been demoted from the police forces."
+        - "%player%%message% &bYou have been demoted from the police forces."
       killed-commands:
-        - "%attacker%%message% You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
+        - "%player%%attacker%%message% You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
     sheriff:
       display: "&6Sheriff"
       minimum: 1251
       maximum: 1500
       join-commands:
-        - "%message% &fYour wanted level is now %karma_player_tier_display% &r."
+        - "%player%%message% &fYour wanted level is now %karma_player_tier_display% &r."
       join-on-up-commands:
-        - "%message% &bYou are got promoted from %karma_player_previous_tier_display%."
+        - "%player%%message% &bYou are got promoted from %karma_player_previous_tier_display%."
       killed-commands:
         - "broadcast %victim% as been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
 

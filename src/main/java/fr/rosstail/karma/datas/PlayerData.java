@@ -13,12 +13,16 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.graalvm.compiler.debug.TimeSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -36,7 +40,7 @@ public class PlayerData {
     private double previousKarma;
     private Tier tier;
     private Tier previousTier;
-    private long lastAttack;
+    private Timestamp lastAttack;
     private Timer updateDataTimer;
     private int overTimerScheduler;
 
@@ -71,7 +75,7 @@ public class PlayerData {
         return TierManager.getNoTier();
     }
 
-    public long getLastAttack() {
+    public Timestamp getLastAttack() {
         return lastAttack; //milliseconds are important only for calculations
     }
 
@@ -105,7 +109,7 @@ public class PlayerData {
                     if (TierManager.getTierManager().getTiers().containsKey(previousTierLabel)) {
                         previousTier = TierManager.getTierManager().getTiers().get(previousTierLabel);
                     }
-                    lastAttack = result.getLong("Last_Attack");
+                    lastAttack = result.getTimestamp("Last_Attack");
                     return true;
                 }
                 statement.close();
@@ -131,7 +135,7 @@ public class PlayerData {
                     previousKarma = result.getDouble("Previous_Karma");
                     tier = TierManager.getTierManager().getTiers().get(result.getString("Tier"));
                     previousTier = TierManager.getTierManager().getTiers().get(result.getString("Previous_Tier"));
-                    lastAttack = result.getLong("Last_Attack");
+                    lastAttack = result.getTimestamp("Last_Attack");
                 }
                 statement.close();
             } else {
@@ -140,7 +144,7 @@ public class PlayerData {
                 previousKarma = playerConfig.getDouble("previous-karma");
                 tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
                 previousTier = TierManager.getTierManager().getTiers().get(playerConfig.getString("previous-tier"));
-                lastAttack = playerConfig.getLong("last-attack");
+                lastAttack = new Timestamp(playerConfig.getLong("last-attack"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -160,8 +164,8 @@ public class PlayerData {
             } else if (!playerFile.exists()){
                 initPlayerDataLocale();
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
     }
 
@@ -286,7 +290,7 @@ public class PlayerData {
                 } else {
                     playerConfig.set("previous-tier", null);
                 }
-                playerConfig.set("last-attack", lastAttack);
+                playerConfig.set("last-attack", lastAttack.getTime());
 
                 playerConfig.save(playerFile);
             }
@@ -318,7 +322,8 @@ public class PlayerData {
                     } else {
                         preparedStatement.setString(4, null);
                     }
-                    preparedStatement.setLong(5, lastAttack);
+
+                    preparedStatement.setTimestamp(5, lastAttack);
                     preparedStatement.setString(6, UUID);
 
                     preparedStatement.executeUpdate();
@@ -419,7 +424,7 @@ public class PlayerData {
         if (player.hasMetadata("NPC")) {
             return;
         }
-        lastAttack = System.currentTimeMillis();
+        lastAttack = new Timestamp(System.currentTimeMillis());
     }
 
     private void changePlayerTierMessage() {

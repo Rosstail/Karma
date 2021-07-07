@@ -7,6 +7,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -151,11 +152,10 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 return playerData.getPreviousTier().getDisplay();
             }
             if (identifier.equals("player_last_attack")) {
-                long time = playerData.getLastAttack();
+                float time = playerData.getLastAttack().getTime();
                 if (time > 0f) {
-                    Date date = new Date(time);
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
-                    return simpleDateFormat.format(date);
+                    return simpleDateFormat.format(time);
                 }
                 return "N/A";
             }

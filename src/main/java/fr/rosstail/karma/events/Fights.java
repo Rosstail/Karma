@@ -58,11 +58,9 @@ public class Fights {
                 expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
                 expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
                 ScriptEngine engine = new ScriptEngineManager().getEngineByExtension("js");
-                System.out.println("Hit expression " + expression);
                 try {
                     // Evaluate the expression
                     resultSE = engine.eval(expression);
-                    System.out.println("Expression value " + Double.parseDouble(resultSE.toString()));
                 } catch (ScriptException e) {
                     // Something went wrong
                     e.printStackTrace();
@@ -70,25 +68,21 @@ public class Fights {
                 }
                 if (configData.doesUseWorldGuard()) {
                     double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
-                    System.out.println("MULT " + multi);
                     result = Double.parseDouble(resultSE.toString()) * multi;
                 } else {
                     result = Double.parseDouble(resultSE.toString());
                 }
-
-                System.out.println("TEST " + attackerInitialKarma + " Result " + result);
                 double attackerNewKarma = attackerInitialKarma + result;
 
-                System.out.println("New karma = " + attackerNewKarma);
                 if (configData.isPvpCrimeTimeEnabled() && !(
                         attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
                     long timeStamp = System.currentTimeMillis();
                     long delay = configData.getPvpCrimeTimeDelay();
 
-                    double attackStart = attackerData.getLastAttack();
-                    double victimStart = victimData.getLastAttack();
-                    double attackEnd = attackerData.getLastAttack() + delay;
-                    double victimEnd = victimData.getLastAttack() + delay;
+                    float attackStart = attackerData.getLastAttack().getTime();
+                    float victimStart = attackerData.getLastAttack().getTime();
+                    float attackEnd = attackStart + delay;
+                    float victimEnd = victimStart + delay;
 
                     if (attackStart != 0L && victimStart != 0L) {
                         if ((timeStamp >= attackStart && timeStamp <= attackEnd) || timeStamp > victimEnd) {
