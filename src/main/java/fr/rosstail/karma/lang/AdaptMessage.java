@@ -12,6 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +58,7 @@ public class AdaptMessage {
 
                 Tier playerTier = playerData.getTier();
                 Tier playerPreviousTier = playerData.getPreviousTier();
-
+                Timestamp lastAttack = playerData.getLastAttack();
 
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(playerKarma));
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_karma%", decimalFormat(playerPreviousKarma));
@@ -65,6 +67,8 @@ public class AdaptMessage {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier%", playerPreviousTier.getName());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier_display%", playerTier.getDisplay());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_display%", playerPreviousTier.getDisplay());
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_last_attack%", simpleDateFormat.format(lastAttack.getTime()));
             } else {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble()));
             }
@@ -126,7 +130,7 @@ public class AdaptMessage {
     }
 
     private String decimalFormat(double value) {
-        return String.format("%." + configData.getDecNumber() + "f", value);
+        return String.format("%." + configData.getDecNumber() + "f", value).replaceAll(",", ".");
     }
 
     public static AdaptMessage getAdaptMessage() {

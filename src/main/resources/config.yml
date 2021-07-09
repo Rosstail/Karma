@@ -50,7 +50,7 @@ tiers:
       join-commands:
         - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
       join-on-down-commands:
-        - "%player%%message% &cEverybody is now trying to kill you."
+        - "player message &cEverybody is now trying to kill you."
       killed-commands:
         - "jail %victim% jail %karma_victim_karma%"
         - "karma set %victim% -3000"
@@ -60,12 +60,12 @@ tiers:
       minimum: -1499
       maximum: -50
       join-commands:
-        - "%player%%message% &fYou are now a filthy %karma_player_tier% &r."
-        - "%player% me&5is now in the dark side of the law."
+        - "player message &fYou are now a filthy %karma_player_tier% &r."
+        - "player me &5is now in the dark side of the law."
       join-on-down-commands:
-        - "%player%%message% &bThe police is now hunting you."
+        - "player message &bThe police is now hunting you."
       join-on-up-commands:
-        - "%player%%message% &aKeep a low profile."
+        - "playermessage &aKeep a low profile."
       killed-commands:
         - "jail %victim% jail %karma_victim_karma%"
         - "karma set %victim% -1499"
@@ -75,28 +75,28 @@ tiers:
       minimum: -49
       maximum: 500
       join-commands:
-        - "%player%%message% &fYou are a %karma_player_tier_display% &r."
-        - "%player%%message% &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
+        - "playermessage &fYou are a %karma_player_tier_display% &r."
+        - "playermessage &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
     vigilante:
       display: "&aVigilante"
       minimum: 501
       maximum: 1250
       join-commands:
-        - "%player%%message% &fYour are a %karma_player_tier_display% &r."
+        - "player message &fYour are a %karma_player_tier_display% &r."
       join-on-up-commands:
-        - "%player%%message% &bYou can help the police now."
+        - "player message &bYou can help the police now."
       join-on-down-commands:
-        - "%player%%message% &bYou have been demoted from the police forces."
+        - "player message &bYou have been demoted from the police forces."
       killed-commands:
-        - "%player%%attacker%%message% You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
+        - "attacker message You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
     sheriff:
       display: "&6Sheriff"
       minimum: 1251
       maximum: 1500
       join-commands:
-        - "%player%%message% &fYour wanted level is now %karma_player_tier_display% &r."
+        - "player message &fYour wanted level is now %karma_player_tier_display% &r."
       join-on-up-commands:
-        - "%player%%message% &bYou are got promoted from %karma_player_previous_tier_display%."
+        - "player message &bYou are got promoted from %karma_player_previous_tier_display%."
       killed-commands:
         - "broadcast %victim% as been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
 
@@ -131,9 +131,9 @@ times:
 
 pvp:
   # You can make your own expression
-  hit-reward-expression:  (-1 * (%karma_victim_karma% + 3000) / 50)
-  kill-reward-expression:  (-1 * (%karma_victim_karma% + 3000) / 10)
-  crime-time: #if a player attacks another one, everybody can attack him back without karma changes (unless if the defender is an agressor)
+  hit-reward-expression:  (-1 * (%karma_victim_karma% + 200) / 50)
+  kill-reward-expression:  (-1 * (%karma_victim_karma% + 200) / 10)
+  crime-time: #if a player attacks another one, everybody can strikes him back without karma changes (unless if the defender is an aggressor)
     enable: true
     delay: 300 #delay in second that a player is an agressor.
     # Enable or not the karma change if the defender won/less some karma or stay at the same karma.
@@ -141,10 +141,10 @@ pvp:
     active-on-up: true
     active-on-still: false
     active-on-down: false
-  #Sends a message to <attacker> when hitting / killing another player. You can use <attacker>, <attackerKarma>, <victim> and <victimKarma>.
+  #Sends a message to the attacker when hitting / killing another player. You can use any local placeholder with attacker or victim instead of player.
   hit-message-on-karma-increase: "&aThat scum will not escape from that !"
-  kill-message-on-karma-increase: "&bThat bastard is now finished !"
-  hit-message-on-karma-decrease: "&cYou attack a honnest people !"
+  kill-message-on-karma-increase: "&b%victim% is now finished !"
+  hit-message-on-karma-decrease: "&c%attacker%, %you attack a honnest people !"
   kill-message-on-karma-decrease: "&cSonovabitch !"
 
 entities:

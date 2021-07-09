@@ -40,7 +40,7 @@ public class PlayerData {
     private double previousKarma;
     private Tier tier;
     private Tier previousTier;
-    private Timestamp lastAttack;
+    private Timestamp lastAttack = new Timestamp(0L);
     private Timer updateDataTimer;
     private int overTimerScheduler;
 
@@ -192,8 +192,8 @@ public class PlayerData {
             public void run() {
                 try {
                     PreparedStatement preparedStatement = plugin.connection.prepareStatement(
-                            "INSERT INTO " + plugin.getName() + " (UUID, Karma, Previous_Karma, Tier, Previous_Tier)\n"
-                                    + "VALUES (?, ?, ?, ?, ?);");
+                            "INSERT INTO " + plugin.getName() + " (UUID, Karma, Previous_Karma, Tier, Previous_Tier, Last_Attack)\n"
+                                    + "VALUES (?, ?, ?, ?, ?, ?);");
 
                     preparedStatement.setString(1, UUID);
                     preparedStatement.setDouble(2, finalValue);
@@ -208,6 +208,7 @@ public class PlayerData {
                     } else {
                         preparedStatement.setString(5, null);
                     }
+                    preparedStatement.setTimestamp(6, lastAttack);
 
                     preparedStatement.execute();
                     preparedStatement.close();
@@ -456,13 +457,13 @@ public class PlayerData {
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 
-        if (command.startsWith(PlayerType.player.getId())) {
-            command = command.replaceFirst(PlayerType.player.getId(), "");
+        String regex = PlayerType.player.getId();
+        if (command.startsWith(regex)) {
+            command = command.replaceFirst(regex, "").trim();
             senderOrTarget = player;
         }
-
-        if (command.startsWith("%message%")) {
-            command = command.replaceFirst("%message%", "").trim();
+        if (command.startsWith("message")) {
+            command = command.replaceFirst("message", "").trim();
             senderOrTarget.sendMessage(command);
         } else {
             Bukkit.dispatchCommand(senderOrTarget, command);
@@ -476,15 +477,15 @@ public class PlayerData {
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
         if (command.startsWith(PlayerType.victim.getId())) {
-            command = command.replaceFirst(PlayerType.victim.getId(), "");
+            command = command.replaceFirst(PlayerType.victim.getId(), "").trim();
             senderOrTarget = victim;
         } else if (command.startsWith(PlayerType.attacker.getId())) {
-            command = command.replaceFirst(PlayerType.attacker.getId(), "");
+            command = command.replaceFirst(PlayerType.attacker.getId(), "").trim();
             senderOrTarget = attacker;
         }
 
-        if (command.startsWith("%message%")) {
-            command = command.replaceFirst("%message%", "").trim();
+        if (command.startsWith("message")) {
+            command = command.replaceFirst("message", "").trim();
             senderOrTarget.sendMessage(command);
         } else {
             Bukkit.dispatchCommand(senderOrTarget, command);

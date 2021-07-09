@@ -52,14 +52,14 @@ public class Fights {
             }
 
             Object resultSE;
-            double result = 0D;
+            double result;
 
             if (expression != null) {
                 expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
                 expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
-                ScriptEngine engine = new ScriptEngineManager().getEngineByExtension("js");
                 try {
                     // Evaluate the expression
+                    ScriptEngine engine = new ScriptEngineManager().getEngineByExtension("js");
                     resultSE = engine.eval(expression);
                 } catch (ScriptException e) {
                     // Something went wrong

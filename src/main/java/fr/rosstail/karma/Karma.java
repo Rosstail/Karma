@@ -118,7 +118,7 @@ public class Karma extends JavaPlugin implements Listener {
                 " Previous_Karma double,\n" +
                 " Tier varchar(50),\n" +
                 " Previous_Tier varchar(50),\n" +
-                " Last_Attack DATETIME);";
+                " Last_Attack DATETIME NOT NULL DEFAULT '1970-01-01 01:00:00');";
         try {
             if (connection != null && !connection.isClosed()) {
                 Statement statement = connection.createStatement();
