@@ -45,7 +45,7 @@ commands:
     permission: karma.reset
     permission-message: You don't have permission !
   karma calculate:
-    description: Calculate a mathematical formulae
+    description: Calculate a mathematical formula
     usage: /karma [expression]
     permission: karma.calculate
     permission-message: You don't have permission !

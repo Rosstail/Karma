@@ -24,7 +24,7 @@ public class Fights {
         PlayerData victimData = PlayerData.gets(victim, plugin);
 
         if (reason.equals(Reasons.KILL)) {
-            PlayerData.tierCommandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
+            PlayerData.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
         }
 
         if (!DataHandler.getTime(attacker)) {

@@ -57,9 +57,9 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         } else if (string.startsWith(COMMAND_KARMA_CALCULATE.getCommand())) {
           if (canLaunchCommand(sender, COMMAND_KARMA_CALCULATE)) {
               if (args.length > 1) {
-                  ArrayList<String> formulaeList = new ArrayList<>(Arrays.asList(args));
-                  formulaeList.remove("calculate");
-                  String expression = String.join(" ", formulaeList);
+                  ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
+                  expressionList.remove("calculate");
+                  String expression = String.join(" ", expressionList);
                   if (sender instanceof Player) {
                       expression = adaptMessage.message(((Player) sender).getPlayer(), expression, null);
                   }

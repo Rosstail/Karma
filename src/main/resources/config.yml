@@ -31,14 +31,18 @@ world-fight-system:
 overtime: #Useful for GTA Wanted Level. Reset when karma changes from fights and commands.
   active: false
   first-delay: 60 #first occurrence in seconds after a karma change.
-  next-delay: 10 #every occurrences in seconds after the first one
+  next-delay: 10 #every occurrence in seconds after the first one
   values:
     decrease:
       value: 5
       limit: 0
+      commands:
+        - "player message &cYou lose 5 karma from the overtime"
     increase:
       value: 5
       limit: 0
+      commands:
+        - "player message &cYou won 5 karma from the overtime"
 
 tiers:
   none-display: "&f[&8None&f]&r"

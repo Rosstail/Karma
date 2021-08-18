@@ -21,4 +21,4 @@ help:
     - "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma"
     - "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma"
     - "&6/karma reset [player] &8: &rSet the targeted player karma to the default one."
-    - "&6/karma calculate [expression] &8: &rCalculate the given formulae."
+    - "&6/karma calculate [expression] &8: &rCalculate the given expression."

@@ -3,6 +3,8 @@ package fr.rosstail.karma.configData;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.List;
+
 public class ConfigData {
     private static ConfigData configValues;
 
@@ -22,7 +24,8 @@ public class ConfigData {
     private final double overtimeDecreaseLimit;
     private final double overtimeIncreaseValue;
     private final double overtimeIncreaseLimit;
-
+    private final List<String> overtimeDecreaseCommands;
+    private final List<String> overtimeIncreaseCommands;
 
     private final boolean useWorldGuard;
     private final boolean pvpCrimeTimeEnabled;
@@ -59,8 +62,10 @@ public class ConfigData {
         overtimeNextDelay = config.getLong("overtime.next-delay") * 20L;
         overtimeDecreaseValue = config.getDouble("overtime.values.decrease.value");
         overtimeDecreaseLimit = config.getDouble("overtime.values.decrease.limit");
+        overtimeDecreaseCommands = config.getStringList("overtime.values.decrease.commands");
         overtimeIncreaseValue = config.getDouble("overtime.values.increase.value");
         overtimeIncreaseLimit = config.getDouble("overtime.values.increase.limit");
+        overtimeIncreaseCommands = config.getStringList("overtime.values.increase.commands");
 
         useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard");
         pvpCrimeTimeEnabled = config.getBoolean("pvp.crime-time.enable");
@@ -130,12 +135,20 @@ public class ConfigData {
         return overtimeDecreaseLimit;
     }
 
+    public List<String> getOvertimeDecreaseCommands() {
+        return overtimeDecreaseCommands;
+    }
+
     public double getOvertimeIncreaseValue() {
         return overtimeIncreaseValue;
     }
 
     public double getOvertimeIncreaseLimit() {
         return overtimeIncreaseLimit;
+    }
+
+    public List<String> getOvertimeIncreaseCommands() {
+        return overtimeIncreaseCommands;
     }
 
     public String getPvpHitRewardExpression() {

@@ -21,8 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.Format;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -348,12 +346,12 @@ public class PlayerData {
                 this.tier = tier;
 
                 changePlayerTierMessage();
-                tierCommandsLauncher(player, tier.getJoinCommands());
+                commandsLauncher(player, tier.getJoinCommands());
                 if (previousTier != null) {
                     if (karma > previousKarma) {
-                        tierCommandsLauncher(player, tier.getJoinOnUpCommands());
+                        commandsLauncher(player, tier.getJoinOnUpCommands());
                     } else {
-                        tierCommandsLauncher(player, tier.getJoinOnDownCommands());
+                        commandsLauncher(player, tier.getJoinOnDownCommands());
                     }
                 }
                 break;
@@ -395,6 +393,7 @@ public class PlayerData {
                             karma = decreaseLimit;
                         }
                     }
+                    commandsLauncher(player, ConfigData.getConfigData().getOvertimeDecreaseCommands());
                 }
                 if (increaseValue > 0) {
                     double increaseLimit = ConfigData.getConfigData().getOvertimeIncreaseLimit();
@@ -404,6 +403,7 @@ public class PlayerData {
                             karma = increaseLimit;
                         }
                     }
+                    commandsLauncher(player, ConfigData.getConfigData().getOvertimeIncreaseCommands());
                 }
 
                 if (karma != getKarma()) {
@@ -435,7 +435,7 @@ public class PlayerData {
         }
     }
 
-    public static void tierCommandsLauncher(Player player, List<String> commands) {
+    public static void commandsLauncher(Player player, List<String> commands) {
         if (commands != null) {
             commands.forEach(s -> {
                 placeCommands(player, s);
@@ -443,7 +443,7 @@ public class PlayerData {
         }
     }
 
-    public static void tierCommandsLauncher(Player attacker, Player victim, List<String> commands) {
+    public static void commandsLauncher(Player attacker, Player victim, List<String> commands) {
         if (commands != null) {
             commands.forEach(s -> {
                 placeCommands(attacker, victim, s);
