@@ -6,7 +6,7 @@
 
     <groupId>io.github.Rosstail</groupId>
     <artifactId>Karma</artifactId>
-    <version>1.6.2</version>
+    <version>beta-1.6.3</version>
     <build>
         <plugins>
             <plugin>
@@ -57,8 +57,13 @@
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-            <version>RELEASE</version>
+            <version>22.0.0</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fathzer</groupId>
+            <artifactId>javaluator</artifactId>
+            <version>3.0.3</version>
         </dependency>
     </dependencies>
 </project>
