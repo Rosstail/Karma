@@ -1,11 +1,11 @@
 package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.apis.Calculator;
 import fr.rosstail.karma.commands.list.Commands;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
-import fr.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -54,6 +54,23 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             editKarmaCommand.karmaRemove(sender, args);
         } else if (string.startsWith(COMMAND_KARMA_RESET.getCommand())) {
             editKarmaCommand.karmaReset(sender, args);
+        } else if (string.startsWith(COMMAND_KARMA_CALCULATE.getCommand())) {
+          if (canLaunchCommand(sender, COMMAND_KARMA_CALCULATE)) {
+              if (args.length > 1) {
+                  ArrayList<String> formulaeList = new ArrayList<>(Arrays.asList(args));
+                  formulaeList.remove("calculate");
+                  String expression = String.join(" ", formulaeList);
+                  if (sender instanceof Player) {
+                      expression = adaptMessage.message(((Player) sender).getPlayer(), expression, null);
+                  }
+                  System.out.println(expression);
+                  double result = Calculator.eval(expression);
+
+                  sender.sendMessage(adaptMessage.message(null, expression + " = " + result, null));
+              } else {
+                  errorMessage(sender, new ArrayIndexOutOfBoundsException());
+              }
+          }
         } else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
                 sender.sendMessage(adaptMessage.listMessage(null, LangManager.getListMessage(LangMessage.HELP)));

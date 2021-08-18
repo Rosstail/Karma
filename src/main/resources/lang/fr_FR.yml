@@ -21,3 +21,4 @@ help:
     - "&6/karma add [joueur] [valeur] &8: &rAjoute la valeur spécifiée au karma du joueur ciblé"
     - "&6/karma remove [joueur] [valeur] &8: &rSoustrait la valeur indiquée du karma du joueur ciblé"
     - "&6/karma reset [joueur] &8: &rRéinitialise le karma du joueur ciblé."
+    - "&6/karma calculate [expression] &8: &rcalcule une formule donnée."

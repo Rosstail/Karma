@@ -3,6 +3,7 @@ package fr.rosstail.karma.commands.list;
 public enum Commands {
 
     COMMAND_KARMA("", "karma"),
+    COMMAND_KARMA_CALCULATE("calculate", "karma.calculate"),
     COMMAND_KARMA_CHECK("check", "karma.self"),
     COMMAND_KARMA_HELP("help", "karma.help"),
     COMMAND_KARMA_SET("set", "karma.set"),

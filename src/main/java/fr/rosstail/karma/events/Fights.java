@@ -1,7 +1,7 @@
 package fr.rosstail.karma.events;
 
-import com.fathzer.soft.javaluator.DoubleEvaluator;
 import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.apis.Calculator;
 import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.datas.DataHandler;
@@ -14,17 +14,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-/*
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-*/
 public class Fights {
 
     private static final Karma plugin = Karma.getInstance();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
-
-    private static final DoubleEvaluator doubleEvaluator = new DoubleEvaluator();
 
     public static void pvpHandler(Player attacker, Player victim, Reasons reason) {
 
@@ -62,25 +55,7 @@ public class Fights {
                 expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
                 expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
 
-                /*
-                try {
-                    // Evaluate the expression
-                    ScriptEngine engine = new ScriptEngineManager().getEngineByExtension("js");
-                    resultSE = engine.eval(expression);
-                } catch (ScriptException e) {
-                    // Something went wrong
-                    e.printStackTrace();
-                    resultSE = 0D;
-                }
-                if (configData.doesUseWorldGuard()) {
-                    double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
-                    result = Double.parseDouble(resultSE.toString()) * multi;
-                } else {
-                    result = Double.parseDouble(resultSE.toString());
-                }
-                */
-
-                result = doubleEvaluator.evaluate(expression);
+                result = Calculator.eval(expression);
                 if (configData.doesUseWorldGuard()) {
                     double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
                     result = result * multi;
