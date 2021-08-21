@@ -5,6 +5,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -25,7 +26,7 @@ public class FightEvents implements Listener {
      *
      * @param event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityHurt(EntityDamageByEntityEvent event) {
         LivingEntity victimEntity;
 
@@ -71,7 +72,7 @@ public class FightEvents implements Listener {
      *
      * @param event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity victim = event.getEntity();
         Player killer = victim.getKiller();
@@ -89,7 +90,7 @@ public class FightEvents implements Listener {
      *
      * @param event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
         if (!CustomFightWorlds.isFightEnabledInWorld(victim.getWorld())) {

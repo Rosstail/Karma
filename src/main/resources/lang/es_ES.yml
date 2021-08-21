@@ -11,6 +11,7 @@ reset-karma: "[Karma] &rEl karma de &6%player%&r se ha reiniciado. Karma : &6%ka
 tier-change: "[Karma] ¡ Ahora eres &6%karma_player_tier_display% &r!"
 self-defending-off: "[Karma] You are defending yourself ! Karma unchanged."
 self-defending-on: "[Karma] You are defending yourself but your Karma changes."
+calculation: "[Karma] &a%expression% &r= &b%result%"
 permission-denied: "[Karma] &c¡No tienes %permission% permiso!"
 wrong-value: "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] Too few arguments"

@@ -16,6 +16,7 @@ public enum LangMessage {
     TIER_CHANGE("tier-change"),
     SELF_DEFENDING_OFF("self-defending-off"),
     SELF_DEFENDING_ON("self-defending-on"),
+    CALCULATION("calculation"),
     TOO_FEW_ARGUMENTS("too-few-arguments");
 
     private final String text;

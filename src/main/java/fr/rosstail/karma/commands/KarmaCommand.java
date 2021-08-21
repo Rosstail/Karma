@@ -60,13 +60,17 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                   ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
                   expressionList.remove("calculate");
                   String expression = String.join(" ", expressionList);
+                  Player player = null;
                   if (sender instanceof Player) {
-                      expression = adaptMessage.message(((Player) sender).getPlayer(), expression, null);
+                      player = ((Player) sender).getPlayer();
+                      expression = adaptMessage.message(player, expression, null);
                   }
-                  System.out.println(expression);
                   double result = Calculator.eval(expression);
 
-                  sender.sendMessage(adaptMessage.message(null, expression + " = " + result, null));
+                  sender.sendMessage(adaptMessage.message(player,
+                          LangManager.getMessage(LangMessage.CALCULATION)
+                                  .replaceAll("%expression%", expression).replaceAll("%result%", String.valueOf(result))
+                          , null));
               } else {
                   errorMessage(sender, new ArrayIndexOutOfBoundsException());
               }
@@ -98,6 +102,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             commands.add("remove");
             commands.add("reset");
             commands.add("help");
+            commands.add("calculate");
             StringUtil.copyPartialMatches(args[0], commands, completions);
         } else if (args.length == 2) {
             if (!string.startsWith(COMMAND_KARMA_HELP.getCommand())) {

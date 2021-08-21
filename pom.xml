@@ -6,7 +6,7 @@
 
     <groupId>io.github.Rosstail</groupId>
     <artifactId>Karma</artifactId>
-    <version>beta-1.6.3</version>
+    <version>1.6.4-Beta</version>
     <build>
         <plugins>
             <plugin>
