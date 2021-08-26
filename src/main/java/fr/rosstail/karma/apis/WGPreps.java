@@ -19,7 +19,7 @@ import java.util.logging.Level;
 public class WGPreps {
 
     public static WGPreps wgPreps;
-    public static DoubleFlag KARMA_MULTIPLICATOR;
+    public static DoubleFlag KARMA_MULTIPLICATION;
     public static IntegerFlag KARMA_CHANGE_CHANCE;
 
     public static void initWGPreps() {
@@ -34,15 +34,15 @@ public class WGPreps {
         FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             // create a flag with the name "my-custom-flag", defaulting to true
-            DoubleFlag karmaMultFlag = new DoubleFlag("karma-multiplicator");
-            registry.register(karmaMultFlag);
-            KARMA_MULTIPLICATOR = karmaMultFlag; // only set our field if there was no error
+            DoubleFlag karmaMultiFlag = new DoubleFlag("karma-multiplicator");
+            registry.register(karmaMultiFlag);
+            KARMA_MULTIPLICATION = karmaMultiFlag; // only set our field if there was no error
         } catch (FlagConflictException e) {
             // some other plugin registered a flag by the same name already.
             // you can use the existing flag, but this may cause conflicts - be sure to check type
             Flag<?> existing = registry.get("karma-multiplicator");
             if (existing instanceof DoubleFlag) {
-                KARMA_MULTIPLICATOR = (DoubleFlag) existing;
+                KARMA_MULTIPLICATION = (DoubleFlag) existing;
             } else {
                 Karma.getPlugin(Karma.class).getLogger().log(Level.WARNING,
                     "[WARNING] CONFLICT BETWEEN KARMA karma-multiplier FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
@@ -79,7 +79,7 @@ public class WGPreps {
         if (ThreadLocalRandom.current().nextInt(0, 100) >= checkChangeKarmaFlag(player)) {
             return 0;
         }
-        Double value = query.queryValue(location, localPlayer, KARMA_MULTIPLICATOR);
+        Double value = query.queryValue(location, localPlayer, KARMA_MULTIPLICATION);
         return value == null ? 1 : value;
     }
 

@@ -1,5 +1,5 @@
 name: Karma
-version: 1.6.4-BETA
+version: 1.7.0-BETA
 description: Make your players actions have consequences !
 api-version: 1.15
 author: Rosstail
@@ -89,3 +89,4 @@ permissions:
       karma.remove: true
       karma.reset: true
       karma.calculate: true
+      karma.reload: true

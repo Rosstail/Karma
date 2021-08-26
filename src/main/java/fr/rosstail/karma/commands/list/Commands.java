@@ -10,7 +10,8 @@ public enum Commands {
     COMMAND_KARMA_ADD("add", "karma.add"),
     COMMAND_KARMA_REMOVE("remove", "karma.remove"),
     COMMAND_KARMA_RESET("reset", "karma.reset"),
-    COMMAND_KARMA_OTHER("check", "karma.other");
+    COMMAND_KARMA_OTHER("check", "karma.other"),
+    COMMAND_KARMA_RELOAD("reload", "karma.reload");
 
     private final String command;
     private final String permission;

@@ -17,8 +17,8 @@ public enum LangMessage {
     SELF_DEFENDING_OFF("self-defending-off"),
     SELF_DEFENDING_ON("self-defending-on"),
     CALCULATION("calculation"),
+    RELOAD("reload"),
     TOO_FEW_ARGUMENTS("too-few-arguments");
-
     private final String text;
 
     LangMessage(String text) {

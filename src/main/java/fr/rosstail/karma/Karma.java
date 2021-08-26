@@ -10,8 +10,7 @@ import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.commands.KarmaCommand;
 import fr.rosstail.karma.datas.FileResourcesUtils;
 import fr.rosstail.karma.events.CustomFightWorlds;
-import fr.rosstail.karma.events.FightEvents;
-import fr.rosstail.karma.events.PlayerConnect;
+import fr.rosstail.karma.events.CustomEventHandler;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
@@ -75,9 +74,8 @@ public class Karma extends JavaPlugin implements Listener {
             prepareConnection();
         }
         this.createPlayerDataFolder();
-
-        Bukkit.getPluginManager().registerEvents(new PlayerConnect(this), this);
-        Bukkit.getPluginManager().registerEvents(new FightEvents(), this);
+        
+        Bukkit.getPluginManager().registerEvents(new CustomEventHandler(this), this);
         this.getCommand(getName().toLowerCase()).setExecutor(new KarmaCommand(this));
     }
 

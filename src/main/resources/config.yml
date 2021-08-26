@@ -102,7 +102,7 @@ tiers:
       join-on-up-commands:
         - "player message &bYou are got promoted from %karma_player_previous_tier_display%."
       killed-commands:
-        - "broadcast %victim% as been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
+        - "broadcast %victim% has been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
 
 times:
   use-both-system-and-worlds-time: "NONE" #can be replaced by WORLDS, SYSTEM and BOTH or NONE
@@ -190,3 +190,5 @@ entities:
   ZombieVillager:
     hit-karma-reward:      0
     kill-karma-reward:  -100
+
+

@@ -1,15 +1,17 @@
 package fr.rosstail.karma.events;
 
 import fr.rosstail.karma.Karma;
-import fr.rosstail.karma.apis.Calculator;
+import fr.rosstail.karma.apis.ExpressionCalculator;
 import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.configData.ConfigData;
+import fr.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
 import fr.rosstail.karma.datas.DataHandler;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
 import fr.rosstail.karma.lang.PlayerType;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -27,7 +29,7 @@ public class Fights {
             PlayerData.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
         }
 
-        if (!DataHandler.getTime(attacker)) {
+        if (DataHandler.getTime(attacker)) {
             return;
         }
 
@@ -55,7 +57,7 @@ public class Fights {
                 expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
                 expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
 
-                result = Calculator.eval(expression);
+                result = ExpressionCalculator.eval(expression);
                 if (configData.doesUseWorldGuard()) {
                     double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
                     result = result * multi;
@@ -102,25 +104,27 @@ public class Fights {
 
                 }
 
-                attackerData.setKarma(attackerNewKarma);
-                attackerData.setOverTimerChange();
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true);
+                Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
-                String message = null;
-                if (attackerNewKarma > attackerInitialKarma) {
-                    if (reason.equals(Reasons.HIT)) {
-                        message = configData.getPvpHitMessageKarmaIncrease();
-                    } else {
-                        message = configData.getPvpKillMessageKarmaIncrease();
+                if (!playerKarmaChangeEvent.isCancelled()) {
+                    String message = null;
+                    if (attackerNewKarma > attackerInitialKarma) {
+                        if (reason.equals(Reasons.HIT)) {
+                            message = configData.getPvpHitMessageKarmaIncrease();
+                        } else {
+                            message = configData.getPvpKillMessageKarmaIncrease();
+                        }
+                    } else if (attackerNewKarma < attackerInitialKarma) {
+                        if (reason.equals(Reasons.HIT)) {
+                            message = configData.getPvpHitMessageKarmaDecrease();
+                        } else {
+                            message = configData.getPvpKillMessageKarmaDecrease();
+                        }
                     }
-                } else if (attackerNewKarma < attackerInitialKarma) {
-                    if (reason.equals(Reasons.HIT)) {
-                    message = configData.getPvpHitMessageKarmaDecrease();
-                    } else {
-                        message = configData.getPvpKillMessageKarmaDecrease();
+                    if (message != null) {
+                        adaptMessage.playerHitMessage(message, attacker, victim, reason.getText());
                     }
-                }
-                if (message != null) {
-                    adaptMessage.playerHitMessage(message, attacker, victim, reason.getText());
                 }
 
             }
@@ -137,15 +141,18 @@ public class Fights {
         }
 
         PlayerData attackerData = PlayerData.gets(attacker, plugin);
-        double killerKarma = attackerData.getKarma();
+        double attackerKarma = attackerData.getKarma();
 
         if (configData.doesUseWorldGuard()) {
             reward = reward * WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
         }
 
-        attackerData.setKarma(killerKarma + reward);
-        attackerData.setOverTimerChange();
-        adaptMessage.entityHitMessage(config.getString("entities." + entityName + "." + reason.getText() + "-message"), attacker, reason);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerKarma + reward, true);
+        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+
+        if (!playerKarmaChangeEvent.isCancelled()) {
+            adaptMessage.entityHitMessage(config.getString("entities." + entityName + "." + reason.getText() + "-message"), attacker, reason);
+        }
     }
 
     public static boolean isPlayerNPC(Player player) {

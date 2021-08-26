@@ -19,7 +19,6 @@ public class Tier {
     private final List<String> killedCommands;
 
 
-
     Tier(ConfigurationSection section, String name) {
         this.name = name;
 
@@ -40,7 +39,7 @@ public class Tier {
      * NULL TIER
      */
     Tier(String display) {
-        this.name = "none";
+        this.name = null;
         this.display = ChatColor.translateAlternateColorCodes('&', display);
         this.minKarma = 0;
         this.maxKarma = 0;

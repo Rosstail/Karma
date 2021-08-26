@@ -1,8 +1,9 @@
 package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
-import fr.rosstail.karma.apis.Calculator;
+import fr.rosstail.karma.apis.ExpressionCalculator;
 import fr.rosstail.karma.commands.list.Commands;
+import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
@@ -65,7 +66,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                       player = ((Player) sender).getPlayer();
                       expression = adaptMessage.message(player, expression, null);
                   }
-                  double result = Calculator.eval(expression);
+                  double result = ExpressionCalculator.eval(expression);
 
                   sender.sendMessage(adaptMessage.message(player,
                           LangManager.getMessage(LangMessage.CALCULATION)
@@ -75,7 +76,13 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                   errorMessage(sender, new ArrayIndexOutOfBoundsException());
               }
           }
-        } else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
+        } else if (string.startsWith(COMMAND_KARMA_RELOAD.getCommand())) {
+            if (canLaunchCommand(sender, COMMAND_KARMA_RELOAD)) {
+                ConfigData.initKarmaValues(Karma.getInstance().getCustomConfig());
+                sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.RELOAD), null));
+            }
+        }
+        else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
                 sender.sendMessage(adaptMessage.listMessage(null, LangManager.getListMessage(LangMessage.HELP)));
             }
@@ -103,6 +110,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             commands.add("reset");
             commands.add("help");
             commands.add("calculate");
+            commands.add("reload");
             StringUtil.copyPartialMatches(args[0], commands, completions);
         } else if (args.length == 2) {
             if (!string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
