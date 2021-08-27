@@ -1,4 +1,4 @@
-package fr.rosstail.karma.times;
+package fr.rosstail.karma.timeManagement.times;
 
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -9,7 +9,7 @@ public class WorldsTimes {
     private final long endTime;
     private final byte rate;
 
-    WorldsTimes(ConfigurationSection section, String name) {
+    public WorldsTimes(ConfigurationSection section, String name) {
         this.name = name;
 
         this.startTime = formatToLong(section.getString("start-time"));
@@ -17,9 +17,9 @@ public class WorldsTimes {
         this.rate = (byte) section.getInt("rate");
     }
 
-    private long formatToLong(String formatedHour) {
-        String[] convMinHourMin = formatedHour.split(":", 2);
-        long hour = (long) (1000 * Integer.parseInt(convMinHourMin[0]) + 16.66 * Integer
+    private long formatToLong(String formattedTime) {
+        String[] convMinHourMin = formattedTime.split(":", 2);
+        long hour = (long) (1000L * Integer.parseInt(convMinHourMin[0]) + 16.66 * Integer
                 .parseInt(convMinHourMin[1])) + 18000L;
         if (hour > 24000L) {
             hour -= 24000L;
@@ -44,6 +44,8 @@ public class WorldsTimes {
     }
 
     public boolean roll() {
-        return Math.random() * 100 <= rate;
+        double diceRoll = Math.random() * 100;
+        boolean bool = diceRoll <= rate;
+        return bool;
     }
 }

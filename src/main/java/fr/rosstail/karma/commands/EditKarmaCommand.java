@@ -1,6 +1,7 @@
 package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
@@ -48,10 +49,8 @@ public class EditKarmaCommand {
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerData playerData = PlayerData.gets(player, plugin);
-                playerData.setKarma(value);
-                playerData.setOverTimerChange();
-                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.SET_KARMA), PlayerType.player.getId()));
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.SET_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }
@@ -77,9 +76,8 @@ public class EditKarmaCommand {
             }
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
-                playerData.setKarma(playerData.getKarma() + value);
-                playerData.setOverTimerChange();
-                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.ADD_KARMA), PlayerType.player.getId()));
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, true);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.ADD_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }
@@ -105,9 +103,8 @@ public class EditKarmaCommand {
             }
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player, plugin);
-                playerData.setKarma(playerData.getKarma() - value);
-                playerData.setOverTimerChange();
-                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.REMOVE_KARMA), PlayerType.player.getId()));
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, true);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.REMOVE_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }
@@ -129,18 +126,19 @@ public class EditKarmaCommand {
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerData playerData = PlayerData.gets(player, plugin);
                 double resKarma = karmaValues.getDefaultKarma();
-
-                playerData.setKarma(resKarma);
-                playerData.setOverTimerChange();
-
-                sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.RESET_KARMA), PlayerType.player.getId()));
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, true);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
             }
         }
     }
 
-
+    private void tryKarmaChange(PlayerKarmaChangeEvent playerKarmaChangeEvent, CommandSender sender, LangMessage message) {
+        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        if (!playerKarmaChangeEvent.isCancelled()) {
+            sender.sendMessage(adaptMessage.message(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.getId()));
+        }
+    }
 }

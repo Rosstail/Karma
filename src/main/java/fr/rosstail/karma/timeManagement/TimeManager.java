@@ -1,6 +1,9 @@
-package fr.rosstail.karma.times;
+package fr.rosstail.karma.timeManagement;
 
 import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.configData.ConfigData;
+import fr.rosstail.karma.timeManagement.times.SystemTimes;
+import fr.rosstail.karma.timeManagement.times.WorldsTimes;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -17,6 +20,7 @@ public class TimeManager {
     private static TimeManager timeManager;
     private final List<SystemTimes> systemTimes;
     private final List<WorldsTimes> worldTimes;
+    private final String type = ConfigData.getConfigData().getUseTimeValue();
 
     public static void initTimeManager(Karma plugin) {
         if (timeManager == null) {
@@ -27,6 +31,7 @@ public class TimeManager {
     TimeManager(Karma plugin) {
         FileConfiguration config = plugin.getCustomConfig();
         ArrayList<SystemTimes> systemTimes = new ArrayList<>();
+        ArrayList<WorldsTimes> worldsTimes = new ArrayList<>();
         for (String timeName : config.getConfigurationSection("times.system-times").getKeys(false)) {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("times.system-times." + timeName);
             if (tierConfigSection != null) {
@@ -35,17 +40,29 @@ public class TimeManager {
         }
         this.systemTimes = systemTimes;
 
-        ArrayList<WorldsTimes> worldTimes = new ArrayList<>();
         for (String timeName : config.getConfigurationSection("times.worlds-times").getKeys(false)) {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("times.worlds-times." + timeName);
             if (tierConfigSection != null) {
-                systemTimes.add(new SystemTimes(tierConfigSection, timeName));
+                worldsTimes.add(new WorldsTimes(tierConfigSection, timeName));
             }
         }
-        this.worldTimes = worldTimes;
+        this.worldTimes = worldsTimes;
     }
 
-    public static boolean getSystemTime() {
+    public boolean isPlayerInTime(Player player) {
+        if (type != null && !type.equalsIgnoreCase("NONE")) {
+            if (type.equalsIgnoreCase("BOTH")) {
+                return isPlayerInSystemTime() || isPlayerInWorldTime(player);
+            } else if (type.equalsIgnoreCase("SYSTEM")) {
+                return isPlayerInSystemTime();
+            } else if (type.equalsIgnoreCase("WORLDS")) {
+                return isPlayerInWorldTime(player);
+            }
+        }
+        return true;
+    }
+
+    public boolean isPlayerInSystemTime() {
         Date now = new Date(System.currentTimeMillis());
         SimpleDateFormat hhmmFormat = new SimpleDateFormat("HH:mm");
         String formattedNow = hhmmFormat.format(now);
@@ -66,11 +83,11 @@ public class TimeManager {
         return false;
     }
 
-    public static boolean getPlayerWorldTime(Player player) {
+    public boolean isPlayerInWorldTime(Player player) {
         World world = player.getWorld();
         long worldTime = world.getTime();
 
-        for (WorldsTimes worldsTimes: getTimeManager().getWorldTimes()) {
+        for (WorldsTimes worldsTimes: getWorldTimes()) {
             if (worldsTimes.getStartTime() <= worldsTimes.getEndTime()) {
                 if (worldsTimes.getStartTime() <= worldTime && worldsTimes.getEndTime() >= worldTime) {
                     return worldsTimes.roll();

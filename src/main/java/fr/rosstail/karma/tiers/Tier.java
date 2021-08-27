@@ -15,9 +15,7 @@ public class Tier {
     private final List<String> joinCommands;
     private final List<String> joinOnDownCommands;
     private final List<String> joinOnUpCommands;
-
     private final List<String> killedCommands;
-
 
 
     Tier(ConfigurationSection section, String name) {
@@ -30,17 +28,17 @@ public class Tier {
         this.display = ChatColor.translateAlternateColorCodes('&', display);
         this.minKarma = section.getDouble("minimum");
         this.maxKarma = section.getDouble("maximum");
-        this.joinCommands = section.getStringList("join-commands");
-        this.joinOnDownCommands = section.getStringList("join-on-down-commands");
-        this.joinOnUpCommands = section.getStringList("join-on-up-commands");
-        this.killedCommands = section.getStringList("killed-commands");
+        this.joinCommands = section.getStringList("commands.join-commands");
+        this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
+        this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
+        this.killedCommands = section.getStringList("commands.killed-commands.commands");
     }
 
     /**
      * NULL TIER
      */
     Tier(String display) {
-        this.name = "none";
+        this.name = null;
         this.display = ChatColor.translateAlternateColorCodes('&', display);
         this.minKarma = 0;
         this.maxKarma = 0;

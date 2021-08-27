@@ -1,11 +1,12 @@
 package fr.rosstail.karma.commands;
 
 import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.apis.ExpressionCalculator;
 import fr.rosstail.karma.commands.list.Commands;
+import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.lang.LangMessage;
-import fr.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,6 +18,8 @@ import org.bukkit.util.StringUtil;
 
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static fr.rosstail.karma.commands.list.Commands.*;
 /**
@@ -54,11 +57,59 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             editKarmaCommand.karmaRemove(sender, args);
         } else if (string.startsWith(COMMAND_KARMA_RESET.getCommand())) {
             editKarmaCommand.karmaReset(sender, args);
-        } else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
+        } else if (string.startsWith(COMMAND_KARMA_CALCULATE.getCommand())) {
+          if (canLaunchCommand(sender, COMMAND_KARMA_CALCULATE)) {
+              if (args.length > 1) {
+                  ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
+                  expressionList.remove("calculate");
+                  String expression = String.join(" ", expressionList);
+                  Player player = null;
+                  if (sender instanceof Player) {
+                      player = ((Player) sender).getPlayer();
+                      expression = adaptMessage.message(player, expression, null);
+                  }
+                  double result = ExpressionCalculator.eval(expression);
+
+                  sender.sendMessage(adaptMessage.message(player,
+                          LangManager.getMessage(LangMessage.CALCULATION)
+                                  .replaceAll("%expression%", expression).replaceAll("%result%", String.valueOf(result))
+                          , null));
+              } else {
+                  errorMessage(sender, new ArrayIndexOutOfBoundsException());
+              }
+          }
+        } else if (string.startsWith(COMMAND_KARMA_RELOAD.getCommand())) {
+            if (canLaunchCommand(sender, COMMAND_KARMA_RELOAD)) {
+                ConfigData.initKarmaValues(Karma.getInstance().getCustomConfig());
+                sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.RELOAD), null));
+            }
+        }
+        else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
                 sender.sendMessage(adaptMessage.listMessage(null, LangManager.getListMessage(LangMessage.HELP)));
             }
-        } else {
+        } /*else if (string.startsWith("test")) { //EXPERIMENTATIONS TO MAKE CALCULATIONS WITH SOME EVALS ON eval(X) PLACEHOLDERS
+            if (args.length >= 2) {
+                ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
+                argList.remove("test");
+                String arg = String.join(" ", argList);
+                if (arg.contains("eval")) {
+                    if (arg.matches("^eval\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\)$")) {
+                        Pattern p = Pattern.compile("^eval\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\)$");
+                        Matcher m = p.matcher(arg);
+
+                        while (m.find()) {
+                            String matched = m.group();
+                            if (arg.contains(matched)) {
+                                String value = String.valueOf(ExpressionCalculator.eval(matched.replace("eval", "")));
+                                arg = arg.replaceAll(matched, value);
+                            }
+                        }
+                    }
+                    sender.sendMessage(arg);
+                }
+            }
+        }*/ else {
             Player playerSender = null;
             if (sender instanceof Player) {
                 playerSender = ((Player) sender).getPlayer();
@@ -81,6 +132,8 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             commands.add("remove");
             commands.add("reset");
             commands.add("help");
+            commands.add("calculate");
+            commands.add("reload");
             StringUtil.copyPartialMatches(args[0], commands, completions);
         } else if (args.length == 2) {
             if (!string.startsWith(COMMAND_KARMA_HELP.getCommand())) {

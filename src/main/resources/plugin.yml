@@ -1,5 +1,5 @@
 name: Karma
-version: 1.6.2
+version: 1.7.0
 description: Make your players actions have consequences !
 api-version: 1.15
 author: Rosstail
@@ -44,6 +44,11 @@ commands:
     usage: /karma [player] reset
     permission: karma.reset
     permission-message: You don't have permission !
+  karma calculate:
+    description: Calculate a mathematical formula
+    usage: /karma [expression]
+    permission: karma.calculate
+    permission-message: You don't have permission !
   karma reload:
     description: Reloads the plugin configuration
     usage: /karma reload
@@ -67,6 +72,8 @@ permissions:
     default: op
   karma.reset:
     default: op
+  karma.calculate:
+    default: false
   karmaa.reload:
     default: op
   karma.*:
@@ -81,3 +88,5 @@ permissions:
       karma.add: true
       karma.remove: true
       karma.reset: true
+      karma.calculate: true
+      karma.reload: true

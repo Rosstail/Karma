@@ -1,6 +1,7 @@
 package fr.rosstail.karma.lang;
 
 import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.apis.ExpressionCalculator;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.events.Reasons;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AdaptMessage {
 
