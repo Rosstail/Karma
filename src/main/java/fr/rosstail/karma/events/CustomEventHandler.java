@@ -6,9 +6,9 @@ import fr.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
 import fr.rosstail.karma.customEvents.PlayerKarmaHasChangedEvent;
 import fr.rosstail.karma.customEvents.PlayerTierChangeEvent;
 import fr.rosstail.karma.customEvents.PlayerTierHasChangedEvent;
-import fr.rosstail.karma.datas.DataHandler;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.tiers.Tier;
+import fr.rosstail.karma.timeManagement.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -38,7 +38,6 @@ public class CustomEventHandler implements Listener {
         if (event.isOverTimeChange()) {
             playerData.setOverTimerChange();
         }
-
         PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(event.getPlayer(), playerData.getKarma(), event.isOverTimeChange());
         Bukkit.getPluginManager().callEvent(playerKarmaHasChangedEvent);
     }
@@ -129,7 +128,9 @@ public class CustomEventHandler implements Listener {
         }
         Player killer = victim.getKiller();
         if (!(killer == null || Fights.isPlayerNPC(killer))) {
-            Fights.pvpHandler(killer, victim, Reasons.KILL);
+            if (victim != killer) {
+                Fights.pvpHandler(killer, victim, Reasons.KILL);
+            }
         }
     }
 
@@ -155,7 +156,7 @@ public class CustomEventHandler implements Listener {
 
         Player attacker = getFightAttacker(event);
         if (attacker != null) {
-            if (Fights.isPlayerNPC(attacker) || DataHandler.getTime(attacker)) {
+            if (Fights.isPlayerNPC(attacker) || TimeManager.getTimeManager().isPlayerInTime(attacker)) {
                 return;
             }
 

@@ -1,4 +1,4 @@
-package fr.rosstail.karma.times;
+package fr.rosstail.karma.timeManagement.times;
 
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -9,7 +9,7 @@ public class SystemTimes {
     private final String endTime;
     private final byte rate;
 
-    SystemTimes(ConfigurationSection section, String name) {
+    public SystemTimes(ConfigurationSection section, String name) {
         this.name = name;
 
         this.startTime = section.getString("start-time");

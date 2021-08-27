@@ -51,58 +51,69 @@ tiers:
       display: "&4Criminal"
       minimum: -3000
       maximum: -1500
-      join-commands:
-        - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
-      join-on-down-commands:
-        - "player message &cEverybody is now trying to kill you."
-      killed-commands:
-        - "jail %victim% jail %karma_victim_karma%"
-        - "karma set %victim% -3000"
-        - "broadcast %victim% &ahas been arrested for %karma_victim_previous_karma% minutes by %attacker% !"
+      commands:
+        join-commands:
+          - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
+        join-on-down-commands:
+          - "player message &cEverybody is now trying to kill you."
+        killed-commands:
+          sheriff:
+            - "jail %victim% jail %karma_victim_karma%"
+            - "karma set %victim% -3000"
+            - "broadcast %victim% &ahas been arrested for %karma_victim_previous_karma% minutes by %attacker% !"
     thug:
       display: "&5Thug"
       minimum: -1499
       maximum: -50
-      join-commands:
-        - "player message &fYou are now a filthy %karma_player_tier% &r."
-        - "player me &5is now in the dark side of the law."
-      join-on-down-commands:
-        - "player message &bThe police is now hunting you."
-      join-on-up-commands:
-        - "playermessage &aKeep a low profile."
-      killed-commands:
-        - "jail %victim% jail %karma_victim_karma%"
-        - "karma set %victim% -1499"
-        - "broadcast %victim% loss a fight against %attacker% with the tier identifier %karma_attacker_tier%!"
+      commands:
+        join-commands:
+          - "player message &fYou are now a filthy %karma_player_tier% &r."
+          - "player me &5is now in the dark side of the law."
+        join-on-down-commands:
+          - "player message &bThe police is now hunting you."
+        join-on-up-commands:
+          - "playermessage &aKeep a low profile."
+        killed-commands:
+          commands:
+            - "jail %victim% jail %karma_victim_karma%"
+            - "karma set %victim% -1499"
+            - "broadcast %victim% loss a fight against %attacker% with the tier identifier %karma_attacker_tier%!"
     citizen:
       display: "&fCitizen"
       minimum: -49
       maximum: 500
-      join-commands:
-        - "playermessage &fYou are a %karma_player_tier_display% &r."
-        - "playermessage &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
+      commands:
+        join-commands:
+          - "playermessage &fYou are a %karma_player_tier_display% &r."
+          - "playermessage &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
     vigilante:
       display: "&aVigilante"
       minimum: 501
       maximum: 1250
-      join-commands:
-        - "player message &fYour are a %karma_player_tier_display% &r."
-      join-on-up-commands:
-        - "player message &bYou can help the police now."
-      join-on-down-commands:
-        - "player message &bYou have been demoted from the police forces."
-      killed-commands:
-        - "attacker message You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
+      commands:
+        join-commands:
+          - "player message &fYour are a %karma_player_tier_display% &r."
+        join-on-up-commands:
+          - "player message &bYou can help the police now."
+        join-on-down-commands:
+          - "player message &bYou have been demoted from the police forces."
+        killed-commands:
+          commands:
+            - "attacker message You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
     sheriff:
       display: "&6Sheriff"
       minimum: 1251
       maximum: 1500
-      join-commands:
-        - "player message &fYour wanted level is now %karma_player_tier_display% &r."
-      join-on-up-commands:
-        - "player message &bYou are got promoted from %karma_player_previous_tier_display%."
-      killed-commands:
-        - "broadcast %victim% has been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
+      commands:
+        join-commands:
+          - "player message &fYour wanted level is now %karma_player_tier_display% &r."
+        join-on-up-commands:
+          - "player message &bYou are got promoted from %karma_player_previous_tier_display%."
+        killed-commands:
+          commands:
+            - "broadcast %victim% has been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
+          criminal:
+            - "victim message %attacker% was in Criminal tier when he killed you."
 
 times:
   use-both-system-and-worlds-time: "NONE" #can be replaced by WORLDS, SYSTEM and BOTH or NONE
@@ -137,9 +148,9 @@ pvp:
   # You can make your own expression, any error will lead to a result of 0.
   hit-reward-expression:  (-1 * (%karma_victim_karma% + 200) / 50)
   kill-reward-expression:  (-1 * (%karma_victim_karma% + 200) / 10)
-  crime-time: #if a player attacks another one, everybody can strikes him back without karma changes (unless if the defender is an aggressor)
+  crime-time: #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is an aggressor)
     enable: true
-    delay: 300 #delay in second that a player is an agressor.
+    delay: 300 #delay in second that a player is an aggressor.
     # Enable or not the karma change if the defender won/less some karma or stay at the same karma.
     # Useful for avoid messages in a future update too.
     active-on-up: true

@@ -1,16 +1,20 @@
 package fr.rosstail.karma.configData;
 
+import fr.rosstail.karma.Karma;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ConfigData {
     private static ConfigData configValues;
-
+    private final String pluginName = Karma.getInstance().getName();
     private final double defaultKarma;
     private final double minKarma;
     private final double maxKarma;
+
+    private final String killedByTierPath;
 
     private final int decNumber;
     private final int saveDelay;
@@ -33,6 +37,8 @@ public class ConfigData {
     private final boolean pvpCrimeTimeOnStill;
     private final boolean pvpCrimeTimeOnDown;
 
+    private final String useTimeValue;
+
     private final String dateTimeFormat;
     private final String pvpHitRewardExpression;
     private final String pvpKillRewardExpression;
@@ -45,6 +51,8 @@ public class ConfigData {
         defaultKarma = config.getDouble("karma.default-karma");
         minKarma = config.getDouble("karma.minimum");
         maxKarma = config.getDouble("karma.maximum");
+
+        killedByTierPath = "tiers.list.%" + pluginName.toLowerCase() + "_victim_tier%.commands.killed-commands.%" + pluginName.toLowerCase() + "_attacker_tier%";
 
         decNumber = config.getInt("general.decimal-number-to-show");
         pvpCrimeTimeDelay = config.getLong("pvp.crime-time.delay") * 1000;
@@ -78,6 +86,8 @@ public class ConfigData {
         pvpHitMessageKarmaDecrease = config.getString("pvp.hit-message-on-karma-decrease");
         pvpKillMessageKarmaDecrease = config.getString("pvp.kill-message-on-karma-decrease");
         dateTimeFormat = config.getString("general.date-time-format");
+
+        useTimeValue = config.getString("times.use-both-system-and-worlds-time");
     }
 
     public static void initKarmaValues(FileConfiguration config) {
@@ -98,6 +108,10 @@ public class ConfigData {
 
     public double getMaxKarma() {
         return maxKarma;
+    }
+
+    public String getKilledByTierPath() {
+        return killedByTierPath;
     }
 
     public int getDecNumber() {
@@ -197,5 +211,9 @@ public class ConfigData {
 
     public long getPvpCrimeTimeDelay() {
         return pvpCrimeTimeDelay;
+    }
+
+    public String getUseTimeValue() {
+        return useTimeValue;
     }
 }

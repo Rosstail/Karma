@@ -15,7 +15,7 @@ import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
 import fr.rosstail.karma.tiers.TierManager;
-import fr.rosstail.karma.times.TimeManager;
+import fr.rosstail.karma.timeManagement.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;

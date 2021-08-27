@@ -18,6 +18,8 @@ import org.bukkit.util.StringUtil;
 
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static fr.rosstail.karma.commands.list.Commands.*;
 /**
@@ -86,7 +88,28 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
                 sender.sendMessage(adaptMessage.listMessage(null, LangManager.getListMessage(LangMessage.HELP)));
             }
-        } else {
+        } /*else if (string.startsWith("test")) { //EXPERIMENTATIONS TO MAKE CALCULATIONS WITH SOME EVALS ON eval(X) PLACEHOLDERS
+            if (args.length >= 2) {
+                ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
+                argList.remove("test");
+                String arg = String.join(" ", argList);
+                if (arg.contains("eval")) {
+                    if (arg.matches("^eval\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\)$")) {
+                        Pattern p = Pattern.compile("^eval\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\)$");
+                        Matcher m = p.matcher(arg);
+
+                        while (m.find()) {
+                            String matched = m.group();
+                            if (arg.contains(matched)) {
+                                String value = String.valueOf(ExpressionCalculator.eval(matched.replace("eval", "")));
+                                arg = arg.replaceAll(matched, value);
+                            }
+                        }
+                    }
+                    sender.sendMessage(arg);
+                }
+            }
+        }*/ else {
             Player playerSender = null;
             if (sender instanceof Player) {
                 playerSender = ((Player) sender).getPlayer();

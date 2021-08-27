@@ -413,6 +413,7 @@ public class PlayerData {
     private static void placeCommands(Player attacker, Player victim, String command) {
         command = adaptMessage.message(attacker, command, PlayerType.attacker.getId());
         command = adaptMessage.message(victim, command, PlayerType.victim.getId());
+
         command = ChatColor.translateAlternateColorCodes('&', command);
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
