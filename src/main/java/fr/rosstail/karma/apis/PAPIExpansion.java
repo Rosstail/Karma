@@ -8,9 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class PAPIExpansion extends PlaceholderExpansion {
     // We get an instance of the plugin later.

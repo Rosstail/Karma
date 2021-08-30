@@ -18,8 +18,6 @@ import org.bukkit.util.StringUtil;
 
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static fr.rosstail.karma.commands.list.Commands.*;
 /**
@@ -30,10 +28,10 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private final CheckKarmaCommand checkKarmaCommand;
     private final EditKarmaCommand editKarmaCommand;
 
-    public KarmaCommand(Karma plugin) {
+    public KarmaCommand() {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
         this.checkKarmaCommand = new CheckKarmaCommand(this);
-        this.editKarmaCommand = new EditKarmaCommand(this, plugin);
+        this.editKarmaCommand = new EditKarmaCommand(this);
     }
 
     @Override
@@ -80,7 +78,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
           }
         } else if (string.startsWith(COMMAND_KARMA_RELOAD.getCommand())) {
             if (canLaunchCommand(sender, COMMAND_KARMA_RELOAD)) {
-                ConfigData.initKarmaValues(Karma.getInstance().getCustomConfig());
+                ConfigData.applyNewConfigValues(Karma.getInstance().getCustomConfig());
                 sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.RELOAD), null));
             }
         }

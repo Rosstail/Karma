@@ -20,11 +20,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class CustomEventHandler implements Listener {
-    private final Karma plugin;
-    private final ConfigData configData = ConfigData.getConfigData();
+    private static ConfigData configData = ConfigData.getConfigData();
 
-    public CustomEventHandler(Karma plugin) {
-        this.plugin = plugin;
+    public CustomEventHandler() {
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -213,5 +211,9 @@ public class CustomEventHandler implements Listener {
             return (Player) event.getDamager();
         }
         return null;
+    }
+
+    public static void setConfigData(ConfigData configData) {
+        CustomEventHandler.configData = configData;
     }
 }

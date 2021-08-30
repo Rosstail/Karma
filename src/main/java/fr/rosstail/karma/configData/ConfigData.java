@@ -1,6 +1,10 @@
 package fr.rosstail.karma.configData;
 
 import fr.rosstail.karma.Karma;
+import fr.rosstail.karma.datas.PlayerData;
+import fr.rosstail.karma.events.CustomEventHandler;
+import fr.rosstail.karma.events.Fights;
+import fr.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -214,5 +218,13 @@ public class ConfigData {
 
     public String getUseTimeValue() {
         return useTimeValue;
+    }
+
+    public static void applyNewConfigValues(FileConfiguration config) {
+        initKarmaValues(config);
+        PlayerData.setConfigData(configValues);
+        CustomEventHandler.setConfigData(configValues);
+        Fights.setConfigData(configValues);
+        AdaptMessage.getAdaptMessage().setConfigData(configValues);
     }
 }

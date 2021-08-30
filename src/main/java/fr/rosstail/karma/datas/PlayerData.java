@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class PlayerData {
     private static final Karma plugin = Karma.getInstance();
-    private static final ConfigData configData = ConfigData.getConfigData();
+    private static ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
     private static final Map<Player, PlayerData> playerList = new HashMap<Player, PlayerData>();
@@ -454,5 +454,9 @@ public class PlayerData {
 
     public void setOverTimerScheduler(int overTimerScheduler) {
         this.overTimerScheduler = overTimerScheduler;
+    }
+
+    public static void setConfigData(ConfigData configData) {
+        PlayerData.configData = configData;
     }
 }

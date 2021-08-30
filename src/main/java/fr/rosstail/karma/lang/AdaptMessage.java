@@ -26,7 +26,7 @@ public class AdaptMessage {
 
     private static AdaptMessage adaptMessage;
     private final Karma plugin;
-    private final ConfigData configData;
+    private ConfigData configData;
     private final boolean msgStyle;
 
     public AdaptMessage(Karma plugin) {
@@ -149,5 +149,9 @@ public class AdaptMessage {
             return PlaceholderAPI.setPlaceholders(player, message);
         }
         return message;
+    }
+
+    public void setConfigData(ConfigData configData) {
+        this.configData = configData;
     }
 }

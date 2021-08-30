@@ -75,8 +75,8 @@ public class Karma extends JavaPlugin implements Listener {
         }
         this.createPlayerDataFolder();
         
-        Bukkit.getPluginManager().registerEvents(new CustomEventHandler(this), this);
-        this.getCommand(getName().toLowerCase()).setExecutor(new KarmaCommand(this));
+        Bukkit.getPluginManager().registerEvents(new CustomEventHandler(), this);
+        this.getCommand(getName().toLowerCase()).setExecutor(new KarmaCommand());
     }
 
     private void prepareConnection() {

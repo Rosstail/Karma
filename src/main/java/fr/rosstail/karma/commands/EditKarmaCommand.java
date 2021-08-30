@@ -20,13 +20,11 @@ import static fr.rosstail.karma.commands.list.Commands.*;
  */
 public class EditKarmaCommand {
 
-    private final Karma plugin;
     private final AdaptMessage adaptMessage;
     private final KarmaCommand karmaCommand;
     private final ConfigData karmaValues;
 
-    public EditKarmaCommand(KarmaCommand karmaCommand, Karma plugin) {
-        this.plugin = plugin;
+    public EditKarmaCommand(KarmaCommand karmaCommand) {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
         this.karmaCommand = karmaCommand;
         this.karmaValues = ConfigData.getConfigData();

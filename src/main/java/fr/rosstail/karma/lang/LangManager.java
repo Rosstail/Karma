@@ -1,7 +1,5 @@
 package fr.rosstail.karma.lang;
 
-import fr.rosstail.karma.Karma;
-
 import java.util.Collections;
 import java.util.List;
 

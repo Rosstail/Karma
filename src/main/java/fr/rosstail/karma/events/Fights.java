@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
 public class Fights {
 
     private static final Karma plugin = Karma.getInstance();
-    private static final ConfigData configData = ConfigData.getConfigData();
+    private static ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
     public static void pvpHandler(Player attacker, Player victim, Reasons reason) {
@@ -134,7 +134,6 @@ public class Fights {
     public static void pveHandler(Player attacker, LivingEntity entity, Reasons reason) {
         String entityName = entity.getName();
         YamlConfiguration config = plugin.getCustomConfig();
-        ConfigData configData = ConfigData.getConfigData();
         double reward = config.getInt("entities." + entityName + "." + reason.getText()  + "-karma-reward");
         if (reward == 0) {
             return;
@@ -164,7 +163,6 @@ public class Fights {
     }
 
     public static boolean doesDefendChangeKarma(double attackerInitialKarma, double attackerNewKarma) {
-        ConfigData configData = ConfigData.getConfigData();
         if (attackerNewKarma > attackerInitialKarma) {
             return !configData.isPvpCrimeTimeOnUp();
         } else if (attackerNewKarma == attackerInitialKarma) {
@@ -172,5 +170,9 @@ public class Fights {
         } else {
             return !configData.isPvpCrimeTimeOnDown();
         }
+    }
+
+    public static void setConfigData(ConfigData configData) {
+        Fights.configData = configData;
     }
 }
