@@ -159,7 +159,7 @@ pvp:
   #Sends a message to the attacker when hitting / killing another player. You can use any local placeholder with attacker or victim instead of player.
   hit-message-on-karma-increase: "&aThat scum will not escape from that !"
   kill-message-on-karma-increase: "&b%victim% is now finished !"
-  hit-message-on-karma-decrease: "&c%attacker%, you attack a honnest people !"
+  hit-message-on-karma-decrease: "&c%attacker%, you attack a honest people !"
   kill-message-on-karma-decrease: "&cSonovabitch !"
 
 entities:
