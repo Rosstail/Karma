@@ -75,7 +75,7 @@ public class EditKarmaCommand {
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerData playerData = PlayerData.gets(player, plugin);
+                PlayerData playerData = PlayerData.gets(player);
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, true);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.ADD_KARMA);
             } else {
@@ -102,7 +102,7 @@ public class EditKarmaCommand {
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerData playerData = PlayerData.gets(player, plugin);
+                PlayerData playerData = PlayerData.gets(player);
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, true);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.REMOVE_KARMA);
             } else {

@@ -5,11 +5,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
-import java.util.Locale;
 
 public class ConfigData {
     private static ConfigData configValues;
-    private final String pluginName = Karma.getInstance().getName();
     private final double defaultKarma;
     private final double minKarma;
     private final double maxKarma;
@@ -52,6 +50,7 @@ public class ConfigData {
         minKarma = config.getDouble("karma.minimum");
         maxKarma = config.getDouble("karma.maximum");
 
+        String pluginName = Karma.getInstance().getName();
         killedByTierPath = "tiers.list.%" + pluginName.toLowerCase() + "_victim_tier%.commands.killed-commands.%" + pluginName.toLowerCase() + "_attacker_tier%";
 
         decNumber = config.getInt("general.decimal-number-to-show");

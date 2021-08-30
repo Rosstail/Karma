@@ -2,10 +2,7 @@ package fr.rosstail.karma.events;
 
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.configData.ConfigData;
-import fr.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
-import fr.rosstail.karma.customEvents.PlayerKarmaHasChangedEvent;
-import fr.rosstail.karma.customEvents.PlayerTierChangeEvent;
-import fr.rosstail.karma.customEvents.PlayerTierHasChangedEvent;
+import fr.rosstail.karma.customEvents.*;
 import fr.rosstail.karma.datas.PlayerData;
 import fr.rosstail.karma.tiers.Tier;
 import fr.rosstail.karma.timeManagement.TimeManager;
@@ -14,6 +11,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -31,14 +29,15 @@ public class CustomEventHandler implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKarmaChange(PlayerKarmaChangeEvent event) {
-        PlayerData playerData = PlayerData.getPlayerList().get(event.getPlayer());
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.getPlayerList().get(player);
 
         playerData.setKarma(event.getValue());
 
         if (event.isOverTimeChange()) {
-            playerData.setOverTimerChange();
+            PlayerData.setOverTimerChange(player);
         }
-        PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(event.getPlayer(), playerData.getKarma(), event.isOverTimeChange());
+        PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeChange());
         Bukkit.getPluginManager().callEvent(playerKarmaHasChangedEvent);
     }
 
@@ -59,7 +58,8 @@ public class CustomEventHandler implements Listener {
         Bukkit.getPluginManager().callEvent(playerTierHasChangedEvent);
     }
 
-    @EventHandler void onPlayerTierHasChanged(PlayerTierHasChangedEvent event) {
+    @EventHandler
+    public void onPlayerTierHasChanged(PlayerTierHasChangedEvent event) {
         Player player = event.getPlayer();
         Tier tier = event.getTier();
         PlayerData playerData = PlayerData.getPlayerList().get(player);
@@ -67,7 +67,7 @@ public class CustomEventHandler implements Listener {
         double karma = playerData.getKarma();
         double previousKarma = playerData.getPreviousKarma();
 
-        playerData.changePlayerTierMessage();
+        PlayerData.changePlayerTierMessage(player);
         PlayerData.commandsLauncher(player, tier.getJoinCommands());
         if (previousTier != null) {
             if (karma > previousKarma) {
@@ -79,22 +79,57 @@ public class CustomEventHandler implements Listener {
     }
 
     @EventHandler
+    public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
+        if (!event.isCancelled()) {
+            Player player = event.getPlayer();
+            PlayerData.triggerOverTime(player);
+            PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
+            Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerOverTimeHasTriggeredEvent(PlayerOverTimeHasTriggeredEvent event) {
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onPlayerOverTimeHighestResetEvent(PlayerOverTimeResetEvent event) {
+        event.setTriggerID(PlayerData.gets(event.getPlayer()).getOverTimerScheduler());
+    }
+
+    @EventHandler
+    public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
+        if (!event.isCancelled()) {
+            Player player = event.getPlayer();
+            PlayerData playerData = PlayerData.gets(player);
+            PlayerData.setOverTimerChange(player);
+
+            PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player, playerData.getOverTimerScheduler());
+            Bukkit.getPluginManager().callEvent(hasResetEvent);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerOverTimeHasResetEvent(PlayerOverTimeHasResetEvent event) {
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         int delay = configData.getSaveDelay();
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player, plugin);
+        PlayerData playerData = PlayerData.gets(player);
         playerData.initPlayerData();
         playerData.setUpdateDataTimer(delay);
-        playerData.setOverTimerChange();
+        PlayerData.setOverTimerChange(player);
     }
 
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player, plugin);
+        PlayerData playerData = PlayerData.gets(player);
         playerData.getUpdateDataTimer().cancel();
         playerData.updateData();
-        playerData.stopOverTimer();
+        PlayerData.stopOverTimer(player);
     }
 
     /**

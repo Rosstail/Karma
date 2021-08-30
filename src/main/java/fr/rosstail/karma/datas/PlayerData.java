@@ -3,6 +3,7 @@ package fr.rosstail.karma.datas;
 import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
+import fr.rosstail.karma.customEvents.PlayerOverTimeTriggerEvent;
 import fr.rosstail.karma.customEvents.PlayerTierChangeEvent;
 import fr.rosstail.karma.lang.AdaptMessage;
 import fr.rosstail.karma.lang.LangManager;
@@ -15,7 +16,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-//import org.graalvm.compiler.debug.TimeSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.*;
  * Gonna be used to optimize the research of values
  */
 public class PlayerData {
-    private final Karma plugin;
+    private static final Karma plugin = Karma.getInstance();
     private static final ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
@@ -44,8 +44,7 @@ public class PlayerData {
     private Timer updateDataTimer;
     private int overTimerScheduler;
 
-    private PlayerData(Karma plugin, Player player) {
-        this.plugin = plugin;
+    private PlayerData(Player player) {
         this.player = player;
         playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         loadPlayerData();
@@ -53,9 +52,9 @@ public class PlayerData {
         previousTier = tier;
     }
 
-    public static PlayerData gets(Player player, Karma plugin) {
+    public static PlayerData gets(Player player) {
         if(!playerList.containsKey(player)){ // If player doesn't have instance
-            playerList.put(player, new PlayerData(plugin, player));
+            playerList.put(player, new PlayerData(player));
         }
         return playerList.get(player);
     }
@@ -315,46 +314,58 @@ public class PlayerData {
         }, delay, delay);;
     }
 
-    public void setOverTimerChange() {
-        stopOverTimer();
+    public static void setOverTimerChange(Player player) {
+        PlayerData playerData = PlayerData.gets(player);
+        stopOverTimer(player);
         if (!ConfigData.getConfigData().isOvertimeActive()) {
             return;
         }
-        this.overTimerScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            double playerKarma = getKarma();
-            double karma = getKarma();
-            double decreaseValue = ConfigData.getConfigData().getOvertimeDecreaseValue();
-            double increaseValue = ConfigData.getConfigData().getOvertimeIncreaseValue();
-            if (decreaseValue > 0) {
-                double decreaseLimit = ConfigData.getConfigData().getOvertimeDecreaseLimit();
-                if (playerKarma > decreaseLimit) {
-                    karma = getKarma() - decreaseValue;
-                    if (karma < decreaseLimit) {
-                        karma = decreaseLimit;
-                    }
-                }
-                commandsLauncher(player, ConfigData.getConfigData().getOvertimeDecreaseCommands());
-            }
-            if (increaseValue > 0) {
-                double increaseLimit = ConfigData.getConfigData().getOvertimeIncreaseLimit();
-                if (playerKarma < increaseLimit) {
-                    karma = getKarma() + increaseValue;
-                    if (karma > increaseLimit) {
-                        karma = increaseLimit;
-                    }
-                }
-                commandsLauncher(player, ConfigData.getConfigData().getOvertimeIncreaseCommands());
-            }
+        playerData.setOverTimerScheduler(setupNewOverTime(player));
+    }
 
-            if (karma != getKarma()) {
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, karma, false);
-                Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-            }
+    public static int setupNewOverTime(Player player) {
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player);
+            Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
         }, ConfigData.getConfigData().getOvertimeFirstDelay(), ConfigData.getConfigData().getOvertimeNextDelay());
     }
 
-    public void stopOverTimer() {
-        Bukkit.getScheduler().cancelTask(overTimerScheduler);
+    public static void triggerOverTime(Player player) {
+        PlayerData playerData = PlayerData.gets(player);
+        double currentKarma = playerData.getKarma();
+        double newKarma = currentKarma;
+        double decreaseValue = ConfigData.getConfigData().getOvertimeDecreaseValue();
+        double increaseValue = ConfigData.getConfigData().getOvertimeIncreaseValue();
+        if (decreaseValue > 0) {
+            double decreaseLimit = ConfigData.getConfigData().getOvertimeDecreaseLimit();
+            if (currentKarma > decreaseLimit) {
+                newKarma = currentKarma - decreaseValue;
+                if (newKarma < decreaseLimit) {
+                    newKarma = decreaseLimit;
+                }
+                commandsLauncher(player, ConfigData.getConfigData().getOvertimeDecreaseCommands());
+            }
+        }
+        if (increaseValue > 0) {
+            double increaseLimit = ConfigData.getConfigData().getOvertimeIncreaseLimit();
+            if (currentKarma < increaseLimit) {
+                newKarma = currentKarma + increaseValue;
+                if (newKarma > increaseLimit) {
+                    newKarma = increaseLimit;
+                }
+                commandsLauncher(player, ConfigData.getConfigData().getOvertimeIncreaseCommands());
+            }
+        }
+
+        if (newKarma != currentKarma) {
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false);
+            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        }
+    }
+
+    public static void stopOverTimer(Player player) {
+        PlayerData playerData = PlayerData.gets(player);
+        Bukkit.getScheduler().cancelTask(playerData.getOverTimerScheduler());
     }
 
     /**
@@ -368,7 +379,7 @@ public class PlayerData {
         lastAttack = new Timestamp(System.currentTimeMillis());
     }
 
-    public void changePlayerTierMessage() {
+    public static void changePlayerTierMessage(Player player) {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
             player.sendMessage(adaptMessage.message(player, message, PlayerType.player.getId()));
@@ -435,5 +446,13 @@ public class PlayerData {
 
     public static Map<Player, PlayerData> getPlayerList() {
         return playerList;
+    }
+
+    public int getOverTimerScheduler() {
+        return overTimerScheduler;
+    }
+
+    public void setOverTimerScheduler(int overTimerScheduler) {
+        this.overTimerScheduler = overTimerScheduler;
     }
 }

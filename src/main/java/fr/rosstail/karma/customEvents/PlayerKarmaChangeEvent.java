@@ -23,7 +23,7 @@ public class PlayerKarmaChangeEvent extends Event implements Cancellable {
         this.cancelled = b;
     }
 
-    private Player player;
+    private final Player player;
     private double value;
     private boolean overTimeChange;
     private boolean cancelled;
@@ -38,10 +38,6 @@ public class PlayerKarmaChangeEvent extends Event implements Cancellable {
 
     public Player getPlayer() throws NullPointerException {
         return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public double getValue() {

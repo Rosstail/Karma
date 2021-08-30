@@ -30,8 +30,8 @@ public class Fights {
             return;
         }
 
-        PlayerData victimData = PlayerData.gets(victim, plugin);
-        PlayerData attackerData = PlayerData.gets(attacker, plugin);
+        PlayerData victimData = PlayerData.gets(victim);
+        PlayerData attackerData = PlayerData.gets(attacker);
         double attackerInitialKarma = attackerData.getKarma();
 
         if (reason.equals(Reasons.KILL)) {
@@ -140,7 +140,7 @@ public class Fights {
             return;
         }
 
-        PlayerData attackerData = PlayerData.gets(attacker, plugin);
+        PlayerData attackerData = PlayerData.gets(attacker);
         double attackerKarma = attackerData.getKarma();
 
         if (configData.doesUseWorldGuard()) {

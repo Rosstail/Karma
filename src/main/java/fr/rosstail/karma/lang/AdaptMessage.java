@@ -55,7 +55,7 @@ public class AdaptMessage {
         if (player != null) {
             message = message.replaceAll("%" + playerType + "%", player.getName());
             if (!player.hasMetadata("NPC")) {
-                PlayerData playerData = PlayerData.gets(player, plugin);
+                PlayerData playerData = PlayerData.gets(player);
                 double playerKarma = playerData.getKarma();
                 double playerPreviousKarma = playerData.getPreviousKarma();
 

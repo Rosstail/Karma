@@ -18,7 +18,7 @@ public class PlayerKarmaHasChangedEvent extends Event {
         return handlers;
     }
 
-    private Player player;
+    private final Player player;
     private double value;
     private boolean overTimeChange;
 
@@ -35,6 +35,10 @@ public class PlayerKarmaHasChangedEvent extends Event {
 
     public double getValue() {
         return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
     }
 
     public boolean isOverTimeChange() {
