@@ -1,6 +1,5 @@
 package fr.rosstail.karma.events;
 
-import fr.rosstail.karma.Karma;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.customEvents.*;
 import fr.rosstail.karma.datas.PlayerData;
@@ -139,7 +138,7 @@ public class CustomEventHandler implements Listener {
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity victim = event.getEntity();
         Player killer = victim.getKiller();
-        if (!CustomFightWorlds.isFightEnabledInWorld(victim.getWorld())) {
+        if (!WorldFights.isFightEnabledInWorld(victim.getWorld())) {
             return;
         }
 
@@ -156,7 +155,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
-        if (!CustomFightWorlds.isFightEnabledInWorld(victim.getWorld())) {
+        if (!WorldFights.isFightEnabledInWorld(victim.getWorld())) {
             return;
         }
         Player killer = victim.getKiller();
@@ -183,7 +182,7 @@ public class CustomEventHandler implements Listener {
         }
 
         victimEntity = (LivingEntity) event.getEntity();
-        if (!CustomFightWorlds.isFightEnabledInWorld(victimEntity.getWorld())) {
+        if (!WorldFights.isFightEnabledInWorld(victimEntity.getWorld())) {
             return;
         }
 

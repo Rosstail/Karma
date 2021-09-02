@@ -39,15 +39,21 @@ public class EditKarmaCommand {
         if (karmaCommand.canLaunchCommand(sender, COMMAND_KARMA_SET)) {
             Player player;
             double value;
+            boolean reset = true;
             try {
                 player = Bukkit.getServer().getPlayer(args[1]);
                 value = Double.parseDouble(args[2]);
+                try {
+                    reset = Boolean.parseBoolean(args[3]);
+                } catch (Exception ignored) {
+
+                }
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 karmaCommand.errorMessage(sender, e);
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, reset);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.SET_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -65,16 +71,22 @@ public class EditKarmaCommand {
         if (karmaCommand.canLaunchCommand(sender, COMMAND_KARMA_ADD)) {
             Player player;
             double value;
+            boolean reset = true;
             try {
                 player = Bukkit.getServer().getPlayer(args[1]);
                 value = Double.parseDouble(args[2]);
+                try {
+                    reset = Boolean.parseBoolean(args[3]);
+                } catch (Exception ignored) {
+
+                }
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 karmaCommand.errorMessage(sender, e);
                 return;
             }
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player);
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, true);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, reset);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.ADD_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -92,16 +104,22 @@ public class EditKarmaCommand {
         if (karmaCommand.canLaunchCommand(sender, COMMAND_KARMA_REMOVE)) {
             Player player;
             double value;
+            boolean reset = true;
             try {
                 player = Bukkit.getServer().getPlayer(args[1]);
                 value = Double.parseDouble(args[2]);
+                try {
+                    reset = Boolean.parseBoolean(args[3]);
+                } catch (Exception ignored) {
+
+                }
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 karmaCommand.errorMessage(sender, e);
                 return;
             }
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player);
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, true);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, reset);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.REMOVE_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -117,15 +135,21 @@ public class EditKarmaCommand {
     public void karmaReset(CommandSender sender, String[] args) {
         if (karmaCommand.canLaunchCommand(sender, COMMAND_KARMA_RESET)) {
             Player player;
+            boolean reset = true;
             try {
                 player = Bukkit.getServer().getPlayer(args[1]);
+                try {
+                    reset = Boolean.parseBoolean(args[2]);
+                } catch (Exception ignored) {
+
+                }
             } catch (ArrayIndexOutOfBoundsException e) {
                 karmaCommand.errorMessage(sender, e);
                 return;
             }
             if (player != null && player.isOnline()) {
                 double resKarma = karmaValues.getDefaultKarma();
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, true);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);

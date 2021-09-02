@@ -8,18 +8,18 @@ import org.bukkit.configuration.file.FileConfiguration;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomFightWorlds {
+public class WorldFights {
 
-    private static CustomFightWorlds customFightWorlds = null;
+    private static WorldFights worldFights = null;
     private final List<World> enabledWorlds;
 
     public static void setUp(Karma plugin) {
-        if (customFightWorlds == null) {
-            customFightWorlds = new CustomFightWorlds(plugin);
+        if (worldFights == null) {
+            worldFights = new WorldFights(plugin);
         }
     }
 
-    CustomFightWorlds(Karma plugin) {
+    WorldFights(Karma plugin) {
         ArrayList<World> tempList = new ArrayList<>();
 
         boolean isBlackList;
@@ -52,8 +52,8 @@ public class CustomFightWorlds {
         enabledWorlds = tempList;
     }
 
-    public static CustomFightWorlds getCustomFightWorlds() {
-        return customFightWorlds;
+    public static WorldFights getCustomFightWorlds() {
+        return worldFights;
     }
 
     public static List<World> getEnabledWorlds() {

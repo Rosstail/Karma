@@ -9,7 +9,7 @@ import fr.rosstail.karma.apis.PAPIExpansion;
 import fr.rosstail.karma.apis.WGPreps;
 import fr.rosstail.karma.commands.KarmaCommand;
 import fr.rosstail.karma.datas.FileResourcesUtils;
-import fr.rosstail.karma.events.CustomFightWorlds;
+import fr.rosstail.karma.events.WorldFights;
 import fr.rosstail.karma.events.CustomEventHandler;
 import fr.rosstail.karma.configData.ConfigData;
 import fr.rosstail.karma.lang.AdaptMessage;
@@ -51,7 +51,7 @@ public class Karma extends JavaPlugin implements Listener {
         }
 
         config = YamlConfiguration.loadConfiguration(fileConfig);
-        CustomFightWorlds.setUp(this);
+        WorldFights.setUp(this);
         ConfigData.initKarmaValues(this.getCustomConfig());
         TierManager.initTierManager(this);
         TimeManager.initTimeManager(this);

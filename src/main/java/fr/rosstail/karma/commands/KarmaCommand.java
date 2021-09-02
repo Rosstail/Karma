@@ -133,11 +133,29 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             commands.add("calculate");
             commands.add("reload");
             StringUtil.copyPartialMatches(args[0], commands, completions);
-        } else if (args.length == 2) {
-            if (!string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
+        } else if (args.length <= 2) {
+            if (string.startsWith(COMMAND_KARMA_CALCULATE.getCommand()) && sender.hasPermission(COMMAND_KARMA_CALCULATE.getPermission())) {
+                commands.add(ConfigData.getConfigData().getPvpHitRewardExpression());
+                commands.add(ConfigData.getConfigData().getPvpKillRewardExpression());
+            } else if (string.startsWith(COMMAND_KARMA_SET.getCommand()) || string.startsWith(COMMAND_KARMA_ADD.getCommand())
+                    || string.startsWith(COMMAND_KARMA_REMOVE.getCommand()) || string.startsWith(COMMAND_KARMA_RESET.getCommand())
+                    || string.startsWith(COMMAND_KARMA_CHECK.getCommand())) {
                 Bukkit.getOnlinePlayers().forEach(player -> commands.add(player.getName()));
             }
             StringUtil.copyPartialMatches(args[1], commands, completions);
+        } else if (args.length <= 3){
+            if (string.startsWith(COMMAND_KARMA_RESET.getCommand())) {
+                commands.add("true");
+                commands.add("false");
+            }
+            StringUtil.copyPartialMatches(args[2], commands, completions);
+        } else if (args.length <= 4){
+            if (string.startsWith(COMMAND_KARMA_SET.getCommand()) || string.startsWith(COMMAND_KARMA_ADD.getCommand())
+            || string.startsWith(COMMAND_KARMA_REMOVE.getCommand())) {
+                commands.add("true");
+                commands.add("false");
+            }
+            StringUtil.copyPartialMatches(args[3], commands, completions);
         }
         Collections.sort(completions);
         return completions;
