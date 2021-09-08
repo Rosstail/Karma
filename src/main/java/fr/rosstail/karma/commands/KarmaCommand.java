@@ -18,6 +18,8 @@ import org.bukkit.util.StringUtil;
 
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static fr.rosstail.karma.commands.list.Commands.*;
 /**
@@ -86,8 +88,10 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
                 sender.sendMessage(adaptMessage.listMessage(null, LangManager.getListMessage(LangMessage.HELP)));
             }
-        } /*else if (string.startsWith("test")) { //EXPERIMENTATIONS TO MAKE CALCULATIONS WITH SOME EVALS ON eval(X) PLACEHOLDERS
+        } else if (string.startsWith("test")) { //EXPERIMENTATIONS TO MAKE CALCULATIONS WITH SOME EVALS ON eval(X) PLACEHOLDERS
             if (args.length >= 2) {
+                /*
+                */
                 ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
                 argList.remove("test");
                 String arg = String.join(" ", argList);
@@ -106,8 +110,10 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                     }
                     sender.sendMessage(arg);
                 }
+                /*
+                 */
             }
-        }*/ else {
+        } else {
             Player playerSender = null;
             if (sender instanceof Player) {
                 playerSender = ((Player) sender).getPlayer();

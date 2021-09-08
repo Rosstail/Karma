@@ -7,11 +7,30 @@
     <groupId>io.github.Rosstail</groupId>
     <artifactId>Karma</artifactId>
     <version>1.7.1</version>
+    <packaging>jar</packaging>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Rosstail Apache Maven packages</name>
+            <url>https://maven.pkg.github.com/Rosstail/Karma</url>
+        </repository>
+    </distributionManagement>
+    <developers>
+        <developer>
+            <name>Rosstail</name>
+            <email>rosstail_zegeek@hotmail.fr</email>
+            <organization>org.github.rosstail</organization>
+            <organizationUrl>https://github.com/Rosstail/Karma</organizationUrl>
+        </developer>
+    </developers>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
