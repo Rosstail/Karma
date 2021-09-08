@@ -7,7 +7,7 @@ website: https://www.spigotmc.org/resources/karma.76077
 softdepend:
   - WorldGuard
   - PlaceholderAPI
-main: fr.rosstail.karma.Karma
+main: com.rosstail.karma.Karma
 commands:
   karma:
     description: Karma plugin by Rosstail
