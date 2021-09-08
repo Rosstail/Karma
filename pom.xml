@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.Rosstail</groupId>
-    <artifactId>Karma</artifactId>
+    <artifactId>karma</artifactId>
     <version>1.7.1</version>
     <packaging>jar</packaging>
 
