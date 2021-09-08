@@ -25,13 +25,13 @@ public class PlayerKarmaChangeEvent extends Event implements Cancellable {
 
     private final Player player;
     private double value;
-    private boolean overTimeChange;
+    private boolean overTimeReset;
     private boolean cancelled;
 
-    public PlayerKarmaChangeEvent(Player player, double value, boolean isOverTimeChange) {
+    public PlayerKarmaChangeEvent(Player player, double value, boolean isOverTimeReset) {
         this.player = player;
         this.value = value;
-        this.overTimeChange = isOverTimeChange;
+        this.overTimeReset = isOverTimeReset;
         this.cancelled = false;
     }
 
@@ -48,12 +48,12 @@ public class PlayerKarmaChangeEvent extends Event implements Cancellable {
         this.value = value;
     }
 
-    public boolean isOverTimeChange() {
-        return overTimeChange;
+    public boolean isOverTimeReset() {
+        return overTimeReset;
     }
 
-    public void setOverTimeChange(boolean overTimeChange) {
-        this.overTimeChange = overTimeChange;
+    public void setOverTimeReset(boolean overTimeReset) {
+        this.overTimeReset = overTimeReset;
     }
 
     @Override

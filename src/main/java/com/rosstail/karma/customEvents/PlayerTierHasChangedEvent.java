@@ -18,19 +18,11 @@ public class PlayerTierHasChangedEvent extends Event {
         return handlers;
     }
 
-    private Player player;
-    private Tier tier;
+    private final Player player;
+    private final Tier tier;
 
     public PlayerTierHasChangedEvent(Player player, Tier tier) {
         this.player = player;
-        this.tier = tier;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public void setTier(Tier tier) {
         this.tier = tier;
     }
 

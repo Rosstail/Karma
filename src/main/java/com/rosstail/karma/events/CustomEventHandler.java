@@ -31,10 +31,10 @@ public class CustomEventHandler implements Listener {
 
         playerData.setKarma(event.getValue());
 
-        if (event.isOverTimeChange()) {
+        if (event.isOverTimeReset()) {
             PlayerData.setOverTimerChange(player);
         }
-        PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeChange());
+        PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeReset());
         Bukkit.getPluginManager().callEvent(playerKarmaHasChangedEvent);
     }
 

@@ -17,16 +17,12 @@ public class PlayerTierChangeEvent extends Event {
         return handlers;
     }
 
-    private Player player;
+    private final Player player;
     private Tier tier;
 
     public PlayerTierChangeEvent(Player player, Tier tier) {
         this.player = player;
         this.tier = tier;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public void setTier(Tier tier) {

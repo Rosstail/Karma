@@ -18,13 +18,13 @@ public class PlayerKarmaHasChangedEvent extends Event {
     }
 
     private final Player player;
-    private double value;
-    private boolean overTimeChange;
+    private final double value;
+    private final boolean overTimeReset;
 
-    public PlayerKarmaHasChangedEvent(Player player, double value, boolean isOverTimeChange) {
+    public PlayerKarmaHasChangedEvent(Player player, double value, boolean isOverTimeReset) {
         this.player = player;
         this.value = value;
-        this.overTimeChange = isOverTimeChange;
+        this.overTimeReset = isOverTimeReset;
     }
 
 
@@ -36,11 +36,11 @@ public class PlayerKarmaHasChangedEvent extends Event {
         return value;
     }
 
-    public void setValue(double value) {
+    /*public void setValue(double value) {
         this.value = value;
-    }
+    }*/
 
-    public boolean isOverTimeChange() {
-        return overTimeChange;
+    public boolean isOverTimeReset() {
+        return overTimeReset;
     }
 }

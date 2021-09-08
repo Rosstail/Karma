@@ -323,7 +323,7 @@ public class PlayerData {
         playerData.setOverTimerScheduler(setupNewOverTime(player));
     }
 
-    public static int setupNewOverTime(Player player) {
+    private static int setupNewOverTime(Player player) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player);
             Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
