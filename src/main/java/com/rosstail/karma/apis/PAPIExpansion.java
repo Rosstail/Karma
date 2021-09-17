@@ -3,6 +3,7 @@ package com.rosstail.karma.apis;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.configData.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -138,18 +139,39 @@ public class PAPIExpansion extends PlaceholderExpansion {
             if(identifier.equals("player_diff")){
                 return String.valueOf(playerData.getKarma() - playerData.getPreviousKarma());
             }
-            if(identifier.equals("player_tier")){
-                return playerData.getTier().getName();
+
+            if(identifier.startsWith("player_tier")) {
+                Tier tier = playerData.getTier();
+                if (identifier.equals("player_tier")) {
+                    return tier.getName();
+                }
+                if (identifier.equals("player_tier_display")) {
+                    return tier.getDisplay();
+                }
+                if (identifier.equals("player_tier_minimum")) {
+                    return String.valueOf(tier.getMinKarma());
+                }
+                if (identifier.equals("player_tier_maximum")) {
+                    return String.valueOf(tier.getMaxKarma());
+                }
             }
-            if(identifier.equals("player_tier_display")){
-                return playerData.getTier().getDisplay();
+
+            if(identifier.startsWith("player_previous_tier")) {
+                Tier tier = playerData.getTier();
+                if (identifier.equals("player_previous_tier")) {
+                    return tier.getName();
+                }
+                if (identifier.equals("player_previous_tier_display")) {
+                    return tier.getDisplay();
+                }
+                if (identifier.equals("player_previous_tier_minimum")) {
+                    return String.valueOf(tier.getMinKarma());
+                }
+                if (identifier.equals("player_previous_tier_maximum")) {
+                    return String.valueOf(tier.getMaxKarma());
+                }
             }
-            if(identifier.equals("player_previous_tier")){
-                return playerData.getPreviousTier().getName();
-            }
-            if(identifier.equals("player_previous_tier_display")){
-                return playerData.getPreviousTier().getDisplay();
-            }
+
             if (identifier.equals("player_last_attack")) {
                 float time = playerData.getLastAttack().getTime();
                 if (time > 0f) {
@@ -158,10 +180,6 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
                 return "N/A";
             }
-        }
-
-        if (identifier.equals("test")) {
-            return "GENERAL PLACEHOLDER";
         }
 
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)

@@ -51,6 +51,12 @@ tiers:
       display: "&4Criminal"
       minimum: -3000
       maximum: -1500
+      score:
+        criminal: 50
+        thug: 5
+        citizen: -20
+        vigilante: -70
+        sheriff: -150
       commands:
         join-commands:
           - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
@@ -65,6 +71,11 @@ tiers:
       display: "&5Thug"
       minimum: -1499
       maximum: -50
+      score:
+        criminal: 35
+        citizen: -10
+        vigilante: -40
+        sheriff: -150
       commands:
         join-commands:
           - "player message &fYou are now a filthy %karma_player_tier% &r."
@@ -82,6 +93,11 @@ tiers:
       display: "&fCitizen"
       minimum: -49
       maximum: 500
+      score:
+        criminal: 40
+        citizen: -20
+        vigilante: -40
+        sheriff: -150
       commands:
         join-commands:
           - "playermessage &fYou are a %karma_player_tier_display% &r."
@@ -90,6 +106,12 @@ tiers:
       display: "&aVigilante"
       minimum: 501
       maximum: 1250
+      score:
+        criminal: 30
+        thug: 8
+        citizen: -25
+        vigilante: -60
+        sheriff: -150
       commands:
         join-commands:
           - "player message &fYour are a %karma_player_tier_display% &r."
@@ -104,6 +126,12 @@ tiers:
       display: "&6Sheriff"
       minimum: 1251
       maximum: 1500
+        score:
+        criminal: 20
+        thug: 5
+        citizen: -50
+        vigilante: -70
+        sheriff: -200
       commands:
         join-commands:
           - "player message &fYour wanted level is now %karma_player_tier_display% &r."
@@ -160,7 +188,7 @@ pvp:
   hit-message-on-karma-increase: "&aThat scum will not escape from that !"
   kill-message-on-karma-increase: "&b%victim% is now finished !"
   hit-message-on-karma-decrease: "&c%attacker%, you attack a honest people !"
-  kill-message-on-karma-decrease: "&cSonovabitch !"
+  kill-message-on-karma-decrease: "&cYou murdered an innocent !"
 
 entities:
   Bee:
@@ -201,5 +229,3 @@ entities:
   ZombieVillager:
     hit-karma-reward:      0
     kill-karma-reward:  -100
-
-

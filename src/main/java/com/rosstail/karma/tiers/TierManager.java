@@ -29,6 +29,9 @@ public class TierManager {
                 tiers.put(tierID, new Tier(tierConfigSection, tierID));
             }
         });
+        for (Tier tier : tiers.values()) {
+            tier.initScores(this);
+        }
     }
 
     public static TierManager getTierManager() {

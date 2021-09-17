@@ -59,6 +59,9 @@ public class Fights {
             expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
             expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
 
+            expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
+                    String.valueOf(PlayerData.gets(attacker).getTier().getTierScore(PlayerData.gets(victim).getTier())));
+
             result = ExpressionCalculator.eval(expression);
             if (configData.doesUseWorldGuard()) {
                 double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
