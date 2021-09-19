@@ -126,7 +126,7 @@ tiers:
       display: "&6Sheriff"
       minimum: 1251
       maximum: 1500
-        score:
+      score:
         criminal: 20
         thug: 5
         citizen: -50
