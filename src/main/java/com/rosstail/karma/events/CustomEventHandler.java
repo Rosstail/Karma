@@ -34,7 +34,7 @@ public class CustomEventHandler implements Listener {
         if (event.isOverTimeReset()) {
             PlayerData.setOverTimerChange(player);
         }
-        PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeReset());
+        PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeReset(), event);
         Bukkit.getPluginManager().callEvent(playerKarmaHasChangedEvent);
     }
 
@@ -143,7 +143,7 @@ public class CustomEventHandler implements Listener {
         }
 
         if (!(killer == null || Fights.isPlayerNPC(killer))) {
-            Fights.pveHandler(killer, victim, Reasons.KILL);
+            Fights.pveHandler(killer, victim, Reasons.KILL, event);
         }
     }
 
@@ -161,7 +161,7 @@ public class CustomEventHandler implements Listener {
         Player killer = victim.getKiller();
         if (!(killer == null || Fights.isPlayerNPC(killer))) {
             if (victim != killer) {
-                Fights.pvpHandler(killer, victim, Reasons.KILL);
+                Fights.pvpHandler(killer, victim, Reasons.KILL, event);
             }
         }
     }
@@ -193,9 +193,9 @@ public class CustomEventHandler implements Listener {
             }
 
             if (victimEntity instanceof Player) {
-                Fights.pvpHandler(attacker, (Player) victimEntity, Reasons.HIT);
+                Fights.pvpHandler(attacker, (Player) victimEntity, Reasons.HIT, event);
             } else {
-                Fights.pveHandler(attacker, victimEntity, Reasons.HIT);
+                Fights.pveHandler(attacker, victimEntity, Reasons.HIT, event);
             }
         }
     }

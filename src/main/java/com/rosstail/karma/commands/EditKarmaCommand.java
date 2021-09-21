@@ -1,5 +1,6 @@
 package com.rosstail.karma.commands;
 
+import com.rosstail.karma.customEvents.Cause;
 import com.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.configData.ConfigData;
@@ -52,7 +53,7 @@ public class EditKarmaCommand {
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, reset);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.SET_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -85,7 +86,7 @@ public class EditKarmaCommand {
             }
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player);
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, reset);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.ADD_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -118,7 +119,7 @@ public class EditKarmaCommand {
             }
             if (player != null && player.isOnline()) {
                 PlayerData playerData = PlayerData.gets(player);
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, reset);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.REMOVE_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);
@@ -148,7 +149,7 @@ public class EditKarmaCommand {
             }
             if (player != null && player.isOnline()) {
                 double resKarma = karmaValues.getDefaultKarma();
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
             } else {
                 karmaCommand.disconnectedPlayer(sender);

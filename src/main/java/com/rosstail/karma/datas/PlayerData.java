@@ -2,6 +2,7 @@ package com.rosstail.karma.datas;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.configData.ConfigData;
+import com.rosstail.karma.customEvents.Cause;
 import com.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customEvents.PlayerOverTimeTriggerEvent;
 import com.rosstail.karma.customEvents.PlayerTierChangeEvent;
@@ -172,7 +173,7 @@ public class PlayerData {
         String UUID = String.valueOf(player.getUniqueId());
         double value = configData.getDefaultKarma();
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true, null);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         this.previousKarma = getKarma();
@@ -203,7 +204,7 @@ public class PlayerData {
         double defaultKarma = configData.getDefaultKarma();
 
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, defaultKarma, true);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, defaultKarma, true, null);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             playerConfig.set("karma", getKarma());
@@ -358,7 +359,7 @@ public class PlayerData {
         }
 
         if (newKarma != currentKarma) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false);
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false, null);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         }
     }

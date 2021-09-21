@@ -22,7 +22,7 @@ public class Fights {
     private static ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
-    public static void pvpHandler(Player attacker, Player victim, Reasons reason) {
+    public static void pvpHandler(Player attacker, Player victim, Reasons reason, Object cause) {
         boolean isPlayerInTime = TimeManager.getTimeManager().isPlayerInTime(attacker);
         boolean isAttackerNPC = isPlayerNPC(attacker);
         boolean isVictimNPC = isPlayerNPC(victim);
@@ -109,7 +109,7 @@ public class Fights {
 
             }
 
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true);
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, cause);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
             if (!playerKarmaChangeEvent.isCancelled()) {
@@ -134,7 +134,7 @@ public class Fights {
         }
     }
 
-    public static void pveHandler(Player attacker, LivingEntity entity, Reasons reason) {
+    public static void pveHandler(Player attacker, LivingEntity entity, Reasons reason, Object cause) {
         String entityName = entity.getName();
         YamlConfiguration config = plugin.getCustomConfig();
         double reward = config.getInt("entities." + entityName + "." + reason.getText()  + "-karma-reward");
@@ -149,7 +149,7 @@ public class Fights {
             reward = reward * WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerKarma + reward, true);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerKarma + reward, true, cause);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!playerKarmaChangeEvent.isCancelled()) {

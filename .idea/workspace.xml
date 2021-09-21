@@ -23,8 +23,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="53d11734-8c26-4e6c-b126-b0e085e743e4" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/lang/nl_NL.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/customEvents/Cause.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/commands/EditKarmaCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/commands/EditKarmaCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/customEvents/PlayerKarmaChangeEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/customEvents/PlayerKarmaChangeEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/customEvents/PlayerKarmaHasChangedEvent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/customEvents/PlayerKarmaHasChangedEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/datas/PlayerData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/datas/PlayerData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/events/CustomEventHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/events/CustomEventHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/events/Fights.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/rosstail/karma/events/Fights.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/plugin.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,8 +45,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
         <option value="Class" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -83,6 +91,13 @@
       </RecentBranches>
     </option>
   </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="D:\Logiciels\Intellij IDEA\plugins\maven\lib\maven3" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
   <component name="ProjectId" id="1VqXeR4hUcBWdCkAxujdGX73PMl" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -97,7 +112,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main/resources/lang" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -183,5 +198,27 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1632228638475">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="275" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1632228638475" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1632065265648">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1632065265648" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1632065265648">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1632065265648" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1632065265648">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1632065265648" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1632065265648">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1632065265648" />
   </component>
 </project>

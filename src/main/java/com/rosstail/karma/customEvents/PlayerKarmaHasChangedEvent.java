@@ -20,11 +20,13 @@ public class PlayerKarmaHasChangedEvent extends Event {
     private final Player player;
     private final double value;
     private final boolean overTimeReset;
+    private final PlayerKarmaChangeEvent cause;
 
-    public PlayerKarmaHasChangedEvent(Player player, double value, boolean isOverTimeReset) {
+    public PlayerKarmaHasChangedEvent(Player player, double value, boolean isOverTimeReset, PlayerKarmaChangeEvent cause) {
         this.player = player;
         this.value = value;
         this.overTimeReset = isOverTimeReset;
+        this.cause = cause;
     }
 
 
