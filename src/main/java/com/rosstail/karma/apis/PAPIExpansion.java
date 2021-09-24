@@ -1,7 +1,7 @@
 package com.rosstail.karma.apis;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.configData.ConfigData;
+import com.rosstail.karma.configdata.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;

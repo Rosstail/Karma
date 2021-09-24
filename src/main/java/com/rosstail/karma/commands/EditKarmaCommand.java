@@ -1,9 +1,9 @@
 package com.rosstail.karma.commands;
 
-import com.rosstail.karma.customEvents.Cause;
-import com.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.customevents.Cause;
+import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.datas.PlayerData;
-import com.rosstail.karma.configData.ConfigData;
+import com.rosstail.karma.configdata.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;

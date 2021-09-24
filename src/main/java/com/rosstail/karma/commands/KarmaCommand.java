@@ -3,7 +3,7 @@ package com.rosstail.karma.commands;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.commands.list.Commands;
-import com.rosstail.karma.configData.ConfigData;
+import com.rosstail.karma.configdata.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;

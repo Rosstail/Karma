@@ -1,9 +1,9 @@
-package com.rosstail.karma.timeManagement;
+package com.rosstail.karma.timemanagement;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.configData.ConfigData;
-import com.rosstail.karma.timeManagement.times.SystemTimes;
-import com.rosstail.karma.timeManagement.times.WorldsTimes;
+import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.timemanagement.times.SystemTimes;
+import com.rosstail.karma.timemanagement.times.WorldsTimes;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

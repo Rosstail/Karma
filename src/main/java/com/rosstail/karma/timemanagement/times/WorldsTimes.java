@@ -1,4 +1,4 @@
-package com.rosstail.karma.timeManagement.times;
+package com.rosstail.karma.timemanagement.times;
 
 import org.bukkit.configuration.ConfigurationSection;
 

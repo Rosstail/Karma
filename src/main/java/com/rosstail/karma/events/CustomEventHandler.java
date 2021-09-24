@@ -1,10 +1,10 @@
 package com.rosstail.karma.events;
 
-import com.rosstail.karma.configData.ConfigData;
-import com.rosstail.karma.customEvents.*;
+import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.customevents.*;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.tiers.Tier;
-import com.rosstail.karma.timeManagement.TimeManager;
+import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;

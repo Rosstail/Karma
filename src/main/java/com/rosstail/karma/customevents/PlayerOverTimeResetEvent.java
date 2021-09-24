@@ -1,4 +1,4 @@
-package com.rosstail.karma.customEvents;
+package com.rosstail.karma.customevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

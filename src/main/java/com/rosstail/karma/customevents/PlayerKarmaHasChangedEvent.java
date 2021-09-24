@@ -1,4 +1,4 @@
-package com.rosstail.karma.customEvents;
+package com.rosstail.karma.customevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -38,11 +38,11 @@ public class PlayerKarmaHasChangedEvent extends Event {
         return value;
     }
 
-    /*public void setValue(double value) {
-        this.value = value;
-    }*/
-
     public boolean isOverTimeReset() {
         return overTimeReset;
+    }
+
+    public PlayerKarmaChangeEvent getCause() {
+        return cause;
     }
 }

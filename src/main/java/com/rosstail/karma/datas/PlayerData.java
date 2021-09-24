@@ -1,11 +1,11 @@
 package com.rosstail.karma.datas;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.configData.ConfigData;
-import com.rosstail.karma.customEvents.Cause;
-import com.rosstail.karma.customEvents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.customEvents.PlayerOverTimeTriggerEvent;
-import com.rosstail.karma.customEvents.PlayerTierChangeEvent;
+import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.customevents.Cause;
+import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.customevents.PlayerOverTimeTriggerEvent;
+import com.rosstail.karma.customevents.PlayerTierChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -173,7 +173,7 @@ public class PlayerData {
         String UUID = String.valueOf(player.getUniqueId());
         double value = configData.getDefaultKarma();
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true, null);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true, Cause.OTHER);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         this.previousKarma = getKarma();
@@ -204,7 +204,7 @@ public class PlayerData {
         double defaultKarma = configData.getDefaultKarma();
 
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, defaultKarma, true, null);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, defaultKarma, true, Cause.OTHER);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             playerConfig.set("karma", getKarma());
@@ -359,7 +359,7 @@ public class PlayerData {
         }
 
         if (newKarma != currentKarma) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false, null);
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false, Cause.TIMER);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         }
     }

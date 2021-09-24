@@ -1,4 +1,4 @@
-package com.rosstail.karma.customEvents;
+package com.rosstail.karma.customevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -35,6 +35,22 @@ public class PlayerKarmaChangeEvent extends Event implements Cancellable {
         this.overTimeReset = isOverTimeReset;
         this.cancelled = false;
         this.cause = cause;
+    }
+
+    public PlayerKarmaChangeEvent(Player player, double value, boolean isOverTimeReset) {
+        this.player = player;
+        this.value = value;
+        this.overTimeReset = isOverTimeReset;
+        this.cancelled = false;
+        this.cause = null;
+    }
+
+    public PlayerKarmaChangeEvent(Player player, double value) {
+        this.player = player;
+        this.value = value;
+        this.overTimeReset = true;
+        this.cancelled = false;
+        this.cause = null;
     }
 
 

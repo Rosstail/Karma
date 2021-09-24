@@ -1,4 +1,4 @@
-package com.rosstail.karma.configData;
+package com.rosstail.karma.configdata;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.datas.PlayerData;

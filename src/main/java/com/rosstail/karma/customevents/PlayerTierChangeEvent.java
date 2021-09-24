@@ -1,4 +1,4 @@
-package com.rosstail.karma.customEvents;
+package com.rosstail.karma.customevents;
 
 import com.rosstail.karma.tiers.Tier;
 import org.bukkit.entity.Player;
