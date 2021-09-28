@@ -24,9 +24,7 @@ public class Fights {
 
     public static void pvpHandler(Player attacker, Player victim, Reasons reason, Object cause) {
         boolean isPlayerInTime = TimeManager.getTimeManager().isPlayerInTime(attacker);
-        boolean isAttackerNPC = isPlayerNPC(attacker);
-        boolean isVictimNPC = isPlayerNPC(victim);
-        if (!isPlayerInTime || isAttackerNPC || (isVictimNPC && !doesPlayerNPCHaveKarma(victim))) {
+        if (!isPlayerInTime || isPlayerNPC(attacker) || (isPlayerNPC(victim) && !doesPlayerNPCHaveKarma(victim))) {
             return;
         }
 
@@ -53,83 +51,84 @@ public class Fights {
             expression = configData.getPvpHitRewardExpression();
         }
 
+        if (expression == null) {
+            return;
+        }
+
         double result;
 
-        if (expression != null) {
-            expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
-            expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
+        expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
+        expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
 
-            expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
-                    String.valueOf(PlayerData.gets(attacker).getTier().getTierScore(PlayerData.gets(victim).getTier())));
+        expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
+                String.valueOf(PlayerData.gets(attacker).getTier().getTierScore(PlayerData.gets(victim).getTier())));
 
-            result = ExpressionCalculator.eval(expression);
-            if (configData.doesUseWorldGuard()) {
-                double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
-                result = result * multi;
-            }
-            double attackerNewKarma = attackerInitialKarma + result;
+        result = ExpressionCalculator.eval(expression);
+        if (configData.doesUseWorldGuard()) {
+            double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
+            result = result * multi;
+        }
+        double attackerNewKarma = attackerInitialKarma + result;
 
-            if (configData.isPvpCrimeTimeEnabled() && !(
-                    attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
-                long timeStamp = System.currentTimeMillis();
-                long delay = configData.getPvpCrimeTimeDelay();
+        if (configData.isPvpCrimeTimeEnabled() && !(
+                attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
+            long timeStamp = System.currentTimeMillis();
+            long delay = configData.getPvpCrimeTimeDelay();
 
-                float attackStart = attackerData.getLastAttack().getTime();
-                float victimStart = attackerData.getLastAttack().getTime();
-                float attackEnd = attackStart + delay;
-                float victimEnd = victimStart + delay;
+            float attackStart = attackerData.getLastAttack().getTime();
+            float victimStart = attackerData.getLastAttack().getTime();
+            float attackEnd = attackStart + delay;
+            float victimEnd = victimStart + delay;
 
-                if (attackStart != 0L && victimStart != 0L) {
-                    if ((timeStamp >= attackStart && timeStamp <= attackEnd) || timeStamp > victimEnd) {
-                        attackerData.setLastAttack();
-                    } else {
-                        if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                            attacker.sendMessage(adaptMessage.message(attacker,
-                                    LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
-                            return;
-                        }
-                        attacker.sendMessage(adaptMessage.message(attacker,
-                                LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
-                    }
-                } else if (victimStart == 0L) {
+            if (attackStart != 0L && victimStart != 0L) {
+                if ((timeStamp >= attackStart && timeStamp <= attackEnd) || timeStamp > victimEnd) {
                     attackerData.setLastAttack();
-                } else if (victimStart != 0L) {
-                    if (timeStamp >= victimStart && timeStamp <= victimEnd) {
-                        if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                            attacker.sendMessage(adaptMessage.message(attacker,
-                                    LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
-                            return;
-                        }
+                } else {
+                    if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
                         attacker.sendMessage(adaptMessage.message(attacker,
-                                LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
-                    } else {
-                        attackerData.setLastAttack();
+                                LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
+                        return;
                     }
+                    attacker.sendMessage(adaptMessage.message(attacker,
+                            LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
                 }
-
+            } else if (victimStart == 0L) {
+                attackerData.setLastAttack();
+            } else if (victimStart != 0L) {
+                if (timeStamp >= victimStart && timeStamp <= victimEnd) {
+                    if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
+                        attacker.sendMessage(adaptMessage.message(attacker,
+                                LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
+                        return;
+                    }
+                    attacker.sendMessage(adaptMessage.message(attacker,
+                            LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
+                } else {
+                    attackerData.setLastAttack();
+                }
             }
 
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, cause);
-            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        }
 
-            if (!playerKarmaChangeEvent.isCancelled()) {
-                String message = null;
-                if (attackerNewKarma > attackerInitialKarma) {
-                    if (reason.equals(Reasons.HIT)) {
-                        message = configData.getPvpHitMessageKarmaIncrease();
-                    } else {
-                        message = configData.getPvpKillMessageKarmaIncrease();
-                    }
-                } else if (attackerNewKarma < attackerInitialKarma) {
-                    if (reason.equals(Reasons.HIT)) {
-                        message = configData.getPvpHitMessageKarmaDecrease();
-                    } else {
-                        message = configData.getPvpKillMessageKarmaDecrease();
-                    }
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, cause);
+        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        if (!playerKarmaChangeEvent.isCancelled()) {
+            String message = null;
+            if (attackerNewKarma > attackerInitialKarma) {
+                if (reason.equals(Reasons.HIT)) {
+                    message = configData.getPvpHitMessageKarmaIncrease();
+                } else {
+                    message = configData.getPvpKillMessageKarmaIncrease();
                 }
-                if (message != null) {
-                    adaptMessage.playerHitMessage(message, attacker, victim, reason.getText());
+            } else if (attackerNewKarma < attackerInitialKarma) {
+                if (reason.equals(Reasons.HIT)) {
+                    message = configData.getPvpHitMessageKarmaDecrease();
+                } else {
+                    message = configData.getPvpKillMessageKarmaDecrease();
                 }
+            }
+            if (message != null) {
+                adaptMessage.playerHitMessage(message, attacker, victim, reason.getText());
             }
         }
     }

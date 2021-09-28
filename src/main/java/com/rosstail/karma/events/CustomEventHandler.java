@@ -6,6 +6,7 @@ import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -176,8 +177,8 @@ public class CustomEventHandler implements Listener {
         LivingEntity victimEntity;
 
         double damage = event.getFinalDamage();
-        if (!(event.getEntity() instanceof LivingEntity && damage >= 1d
-                && ((LivingEntity) event.getEntity()).getHealth() - damage > 0)) {
+        Entity entity = event.getEntity();
+        if (!(entity instanceof LivingEntity && damage >= 1d && ((LivingEntity) entity).getHealth() - damage > 0)) {
             return;
         }
 
@@ -188,7 +189,7 @@ public class CustomEventHandler implements Listener {
 
         Player attacker = getFightAttacker(event);
         if (attacker != null) {
-            if (Fights.isPlayerNPC(attacker) || TimeManager.getTimeManager().isPlayerInTime(attacker)) {
+            if (Fights.isPlayerNPC(attacker) || !TimeManager.getTimeManager().isPlayerInTime(attacker)) {
                 return;
             }
 
