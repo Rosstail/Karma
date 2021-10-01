@@ -201,7 +201,7 @@ entities:
     hit-message: "&cYou DARE put a hand on your Master ?!!"
     kill-karma-reward:   -76
     kill-message: "&4&lWILFRIIIIIIIED !!!"
-  EnderDragon:
+  Ender Dragon:
     hit-karma-reward:      1
     hit-message: "&aKEEP GOING"
     kill-karma-reward: 10000
@@ -209,10 +209,10 @@ entities:
   Skeleton:
     hit-karma-reward:      1
     kill-karma-reward:   100
-  SkeletonHorse:
+  Skeleton Horse:
     hit-karma-reward:      1
     kill-karma-reward:   100
-  TraderLlama:
+  Trader Llama:
     hit-karma-reward:    -11
     kill-karma-reward:  -356
   Villager:
@@ -226,6 +226,6 @@ entities:
     hit-message: "Aim his head !"
     kill-karma-reward:    58
     kill-message: "Burn the corpse."
-  ZombieVillager:
+  Zombie Villager:
     hit-karma-reward:      0
     kill-karma-reward:  -100

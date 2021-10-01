@@ -135,6 +135,7 @@ public class Fights {
 
     public static void pveHandler(Player attacker, LivingEntity entity, Reasons reason, Object cause) {
         String entityName = entity.getName();
+        System.out.println(entityName);
         YamlConfiguration config = plugin.getCustomConfig();
         double reward = config.getInt("entities." + entityName + "." + reason.getText()  + "-karma-reward");
         if (reward == 0) {
