@@ -80,11 +80,11 @@ public class ConfigData {
         overtimeIncreaseCommands = config.getStringList("overtime.values.increase.commands");
 
         useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard");
-        pvpCrimeTimeEnabled = config.getBoolean("pvp.crime-time.enable");
-        pvpCrimeTimeOnUp = config.getBoolean("pvp.crime-time.active-on-up");
-        pvpCrimeTimeOnStill = config.getBoolean("pvp.crime-time.active-on-still");
-        pvpCrimeTimeOnDown = config.getBoolean("pvp.crime-time.active-on-down");
-        pvpCrimeTimeRefresh = config.getBoolean("pvp.crime-time.refresh");
+        pvpCrimeTimeEnabled = config.getString("pvp.crime-time.enable") != null && config.getBoolean("pvp.crime-time.enable");
+        pvpCrimeTimeOnUp = config.getString("pvp.crime-time.active-on-up") != null && config.getBoolean("pvp.crime-time.active-on-up");
+        pvpCrimeTimeOnStill = config.getString("pvp.crime-time.active-on-still") != null && config.getBoolean("pvp.crime-time.active-on-still");
+        pvpCrimeTimeOnDown = config.getString("pvp.crime-time.active-on-down") != null && config.getBoolean("pvp.crime-time.active-on-down");
+        pvpCrimeTimeRefresh = config.getString("pvp.crime-time.refresh") != null && config.getBoolean("pvp.crime-time.refresh");
 
         pvpHitMessageKarmaIncrease = config.getString("pvp.hit-message-on-karma-increase");
         pvpKillMessageKarmaIncrease = config.getString("pvp.kill-message-on-karma-increase");
