@@ -1,6 +1,8 @@
 package com.rosstail.karma.datas;
 
 import com.rosstail.karma.Karma;
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.Cause;
 
 import java.io.*;
 import java.net.URI;
@@ -25,7 +27,7 @@ public class FileResourcesUtils {
             File pluginFolder = new File(plugin.getDataFolder() + "/" + folder);
             if (!pluginFolder.exists()) {
                 pluginFolder.mkdir();
-                System.out.println("Creating " + pluginFolder.getName() + " folder.");
+                AdaptMessage.print("Creating " + pluginFolder.getName() + " folder.", Cause.OUT);
             } else {
                 return;
             }
@@ -44,7 +46,7 @@ public class FileResourcesUtils {
                 File file = new File(filePathInJAR);
                 if (!file.exists()) {
                     plugin.saveResource(filePathInJAR, false);
-                    System.out.println(" > Creating " + file + " config.");
+                    AdaptMessage.print(" > Creating " + file + " config.", Cause.OUT);
                 }
 
 
@@ -112,7 +114,7 @@ public class FileResourcesUtils {
 
             String line;
             while ((line = reader.readLine()) != null) {
-                System.out.println(line);
+                AdaptMessage.print(line, Cause.WARNING);
             }
 
         } catch (IOException e) {

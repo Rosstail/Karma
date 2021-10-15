@@ -13,11 +13,11 @@ import com.rosstail.karma.events.WorldFights;
 import com.rosstail.karma.events.CustomEventHandler;
 import com.rosstail.karma.configdata.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.Cause;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -46,19 +46,19 @@ public class Karma extends JavaPlugin implements Listener {
         instance = this;
         File fileConfig = new File("plugins/" + getName() + "/config.yml");
         if (!(fileConfig.exists())) {
-            System.out.println("Preparing default config.yml");
+            AdaptMessage.print("Preparing default config.yml", Cause.OUT);
             this.saveDefaultConfig();
         }
 
         config = YamlConfiguration.loadConfiguration(fileConfig);
+        ConfigData.initKarmaValues(getCustomConfig());
+        AdaptMessage.initAdaptMessage(this);
         WorldFights.setUp(this);
-        ConfigData.initKarmaValues(this.getCustomConfig());
         TierManager.initTierManager(this);
         TimeManager.initTimeManager(this);
 
         initDefaultConfigs();
-        LangManager.initCurrentLang(this.getCustomConfig().getString("general.lang"));
-        AdaptMessage.initAdaptMessage(this);
+        LangManager.initCurrentLang(getCustomConfig().getString("general.lang"));
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -137,7 +137,6 @@ public class Karma extends JavaPlugin implements Listener {
                 Statement statement = connection.createStatement();
                 statement.execute(sql);
                 statement.close();
-                System.out.println("[Karma] Added Previous_Karma and Previous_Tier columns in database.");
             }
         } catch (SQLException e) {
         }
@@ -151,7 +150,7 @@ public class Karma extends JavaPlugin implements Listener {
         if (!folder.exists()) {
             String message = this.getCustomConfig().getString("messages.creating-playerdata-folder");
             if (message != null) {
-                message = ChatColor.translateAlternateColorCodes('&', message);
+                message = AdaptMessage.getAdaptMessage().message(null, message, null);
 
                 getServer().getConsoleSender().sendMessage(message);
             }

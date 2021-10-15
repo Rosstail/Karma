@@ -7,8 +7,8 @@ import com.rosstail.karma.configdata.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -178,7 +178,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private void permissionDenied(CommandSender sender, Commands command) {
         String message = LangManager.getMessage(LangMessage.PERMISSION_DENIED);
         if (message != null) {
-            message = ChatColor.translateAlternateColorCodes('&', message);
+            message = AdaptMessage.getAdaptMessage().message((Player) sender, message, PlayerType.player.getId());
             message = message.replaceAll("%command%", command.getCommand());
             message = message.replaceAll("%permission%", command.getPermission());
             sender.sendMessage(message);

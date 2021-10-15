@@ -81,7 +81,8 @@ public class Fights {
             float victimEnd = victimStart + delay;
 
             if (attackStart != 0L && victimStart != 0L) {
-                if ((timeStamp >= attackStart && timeStamp <= attackEnd) || timeStamp > victimEnd) {
+                if ((timeStamp >= attackStart && timeStamp <= attackEnd && ConfigData.getConfigData().isPvpCrimeTimeRefresh())
+                        || timeStamp > victimEnd) {
                     attackerData.setLastAttack();
                 } else {
                     if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {

@@ -37,18 +37,20 @@ overtime: #Useful for GTA Wanted Level. Reset when karma changes from fights and
       value: 5
       limit: 0
       commands:
-        - "player message &cYou lose 5 karma from the overtime"
+        - "player message #DD0000You lose 5 karma from the overtime"
     increase:
       value: 5
       limit: 0
       commands:
-        - "player message &cYou won 5 karma from the overtime"
+        - "player message #87CC72You won 5 karma from the overtime"
 
 tiers:
   none-display: "&f[&8None&f]&r"
+  none-short-display: "&f"
   list:
     criminal:
       display: "&4Criminal"
+      short-display: "&4"
       minimum: -3000
       maximum: -1500
       score:
@@ -69,6 +71,7 @@ tiers:
             - "broadcast %victim% &ahas been arrested for %karma_victim_previous_karma% minutes by %attacker% !"
     thug:
       display: "&5Thug"
+      short-display: "&5"
       minimum: -1499
       maximum: -50
       score:
@@ -91,6 +94,7 @@ tiers:
             - "broadcast %victim% loss a fight against %attacker% with the tier identifier %karma_attacker_tier%!"
     citizen:
       display: "&fCitizen"
+      short-display: "&f"
       minimum: -49
       maximum: 500
       score:
@@ -104,6 +108,7 @@ tiers:
           - "playermessage &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
     vigilante:
       display: "&aVigilante"
+        short-display: "&a"
       minimum: 501
       maximum: 1250
       score:
@@ -124,6 +129,7 @@ tiers:
             - "attacker message You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
     sheriff:
       display: "&6Sheriff"
+      short-display: "&6"
       minimum: 1251
       maximum: 1500
       score:
@@ -184,11 +190,12 @@ pvp:
     active-on-up: true
     active-on-still: false
     active-on-down: false
+    refresh: true
   #Sends a message to the attacker when hitting / killing another player. You can use any local placeholder with attacker or victim instead of player.
   hit-message-on-karma-increase: "&aThat scum will not escape from that !"
   kill-message-on-karma-increase: "&b%victim% is now finished !"
   hit-message-on-karma-decrease: "&c%attacker%, you attack a honest people !"
-  kill-message-on-karma-decrease: "&cYou murdered an innocent !"
+  kill-message-on-karma-decrease: "#DD0000You murdered an innocent !"
 
 entities:
   Bee:

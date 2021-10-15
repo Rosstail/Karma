@@ -13,7 +13,6 @@ import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -405,7 +404,6 @@ public class PlayerData {
 
     private static void placeCommands(Player player, String command) {
         command = adaptMessage.message(player, command, PlayerType.player.getId());
-        command = ChatColor.translateAlternateColorCodes('&', command);
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 
@@ -425,8 +423,6 @@ public class PlayerData {
     private static void placeCommands(Player attacker, Player victim, String command) {
         command = adaptMessage.message(attacker, command, PlayerType.attacker.getId());
         command = adaptMessage.message(victim, command, PlayerType.victim.getId());
-
-        command = ChatColor.translateAlternateColorCodes('&', command);
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
         if (command.startsWith(PlayerType.victim.getId())) {

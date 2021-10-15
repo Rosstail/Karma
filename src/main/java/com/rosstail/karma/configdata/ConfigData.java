@@ -38,6 +38,7 @@ public class ConfigData {
     private final boolean pvpCrimeTimeOnUp;
     private final boolean pvpCrimeTimeOnStill;
     private final boolean pvpCrimeTimeOnDown;
+    private final boolean pvpCrimeTimeRefresh;
 
     private final String useTimeValue;
 
@@ -83,6 +84,7 @@ public class ConfigData {
         pvpCrimeTimeOnUp = config.getBoolean("pvp.crime-time.active-on-up");
         pvpCrimeTimeOnStill = config.getBoolean("pvp.crime-time.active-on-still");
         pvpCrimeTimeOnDown = config.getBoolean("pvp.crime-time.active-on-down");
+        pvpCrimeTimeRefresh = config.getBoolean("pvp.crime-time.refresh");
 
         pvpHitMessageKarmaIncrease = config.getString("pvp.hit-message-on-karma-increase");
         pvpKillMessageKarmaIncrease = config.getString("pvp.kill-message-on-karma-increase");
@@ -214,6 +216,10 @@ public class ConfigData {
 
     public long getPvpCrimeTimeDelay() {
         return pvpCrimeTimeDelay;
+    }
+
+    public boolean isPvpCrimeTimeRefresh() {
+        return pvpCrimeTimeRefresh;
     }
 
     public String getUseTimeValue() {

@@ -1,7 +1,7 @@
 package com.rosstail.karma.tiers;
 
 import com.rosstail.karma.Karma;
-import org.bukkit.ChatColor;
+import com.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,13 +14,14 @@ public class Tier {
 
     private final String name;
     private final String display;
+    private final String shortDisplay;
     private final double minKarma;
     private final double maxKarma;
     private final List<String> joinCommands;
     private final List<String> joinOnDownCommands;
     private final List<String> joinOnUpCommands;
     private final List<String> killedCommands;
-    private final Map<Tier, Double> scores;
+    private final Map<Tier, Double> scores = new HashMap<>();
 
 
     Tier(ConfigurationSection section, String name) {
@@ -30,29 +31,43 @@ public class Tier {
         if (display == null) {
             display = "&7" + name;
         }
-        this.display = ChatColor.translateAlternateColorCodes('&', display);
+        this.display = AdaptMessage.getAdaptMessage().message(null, display, null);
+
+        String shortDisplay = section.getString("short-display");
+        if (shortDisplay == null) {
+            shortDisplay = "&7" + name;
+        }
+        this.shortDisplay = AdaptMessage.getAdaptMessage().message(null, shortDisplay, null);
+
         this.minKarma = section.getDouble("minimum");
         this.maxKarma = section.getDouble("maximum");
         this.joinCommands = section.getStringList("commands.join-commands");
         this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
         this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
         this.killedCommands = section.getStringList("commands.killed-commands.commands");
-        this.scores = new HashMap<>();
     }
 
     /**
      * NULL TIER
      */
-    Tier(String display) {
+    Tier(String display, String shortDisplay) {
         this.name = null;
-        this.display = ChatColor.translateAlternateColorCodes('&', display);
+
+        if (display == null) {
+            display = "&7";
+        }
+        this.display = AdaptMessage.getAdaptMessage().message(null, display, null);
+
+        if (shortDisplay == null) {
+            shortDisplay = "&7";
+        }
+        this.shortDisplay = AdaptMessage.getAdaptMessage().message(null, shortDisplay, null);
         this.minKarma = 0;
         this.maxKarma = 0;
         this.joinCommands = new ArrayList<>();
         this.joinOnDownCommands = new ArrayList<>();
         this.joinOnUpCommands = new ArrayList<>();
         this.killedCommands = new ArrayList<>();
-        this.scores = new HashMap<>();
     }
 
     public String getName() {
@@ -61,6 +76,10 @@ public class Tier {
 
     public String getDisplay() {
         return display;
+    }
+
+    public String getShortDisplay() {
+        return shortDisplay;
     }
 
     public double getMinKarma() {

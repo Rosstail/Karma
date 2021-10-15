@@ -148,6 +148,9 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 if (identifier.equals("player_tier_display")) {
                     return tier.getDisplay();
                 }
+                if (identifier.equals("player_tier_short_display")) {
+                    return tier.getShortDisplay();
+                }
                 if (identifier.equals("player_tier_minimum")) {
                     return String.valueOf(tier.getMinKarma());
                 }
@@ -157,12 +160,15 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
 
             if(identifier.startsWith("player_previous_tier")) {
-                Tier tier = playerData.getTier();
+                Tier tier = playerData.getPreviousTier();
                 if (identifier.equals("player_previous_tier")) {
                     return tier.getName();
                 }
                 if (identifier.equals("player_previous_tier_display")) {
                     return tier.getDisplay();
+                }
+                if (identifier.equals("player_previous_tier_short_display")) {
+                    return tier.getShortDisplay();
                 }
                 if (identifier.equals("player_previous_tier_minimum")) {
                     return String.valueOf(tier.getMinKarma());

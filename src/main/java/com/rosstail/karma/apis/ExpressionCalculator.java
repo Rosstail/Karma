@@ -1,5 +1,8 @@
 package com.rosstail.karma.apis;
 
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.Cause;
+
 public class ExpressionCalculator {
 
     public static double eval(final String expression) {
@@ -116,7 +119,7 @@ public class ExpressionCalculator {
 
         }
         catch (Exception e) {
-            System.out.println("[Karma] An exception as occured during the calculation : " + expression);
+            AdaptMessage.print("An exception as occurred during the calculation : " + expression, Cause.ERROR);
         }
         return 0D;
     }

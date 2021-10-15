@@ -6,10 +6,10 @@ import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.events.Reasons;
 import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import java.sql.Timestamp;
@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.bukkit.Bukkit.getLogger;
 
 public class AdaptMessage {
 
@@ -25,6 +29,7 @@ public class AdaptMessage {
     private final Karma plugin;
     private ConfigData configData;
     private final boolean msgStyle;
+    private final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
     public AdaptMessage(Karma plugin) {
         this.plugin = plugin;
@@ -66,14 +71,27 @@ public class AdaptMessage {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier%", playerTier.getName());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier%", playerPreviousTier.getName());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier_display%", playerTier.getDisplay());
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier_short_display%", playerTier.getShortDisplay());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_display%", playerPreviousTier.getDisplay());
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_short_display%", playerPreviousTier.getShortDisplay());
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_last_attack%", simpleDateFormat.format(lastAttack.getTime()));
             } else {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble()));
             }
         }
-        return ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
+        message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
+        if (Integer.parseInt(Bukkit.getVersion().split("\\.")[1]) >= 16) {
+            Matcher matcher = hexPattern.matcher(message);
+            while (matcher.find()) {
+                try {
+                    String color = message.substring(matcher.start(), matcher.end());
+                    message = message.replaceAll(color, String.valueOf(ChatColor.of(color)));
+                    matcher = hexPattern.matcher(message);
+                } catch (Exception e) {}
+            }
+        }
+        return message;
     }
 
     public String[] listMessage(Player player, List<String> messages) {
@@ -150,5 +168,15 @@ public class AdaptMessage {
 
     public void setConfigData(ConfigData configData) {
         this.configData = configData;
+    }
+
+    public static void print(String string, Cause cause) {
+        if (cause.equals(Cause.ERROR)) {
+            getLogger().severe(string);
+        } else if (cause.equals(Cause.WARNING)) {
+            getLogger().warning(string);
+        } else {
+            getLogger().info(string);
+        }
     }
 }

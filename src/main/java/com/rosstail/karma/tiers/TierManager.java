@@ -22,7 +22,7 @@ public class TierManager {
     TierManager(Karma plugin) {
         FileConfiguration config = plugin.getCustomConfig();
 
-        noTier = new Tier(config.getString("tiers.none-display"));
+        noTier = new Tier(config.getString("tiers.none-display"), config.getString("tiers.none-short-display"));
         config.getConfigurationSection("tiers.list").getKeys(false).forEach(tierID -> {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("tiers.list." + tierID);
             if (tierConfigSection != null) {
