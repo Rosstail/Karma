@@ -108,7 +108,7 @@ tiers:
           - "playermessage &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
     vigilante:
       display: "&aVigilante"
-        short-display: "&a"
+      short-display: "&a"
       minimum: 501
       maximum: 1250
       score:
