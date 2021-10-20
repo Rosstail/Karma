@@ -95,7 +95,7 @@ public class FileResourcesUtils {
         //System.out.println("JAR Path :" + jarPath);
 
         // file walks JAR
-        URI uri = URI.create("jar:file:" + jarPath);
+        URI uri = new URI("jar", "file:" + jarPath, null);
         try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
             result = Files.walk(fs.getPath(folder))
                     .filter(Files::isRegularFile)
