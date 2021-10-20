@@ -3,7 +3,7 @@ package com.rosstail.karma.lang;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.configdata.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
-import com.rosstail.karma.events.Reasons;
+import com.rosstail.karma.events.Cause;
 import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
@@ -102,7 +102,7 @@ public class AdaptMessage {
         return newMessages.toArray(new String[0]);
     }
 
-    public void entityHitMessage(String message, Player player, Reasons reason) {
+    public void entityHitMessage(String message, Player player, Cause reason) {
         if (message == null) {
             return;
         }
@@ -170,10 +170,10 @@ public class AdaptMessage {
         this.configData = configData;
     }
 
-    public static void print(String string, Cause cause) {
-        if (cause.equals(Cause.ERROR)) {
+    public static void print(String string, com.rosstail.karma.lang.Cause cause) {
+        if (cause.equals(com.rosstail.karma.lang.Cause.ERROR)) {
             getLogger().severe(string);
-        } else if (cause.equals(Cause.WARNING)) {
+        } else if (cause.equals(com.rosstail.karma.lang.Cause.WARNING)) {
             getLogger().warning(string);
         } else {
             getLogger().info(string);

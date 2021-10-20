@@ -22,7 +22,7 @@ public class Fights {
     private static ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
-    public static void pvpHandler(Player attacker, Player victim, Reasons reason, Object cause) {
+    public static void pvpHandler(Player attacker, Player victim, Cause reason, Object cause) {
         boolean isPlayerInTime = TimeManager.getTimeManager().isPlayerInTime(attacker);
         if (!isPlayerInTime || isPlayerNPC(attacker) || (isPlayerNPC(victim) && !doesPlayerNPCHaveKarma(victim))) {
             return;
@@ -32,7 +32,7 @@ public class Fights {
         PlayerData attackerData = PlayerData.gets(attacker);
         double attackerInitialKarma = attackerData.getKarma();
 
-        if (reason.equals(Reasons.KILL)) {
+        if (reason.equals(Cause.KILL)) {
             PlayerData.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
 
             String path = configData.getKilledByTierPath();
@@ -45,7 +45,7 @@ public class Fights {
         ConfigData configData = ConfigData.getConfigData();
         String expression;
 
-        if (reason.equals(Reasons.KILL)) {
+        if (reason.equals(Cause.KILL)) {
             expression = configData.getPvpKillRewardExpression();
         } else {
             expression = configData.getPvpHitRewardExpression();
@@ -70,45 +70,8 @@ public class Fights {
         }
         double attackerNewKarma = attackerInitialKarma + result;
 
-        if (configData.isPvpCrimeTimeEnabled() && !(
-                attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
-            long timeStamp = System.currentTimeMillis();
-            long delay = configData.getPvpCrimeTimeDelay();
-
-            float attackStart = attackerData.getLastAttack().getTime();
-            float victimStart = attackerData.getLastAttack().getTime();
-            float attackEnd = attackStart + delay;
-            float victimEnd = victimStart + delay;
-
-            if (attackStart != 0L && victimStart != 0L) {
-                if ((timeStamp >= attackStart && timeStamp <= attackEnd && ConfigData.getConfigData().isPvpCrimeTimeRefresh())
-                        || timeStamp > victimEnd) {
-                    attackerData.setLastAttack();
-                } else {
-                    if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                        attacker.sendMessage(adaptMessage.message(attacker,
-                                LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
-                        return;
-                    }
-                    attacker.sendMessage(adaptMessage.message(attacker,
-                            LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
-                }
-            } else if (victimStart == 0L) {
-                attackerData.setLastAttack();
-            } else if (victimStart != 0L) {
-                if (timeStamp >= victimStart && timeStamp <= victimEnd) {
-                    if (doesDefendChangeKarma(attackerInitialKarma, attackerNewKarma)) {
-                        attacker.sendMessage(adaptMessage.message(attacker,
-                                LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
-                        return;
-                    }
-                    attacker.sendMessage(adaptMessage.message(attacker,
-                            LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
-                } else {
-                    attackerData.setLastAttack();
-                }
-            }
-
+        if (configData.isPvpCrimeTimeEnabled() && !(attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
+            crimeTimeHandler(attacker, attackerNewKarma, victim);
         }
 
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, cause);
@@ -116,13 +79,13 @@ public class Fights {
         if (!playerKarmaChangeEvent.isCancelled()) {
             String message = null;
             if (attackerNewKarma > attackerInitialKarma) {
-                if (reason.equals(Reasons.HIT)) {
+                if (reason.equals(Cause.HIT)) {
                     message = configData.getPvpHitMessageKarmaIncrease();
                 } else {
                     message = configData.getPvpKillMessageKarmaIncrease();
                 }
             } else if (attackerNewKarma < attackerInitialKarma) {
-                if (reason.equals(Reasons.HIT)) {
+                if (reason.equals(Cause.HIT)) {
                     message = configData.getPvpHitMessageKarmaDecrease();
                 } else {
                     message = configData.getPvpKillMessageKarmaDecrease();
@@ -134,7 +97,7 @@ public class Fights {
         }
     }
 
-    public static void pveHandler(Player attacker, LivingEntity entity, Reasons reason, Object cause) {
+    public static void pveHandler(Player attacker, LivingEntity entity, Cause reason, Object cause) {
         String entityName = entity.getName();
         YamlConfiguration config = plugin.getCustomConfig();
         double reward = config.getInt("entities." + entityName + "." + reason.getText()  + "-karma-reward");
@@ -172,6 +135,47 @@ public class Fights {
             return !configData.isPvpCrimeTimeOnStill();
         } else {
             return !configData.isPvpCrimeTimeOnDown();
+        }
+    }
+
+    private static void crimeTimeHandler(Player attacker, double newKarma, Player victim) {
+        PlayerData attackerData = PlayerData.gets(attacker);
+        long timeStamp = System.currentTimeMillis();
+        long delay = configData.getPvpCrimeTimeDelay();
+
+        double attackerInitialKarma = attackerData.getKarma();
+        float attackStart = attackerData.getLastAttack().getTime();
+        float victimStart = PlayerData.gets(victim).getLastAttack().getTime();
+        float attackEnd = attackStart + delay;
+        float victimEnd = victimStart + delay;
+
+        if (attackStart != 0L && victimStart != 0L) { //if both attacker and victim have been guilty once
+            if ((timeStamp >= attackStart && timeStamp <= attackEnd && ConfigData.getConfigData().isPvpCrimeTimeRefresh())
+                    || timeStamp > victimEnd) {
+                attackerData.setLastAttack();
+            } else {
+                if (doesDefendChangeKarma(attackerInitialKarma, newKarma)) {
+                    attacker.sendMessage(adaptMessage.message(attacker,
+                            LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
+                    return;
+                }
+                attacker.sendMessage(adaptMessage.message(attacker,
+                        LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
+            }
+        } else if (victimStart == 0L) { //If only the victim always been innocent
+            attackerData.setLastAttack();
+        } else if (victimStart != 0L) { //if only the victim has been guilty
+            if (timeStamp >= victimStart && timeStamp <= victimEnd) {
+                if (doesDefendChangeKarma(attackerInitialKarma, newKarma)) {
+                    attacker.sendMessage(adaptMessage.message(attacker,
+                            LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
+                    return;
+                }
+                attacker.sendMessage(adaptMessage.message(attacker,
+                        LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
+            } else {
+                attackerData.setLastAttack();
+            }
         }
     }
 

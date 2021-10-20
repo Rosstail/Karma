@@ -144,7 +144,7 @@ public class CustomEventHandler implements Listener {
         }
 
         if (!(killer == null || Fights.isPlayerNPC(killer))) {
-            Fights.pveHandler(killer, victim, Reasons.KILL, event);
+            Fights.pveHandler(killer, victim, Cause.KILL, event);
         }
     }
 
@@ -161,7 +161,7 @@ public class CustomEventHandler implements Listener {
         }
         Player killer = victim.getKiller();
         if (!(killer == null || killer == victim || Fights.isPlayerNPC(killer))) {
-            Fights.pvpHandler(killer, victim, Reasons.KILL, event);
+            Fights.pvpHandler(killer, victim, Cause.KILL, event);
         }
     }
 
@@ -192,9 +192,9 @@ public class CustomEventHandler implements Listener {
             }
 
             if (victimEntity instanceof Player && attacker != victimEntity) {
-                Fights.pvpHandler(attacker, (Player) victimEntity, Reasons.HIT, event);
+                Fights.pvpHandler(attacker, (Player) victimEntity, Cause.HIT, event);
             } else {
-                Fights.pveHandler(attacker, victimEntity, Reasons.HIT, event);
+                Fights.pveHandler(attacker, victimEntity, Cause.HIT, event);
             }
         }
     }
