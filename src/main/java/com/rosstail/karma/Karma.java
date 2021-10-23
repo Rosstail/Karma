@@ -3,17 +3,15 @@ package com.rosstail.karma;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.*;
 
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.FileResourcesUtils;
 import com.rosstail.karma.events.WorldFights;
 import com.rosstail.karma.events.CustomEventHandler;
-import com.rosstail.karma.configdata.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
-import com.rosstail.karma.lang.Cause;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timemanagement.TimeManager;
@@ -26,10 +24,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Main class and methods of the plugin
  */
 public class Karma extends JavaPlugin implements Listener {
-
-    public Connection connection;
-    public String host, database, username, password;
-    public int port;
 
     private YamlConfiguration config;
     private static Karma instance;
@@ -46,12 +40,12 @@ public class Karma extends JavaPlugin implements Listener {
         instance = this;
         File fileConfig = new File("plugins/" + getName() + "/config.yml");
         if (!(fileConfig.exists())) {
-            AdaptMessage.print("Preparing default config.yml", Cause.OUT);
+            AdaptMessage.print("Preparing default config.yml", AdaptMessage.prints.OUT);
             this.saveDefaultConfig();
         }
 
         config = YamlConfiguration.loadConfiguration(fileConfig);
-        ConfigData.initKarmaValues(getCustomConfig());
+        ConfigData.init(getCustomConfig());
         AdaptMessage.initAdaptMessage(this);
         WorldFights.setUp(this);
         TierManager.initTierManager(this);
@@ -71,75 +65,17 @@ public class Karma extends JavaPlugin implements Listener {
         }
 
         if (this.getCustomConfig().getBoolean("mysql.active")) {
-            prepareConnection();
+            try {
+                DBInteractions.initDBInteractions(this);
+                DBInteractions.getInstance().prepareConnection();
+            } catch (Exception e) {
+                AdaptMessage.print(e.toString(), AdaptMessage.prints.ERROR);
+            }
         }
         this.createPlayerDataFolder();
         
         Bukkit.getPluginManager().registerEvents(new CustomEventHandler(), this);
         this.getCommand(getName().toLowerCase()).setExecutor(new KarmaCommand());
-    }
-
-    private void prepareConnection() {
-        host = this.getCustomConfig().getString("mysql.host");
-        database = this.getCustomConfig().getString("mysql.database");
-        username = this.getCustomConfig().getString("mysql.username");
-        password = this.getCustomConfig().getString("mysql.password");
-        port = this.getCustomConfig().getInt("mysql.port");
-        try {
-            openConnection();
-            setTableToDataBase();
-            updateTableToDataBase();
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void openConnection() throws SQLException, ClassNotFoundException {
-        if (connection != null && !connection.isClosed()) {
-            return;
-        }
-
-        synchronized (this) {
-            if (connection != null && !connection.isClosed()) {
-                return;
-            }
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database,
-                    this.username, this.password);
-        }
-    }
-
-
-    public void setTableToDataBase() {
-        String sql = "CREATE TABLE IF NOT EXISTS " + getName() + " ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL,\n" +
-                " Karma double,\n" +
-                " Previous_Karma double,\n" +
-                " Tier varchar(50),\n" +
-                " Previous_Tier varchar(50),\n" +
-                " Last_Attack DATETIME NOT NULL DEFAULT '1970-01-01 01:00:00');";
-        try {
-            if (connection != null && !connection.isClosed()) {
-                Statement statement = connection.createStatement();
-                statement.execute(sql);
-                statement.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updateTableToDataBase() {
-        String sql = "ALTER TABLE " + getName() + " " +
-                "ADD Previous_Karma double AFTER Karma," +
-                "ADD Previous_Tier varchar(50) AFTER Tier;";
-        try {
-            if (connection != null && !connection.isClosed()) {
-                Statement statement = connection.createStatement();
-                statement.execute(sql);
-                statement.close();
-            }
-        } catch (SQLException e) {
-        }
     }
 
     /**
@@ -150,7 +86,7 @@ public class Karma extends JavaPlugin implements Listener {
         if (!folder.exists()) {
             String message = this.getCustomConfig().getString("messages.creating-playerdata-folder");
             if (message != null) {
-                message = AdaptMessage.getAdaptMessage().message(null, message, null);
+                message = AdaptMessage.getAdaptMessage().adapt(null, message, null);
 
                 getServer().getConsoleSender().sendMessage(message);
             }
@@ -159,12 +95,9 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        DBInteractions dbInteractions = DBInteractions.getInstance();
+        if (dbInteractions != null) {
+            dbInteractions.closeConnexion();
         }
     }
 

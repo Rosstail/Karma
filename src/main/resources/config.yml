@@ -11,10 +11,11 @@ data-save-delay: 300
 general:
   lang: "en_EN"
   decimal-number-to-show: 2
-  delay-between-hit-messages: 5
-  delay-between-kill-messages: 10
+  title:
+    fade-in: 1
+    stay: 20
+    fade-out: 1
   use-worldguard: false #works only for Worldguard 7+
-  use-action-bar-on-actions: true
   date-time-format: "yyyy-MM-dd HH:mm:ss"
 
 karma:
@@ -171,7 +172,7 @@ times:
   system-times: #use the server real life time. You can add all the time-X you want, with custom name
     time-1:
       start-time: "08:00"
-      end-time: "12:00"
+      end-time: "12:59"
       rate: 100
     time-2:
       start-time: "13:00"
@@ -180,51 +181,30 @@ times:
 
 pvp:
   # You can make your own expression, any error will lead to a result of 0.
-  hit-reward-expression:  (-1 * (%karma_victim_karma% + 200) / 50)
-  kill-reward-expression:  (-1 * (%karma_victim_karma% + 200) / 10)
-  crime-time: #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is an aggressor)
+  hit-reward-expression:  "(-1 * (%karma_victim_karma% + 200) / 50)"
+  kill-reward-expression:  "(-1 * (%karma_victim_karma% + 200) / 10)"
+  messages-delay:
+    hit: 5
+    kill: 10
+  wanted: #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is wanted too)
     enable: true
-    delay: 300 #delay in second that a player is an aggressor.
-    # Enable or not the karma change if the defender won/less some karma or stay at the same karma.
-    # Useful for avoid messages in a future update too.
-    active-on-up: true
-    active-on-still: false
-    active-on-down: false
+    duration: "(%karma_player_wanted_time% + (300 * 1000))" #delay in second that a player is wanted.
+    max-duration: "(%timestamp% + (3600 * 1000))"
+    on-karma-gain: false
+    on-karma-unchanged: false
+    on-karma-loss: true
     refresh: true
-  #Sends a message to the attacker when hitting / killing another player. You can use any local placeholder with attacker or victim instead of player.
-  hit-message-on-karma-increase: "&aThat scum will not escape from that !"
-  kill-message-on-karma-increase: "&b%victim% is now finished !"
-  hit-message-on-karma-decrease: "&c%attacker%, you attack a honest people !"
-  kill-message-on-karma-decrease: "#DD0000You murdered an innocent !"
 
 entities:
-  Bee:
-    hit-karma-reward:      1
-    hit-message: "Run villager, RUN !!!"
-    kill-karma-reward:     3
-    kill-message: "%attacker% : You captured a bee ! &5*Animal Crossing MLG music* &a%karma_attacker_previous_karma% + %karma_attacker_diff_karma% = %karma_attacker_karma%"
+  #default entities names
   Cat:
     hit-karma-reward:    -10
     hit-message: "&cYou DARE put a hand on your Master ?!!"
     kill-karma-reward:   -76
     kill-message: "&4&lWILFRIIIIIIIED !!!"
-  Ender Dragon:
-    hit-karma-reward:      1
-    hit-message: "&aKEEP GOING"
-    kill-karma-reward: 10000
-    kill-message: "&6&lYou did it ! You finally did it !"
-  Skeleton:
-    hit-karma-reward:      1
-    kill-karma-reward:   100
-  Skeleton Horse:
-    hit-karma-reward:      1
-    kill-karma-reward:   100
   Trader Llama:
     hit-karma-reward:    -11
     kill-karma-reward:  -356
-  Villager:
-    hit-karma-reward:    -34
-    kill-karma-reward:  -651
   Wolf:
     hit-message: "Hunt a wolf doesn't change your karma : &d%karma_attacker_karma%"
     kill-message: "You successfully hunt the wolf : &5%karma_attacker_karma%"
@@ -233,6 +213,8 @@ entities:
     hit-message: "Aim his head !"
     kill-karma-reward:    58
     kill-message: "Burn the corpse."
-  Zombie Villager:
-    hit-karma-reward:      0
-    kill-karma-reward:  -100
+  #renamed entities
+  Galsia:
+    hit-karma-reward: 3
+    hit-message: "HIT !"
+    kill-karma-reward: 8

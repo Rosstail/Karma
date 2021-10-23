@@ -37,23 +37,6 @@ public class PlayerKarmaChangeEvent extends Event implements Cancellable {
         this.cause = cause;
     }
 
-    public PlayerKarmaChangeEvent(Player player, double value, boolean isOverTimeReset) {
-        this.player = player;
-        this.value = value;
-        this.overTimeReset = isOverTimeReset;
-        this.cancelled = false;
-        this.cause = null;
-    }
-
-    public PlayerKarmaChangeEvent(Player player, double value) {
-        this.player = player;
-        this.value = value;
-        this.overTimeReset = true;
-        this.cancelled = false;
-        this.cause = null;
-    }
-
-
     public Player getPlayer() throws NullPointerException {
         return player;
     }

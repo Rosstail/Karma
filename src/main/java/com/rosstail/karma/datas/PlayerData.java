@@ -1,11 +1,10 @@
 package com.rosstail.karma.datas;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.configdata.ConfigData;
-import com.rosstail.karma.customevents.Cause;
-import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.customevents.PlayerOverTimeTriggerEvent;
-import com.rosstail.karma.customevents.PlayerTierChangeEvent;
+import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.ConfigData;
+import com.rosstail.karma.customevents.*;
+import com.rosstail.karma.events.Fights;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -13,17 +12,16 @@ import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Gonna be used to optimize the research of values
@@ -40,16 +38,16 @@ public class PlayerData {
     private double previousKarma;
     private Tier tier;
     private Tier previousTier;
-    private Timestamp lastAttack = new Timestamp(0L);
+    private Timestamp wantedTimeStamp = new Timestamp(0L);
     private Timer updateDataTimer;
     private int overTimerScheduler;
+    private int wantedScheduler;
+    private boolean wanted;
 
     private PlayerData(Player player) {
         this.player = player;
         playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         loadPlayerData();
-        previousKarma = karma;
-        previousTier = tier;
     }
 
     public static PlayerData gets(Player player) {
@@ -74,8 +72,8 @@ public class PlayerData {
         return TierManager.getNoTier();
     }
 
-    public Timestamp getLastAttack() {
-        return lastAttack; //milliseconds are important only for calculations
+    public Timestamp getWantedTimeStamp() {
+        return wantedTimeStamp; //milliseconds are important only for calculations
     }
 
     public double getPreviousKarma() {
@@ -89,64 +87,20 @@ public class PlayerData {
         return TierManager.getNoTier();
     }
 
-    private boolean ifPlayerExistsInDTB() {
-        String UUID = String.valueOf(player.getUniqueId());
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                PreparedStatement statement = plugin.connection
-                    .prepareStatement("SELECT * FROM " + plugin.getName() + " WHERE UUID = '" + UUID + "';");
-                ResultSet result = statement.executeQuery();
-                if (result.next()) {
-                    karma = result.getDouble("Karma");
-                    previousKarma = result.getDouble("Previous_Karma");
-
-                    String tierLabel = result.getString("Tier");
-                    String previousTierLabel = result.getString("Previous_Tier");
-                    if (TierManager.getTierManager().getTiers().containsKey(tierLabel)) {
-                        tier = TierManager.getTierManager().getTiers().get(tierLabel);
-                    }
-                    if (TierManager.getTierManager().getTiers().containsKey(previousTierLabel)) {
-                        previousTier = TierManager.getTierManager().getTiers().get(previousTierLabel);
-                    }
-                    lastAttack = result.getTimestamp("Last_Attack");
-                    return true;
-                }
-                statement.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
     /**
-     * Request the player Tier inside file or database
+     * Request the player Tier inside file
      *
      */
     public void loadPlayerData() {
-        String UUID = String.valueOf(player.getUniqueId());
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                PreparedStatement statement = plugin.connection.prepareStatement("SELECT * FROM " + plugin.getName() + " WHERE UUID = '" + UUID + "';");
-                ResultSet result = statement.executeQuery();
-                if (result.next()) {
-                    karma = result.getDouble("Karma");
-                    previousKarma = result.getDouble("Previous_Karma");
-                    tier = TierManager.getTierManager().getTiers().get(result.getString("Tier"));
-                    previousTier = TierManager.getTierManager().getTiers().get(result.getString("Previous_Tier"));
-                    lastAttack = result.getTimestamp("Last_Attack");
-                }
-                statement.close();
-            } else {
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                karma = playerConfig.getDouble("karma");
-                previousKarma = playerConfig.getDouble("previous-karma");
-                tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
-                previousTier = TierManager.getTierManager().getTiers().get(playerConfig.getString("previous-tier"));
-                lastAttack = new Timestamp(playerConfig.getLong("last-attack"));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        DBInteractions dbInteractions = DBInteractions.getInstance();
+        if (dbInteractions == null) {
+            YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+            karma = playerConfig.getDouble("karma");
+            previousKarma = playerConfig.getDouble("previous-karma");
+            tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
+            previousTier = TierManager.getTierManager().getTiers().get(playerConfig.getString("previous-tier"));
+            wantedTimeStamp = new Timestamp(playerConfig.getLong("wanted-time"));
+            wanted = isWanted();
         }
     }
 
@@ -155,52 +109,18 @@ public class PlayerData {
      *
      */
     public void initPlayerData() {
-        try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                if (!ifPlayerExistsInDTB()) {
-                    initPlayerDataDTB();
-                }
-            } else if (!playerFile.exists()){
-                initPlayerDataLocale();
+        DBInteractions dbInteractions = DBInteractions.getInstance();
+        if (dbInteractions != null) {
+            if (!dbInteractions.getPlayerData(player)) {
+                dbInteractions.initPlayerDB(player);
             }
-        } catch (SQLException throwable) {
-            throwable.printStackTrace();
+        } else if (!playerFile.exists()){
+            initPlayerDataLocale();
         }
     }
 
-    private void initPlayerDataDTB() {
-        String UUID = String.valueOf(player.getUniqueId());
-        double value = configData.getDefaultKarma();
-
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true, Cause.OTHER);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-
-        this.previousKarma = getKarma();
-        checkTier();
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                PreparedStatement preparedStatement = plugin.connection.prepareStatement(
-                        "INSERT INTO " + plugin.getName() + " (UUID, Karma, Previous_Karma, Tier, Previous_Tier, Last_Attack)\n"
-                                + "VALUES (?, ?, ?, ?, ?, ?);");
-
-                preparedStatement.setString(1, UUID);
-                preparedStatement.setDouble(2, getKarma());
-                preparedStatement.setDouble(3, getPreviousKarma());
-                preparedStatement.setString(4, getTier().getName());
-                preparedStatement.setString(5, getPreviousTier().getName());
-                preparedStatement.setTimestamp(6, getLastAttack());
-
-                preparedStatement.execute();
-                preparedStatement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     private void initPlayerDataLocale() {
-        double defaultKarma = configData.getDefaultKarma();
+        double defaultKarma = configData.defaultKarma;
 
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, defaultKarma, true, Cause.OTHER);
@@ -224,8 +144,8 @@ public class PlayerData {
      * @param value  -> The new karma amount of the player
      */
     public void setKarma(double value) {
-        double min = ConfigData.getConfigData().getMinKarma();
-        double max = ConfigData.getConfigData().getMaxKarma();
+        double min = ConfigData.getConfigData().minKarma;
+        double max = ConfigData.getConfigData().maxKarma;
         if (value < min) {
             value = min;
         } else if (value > max) {
@@ -242,43 +162,21 @@ public class PlayerData {
 
     public void updateData() {
         try {
-            if (plugin.connection != null && !plugin.connection.isClosed()) {
-                updateDB();
+            DBInteractions dbInteractions = DBInteractions.getInstance();
+            if (dbInteractions != null) {
+                dbInteractions.updatePlayerDB(player);
             } else {
                 YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
                 playerConfig.set("karma", getKarma());
                 playerConfig.set("previous-karma", getPreviousKarma());
                 playerConfig.set("tier", getTier().getName());
                 playerConfig.set("previous-tier", getPreviousTier().getName());
-                playerConfig.set("last-attack", getLastAttack().getTime());
+                playerConfig.set("wanted-time", getWantedTimeStamp().getTime());
                 playerConfig.save(playerFile);
             }
-        } catch (SQLException | IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void updateDB() {
-        String UUID = player.getUniqueId().toString();
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                String query = "UPDATE " + plugin.getName() + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Last_Attack = ? WHERE UUID = ?;";
-                PreparedStatement preparedStatement = plugin.connection.prepareStatement(query);
-
-                preparedStatement.setDouble(1, getKarma());
-                preparedStatement.setDouble(2, getPreviousKarma());
-                preparedStatement.setString(3, getTier().getName());
-                    preparedStatement.setString(4, getPreviousTier().getName());
-                preparedStatement.setTimestamp(5, getLastAttack());
-                preparedStatement.setString(6, UUID);
-
-                preparedStatement.executeUpdate();
-                preparedStatement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
     }
 
     /**
@@ -316,44 +214,65 @@ public class PlayerData {
 
     public static void setOverTimerChange(Player player) {
         PlayerData playerData = PlayerData.gets(player);
-        stopOverTimer(player);
-        if (!ConfigData.getConfigData().isOvertimeActive()) {
+        stopTimer(playerData.getOverTimerScheduler());
+        if (!ConfigData.getConfigData().isOvertimeActive) {
             return;
         }
         playerData.setOverTimerScheduler(setupNewOverTime(player));
+    }
+
+    public static void replaceWantedScheduler(Player player) {
+        PlayerData playerData = PlayerData.gets(player);
+        stopTimer(playerData.getWantedScheduler());
+        playerData.setWantedScheduler(setupNewWantedPeriod(player));
     }
 
     private static int setupNewOverTime(Player player) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player);
             Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
-        }, ConfigData.getConfigData().getOvertimeFirstDelay(), ConfigData.getConfigData().getOvertimeNextDelay());
+        }, ConfigData.getConfigData().overtimeFirstDelay, ConfigData.getConfigData().overtimeNextDelay);
+    }
+    private static int setupNewWantedPeriod(Player player) {
+        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            PlayerData playerData = PlayerData.gets(player);
+            if (playerData.isWanted() && !Fights.isPlayerWanted(playerData.getWantedTimeStamp().getTime())) {
+                PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
+                Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
+            }
+        }, 1, 1);
+    }
+
+    public void setWanted(boolean b) {
+        this.wanted = b;
     }
 
     public static void triggerOverTime(Player player) {
         PlayerData playerData = PlayerData.gets(player);
         double currentKarma = playerData.getKarma();
         double newKarma = currentKarma;
-        double decreaseValue = ConfigData.getConfigData().getOvertimeDecreaseValue();
-        double increaseValue = ConfigData.getConfigData().getOvertimeIncreaseValue();
+        double decreaseValue = ConfigData.getConfigData().overtimeDecreaseValue;
+        double increaseValue = ConfigData.getConfigData().overtimeIncreaseValue;
         if (decreaseValue > 0) {
-            double decreaseLimit = ConfigData.getConfigData().getOvertimeDecreaseLimit();
+            double decreaseLimit = ConfigData.getConfigData().overtimeDecreaseLimit;
             if (currentKarma > decreaseLimit) {
                 newKarma = currentKarma - decreaseValue;
                 if (newKarma < decreaseLimit) {
                     newKarma = decreaseLimit;
                 }
-                commandsLauncher(player, ConfigData.getConfigData().getOvertimeDecreaseCommands());
+
+                KarmaCommand.commandsLauncher(player, ConfigData.getConfigData().overtimeDecreaseCommands);
             }
         }
         if (increaseValue > 0) {
-            double increaseLimit = ConfigData.getConfigData().getOvertimeIncreaseLimit();
+            double increaseLimit = ConfigData.getConfigData().overtimeIncreaseLimit;
             if (currentKarma < increaseLimit) {
                 newKarma = currentKarma + increaseValue;
                 if (newKarma > increaseLimit) {
                     newKarma = increaseLimit;
                 }
-                commandsLauncher(player, ConfigData.getConfigData().getOvertimeIncreaseCommands());
+
+                KarmaCommand.commandsLauncher(player, ConfigData.getConfigData().overtimeIncreaseCommands);
             }
         }
 
@@ -363,82 +282,30 @@ public class PlayerData {
         }
     }
 
-    public static void stopOverTimer(Player player) {
-        PlayerData playerData = PlayerData.gets(player);
-        Bukkit.getScheduler().cancelTask(playerData.getOverTimerScheduler());
+    public static void stopTimer(int scheduler) {
+        Bukkit.getScheduler().cancelTask(scheduler);
     }
 
     /**
      * Set the timestamp of the player's attack moment if needed
      *
      */
-    public void setLastAttack() {
+    public void setWantedTimeStamp(Timestamp lastAttack) {
         if (player.hasMetadata("NPC")) {
             return;
         }
-        lastAttack = new Timestamp(System.currentTimeMillis());
+        this.wantedTimeStamp = lastAttack;
     }
 
     public static void changePlayerTierMessage(Player player) {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
-            player.sendMessage(adaptMessage.message(player, message, PlayerType.player.getId()));
+            adaptMessage.sendToPlayer(player, adaptMessage.adapt(player, message, PlayerType.player.toString()));
         }
     }
 
-    public static void commandsLauncher(Player player, List<String> commands) {
-        if (commands != null) {
-            commands.forEach(s -> {
-                placeCommands(player, s);
-            });
-        }
-    }
-
-    public static void commandsLauncher(Player attacker, Player victim, List<String> commands) {
-        if (commands != null) {
-            commands.forEach(s -> {
-                placeCommands(attacker, victim, s);
-            });
-        }
-    }
-
-    private static void placeCommands(Player player, String command) {
-        command = adaptMessage.message(player, command, PlayerType.player.getId());
-
-        CommandSender senderOrTarget = Bukkit.getConsoleSender();
-
-        String regex = PlayerType.player.getId();
-        if (command.startsWith(regex)) {
-            command = command.replaceFirst(regex, "").trim();
-            senderOrTarget = player;
-        }
-        if (command.startsWith("message")) {
-            command = command.replaceFirst("message", "").trim();
-            senderOrTarget.sendMessage(command);
-        } else {
-            Bukkit.dispatchCommand(senderOrTarget, command);
-        }
-    }
-
-    private static void placeCommands(Player attacker, Player victim, String command) {
-        command = adaptMessage.message(attacker, command, PlayerType.attacker.getId());
-        command = adaptMessage.message(victim, command, PlayerType.victim.getId());
-
-        CommandSender senderOrTarget = Bukkit.getConsoleSender();
-        if (command.startsWith(PlayerType.victim.getId())) {
-            command = command.replaceFirst(PlayerType.victim.getId(), "").trim();
-            senderOrTarget = victim;
-        } else if (command.startsWith(PlayerType.attacker.getId())) {
-            command = command.replaceFirst(PlayerType.attacker.getId(), "").trim();
-            senderOrTarget = attacker;
-        }
-
-        if (command.startsWith("message")) {
-            command = command.replaceFirst("message", "").trim();
-            senderOrTarget.sendMessage(command);
-        } else {
-            Bukkit.dispatchCommand(senderOrTarget, command);
-        }
+    public boolean isWanted() {
+        return wanted;
     }
 
     public static Map<Player, PlayerData> getPlayerList() {
@@ -449,8 +316,16 @@ public class PlayerData {
         return overTimerScheduler;
     }
 
+    public int getWantedScheduler() {
+        return wantedScheduler;
+    }
+
     public void setOverTimerScheduler(int overTimerScheduler) {
         this.overTimerScheduler = overTimerScheduler;
+    }
+
+    public void setWantedScheduler(int wantedScheduler) {
+        this.wantedScheduler = wantedScheduler;
     }
 
     public static void setConfigData(ConfigData configData) {

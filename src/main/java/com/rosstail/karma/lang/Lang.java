@@ -22,7 +22,7 @@ public class Lang {
             this.name = this.file.getName();
         } else {
             this.configuration = null;
-            AdaptMessage.print("The language file/" + langId + ".yml does not exists", Cause.ERROR);
+            AdaptMessage.print("The language file/" + langId + ".yml does not exists", AdaptMessage.prints.ERROR);
         }
     }
 

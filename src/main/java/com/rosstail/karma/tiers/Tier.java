@@ -31,13 +31,13 @@ public class Tier {
         if (display == null) {
             display = "&7" + name;
         }
-        this.display = AdaptMessage.getAdaptMessage().message(null, display, null);
+        this.display = AdaptMessage.getAdaptMessage().adapt(null, display, null);
 
         String shortDisplay = section.getString("short-display");
         if (shortDisplay == null) {
             shortDisplay = "&7" + name;
         }
-        this.shortDisplay = AdaptMessage.getAdaptMessage().message(null, shortDisplay, null);
+        this.shortDisplay = AdaptMessage.getAdaptMessage().adapt(null, shortDisplay, null);
 
         this.minKarma = section.getDouble("minimum");
         this.maxKarma = section.getDouble("maximum");
@@ -56,12 +56,12 @@ public class Tier {
         if (display == null) {
             display = "&7";
         }
-        this.display = AdaptMessage.getAdaptMessage().message(null, display, null);
+        this.display = AdaptMessage.getAdaptMessage().adapt(null, display, null);
 
         if (shortDisplay == null) {
             shortDisplay = "&7";
         }
-        this.shortDisplay = AdaptMessage.getAdaptMessage().message(null, shortDisplay, null);
+        this.shortDisplay = AdaptMessage.getAdaptMessage().adapt(null, shortDisplay, null);
         this.minKarma = 0;
         this.maxKarma = 0;
         this.joinCommands = new ArrayList<>();

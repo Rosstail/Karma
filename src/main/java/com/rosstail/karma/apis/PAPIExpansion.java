@@ -1,8 +1,10 @@
 package com.rosstail.karma.apis;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -178,13 +180,22 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
             }
 
-            if (identifier.equals("player_last_attack")) {
-                float time = playerData.getLastAttack().getTime();
+            if (identifier.equals("player_wanted_time")) {
+                return String.valueOf(playerData.getWantedTimeStamp().getTime());
+            }
+            if (identifier.equals("player_wanted_time_display")) {
+                float time = playerData.getWantedTimeStamp().getTime();
                 if (time > 0f) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
                     return simpleDateFormat.format(time);
                 }
                 return "N/A";
+            }
+            if (identifier.equals("player_wanted_status")) {
+                if (playerData.isWanted()) {
+                    return LangManager.getMessage(LangMessage.STATUS_WANTED);
+                }
+                return LangManager.getMessage(LangMessage.STATUS_INNOCENT);
             }
         }
 

@@ -42,6 +42,13 @@ public class TierManager {
         return tiers;
     }
 
+    public Tier getTierInList(String tierName) {
+        if (tiers.containsKey(tierName)) {
+            return tiers.get(tierName);
+        }
+        return noTier;
+    }
+
     public static Tier getNoTier() {
         return noTier;
     }

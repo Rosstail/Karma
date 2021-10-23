@@ -14,11 +14,20 @@ public enum LangMessage {
     HELP("help"),
     PERMISSION_DENIED("permission-denied"),
     TIER_CHANGE("tier-change"),
-    SELF_DEFENDING_OFF("self-defending-off"),
-    SELF_DEFENDING_ON("self-defending-on"),
     CALCULATION("calculation"),
-    RELOAD("reload"),
-    TOO_FEW_ARGUMENTS("too-few-arguments");
+    TOO_FEW_ARGUMENTS("too-few-arguments"),
+    PVP_HIT_KARMA_INCREASE("pvp.hit-karma-increase"),
+    PVP_HIT_KARMA_UNCHANGED("pvp.hit-karma-unchanged"),
+    PVP_HIT_KARMA_DECREASE("pvp.hit-karma-decrease"),
+    PVP_KILL_KARMA_INCREASE("pvp.kill-karma-increase"),
+    PVP_KILL_KARMA_UNCHANGED("pvp.kill-karma-unchanged"),
+    PVP_KILL_KARMA_DECREASE("pvp.kill-karma-decrease"),
+    WANTED_ENTER("wanted.enter"),
+    WANTED_REFRESH("wanted.refresh"),
+    WANTED_EXIT("wanted.exit"),
+    STATUS_INNOCENT("wanted.status.innocent"),
+    STATUS_WANTED("wanted.status.wanted");
+
     private final String text;
 
     LangMessage(String text) {

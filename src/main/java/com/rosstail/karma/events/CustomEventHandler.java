@@ -1,8 +1,14 @@
 package com.rosstail.karma.events;
 
-import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.apis.ExpressionCalculator;
+import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
@@ -19,10 +25,16 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.sql.Timestamp;
+import java.util.regex.Matcher;
+
 public class CustomEventHandler implements Listener {
     private static ConfigData configData = ConfigData.getConfigData();
+    private final int saveDelay = Math.max(1, configData.saveDelay);
+    private final AdaptMessage adaptMessage;
 
     public CustomEventHandler() {
+        this.adaptMessage = AdaptMessage.getAdaptMessage();
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -35,13 +47,57 @@ public class CustomEventHandler implements Listener {
         if (event.isOverTimeReset()) {
             PlayerData.setOverTimerChange(player);
         }
+
         PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeReset(), event);
         Bukkit.getPluginManager().callEvent(playerKarmaHasChangedEvent);
     }
 
     @EventHandler
     public void onPlayerKarmaHasChanged(PlayerKarmaHasChangedEvent event) {
-        PlayerData playerData = PlayerData.getPlayerList().get(event.getPlayer());
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.getPlayerList().get(player);
+
+        Object cause = event.getCause().getCause();
+        if (cause instanceof EntityDamageByEntityEvent || cause instanceof PlayerDeathEvent) {
+            double newKarma = event.getValue();
+            double previousKarma = playerData.getPreviousKarma();
+
+            String message;
+            if (newKarma > previousKarma) {
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_INCREASE);
+                } else {
+                    message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_INCREASE);
+                }
+            } else if (newKarma < previousKarma) {
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_DECREASE);
+                } else {
+                    message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_DECREASE);
+                }
+            } else {
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_UNCHANGED);
+                } else {
+                    message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_UNCHANGED);
+                }
+            }
+            if (message != null) {
+                Player victim = null;
+                if (cause instanceof EntityDamageByEntityEvent) {
+                    if (((EntityDamageByEntityEvent) cause).getEntity() instanceof Player) {
+                        victim = (Player) ((EntityDamageByEntityEvent) cause).getEntity();
+                    }
+                } else {
+                    victim = ((PlayerDeathEvent) cause).getEntity();
+                }
+
+                message = adaptMessage.playerHitAdapt(message, player, victim, cause);
+                adaptMessage.sendToPlayer(player, message);
+            }
+        }
+
+
         playerData.checkTier();
     }
 
@@ -66,24 +122,22 @@ public class CustomEventHandler implements Listener {
         double previousKarma = playerData.getPreviousKarma();
 
         PlayerData.changePlayerTierMessage(player);
-        PlayerData.commandsLauncher(player, tier.getJoinCommands());
+        KarmaCommand.commandsLauncher(player, tier.getJoinCommands());
         if (previousTier != null) {
             if (karma > previousKarma) {
-                PlayerData.commandsLauncher(player, tier.getJoinOnUpCommands());
+                KarmaCommand.commandsLauncher(player, tier.getJoinOnUpCommands());
             } else {
-                PlayerData.commandsLauncher(player, tier.getJoinOnDownCommands());
+                KarmaCommand.commandsLauncher(player, tier.getJoinOnDownCommands());
             }
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
-        if (!event.isCancelled()) {
-            Player player = event.getPlayer();
-            PlayerData.triggerOverTime(player);
-            PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
-            Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
-        }
+        Player player = event.getPlayer();
+        PlayerData.triggerOverTime(player);
+        PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
+        Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
     }
 
     @EventHandler
@@ -95,29 +149,112 @@ public class CustomEventHandler implements Listener {
         event.setTriggerID(PlayerData.gets(event.getPlayer()).getOverTimerScheduler());
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
-        if (!event.isCancelled()) {
-            Player player = event.getPlayer();
-            PlayerData playerData = PlayerData.gets(player);
-            PlayerData.setOverTimerChange(player);
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.gets(player);
+        PlayerData.setOverTimerChange(player);
 
-            PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player, playerData.getOverTimerScheduler());
-            Bukkit.getPluginManager().callEvent(hasResetEvent);
-        }
+        PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player, playerData.getOverTimerScheduler());
+        Bukkit.getPluginManager().callEvent(hasResetEvent);
     }
 
     @EventHandler
     public void onPlayerOverTimeHasResetEvent(PlayerOverTimeHasResetEvent event) {
     }
 
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerWantedPeriodStartEvent(PlayerWantedPeriodStartEvent event) {
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.gets(player);
+        String message = LangManager.getMessage(LangMessage.WANTED_ENTER);
+
+        playerData.setWanted(true);
+
+        long durationTimeStamp = 0;
+        long durationMaxTimeStamp = 0;
+
+        try {
+            String wantedDurationExp = configData.wantedDurationExpression;
+            String wantedMaxDurationExp = configData.wantedMaxDurationExpression;
+
+            if (playerData.getWantedTimeStamp().getTime() < System.currentTimeMillis()) {
+                wantedDurationExp = wantedDurationExp.replaceAll("%karma_player_wanted_time%", "%timestamp%");
+                wantedMaxDurationExp = wantedMaxDurationExp.replaceAll("%karma_player_wanted_time%", "%timestamp%");
+            }
+            durationTimeStamp = (long) ExpressionCalculator.eval(
+                    AdaptMessage.getAdaptMessage().adapt(player, wantedDurationExp, PlayerType.player.toString())
+            );
+            durationMaxTimeStamp = (long) ExpressionCalculator.eval(
+                    AdaptMessage.getAdaptMessage().adapt(player, wantedMaxDurationExp, PlayerType.player.toString())
+            );
+        } catch (Exception e) {
+            AdaptMessage.print(e.toString(), AdaptMessage.prints.ERROR);
+        }
+
+        playerData.setWantedTimeStamp(new Timestamp(Math.min(durationTimeStamp, durationMaxTimeStamp)));
+        PlayerData.replaceWantedScheduler(player);
+        if (message != null) {
+            adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.player.toString()));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerWantedPeriodRefreshEvent(PlayerWantedPeriodRefreshEvent event) {
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.gets(player);
+        String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
+
+        if (event.isTimeExtend()) {
+            long durationTimeStamp = 0;
+            long durationMaxTimeStamp = 0;
+
+            try {
+                String wantedDurationExp = configData.wantedDurationExpression;
+                String wantedMaxDurationExp = configData.wantedMaxDurationExpression;
+
+                if (playerData.getWantedTimeStamp().getTime() < System.currentTimeMillis()) {
+                    wantedDurationExp = wantedDurationExp.replaceAll("%karma_player_wanted_time%", "%timestamp%");
+                    wantedMaxDurationExp = wantedMaxDurationExp.replaceAll("%karma_player_wanted_time%", "%timestamp%");
+                }
+                durationTimeStamp = (long) ExpressionCalculator.eval(
+                        AdaptMessage.getAdaptMessage().adapt(player, wantedDurationExp, PlayerType.player.toString())
+                );
+                durationMaxTimeStamp = (long) ExpressionCalculator.eval(
+                        AdaptMessage.getAdaptMessage().adapt(player, wantedMaxDurationExp, PlayerType.player.toString())
+                );
+            } catch (Exception e) {
+                AdaptMessage.print(e.toString(), AdaptMessage.prints.ERROR);
+            }
+
+            playerData.setWantedTimeStamp(new Timestamp(Math.min(durationTimeStamp, durationMaxTimeStamp)));
+        }
+
+        PlayerData.replaceWantedScheduler(player);
+        if (message != null) {
+            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.player.toString()));
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerWantedPeriodEndEvent(PlayerWantedPeriodEndEvent event) {
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.gets(player);
+
+        playerData.setWanted(false);
+        PlayerData.stopTimer(playerData.getWantedScheduler());
+        String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
+        if (message != null) {
+            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.player.toString()));
+        }
+    }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        int delay = configData.getSaveDelay();
         Player player = event.getPlayer();
         PlayerData playerData = PlayerData.gets(player);
         playerData.initPlayerData();
-        playerData.setUpdateDataTimer(delay);
+        playerData.setUpdateDataTimer(saveDelay);
         PlayerData.setOverTimerChange(player);
     }
 
@@ -127,7 +264,8 @@ public class CustomEventHandler implements Listener {
         PlayerData playerData = PlayerData.gets(player);
         playerData.getUpdateDataTimer().cancel();
         playerData.updateData();
-        PlayerData.stopOverTimer(player);
+        PlayerData.stopTimer(playerData.getOverTimerScheduler());
+        PlayerData.stopTimer(playerData.getWantedScheduler());
     }
 
     /**
@@ -144,7 +282,7 @@ public class CustomEventHandler implements Listener {
         }
 
         if (!(killer == null || Fights.isPlayerNPC(killer))) {
-            Fights.pveHandler(killer, victim, Cause.KILL, event);
+            Fights.pveHandler(killer, victim, event);
         }
     }
 
@@ -161,7 +299,7 @@ public class CustomEventHandler implements Listener {
         }
         Player killer = victim.getKiller();
         if (!(killer == null || killer == victim || Fights.isPlayerNPC(killer))) {
-            Fights.pvpHandler(killer, victim, Cause.KILL, event);
+            Fights.pvpHandler(killer, victim, event);
         }
     }
 
@@ -191,10 +329,10 @@ public class CustomEventHandler implements Listener {
                 return;
             }
 
-            if (victimEntity instanceof Player && attacker != victimEntity) {
-                Fights.pvpHandler(attacker, (Player) victimEntity, Cause.HIT, event);
+            if (victimEntity instanceof Player && !attacker.equals(victimEntity)) {
+                Fights.pvpHandler(attacker, (Player) victimEntity, event);
             } else {
-                Fights.pveHandler(attacker, victimEntity, Cause.HIT, event);
+                Fights.pveHandler(attacker, victimEntity, event);
             }
         }
     }

@@ -3,26 +3,32 @@ package com.rosstail.karma.events;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.apis.WGPreps;
-import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.customevents.PlayerWantedPeriodRefreshEvent;
+import com.rosstail.karma.customevents.PlayerWantedPeriodStartEvent;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.lang.AdaptMessage;
-import com.rosstail.karma.lang.LangManager;
-import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class Fights {
 
     private static final Karma plugin = Karma.getInstance();
     private static ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+    private static final boolean doesWantedTimeRefresh = configData.wantedRefresh;
 
-    public static void pvpHandler(Player attacker, Player victim, Cause reason, Object cause) {
+    public static void pvpHandler(Player attacker, Player victim, Event event) {
         boolean isPlayerInTime = TimeManager.getTimeManager().isPlayerInTime(attacker);
         if (!isPlayerInTime || isPlayerNPC(attacker) || (isPlayerNPC(victim) && !doesPlayerNPCHaveKarma(victim))) {
             return;
@@ -32,23 +38,23 @@ public class Fights {
         PlayerData attackerData = PlayerData.gets(attacker);
         double attackerInitialKarma = attackerData.getKarma();
 
-        if (reason.equals(Cause.KILL)) {
-            PlayerData.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
+        if (event instanceof PlayerDeathEvent) {
+            KarmaCommand.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
 
-            String path = configData.getKilledByTierPath();
+            String path = configData.killedByTierPath;
 
-            path = adaptMessage.message(victim, path, PlayerType.victim.getId());
-            path = adaptMessage.message(attacker, path, PlayerType.attacker.getId());
-            PlayerData.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
+            path = adaptMessage.adapt(victim, path, PlayerType.victim.toString());
+            path = adaptMessage.adapt(attacker, path, PlayerType.attacker.toString());
+            KarmaCommand.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
         }
 
         ConfigData configData = ConfigData.getConfigData();
         String expression;
 
-        if (reason.equals(Cause.KILL)) {
-            expression = configData.getPvpKillRewardExpression();
+        if (event instanceof PlayerDeathEvent) {
+            expression = configData.pvpKillRewardExpression;
         } else {
-            expression = configData.getPvpHitRewardExpression();
+            expression = configData.pvpHitRewardExpression;
         }
 
         if (expression == null) {
@@ -57,66 +63,55 @@ public class Fights {
 
         double result;
 
-        expression = adaptMessage.message(attacker, expression, PlayerType.attacker.getId());
-        expression = adaptMessage.message(victim, expression, PlayerType.victim.getId());
+        expression = adaptMessage.adapt(attacker, expression, PlayerType.attacker.toString());
+        expression = adaptMessage.adapt(victim, expression, PlayerType.victim.toString());
 
         expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
                 String.valueOf(PlayerData.gets(attacker).getTier().getTierScore(PlayerData.gets(victim).getTier())));
 
         result = ExpressionCalculator.eval(expression);
-        if (configData.doesUseWorldGuard()) {
+        if (configData.useWorldGuard) {
             double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
             result = result * multi;
         }
         double attackerNewKarma = attackerInitialKarma + result;
 
-        if (configData.isPvpCrimeTimeEnabled() && !(attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
-            crimeTimeHandler(attacker, attackerNewKarma, victim);
+        if (configData.wantedEnable && !(attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
+            wantedHandler(attacker, attackerNewKarma, victim, event);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, cause);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, event);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-        if (!playerKarmaChangeEvent.isCancelled()) {
-            String message = null;
-            if (attackerNewKarma > attackerInitialKarma) {
-                if (reason.equals(Cause.HIT)) {
-                    message = configData.getPvpHitMessageKarmaIncrease();
-                } else {
-                    message = configData.getPvpKillMessageKarmaIncrease();
-                }
-            } else if (attackerNewKarma < attackerInitialKarma) {
-                if (reason.equals(Cause.HIT)) {
-                    message = configData.getPvpHitMessageKarmaDecrease();
-                } else {
-                    message = configData.getPvpKillMessageKarmaDecrease();
-                }
-            }
-            if (message != null) {
-                adaptMessage.playerHitMessage(message, attacker, victim, reason.getText());
-            }
-        }
     }
 
-    public static void pveHandler(Player attacker, LivingEntity entity, Cause reason, Object cause) {
+    public static void pveHandler(Player attacker, LivingEntity entity, Event event) {
         String entityName = entity.getName();
         YamlConfiguration config = plugin.getCustomConfig();
-        double reward = config.getInt("entities." + entityName + "." + reason.getText()  + "-karma-reward");
-        if (reward == 0) {
+        double reward;
+        if (event instanceof EntityDeathEvent) {
+            reward = config.getInt("entities." + entityName + ".kill-karma-reward");
+        } else if (event instanceof EntityDamageByEntityEvent) {
+            reward = config.getInt("entities." + entityName + ".hit-karma-reward");
+        } else {
             return;
         }
 
         PlayerData attackerData = PlayerData.gets(attacker);
         double attackerKarma = attackerData.getKarma();
 
-        if (configData.doesUseWorldGuard()) {
+        if (configData.useWorldGuard) {
             reward = reward * WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerKarma + reward, true, cause);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerKarma + reward, true, event);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!playerKarmaChangeEvent.isCancelled()) {
-            adaptMessage.entityHitMessage(config.getString("entities." + entityName + "." + reason.getText() + "-message"), attacker, reason);
+            if (event instanceof EntityDeathEvent) {
+                adaptMessage.entityHitMessage(config.getString("entities." + entityName + ".kill-message"), attacker, event);
+            } else {
+                adaptMessage.entityHitMessage(config.getString("entities." + entityName + ".hit-message"), attacker, event);
+            }
         }
     }
 
@@ -128,55 +123,65 @@ public class Fights {
         return npc.hasMetadata("Karma") && npc.getMetadata("Karma").get(0) != null;
     }
 
-    public static boolean doesDefendChangeKarma(double attackerInitialKarma, double attackerNewKarma) {
+    public static boolean doesAttackerRisksGuilt(double attackerInitialKarma, double attackerNewKarma) {
         if (attackerNewKarma > attackerInitialKarma) {
-            return !configData.isPvpCrimeTimeOnUp();
+            return configData.wantedOnKarmaGain;
         } else if (attackerNewKarma == attackerInitialKarma) {
-            return !configData.isPvpCrimeTimeOnStill();
+            return configData.wantedOnKarmaUnchanged;
         } else {
-            return !configData.isPvpCrimeTimeOnDown();
+            return configData.wantedOnKarmaLoss;
         }
     }
 
-    private static void crimeTimeHandler(Player attacker, double newKarma, Player victim) {
+    private static void wantedHandler(Player attacker, double newKarma, Player victim, Object cause) {
         PlayerData attackerData = PlayerData.gets(attacker);
-        long timeStamp = System.currentTimeMillis();
-        long delay = configData.getPvpCrimeTimeDelay();
 
         double attackerInitialKarma = attackerData.getKarma();
-        float attackStart = attackerData.getLastAttack().getTime();
-        float victimStart = PlayerData.gets(victim).getLastAttack().getTime();
-        float attackEnd = attackStart + delay;
-        float victimEnd = victimStart + delay;
+        long attackerLastWanted = attackerData.getWantedTimeStamp().getTime();
+        long victimLastWanted = PlayerData.gets(victim).getWantedTimeStamp().getTime();
+        boolean hasAttackerWantedOnce = hasBeenWantedOnce(attackerLastWanted);
+        boolean hasVictimWantedOnce = hasBeenWantedOnce(victimLastWanted);
+        boolean isAttackerWanted = isPlayerWanted(attackerLastWanted);
+        boolean isVictimWanted = isPlayerWanted(victimLastWanted);
+        boolean doesAttackerRisksGuilt = doesAttackerRisksGuilt(attackerInitialKarma, newKarma);
+        boolean isGuilty = false;
 
-        if (attackStart != 0L && victimStart != 0L) { //if both attacker and victim have been guilty once
-            if ((timeStamp >= attackStart && timeStamp <= attackEnd && ConfigData.getConfigData().isPvpCrimeTimeRefresh())
-                    || timeStamp > victimEnd) {
-                attackerData.setLastAttack();
-            } else {
-                if (doesDefendChangeKarma(attackerInitialKarma, newKarma)) {
-                    attacker.sendMessage(adaptMessage.message(attacker,
-                            LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
-                    return;
+        if (doesAttackerRisksGuilt) {
+            if (!hasAttackerWantedOnce && !hasVictimWantedOnce) { //if none have been wanted in the past
+                //Declare attacker guilty
+                isGuilty = isGuilty(isAttackerWanted);
+            } else if (!hasVictimWantedOnce) { //if the victim never been wanted in the past
+                //Declare attacker guilty
+                isGuilty = isGuilty(isAttackerWanted);
+            } else { //If both have been wanted in the past
+                if (!isVictimWanted || isAttackerWanted) {
+                    isGuilty = isGuilty(isAttackerWanted);
                 }
-                attacker.sendMessage(adaptMessage.message(attacker,
-                        LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
-            }
-        } else if (victimStart == 0L) { //If only the victim always been innocent
-            attackerData.setLastAttack();
-        } else if (victimStart != 0L) { //if only the victim has been guilty
-            if (timeStamp >= victimStart && timeStamp <= victimEnd) {
-                if (doesDefendChangeKarma(attackerInitialKarma, newKarma)) {
-                    attacker.sendMessage(adaptMessage.message(attacker,
-                            LangManager.getMessage(LangMessage.SELF_DEFENDING_OFF), PlayerType.attacker.getId()));
-                    return;
-                }
-                attacker.sendMessage(adaptMessage.message(attacker,
-                        LangManager.getMessage(LangMessage.SELF_DEFENDING_ON), PlayerType.attacker.getId()));
-            } else {
-                attackerData.setLastAttack();
             }
         }
+
+        if (isGuilty) {
+            if (!isAttackerWanted) {
+                PlayerWantedPeriodStartEvent playerWantedPeriodStartEvent = new PlayerWantedPeriodStartEvent(attacker, cause);
+                Bukkit.getPluginManager().callEvent(playerWantedPeriodStartEvent);
+            } else {
+                PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(attacker, cause, true);
+                Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
+            }
+        }
+
+    }
+
+    private static boolean hasBeenWantedOnce(long wantedTime) {
+        return wantedTime != 0;
+    }
+
+    public static boolean isPlayerWanted(long wantedTime) {
+        return (wantedTime >= System.currentTimeMillis());
+    }
+
+    private static boolean isGuilty(boolean isAttackerWanted) {
+        return !isAttackerWanted || doesWantedTimeRefresh;
     }
 
     public static void setConfigData(ConfigData configData) {

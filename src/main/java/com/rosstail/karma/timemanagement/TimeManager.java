@@ -1,7 +1,7 @@
 package com.rosstail.karma.timemanagement;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.timemanagement.times.SystemTimes;
 import com.rosstail.karma.timemanagement.times.WorldsTimes;
 import org.bukkit.World;
@@ -20,7 +20,7 @@ public class TimeManager {
     private static TimeManager timeManager;
     private final List<SystemTimes> systemTimes;
     private final List<WorldsTimes> worldTimes;
-    private final String type = ConfigData.getConfigData().getUseTimeValue();
+    private final String type = ConfigData.getConfigData().useTimeValue;
 
     public static void initTimeManager(Karma plugin) {
         if (timeManager == null) {

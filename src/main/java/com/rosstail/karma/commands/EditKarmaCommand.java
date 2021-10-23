@@ -3,7 +3,7 @@ package com.rosstail.karma.commands;
 import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.datas.PlayerData;
-import com.rosstail.karma.configdata.ConfigData;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -148,7 +148,7 @@ public class EditKarmaCommand {
                 return;
             }
             if (player != null && player.isOnline()) {
-                double resKarma = karmaValues.getDefaultKarma();
+                double resKarma = karmaValues.defaultKarma;
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
             } else {
@@ -160,7 +160,7 @@ public class EditKarmaCommand {
     private void tryKarmaChange(PlayerKarmaChangeEvent playerKarmaChangeEvent, CommandSender sender, LangMessage message) {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         if (!playerKarmaChangeEvent.isCancelled()) {
-            sender.sendMessage(adaptMessage.message(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.getId()));
+            sender.sendMessage(adaptMessage.adapt(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.toString()));
         }
     }
 }

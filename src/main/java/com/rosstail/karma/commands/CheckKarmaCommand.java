@@ -43,7 +43,7 @@ public class CheckKarmaCommand {
         }
 
         if (player != null && player.isOnline()) {
-            sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.player.getId()));
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.player.toString()));
         } else {
             karmaCommand.disconnectedPlayer(sender);
         }
@@ -56,12 +56,12 @@ public class CheckKarmaCommand {
     public void karmaSelf(CommandSender sender)
     {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(adaptMessage.message(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.player.getId()));
+            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.player.toString()));
             return;
         }
         Player player = (Player) sender;
         if (karmaCommand.canLaunchCommand(player, Commands.COMMAND_KARMA_CHECK)) {
-            sender.sendMessage(adaptMessage.message(player, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.player.getId()));
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.player.toString()));
         }
     }
 }
