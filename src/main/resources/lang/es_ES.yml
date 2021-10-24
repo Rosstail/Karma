@@ -32,10 +32,11 @@ pvp:
     kill-karma-increase: "&b%victim% is now finished !"
     kill-karma-unchanged: "##666666You have killed someone without consequence."
     kill-karma-decrease: "#DD0000&lYou murdered an innocent !"
-wanted:
-    enter: "&cYou are now wanted."
-    refresh: "&cYour wanted status is refreshed."
-    exit: "&aYou are not actively wanted anymore."
-    status:
-        innocent: "&fInnocent"
-        wanted: "&4&lWANTED"
+    wanted:
+        enter: "%msg-title%#DD0000&lWANTED.
+            %msg-subtitle% &r&cThe police is after you !"
+        refresh: "%msg-actionbar%&cYou are wanted."
+        exit: "&aYou are not actively wanted anymore."
+        status:
+            innocent: "&fInnocent"
+            wanted: "&4&lWANTED"

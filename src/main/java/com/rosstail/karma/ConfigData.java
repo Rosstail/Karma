@@ -54,7 +54,7 @@ public class ConfigData {
         String pluginName = Karma.getInstance().getName();
         killedByTierPath = "tiers.list.%" + pluginName.toLowerCase() + "_victim_tier%.commands.killed-commands.%" + pluginName.toLowerCase() + "_attacker_tier%";
 
-        decNumber = config.getInt("general.decimal-number-to-show");
+        decNumber = config.getInt("general.decimal-display");
         hitMessageDelay = config.getInt("pvp.messages-delay.hit");
         killMessageDelay = config.getInt("pvp.messages-delay.kill");
         titleFadeIn = config.getInt("general.title.fade-in");

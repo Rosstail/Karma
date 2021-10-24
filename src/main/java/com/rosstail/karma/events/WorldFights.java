@@ -24,14 +24,14 @@ public class WorldFights {
 
         boolean isBlackList;
         FileConfiguration config = plugin.getCustomConfig();
-        boolean enabled = config.getString("world-fight-system.enable") != null
-                && config.getBoolean("world-fight-system.enable");
-        if (config.getString("world-fight-system.black-list") != null) {
-            isBlackList = config.getBoolean("world-fight-system.black-list");
+        boolean enabled = config.getString("worlds.enable") != null
+                && config.getBoolean("worlds.enable");
+        if (config.getString("worlds.black-list") != null) {
+            isBlackList = config.getBoolean("worlds.black-list");
         } else {
             isBlackList = false;
         }
-        List<String> configWorldsList = config.getStringList("world-fight-system.worlds");
+        List<String> configWorldsList = config.getStringList("worlds.worlds");
 
         if (enabled) {
             for (World world : Bukkit.getWorlds()) {
