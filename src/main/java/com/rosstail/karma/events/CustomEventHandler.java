@@ -21,6 +21,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -59,41 +60,41 @@ public class CustomEventHandler implements Listener {
 
         Object cause = event.getCause().getCause();
         if (cause instanceof EntityDamageByEntityEvent || cause instanceof PlayerDeathEvent) {
-            double newKarma = event.getValue();
-            double previousKarma = playerData.getPreviousKarma();
+            if (((EntityEvent) cause).getEntity() instanceof Player) {
+                double newKarma = event.getValue();
+                double previousKarma = playerData.getPreviousKarma();
 
-            String message;
-            if (newKarma > previousKarma) {
-                if (cause instanceof EntityDamageByEntityEvent) {
-                    message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_INCREASE);
-                } else {
-                    message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_INCREASE);
-                }
-            } else if (newKarma < previousKarma) {
-                if (cause instanceof EntityDamageByEntityEvent) {
-                    message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_DECREASE);
-                } else {
-                    message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_DECREASE);
-                }
-            } else {
-                if (cause instanceof EntityDamageByEntityEvent) {
-                    message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_UNCHANGED);
-                } else {
-                    message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_UNCHANGED);
-                }
-            }
-            if (message != null) {
-                Player victim = null;
-                if (cause instanceof EntityDamageByEntityEvent) {
-                    if (((EntityDamageByEntityEvent) cause).getEntity() instanceof Player) {
-                        victim = (Player) ((EntityDamageByEntityEvent) cause).getEntity();
+                String message;
+                if (newKarma > previousKarma) {
+                    if (cause instanceof EntityDamageByEntityEvent) {
+                        message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_INCREASE);
+                    } else {
+                        message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_INCREASE);
+                    }
+                } else if (newKarma < previousKarma) {
+                    if (cause instanceof EntityDamageByEntityEvent) {
+                        message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_DECREASE);
+                    } else {
+                        message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_DECREASE);
                     }
                 } else {
-                    victim = ((PlayerDeathEvent) cause).getEntity();
+                    if (cause instanceof EntityDamageByEntityEvent) {
+                        message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_UNCHANGED);
+                    } else {
+                        message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_UNCHANGED);
+                    }
                 }
+                if (message != null) {
+                    Player victim;
+                    if (cause instanceof EntityDamageByEntityEvent) {
+                        victim = (Player) ((EntityDamageByEntityEvent) cause).getEntity();
+                    } else {
+                        victim = ((PlayerDeathEvent) cause).getEntity();
+                    }
 
-                message = adaptMessage.playerHitAdapt(message, player, victim, cause);
-                adaptMessage.sendToPlayer(player, message);
+                    message = adaptMessage.playerHitAdapt(message, player, victim, cause);
+                    adaptMessage.sendToPlayer(player, message);
+                }
             }
         }
 

@@ -150,9 +150,9 @@ public class AdaptMessage {
         if (coolDown.containsKey(player)) {
             double seconds = 0;
 
-            if (event instanceof EntityDeathEvent) {
+            if (event instanceof EntityDamageByEntityEvent) {
                 seconds = configData.hitMessageDelay;
-            } else if (event instanceof EntityDamageByEntityEvent) {
+            } else if (event instanceof EntityDeathEvent) {
                 seconds = configData.killMessageDelay;
             }
             double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
