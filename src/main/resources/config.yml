@@ -192,10 +192,18 @@ pvp:
     #%karma_player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
     duration: "(%karma_player_wanted_time% + (300 * 1000))" #delay in milliseconds.
     max-duration: "(%timestamp% + (3600 * 1000))"
-    on-karma-gain: false
-    on-karma-unchanged: false
-    on-karma-loss: true
-    refresh: true
+    conditions:
+      on-karma-gain: false
+      on-karma-unchanged: false
+      on-karma-loss: true
+      refresh: true
+    cancel-karma-change:
+      wanted:
+        on-karma-gain: true
+        on-karma-loss: false
+      innocent:
+        on-karma-gain: false
+        on-karma-loss: true
 
 entities:
   #default entities names

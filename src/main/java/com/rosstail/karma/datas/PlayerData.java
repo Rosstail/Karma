@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Gonna be used to optimize the research of values
@@ -39,7 +37,6 @@ public class PlayerData {
     private Tier tier;
     private Tier previousTier;
     private Timestamp wantedTimeStamp = new Timestamp(0L);
-    private Timer updateDataTimer;
     private int overTimerScheduler;
     private int wantedScheduler;
     private boolean wanted;
@@ -55,10 +52,6 @@ public class PlayerData {
             playerList.put(player, new PlayerData(player));
         }
         return playerList.get(player);
-    }
-
-    public Timer getUpdateDataTimer() {
-        return updateDataTimer;
     }
 
     public double getKarma() {
@@ -160,25 +153,6 @@ public class PlayerData {
         this.previousKarma = previousKarma;
     }
 
-    public void updateData() {
-        try {
-            DBInteractions dbInteractions = DBInteractions.getInstance();
-            if (dbInteractions != null) {
-                dbInteractions.updatePlayerDB(player);
-            } else {
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                playerConfig.set("karma", getKarma());
-                playerConfig.set("previous-karma", getPreviousKarma());
-                playerConfig.set("tier", getTier().getName());
-                playerConfig.set("previous-tier", getPreviousTier().getName());
-                playerConfig.set("wanted-time", getWantedTimeStamp().getTime());
-                playerConfig.save(playerFile);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Set the new tier of the player if change is needed.
      * Uses local files or Database if connection is active
@@ -200,16 +174,6 @@ public class PlayerData {
 
     public void setPreviousTier(Tier previousTier) {
         this.previousTier = previousTier;
-    }
-
-    public void setUpdateDataTimer(int delay) {
-        this.updateDataTimer = new Timer();
-        updateDataTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                updateData();
-            }
-        }, delay, delay);;
     }
 
     public static void setOverTimerChange(Player player) {
@@ -306,6 +270,10 @@ public class PlayerData {
 
     public boolean isWanted() {
         return wanted;
+    }
+
+    public File getPlayerFile() {
+        return playerFile;
     }
 
     public static Map<Player, PlayerData> getPlayerList() {

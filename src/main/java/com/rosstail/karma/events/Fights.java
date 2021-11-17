@@ -30,6 +30,7 @@ public class Fights {
 
     public static void pvpHandler(Player attacker, Player victim, Event event) {
         boolean isPlayerInTime = TimeManager.getTimeManager().isPlayerInTime(attacker);
+        boolean doesKarmaChange = true;
         if (!isPlayerInTime || isPlayerNPC(attacker) || (isPlayerNPC(victim) && !doesPlayerNPCHaveKarma(victim))) {
             return;
         }
@@ -74,14 +75,27 @@ public class Fights {
             double multi = WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
             result = result * multi;
         }
-        double attackerNewKarma = attackerInitialKarma + result;
 
+        if (!attackerData.isWanted() && victimData.isWanted()) {
+            if ((result > 0 && configData.cancelInnocentKarmaGain) ||(result < 0 && configData.cancelInnocentKarmaLoss)) {
+                doesKarmaChange = false;
+            }
+        } else if (attackerData.isWanted()){
+            if ((result > 0 && configData.cancelWantedKarmaGain) || (result < 0 && configData.cancelWantedKarmaLoss)) {
+                doesKarmaChange = false;
+            }
+        }
+
+        double attackerNewKarma = attackerInitialKarma + result;
+        attacker.sendMessage(expression + ": " + result);
         if (configData.wantedEnable && !(attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
             wantedHandler(attacker, attackerNewKarma, victim, event);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, event);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        if (doesKarmaChange) {
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerNewKarma, true, event);
+            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        }
     }
 
     public static void pveHandler(Player attacker, LivingEntity entity, Event event) {

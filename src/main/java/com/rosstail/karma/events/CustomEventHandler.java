@@ -1,5 +1,6 @@
 package com.rosstail.karma.events;
 
+import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.ConfigData;
@@ -27,12 +28,13 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.Timestamp;
-import java.util.regex.Matcher;
+import java.util.Collections;
+import java.util.HashMap;
 
 public class CustomEventHandler implements Listener {
     private static ConfigData configData = ConfigData.getConfigData();
-    private final int saveDelay = Math.max(1, configData.saveDelay);
     private final AdaptMessage adaptMessage;
+    private final Karma plugin = Karma.getInstance();
 
     public CustomEventHandler() {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
@@ -44,7 +46,6 @@ public class CustomEventHandler implements Listener {
         PlayerData playerData = PlayerData.getPlayerList().get(player);
 
         playerData.setKarma(event.getValue());
-
         if (event.isOverTimeReset()) {
             PlayerData.setOverTimerChange(player);
         }
@@ -145,7 +146,7 @@ public class CustomEventHandler implements Listener {
     public void onPlayerOverTimeHasTriggeredEvent(PlayerOverTimeHasTriggeredEvent event) {
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerOverTimeHighestResetEvent(PlayerOverTimeResetEvent event) {
         event.setTriggerID(PlayerData.gets(event.getPlayer()).getOverTimerScheduler());
     }
@@ -255,7 +256,6 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerData.gets(player);
         playerData.initPlayerData();
-        playerData.setUpdateDataTimer(saveDelay);
         PlayerData.setOverTimerChange(player);
     }
 
@@ -263,8 +263,8 @@ public class CustomEventHandler implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerData.gets(player);
-        playerData.getUpdateDataTimer().cancel();
-        playerData.updateData();
+        plugin.saveData(false, Collections.singletonMap(player, playerData));
+
         PlayerData.stopTimer(playerData.getOverTimerScheduler());
         PlayerData.stopTimer(playerData.getWantedScheduler());
     }
@@ -274,7 +274,7 @@ public class CustomEventHandler implements Listener {
      *
      * @param event
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onEntityDeath(EntityDeathEvent event) {
         LivingEntity victim = event.getEntity();
         Player killer = victim.getKiller();
@@ -292,7 +292,7 @@ public class CustomEventHandler implements Listener {
      *
      * @param event
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player victim = event.getEntity();
         if (!WorldFights.isFightEnabledInWorld(victim.getWorld())) {
@@ -309,7 +309,7 @@ public class CustomEventHandler implements Listener {
      *
      * @param event
      */
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
     public void onEntityHurt(EntityDamageByEntityEvent event) {
         LivingEntity victimEntity;
 

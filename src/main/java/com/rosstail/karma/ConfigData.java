@@ -38,6 +38,10 @@ public class ConfigData {
     public final boolean wantedOnKarmaUnchanged;
     public final boolean wantedOnKarmaLoss;
     public final boolean wantedRefresh;
+    public final boolean cancelWantedKarmaGain;
+    public final boolean cancelWantedKarmaLoss;
+    public final boolean cancelInnocentKarmaGain;
+    public final boolean cancelInnocentKarmaLoss;
 
     public final String useTimeValue;
     private final String dateTimeFormat;
@@ -45,6 +49,7 @@ public class ConfigData {
     public final String pvpKillRewardExpression;
     public final String wantedDurationExpression;
     public final String wantedMaxDurationExpression;
+
 
     ConfigData(FileConfiguration config) {
         defaultKarma = config.getDouble("karma.default-karma");
@@ -70,7 +75,7 @@ public class ConfigData {
         pvpHitRewardExpression = config.getString("pvp.hit-reward-expression");
         pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");
 
-        isOvertimeActive = config.getBoolean("overtime.active");
+        isOvertimeActive = config.getString("overtime.active") != null && config.getBoolean("overtime.active");
         overtimeFirstDelay = config.getLong("overtime.first-delay") * 20L;
         overtimeNextDelay = config.getLong("overtime.next-delay") * 20L;
         overtimeDecreaseValue = config.getDouble("overtime.values.decrease.value");
@@ -82,16 +87,25 @@ public class ConfigData {
 
         useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard");
         wantedEnable = config.getString("pvp.wanted.enable") != null && config.getBoolean("pvp.wanted.enable");
-        wantedOnKarmaGain = config.getString("pvp.wanted.on-karma-gain") != null && config.getBoolean("pvp.wanted.on-karma-gain");
-        wantedOnKarmaUnchanged = config.getString("pvp.wanted.on-karma-unchanged") != null && config.getBoolean("pvp.wanted.on-karma-unchanged");
-        wantedOnKarmaLoss = config.getString("pvp.wanted.on-karma-loss") != null && config.getBoolean("pvp.wanted.on-karma-loss");
-        wantedRefresh = config.getString("pvp.wanted.refresh") != null && config.getBoolean("pvp.wanted.refresh");
+        wantedOnKarmaGain = config.getString("pvp.wanted.conditions.on-karma-gain") != null && config.getBoolean("pvp.wanted.conditions.on-karma-gain");
+        wantedOnKarmaUnchanged = config.getString("pvp.wanted.conditions.on-karma-unchanged") != null && config.getBoolean("pvp.wanted.conditions.on-karma-unchanged");
+        wantedOnKarmaLoss = config.getString("pvp.wanted.conditions.on-karma-loss") != null && config.getBoolean("pvp.wanted.conditions.on-karma-loss");
+        wantedRefresh = config.getString("pvp.wanted.conditions.refresh") != null && config.getBoolean("pvp.wanted.conditions.refresh");
         wantedDurationExpression = config.getString("pvp.wanted.duration");
         wantedMaxDurationExpression = config.getString("pvp.wanted.max-duration");
 
         dateTimeFormat = config.getString("general.date-time-format");
 
         useTimeValue = config.getString("times.use-both-system-and-worlds-time");
+
+        cancelWantedKarmaGain = config.getString("pvp.wanted.cancel-karma-change.wanted.on-karma-gain") != null
+                && config.getBoolean("pvp.wanted.cancel-karma-change.wanted.on-karma-gain");
+        cancelWantedKarmaLoss = config.getString("pvp.wanted.cancel-karma-change.wanted.on-karma-loss") != null
+                && config.getBoolean("pvp.wanted.cancel-karma-change.wanted.on-karma-loss");
+        cancelInnocentKarmaGain = config.getString("pvp.wanted.cancel-karma-change.innocent.on-karma-gain") != null
+                && config.getBoolean("pvp.wanted.cancel-karma-change.innocent.on-karma-gain");
+        cancelInnocentKarmaLoss = config.getString("pvp.wanted.cancel-karma-change.innocent.on-karma-loss") != null
+                && config.getBoolean("pvp.wanted.cancel-karma-change.innocent.on-karma-loss");
     }
 
     public static void init(FileConfiguration config) {

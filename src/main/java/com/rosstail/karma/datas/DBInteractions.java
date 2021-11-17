@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
+import java.util.*;
 
 public class DBInteractions {
 
@@ -37,6 +38,8 @@ public class DBInteractions {
         try {
             openConnection();
             setTableToDataBase();
+
+
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -136,28 +139,46 @@ public class DBInteractions {
         });
     }
 
-    public void updatePlayerDB(Player player) {
-        String UUID = player.getUniqueId().toString();
-        PlayerData playerData = PlayerData.gets(player);
-
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-            try {
-                String query = "UPDATE " + plugin.getName() + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Wanted_Time = ? WHERE UUID = ?;";
-                PreparedStatement preparedStatement = connection.prepareStatement(query);
-
-                preparedStatement.setDouble(1, playerData.getKarma());
-                preparedStatement.setDouble(2, playerData.getPreviousKarma());
-                preparedStatement.setString(3, playerData.getTier().getName());
-                preparedStatement.setString(4, playerData.getPreviousTier().getName());
-                preparedStatement.setTimestamp(5, playerData.getWantedTimeStamp());
-                preparedStatement.setString(6, UUID);
-
-                preparedStatement.executeUpdate();
-                preparedStatement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+    public void updatePlayersDB(boolean isSync, Map<Player, PlayerData> map) {
+        if (!isSync) {
+            for (Player player : map.keySet()) {
+                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                    try {
+                        updateData(player, PlayerData.getPlayerList().get(player));
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                });
             }
-        });
+        } else {
+            System.out.println("sync");
+            for (Player player : map.keySet()) {
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    try {
+                        updateData(player, PlayerData.getPlayerList().get(player));
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
+                });
+            }
+        }
+    }
+
+    public void updateData(Player player, PlayerData playerData) throws SQLException {
+        String UUID = player.getUniqueId().toString();
+        String query = "UPDATE " + plugin.getName() + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Wanted_Time = ? WHERE UUID = ?;";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        preparedStatement.setDouble(1, playerData.getKarma());
+        preparedStatement.setDouble(2, playerData.getPreviousKarma());
+        preparedStatement.setString(3, playerData.getTier().getName());
+        preparedStatement.setString(4, playerData.getPreviousTier().getName());
+        preparedStatement.setTimestamp(5, playerData.getWantedTimeStamp());
+        preparedStatement.setString(6, UUID);
+
+        preparedStatement.executeUpdate();
+        preparedStatement.close();
+        System.out.println("done " + player);
     }
 
     public void closeConnexion() {

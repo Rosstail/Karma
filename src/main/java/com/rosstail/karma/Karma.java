@@ -3,12 +3,16 @@ package com.rosstail.karma;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.FileResourcesUtils;
+import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.events.WorldFights;
 import com.rosstail.karma.events.CustomEventHandler;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -17,6 +21,7 @@ import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -27,6 +32,7 @@ public class Karma extends JavaPlugin implements Listener {
 
     private YamlConfiguration config;
     private static Karma instance;
+    private Timer updateDataTimer;
 
     @Override
     public void onLoad() {
@@ -76,6 +82,15 @@ public class Karma extends JavaPlugin implements Listener {
         
         Bukkit.getPluginManager().registerEvents(new CustomEventHandler(), this);
         this.getCommand(getName().toLowerCase()).setExecutor(new KarmaCommand());
+
+        this.updateDataTimer = new Timer();
+        int delay = Math.max(1, ConfigData.getConfigData().saveDelay);
+        updateDataTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                saveData(false, PlayerData.getPlayerList());
+            }
+        }, delay, delay);
     }
 
     /**
@@ -95,9 +110,35 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
+        saveData(true, PlayerData.getPlayerList());
+        updateDataTimer.cancel();
         DBInteractions dbInteractions = DBInteractions.getInstance();
         if (dbInteractions != null) {
             dbInteractions.closeConnexion();
+        }
+    }
+
+    public void saveData(boolean isSync, Map<Player, PlayerData> map) {
+        DBInteractions dbInteractions = DBInteractions.getInstance();
+        if (dbInteractions != null) {
+            dbInteractions.updatePlayersDB(isSync, map);
+        } else {
+            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+                for (PlayerData playerData : map.values()) {
+                    File playerFile = playerData.getPlayerFile();
+                    YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+                    playerConfig.set("karma", playerData.getKarma());
+                    playerConfig.set("previous-karma", playerData.getPreviousKarma());
+                    playerConfig.set("tier", playerData.getTier().getName());
+                    playerConfig.set("previous-tier", playerData.getPreviousTier().getName());
+                    playerConfig.set("wanted-time", playerData.getWantedTimeStamp().getTime());
+                    try {
+                        playerConfig.save(playerFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
     }
 

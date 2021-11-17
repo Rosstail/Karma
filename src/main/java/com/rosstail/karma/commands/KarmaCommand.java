@@ -1,8 +1,11 @@
 package com.rosstail.karma.commands;
 
+import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
-import com.rosstail.karma.commands.list.Commands;
 import com.rosstail.karma.ConfigData;
+import com.rosstail.karma.customevents.Cause;
+import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -17,47 +20,66 @@ import org.bukkit.util.StringUtil;
 
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static com.rosstail.karma.commands.list.Commands.*;
 /**
  * Checking what method/class will be used on command, depending of command Sender and number of args.
  */
 public class KarmaCommand implements CommandExecutor, TabExecutor {
     private final AdaptMessage adaptMessage;
-    private final CheckKarmaCommand checkKarmaCommand;
-    private final EditKarmaCommand editKarmaCommand;
+    private final ConfigData configData;
+    private final Karma plugin = Karma.getInstance();
+
+    private enum commands {
+        KARMA("", "karma"),
+        KARMA_CALCULATE("calculate", "karma.calculate"),
+        KARMA_CHECK("check", "karma.self"),
+        KARMA_HELP("help", "karma.help"),
+        KARMA_SET("set", "karma.set"),
+        KARMA_ADD("add", "karma.add"),
+        KARMA_REMOVE("remove", "karma.remove"),
+        KARMA_RESET("reset", "karma.reset"),
+        KARMA_OTHER("check", "karma.other"),
+        KARMA_SAVE("save", "karma.save"),
+        KARMA_RELOAD("reload", "karma.reload");
+
+        final String command;
+        final String perm;
+        commands(String command, String perm) {
+            this.command = command;
+            this.perm = perm;
+        }
+    }
 
     public KarmaCommand() {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
-        this.checkKarmaCommand = new CheckKarmaCommand(this);
-        this.editKarmaCommand = new EditKarmaCommand(this);
+        this.configData = ConfigData.getConfigData();
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         String string = String.join(" ", args);
-        if (!canLaunchCommand(sender, COMMAND_KARMA)) {
+        if (!canLaunchCommand(sender, commands.KARMA)) {
             return false;
         }
 
-        if (string.startsWith(COMMAND_KARMA_CHECK.getCommand())) {
+        if (string.startsWith(commands.KARMA_CHECK.command)) {
             if (args.length == 2) {
-                checkKarmaCommand.karmaOther(sender, args[1]);
+                karmaOther(sender, args[1]);
             } else {
-                checkKarmaCommand.karmaSelf(sender);
+                karmaSelf(sender);
             }
-        } else if (string.startsWith(COMMAND_KARMA_SET.getCommand())) {
-            editKarmaCommand.karmaSet(sender, args);
-        } else if (string.startsWith(COMMAND_KARMA_ADD.getCommand())) {
-            editKarmaCommand.karmaAdd(sender, args);
-        } else if (string.startsWith(COMMAND_KARMA_REMOVE.getCommand())) {
-            editKarmaCommand.karmaRemove(sender, args);
-        } else if (string.startsWith(COMMAND_KARMA_RESET.getCommand())) {
-            editKarmaCommand.karmaReset(sender, args);
-        } else if (string.startsWith(COMMAND_KARMA_CALCULATE.getCommand())) {
-          if (canLaunchCommand(sender, COMMAND_KARMA_CALCULATE)) {
+        } else if (string.startsWith(commands.KARMA_SET.command)) {
+            karmaSet(sender, args);
+        } else if (string.startsWith(commands.KARMA_ADD.command)) {
+            karmaAdd(sender, args);
+        } else if (string.startsWith(commands.KARMA_REMOVE.command)) {
+            karmaRemove(sender, args);
+        } else if (string.startsWith(commands.KARMA_RESET.command)) {
+            karmaReset(sender, args);
+        } else if (string.startsWith(commands.KARMA_SAVE.command)) {
+            karmaSave(sender);
+        } else if (string.startsWith(commands.KARMA_CALCULATE.command)) {
+          if (canLaunchCommand(sender, commands.KARMA_CALCULATE)) {
               if (args.length > 1) {
                   ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
                   expressionList.remove("calculate");
@@ -77,34 +99,9 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                   errorMessage(sender, new ArrayIndexOutOfBoundsException());
               }
           }
-        } else if (string.startsWith(COMMAND_KARMA_HELP.getCommand())) {
-            if (canLaunchCommand(sender, COMMAND_KARMA_HELP)) {
+        } else if (string.startsWith(commands.KARMA_HELP.command)) {
+            if (canLaunchCommand(sender, commands.KARMA_HELP)) {
                 sender.sendMessage(adaptMessage.listMessage(null, LangManager.getListMessage(LangMessage.HELP)));
-            }
-        } else if (string.startsWith("test")) { //EXPERIMENTATIONS TO MAKE CALCULATIONS WITH SOME EVALS ON eval(X) PLACEHOLDERS
-            if (args.length >= 2) {
-                /*
-                */
-                ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
-                argList.remove("test");
-                String arg = String.join(" ", argList);
-                if (arg.contains("eval")) {
-                    if (arg.matches("^eval\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\)$")) {
-                        Pattern p = Pattern.compile("^eval\\((?:[^)(]+|\\((?:[^)(]+|\\([^)(]*\\))*\\))*\\)$");
-                        Matcher m = p.matcher(arg);
-
-                        while (m.find()) {
-                            String matched = m.group();
-                            if (arg.contains(matched)) {
-                                String value = String.valueOf(ExpressionCalculator.eval(matched.replace("eval", "")));
-                                arg = arg.replaceAll(matched, value);
-                            }
-                        }
-                    }
-                    sender.sendMessage(arg);
-                }
-                /*
-                 */
             }
         } else {
             Player playerSender = null;
@@ -119,60 +116,66 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
         List<String> completions = new ArrayList<>();
-        List<String> commands = new ArrayList<>();
+        List<String> list = new ArrayList<>();
         String string = String.join(" ", args);
+        ConfigData configData = ConfigData.getConfigData();
 
         if (args.length <= 1) {
-            commands.add("set");
-            commands.add("check");
-            commands.add("add");
-            commands.add("remove");
-            commands.add("reset");
-            commands.add("help");
-            commands.add("calculate");
-            StringUtil.copyPartialMatches(args[0], commands, completions);
+            list.add("add");
+            list.add("calculate");
+            list.add("check");
+            list.add("help");
+            list.add("remove");
+            list.add("reset");
+            list.add("save");
+            list.add("set");
+            StringUtil.copyPartialMatches(args[0], list, completions);
         } else if (args.length <= 2) {
-            if (string.startsWith(COMMAND_KARMA_CALCULATE.getCommand()) && sender.hasPermission(COMMAND_KARMA_CALCULATE.getPermission())) {
-                commands.add(ConfigData.getConfigData().pvpHitRewardExpression);
-                commands.add(ConfigData.getConfigData().pvpKillRewardExpression);
-            } else if (string.startsWith(COMMAND_KARMA_SET.getCommand()) || string.startsWith(COMMAND_KARMA_ADD.getCommand())
-                    || string.startsWith(COMMAND_KARMA_REMOVE.getCommand()) || string.startsWith(COMMAND_KARMA_RESET.getCommand())
-                    || string.startsWith(COMMAND_KARMA_CHECK.getCommand())) {
-                Bukkit.getOnlinePlayers().forEach(player -> commands.add(player.getName()));
+            if (string.startsWith(commands.KARMA_CALCULATE.command) && sender.hasPermission(commands.KARMA_CALCULATE.perm)) {
+                if (configData.pvpHitRewardExpression != null) {
+                    list.add(configData.pvpHitRewardExpression);
+                }
+                if (configData.pvpKillRewardExpression != null) {
+                    list.add(configData.pvpKillRewardExpression);
+                }
+            } else if (string.startsWith(commands.KARMA_SET.command) || string.startsWith(commands.KARMA_ADD.command)
+                    || string.startsWith(commands.KARMA_REMOVE.command) || string.startsWith(commands.KARMA_RESET.command)
+                    || string.startsWith(commands.KARMA_CHECK.command)) {
+                Bukkit.getOnlinePlayers().forEach(player -> list.add(player.getName()));
             }
-            StringUtil.copyPartialMatches(args[1], commands, completions);
+            StringUtil.copyPartialMatches(args[1], list, completions);
         } else if (args.length <= 3){
-            if (string.startsWith(COMMAND_KARMA_RESET.getCommand())) {
-                commands.add("true");
-                commands.add("false");
+            if (string.startsWith(commands.KARMA_RESET.command)) {
+                list.add("true");
+                list.add("false");
             }
-            StringUtil.copyPartialMatches(args[2], commands, completions);
+            StringUtil.copyPartialMatches(args[2], list, completions);
         } else if (args.length <= 4){
-            if (string.startsWith(COMMAND_KARMA_SET.getCommand()) || string.startsWith(COMMAND_KARMA_ADD.getCommand())
-            || string.startsWith(COMMAND_KARMA_REMOVE.getCommand())) {
-                commands.add("true");
-                commands.add("false");
+            if (string.startsWith(commands.KARMA_SET.command) || string.startsWith(commands.KARMA_ADD.command)
+            || string.startsWith(commands.KARMA_REMOVE.command)) {
+                list.add("true");
+                list.add("false");
             }
-            StringUtil.copyPartialMatches(args[3], commands, completions);
+            StringUtil.copyPartialMatches(args[3], list, completions);
         }
         Collections.sort(completions);
         return completions;
     }
 
-    boolean canLaunchCommand(CommandSender sender, Commands command) {
-        if (!(sender instanceof Player) || sender.hasPermission(command.getPermission())) {
+    boolean canLaunchCommand(CommandSender sender, commands command) {
+        if (!(sender instanceof Player) || sender.hasPermission(command.perm)) {
             return true;
         }
         permissionDenied(sender, command);
         return false;
     }
 
-    private void permissionDenied(CommandSender sender, Commands command) {
+    private void permissionDenied(CommandSender sender, commands command) {
         String message = LangManager.getMessage(LangMessage.PERMISSION_DENIED);
         if (message != null) {
             message = AdaptMessage.getAdaptMessage().adapt((Player) sender, message, PlayerType.player.toString());
-            message = message.replaceAll("%command%", command.getCommand());
-            message = message.replaceAll("%permission%", command.getPermission());
+            message = message.replaceAll("%command%", command.command);
+            message = message.replaceAll("%permission%", command.perm);
             sender.sendMessage(message);
         }
     }
@@ -254,6 +257,191 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             }
         } else {
             Bukkit.dispatchCommand(senderOrTarget, command);
+        }
+    }
+
+    /**
+     * Is used when an argument is used with the command
+     * Is necessary if commandSender isn't a player.
+     * @param sender
+     * @param playerString
+     */
+    private void karmaOther(CommandSender sender, String playerString)
+    {
+        if (!canLaunchCommand(sender, commands.KARMA_OTHER)) {
+            return;
+        }
+        Player player;
+
+        try {
+            player = Bukkit.getServer().getPlayer(playerString);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            errorMessage(sender, e);
+            return;
+        }
+
+        if (player != null && player.isOnline()) {
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.player.toString()));
+        } else {
+            disconnectedPlayer(sender);
+        }
+    }
+
+    /**
+     * Used when a player use /karma without argument behind
+     * @param sender
+     */
+    private void karmaSelf(CommandSender sender)
+    {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.player.toString()));
+            return;
+        }
+        Player player = (Player) sender;
+        if (canLaunchCommand(player, commands.KARMA_CHECK)) {
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.player.toString()));
+        }
+    }
+
+    /**
+     * The value is now the new karma of the target player.
+     * @param sender
+     * @param args
+     */
+    private void karmaSet(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.KARMA_SET)) {
+            Player player;
+            double value;
+            boolean reset = true;
+            try {
+                player = Bukkit.getServer().getPlayer(args[1]);
+                value = Double.parseDouble(args[2]);
+                try {
+                    reset = Boolean.parseBoolean(args[3]);
+                } catch (Exception ignored) {
+
+                }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, reset, Cause.COMMAND);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.SET_KARMA);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
+    /**
+     * Add the value to the actual Karma of the target.
+     * Put a negative number remove some karma.
+     * @param sender
+     * @param args
+     */
+    private void karmaAdd(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.KARMA_ADD)) {
+            Player player;
+            double value;
+            boolean reset = true;
+            try {
+                player = Bukkit.getServer().getPlayer(args[1]);
+                value = Double.parseDouble(args[2]);
+                try {
+                    reset = Boolean.parseBoolean(args[3]);
+                } catch (Exception ignored) {
+
+                }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                PlayerData playerData = PlayerData.gets(player);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, reset, Cause.COMMAND);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.ADD_KARMA);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
+    /**
+     * Substract the karma of target player by the value
+     * use a negative number make the karma increase
+     * @param sender
+     * @param args
+     */
+    private void karmaRemove(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.KARMA_REMOVE)) {
+            Player player;
+            double value;
+            boolean reset = true;
+            try {
+                player = Bukkit.getServer().getPlayer(args[1]);
+                value = Double.parseDouble(args[2]);
+                try {
+                    reset = Boolean.parseBoolean(args[3]);
+                } catch (Exception ignored) {
+
+                }
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                PlayerData playerData = PlayerData.gets(player);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, reset, Cause.COMMAND);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.REMOVE_KARMA);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
+    /**
+     * Set the karma of target player as default, specified in config.yml
+     * @param sender
+     * @param args
+     */
+    private void karmaReset(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.KARMA_RESET)) {
+            Player player;
+            boolean reset = true;
+            try {
+                player = Bukkit.getServer().getPlayer(args[1]);
+                try {
+                    reset = Boolean.parseBoolean(args[2]);
+                } catch (Exception ignored) {
+
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                double resKarma = configData.defaultKarma;
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset, Cause.COMMAND);
+                tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
+    private void karmaSave(CommandSender sender) {
+        if (canLaunchCommand(sender, commands.KARMA_SAVE)) {
+            Map<Player, PlayerData> playersData = PlayerData.getPlayerList();
+            plugin.saveData(false, playersData);
+            sender.sendMessage(adaptMessage.adapt(null, "Saved datas of " + playersData.size() + " players", null));
+        }
+    }
+
+    private void tryKarmaChange(PlayerKarmaChangeEvent playerKarmaChangeEvent, CommandSender sender, LangMessage message) {
+        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        if (!playerKarmaChangeEvent.isCancelled()) {
+            sender.sendMessage(adaptMessage.adapt(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.toString()));
         }
     }
 }
