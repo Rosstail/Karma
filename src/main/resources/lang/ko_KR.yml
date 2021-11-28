@@ -2,12 +2,14 @@ by-player-only: "[Karma] 이 명령어는 플레이어만 보낼 수 있습니�
 creating-playerdata-folder: "[Karma] &9playerdata 폴더가 존재하지 않으니 생성해주세요."
 creating-player: "[Karma] &a%player%의 플레이어 파일을 생성했습니다."
 disconnected: "[Karma] 해당 플레이어가 접속 중이지 않습니다."
-check-own-karma: "[Karma] %karma_player_tier_display%%player%&r의 성향은 &6%karma_player_karma%&r입니다."
-check-other-karma: "[Karma] %karma_player_tier_display%%player%&r의 성향은 &6%karma_player_karma%&r입니다."
-set-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 &6%karma_player_karma%&r으로 설정했습니다."
-add-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 &6%karma_player_diff_karma%&r추가했습니다. 카르마수치 : &6%karma_player_karma%"
-remove-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 &6%karma_player_diff_karma%&r차감했습니다. 카르마수치 : &6%karma_player_karma%"
-reset-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 초기화 했습니다."
+check:
+  own: "[Karma] %karma_player_tier_display%%player%&r의 성향은 &6%karma_player_karma%&r입니다."
+  other: "[Karma] %karma_player_tier_display%%player%&r의 성향은 &6%karma_player_karma%&r입니다."
+edit:
+  set-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 &6%karma_player_karma%&r으로 설정했습니다."
+  add-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 &6%karma_player_diff_karma%&r추가했습니다. 카르마수치 : &6%karma_player_karma%"
+  remove-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 &6%karma_player_diff_karma%&r차감했습니다. 카르마수치 : &6%karma_player_karma%"
+  reset-karma: "[Karma] %karma_player_tier_display%%player%&r의 카르마를 초기화 했습니다."
 tier-change: "[Karma] 당신의 %karma_player_tier_display%[카르마 상태]&r가 변경되었습니다."
 self-defending-off: "[Karma] 당신은 자신을 보호하고있습니다. 카르마수치는 바뀌지않습니다."
 self-defending-on: "[Karma] 당신은 자신을 보호하고있지만, 카르마수치는 바뀝니다."
@@ -16,6 +18,7 @@ reload: "[Karma] 성공적으로 리로드 됐습니다."
 permission-denied: "[Karma] 권한이 없습니다."
 wrong-value: "&c[Karma] 숫자를 지정해야 합니다. 예시 : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] 숫자를 지정해야 합니다. 예시 : &f\"/karma add Notch 15\"&c."
+saved-data: "[Karma] #00DDCDSaved data of %number% players"
 help:
   - "&b====== &6카르마 도움말 &b======"
   - "&6/karma check (player) &8: &r해당 플레이어의 카르마 수치와 등급을 확인합니다."
@@ -40,3 +43,11 @@ wanted:
   status:
     innocent: "&fInnocent"
     wanted: "&4&lWANTED"
+  check:
+    own: "[Karma] You are currently %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
+    other: "[Karma] %player% status is %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
+  edit:
+    set-wanted: "[Karma] &9%player% &rwanted time set to% karma_player_wanted_time_display%. It is now% karma_player_wanted_status%"
+    add-wanted: "[Karma] &aAdded wanted time to &9%player%&r for %karma_player_wanted_time_display% and is now %karma_player_wanted_status%"
+    remove-wanted: "[Karma] &cReduced wanted time for &9%player% &rto %karma_player_wanted_time_display% and is now %karma_player_wanted_status%"
+    reset-wanted: "[Karma]&9%player% &ris now fully %karma_player_wanted_status% (and always has been!)."

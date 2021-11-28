@@ -6,8 +6,7 @@ import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.customevents.PlayerWantedPeriodRefreshEvent;
-import com.rosstail.karma.customevents.PlayerWantedPeriodStartEvent;
+import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.PlayerType;
@@ -20,6 +19,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.scheduler.BukkitScheduler;
+
+import java.sql.Timestamp;
 
 public class Fights {
 
@@ -31,7 +33,7 @@ public class Fights {
     public static void pvpHandler(Player attacker, Player victim, Event event) {
         boolean isPlayerInTime = TimeManager.getTimeManager().isPlayerInTime(attacker);
         boolean doesKarmaChange = true;
-        if (!isPlayerInTime || isPlayerNPC(attacker) || (isPlayerNPC(victim) && !doesPlayerNPCHaveKarma(victim))) {
+        if (isPlayerNPC(attacker) || (isPlayerNPC(victim) && !doesPlayerNPCHaveKarma(victim) || !isPlayerInTime)) {
             return;
         }
 
@@ -153,10 +155,13 @@ public class Fights {
         double attackerInitialKarma = attackerData.getKarma();
         long attackerLastWanted = attackerData.getWantedTimeStamp().getTime();
         long victimLastWanted = PlayerData.gets(victim).getWantedTimeStamp().getTime();
+
         boolean hasAttackerWantedOnce = hasBeenWantedOnce(attackerLastWanted);
         boolean hasVictimWantedOnce = hasBeenWantedOnce(victimLastWanted);
+
         boolean isAttackerWanted = isPlayerWanted(attackerLastWanted);
         boolean isVictimWanted = isPlayerWanted(victimLastWanted);
+
         boolean doesAttackerRisksGuilt = doesAttackerRisksGuilt(attackerInitialKarma, newKarma);
         boolean isGuilty = false;
 
@@ -175,13 +180,14 @@ public class Fights {
         }
 
         if (isGuilty) {
-            if (!isAttackerWanted) {
-                PlayerWantedPeriodStartEvent playerWantedPeriodStartEvent = new PlayerWantedPeriodStartEvent(attacker, cause);
-                Bukkit.getPluginManager().callEvent(playerWantedPeriodStartEvent);
-            } else {
-                PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(attacker, cause, true);
-                Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
+            String expression = configData.wantedDurationExpression;
+            if (attackerLastWanted < System.currentTimeMillis()) {
+                expression = expression.replaceAll("%karma_player_wanted_time%", "%timestamp%");
             }
+            expression = AdaptMessage.getAdaptMessage().adapt(attacker, expression, PlayerType.player.toString());
+            Timestamp timestamp = new Timestamp((long) ExpressionCalculator.eval(expression));
+            PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(attacker, timestamp, cause);
+            Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
         }
 
     }

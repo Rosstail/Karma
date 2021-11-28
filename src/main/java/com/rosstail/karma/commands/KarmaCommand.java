@@ -5,6 +5,7 @@ import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -19,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 
+import java.sql.Timestamp;
 import java.util.*;
 
 /**
@@ -38,6 +40,13 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         KARMA_ADD("add", "karma.add"),
         KARMA_REMOVE("remove", "karma.remove"),
         KARMA_RESET("reset", "karma.reset"),
+        WANTED("wanted", "karma.wanted"),
+        WANTED_CHECK("wanted check", "karma.wanted.self"),
+        WANTED_OTHER("wanted check", "karma.wanted.other"),
+        WANTED_SET("wanted set", "karma.wanted.set"),
+        WANTED_ADD("wanted add", "karma.wanted.add"),
+        WANTED_REMOVE("wanted remove", "karma.wanted.remove"),
+        WANTED_RESET("wanted reset", "karma.wanted.reset"),
         KARMA_OTHER("check", "karma.other"),
         KARMA_SAVE("save", "karma.save"),
         KARMA_RELOAD("reload", "karma.reload");
@@ -76,6 +85,20 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             karmaRemove(sender, args);
         } else if (string.startsWith(commands.KARMA_RESET.command)) {
             karmaReset(sender, args);
+        } else if (string.startsWith(commands.WANTED_CHECK.command)) {
+            if (args.length == 3) {
+                wantedOther(sender, args[2]);
+            } else {
+                wantedSelf(sender);
+            }
+        } else if (string.startsWith(commands.WANTED_SET.command)) {
+            wantedSet(sender, args);
+        } else if (string.startsWith(commands.WANTED_ADD.command)) {
+            wantedAdd(sender, args);
+        } else if (string.startsWith(commands.WANTED_REMOVE.command)) {
+            wantedRemove(sender, args);
+        } else if (string.startsWith(commands.WANTED_RESET.command)) {
+            wantedReset(sender, args);
         } else if (string.startsWith(commands.KARMA_SAVE.command)) {
             karmaSave(sender);
         } else if (string.startsWith(commands.KARMA_CALCULATE.command)) {
@@ -129,6 +152,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             list.add("reset");
             list.add("save");
             list.add("set");
+            list.add("wanted");
             StringUtil.copyPartialMatches(args[0], list, completions);
         } else if (args.length <= 2) {
             if (string.startsWith(commands.KARMA_CALCULATE.command) && sender.hasPermission(commands.KARMA_CALCULATE.perm)) {
@@ -142,21 +166,41 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                     || string.startsWith(commands.KARMA_REMOVE.command) || string.startsWith(commands.KARMA_RESET.command)
                     || string.startsWith(commands.KARMA_CHECK.command)) {
                 Bukkit.getOnlinePlayers().forEach(player -> list.add(player.getName()));
+            } else if (string.startsWith(commands.WANTED.command)) {
+                list.add("check");
+                list.add("add");
+                list.add("remove");
+                list.add("reset");
+                list.add("set");
             }
             StringUtil.copyPartialMatches(args[1], list, completions);
-        } else if (args.length <= 3){
-            if (string.startsWith(commands.KARMA_RESET.command)) {
-                list.add("true");
-                list.add("false");
+        } else {
+            boolean wantedCommands = string.startsWith(commands.WANTED_CHECK.command) || string.startsWith(commands.WANTED_SET.command)
+                    || string.startsWith(commands.WANTED_ADD.command) || string.startsWith(commands.WANTED_REMOVE.command)
+                    || string.startsWith(commands.WANTED_RESET.command);
+            if (args.length <= 3){
+                if (string.startsWith(commands.KARMA_RESET.command)) {
+                    list.add("true");
+                    list.add("false");
+                } else if (wantedCommands) {
+                    Bukkit.getOnlinePlayers().forEach(player -> list.add(player.getName()));
+                }
+                StringUtil.copyPartialMatches(args[2], list, completions);
+            } else if (args.length <= 4){
+                if (string.startsWith(commands.KARMA_SET.command) || string.startsWith(commands.KARMA_ADD.command)
+                || string.startsWith(commands.KARMA_REMOVE.command)) {
+                    list.add("true");
+                    list.add("false");
+                } else if (wantedCommands) {
+                    if (configData.wantedDurationExpression != null) {
+                        list.add(configData.wantedDurationExpression);
+                    }
+                    if (configData.wantedMaxDurationExpression != null) {
+                        list.add(configData.wantedMaxDurationExpression);
+                    }
+                }
+                StringUtil.copyPartialMatches(args[3], list, completions);
             }
-            StringUtil.copyPartialMatches(args[2], list, completions);
-        } else if (args.length <= 4){
-            if (string.startsWith(commands.KARMA_SET.command) || string.startsWith(commands.KARMA_ADD.command)
-            || string.startsWith(commands.KARMA_REMOVE.command)) {
-                list.add("true");
-                list.add("false");
-            }
-            StringUtil.copyPartialMatches(args[3], list, completions);
         }
         Collections.sort(completions);
         return completions;
@@ -195,9 +239,6 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.WRONG_VALUE), null));
         }
     }
-
-
-
 
     public static void commandsLauncher(Player player, List<String> commands) {
         if (commands != null) {
@@ -314,7 +355,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             double value;
             boolean reset = true;
             try {
-                player = Bukkit.getServer().getPlayer(args[1]);
+                player = Bukkit.getPlayerExact(args[1]);
                 value = Double.parseDouble(args[2]);
                 try {
                     reset = Boolean.parseBoolean(args[3]);
@@ -325,7 +366,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 errorMessage(sender, e);
                 return;
             }
-            if (player != null && player.isOnline()) {
+            if (player != null) {
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.SET_KARMA);
             } else {
@@ -430,11 +471,185 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         }
     }
 
+    /**
+     * Is used when an argument is used with the command
+     * Is necessary if commandSender isn't a player.
+     * @param sender
+     * @param playerString
+     */
+    private void wantedOther(CommandSender sender, String playerString)
+    {
+        if (!canLaunchCommand(sender, commands.WANTED_OTHER)) {
+            return;
+        }
+        Player player;
+
+        try {
+            player = Bukkit.getServer().getPlayer(playerString);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            errorMessage(sender, e);
+            return;
+        }
+
+        if (player != null && player.isOnline()) {
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.WANTED_OTHER_CHECK), PlayerType.player.toString()));
+        } else {
+            disconnectedPlayer(sender);
+        }
+    }
+
+    /**
+     * Used when a player use '/karma wanted check' without argument behind
+     * @param sender
+     */
+    private void wantedSelf(CommandSender sender)
+    {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.player.toString()));
+            return;
+        }
+        Player player = (Player) sender;
+        if (canLaunchCommand(player, commands.WANTED_CHECK)) {
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.WANTED_OWN_CHECK), PlayerType.player.toString()));
+        }
+    }
+
+    /**
+     * The value is now the new karma of the target player.
+     * @param sender
+     * @param args
+     */
+    private void wantedSet(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.WANTED_SET)) {
+            Player player;
+            Timestamp value;
+            try {
+                String playerName = args[2];
+                player = Bukkit.getPlayerExact(playerName);
+                String expression;
+                ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
+                expressionList.remove("wanted");
+                expressionList.remove("set");
+                expressionList.remove(playerName);
+                AdaptMessage.timeRegexAdapt(expressionList);
+                expression = String.join(" ", expressionList);
+                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.player.toString());
+                value = new Timestamp((long) ExpressionCalculator.eval(expression));
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, value, Cause.COMMAND);
+                tryWantedChange(playerWantedChangeEvent, player, LangMessage.SET_WANTED);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
+    /**
+     * Add the value to the actual Karma of the target.
+     * Put a negative number remove some karma.
+     * @param sender
+     * @param args
+     */
+    private void wantedAdd(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.WANTED_ADD)) {
+            Player player;
+            Timestamp value;
+            try {
+                String playerName = args[2];
+                player = Bukkit.getPlayerExact(playerName);
+                String expression;
+                ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
+                expressionList.remove("wanted");
+                expressionList.remove("add");
+                expressionList.remove(playerName);
+                AdaptMessage.timeRegexAdapt(expressionList);
+                expression = String.join(" ", expressionList);
+                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.player.toString());
+                value = new Timestamp(PlayerData.gets(player).getWantedTimeStamp().getTime() + (long) ExpressionCalculator.eval(expression));
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, value, Cause.COMMAND);
+                tryWantedChange(playerWantedChangeEvent, player, LangMessage.ADD_WANTED);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
+    /**
+     * Substract the karma of target player by the value
+     * use a negative number make the karma increase
+     * @param sender
+     * @param args
+     */
+    private void wantedRemove(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.WANTED_REMOVE)) {
+            Player player;
+            Timestamp value;
+            try {
+                String playerName = args[2];
+                player = Bukkit.getPlayerExact(playerName);
+                String expression;
+                ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
+                expressionList.remove("wanted");
+                expressionList.remove("remove");
+                expressionList.remove(playerName);
+                AdaptMessage.timeRegexAdapt(expressionList);
+                expression = String.join(" ", expressionList);
+                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.player.toString());
+                value = new Timestamp(PlayerData.gets(player).getWantedTimeStamp().getTime() - (long) ExpressionCalculator.eval(expression));
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, value, Cause.COMMAND);
+                tryWantedChange(playerWantedChangeEvent, player, LangMessage.REMOVE_WANTED);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
+    /**
+     * Set the karma of target player as default, specified in config.yml
+     * @param sender
+     * @param args
+     */
+    private void wantedReset(CommandSender sender, String[] args) {
+        if (canLaunchCommand(sender, commands.WANTED_RESET)) {
+            Player player;
+            Timestamp value;
+            try {
+                String playerName = args[2];
+                player = Bukkit.getPlayerExact(playerName);
+                value = new Timestamp(0);
+            } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+                errorMessage(sender, e);
+                return;
+            }
+            if (player != null && player.isOnline()) {
+                PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, value, Cause.COMMAND);
+                tryWantedChange(playerWantedChangeEvent, player, LangMessage.RESET_WANTED);
+            } else {
+                disconnectedPlayer(sender);
+            }
+        }
+    }
+
     private void karmaSave(CommandSender sender) {
         if (canLaunchCommand(sender, commands.KARMA_SAVE)) {
             Map<Player, PlayerData> playersData = PlayerData.getPlayerList();
             plugin.saveData(false, playersData);
-            sender.sendMessage(adaptMessage.adapt(null, "Saved datas of " + playersData.size() + " players", null));
+            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.SAVED_DATA)
+                    .replaceAll("%number%", String.valueOf(playersData.size())), null));
         }
     }
 
@@ -442,6 +657,13 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         if (!playerKarmaChangeEvent.isCancelled()) {
             sender.sendMessage(adaptMessage.adapt(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.toString()));
+        }
+    }
+
+    private void tryWantedChange(PlayerWantedChangeEvent playerWantedChangeEvent, CommandSender sender, LangMessage message) {
+        Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
+        if (!playerWantedChangeEvent.isCancelled()) {
+            sender.sendMessage(adaptMessage.adapt(playerWantedChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.toString()));
         }
     }
 }

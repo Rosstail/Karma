@@ -145,13 +145,12 @@ public class DBInteractions {
                 Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                     try {
                         updateData(player, PlayerData.getPlayerList().get(player));
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
+                    } catch (SQLException throwable) {
+                        throwable.printStackTrace();
                     }
                 });
             }
         } else {
-            System.out.println("sync");
             for (Player player : map.keySet()) {
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     try {
@@ -178,7 +177,6 @@ public class DBInteractions {
 
         preparedStatement.executeUpdate();
         preparedStatement.close();
-        System.out.println("done " + player);
     }
 
     public void closeConnexion() {

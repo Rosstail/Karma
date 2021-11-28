@@ -1,21 +1,24 @@
-by-player-only: '[Karma] &fComanda aceasta trebuie executata de catre un jucator!'
-creating-playerdata-folder: '[Karma] &fNu exista "playerdata", asa ca creem noi!'
-creating-player: '[Karma] &fCreem un jucator cu numele &a%player%'
-disconnected: '[Karma] &aJucătorul nu este pe server, sau nu exista.'
-check-own-karma: '[Karma] Karma-ul tau este &a%karma_player_karma% &fsi tier-ul tau este &2%karma_player_tier_display%&r.'
-check-other-karma: '[Karma] &a%player% &fdetine &a%karma_player_karma% &fKarma si tier-ul sau este &2%karma_player_tier_display%&r.'
-set-karma: '[Karma] &9%player%''''s &rAi setat karma &a%karma_player_karma% &rsi tier &2%karma_player_tier_display%&r.'
-add-karma: '[Karma] &fAi scos &a%karma_player_diff_karma% &rKarma de la &2%player% &rel acum detine de &a%karma_player_karma% &rKarma si tier-ul&2 %karma_player_tier_display%.'
-remove-karma: '[Karma] &cAti scos &6%karma_player_diff_karma% &rkarma de la &6%player% &rpentru un total de &6%karma_player_karma% &rsi tier-ul %karma_player_tier_display%.'
-reset-karma: '[Karma] &fKarma-ul lui &a%player%&fa fost resetat. Noul sau Karma este &a%karma_player_karma%;Tier &2%karma_player_tier_display%&r.'
-tier-change: '[Karma] Ai ajuns la tier &a%karma_player_tier_display% &r!'
-self-defending-off: '[Karma] You are defending yourself ! Karma unchanged.'
-self-defending-on: '[Karma] You are defending yourself but your Karma changes.'
+by-player-only: "[Karma] &fComanda aceasta trebuie executata de catre un jucator!"
+creating-playerdata-folder: "[Karma] &fNu exista playerdata/, asa ca creem noi!"
+creating-player: "[Karma] &fCreem un jucator cu numele &a%player%"
+disconnected: "[Karma] &aJucătorul nu este pe server, sau nu exista."
+check:
+    own: "[Karma] Karma-ul tau este &a%karma_player_karma% &fsi tier-ul tau este &2%karma_player_tier_display%&r."
+    other: "[Karma] &a%player% &fdetine &a%karma_player_karma% &fKarma si tier-ul sau este &2%karma_player_tier_display%&r."
+edit:
+    set-karma: "[Karma] &9%player%'s &rAi setat karma &a%karma_player_karma% &rsi tier &2%karma_player_tier_display%&r."
+    add-karma: "[Karma] &fAi scos &a%karma_player_diff_karma% &rKarma de la &2%player% &rel acum detine de &a%karma_player_karma% &rKarma si tier-ul&2 %karma_player_tier_display%."
+    remove-karma: "[Karma] &cAti scos &6%karma_player_diff_karma% &rkarma de la &6%player% &rpentru un total de &6%karma_player_karma% &rsi tier-ul %karma_player_tier_display%."
+    reset-karma: "[Karma] &fKarma-ul lui &a%player%&fa fost resetat. Noul sau Karma este &a%karma_player_karma%;Tier &2%karma_player_tier_display%&r."
+tier-change: "[Karma] Ai ajuns la tier &a%karma_player_tier_display% &r!"
+self-defending-off: "[Karma] You are defending yourself ! Karma unchanged."
+self-defending-on: "[Karma] You are defending yourself but your Karma changes."
 calculation: "[Karma] &a%expression% &r= &b%result%"
 reload: "[Karma] Configuration reloaded."
-permission-denied: '[Karma] &fDin pacate nu ai %permission% &apermisiunea !'
-wrong-value: '&c[Karma] You must indicate a number. Example : &f"/karma add Notch 15"&c.'
+permission-denied: "[Karma] &fDin pacate nu ai %permission% &apermisiunea !"
+wrong-value: "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] Too few arguments"
+saved-data: "[Karma] #00DDCDSaved data of %number% players"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (player) &8: &rDisplays targeted player karma and tier or sender by default"
@@ -40,3 +43,11 @@ wanted:
     status:
         innocent: "&fInnocent"
         wanted: "&4&lWANTED"
+    check:
+        own: "[Karma] You are currently %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
+        other: "[Karma] %player% status is %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
+    edit:
+        set-wanted: "[Karma] &9%player% &rwanted time set to% karma_player_wanted_time_display%. It is now% karma_player_wanted_status%"
+        add-wanted: "[Karma] &aAdded wanted time to &9%player%&r for %karma_player_wanted_time_display% and is now %karma_player_wanted_status%"
+        remove-wanted: "[Karma] &cReduced wanted time for &9%player% &rto %karma_player_wanted_time_display% and is now %karma_player_wanted_status%"
+        reset-wanted: "[Karma]&9%player% &ris now fully %karma_player_wanted_status% (and always has been!)."

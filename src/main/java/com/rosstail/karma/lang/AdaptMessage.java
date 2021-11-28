@@ -220,4 +220,31 @@ public class AdaptMessage {
             getLogger().info(string);
         }
     }
+
+    public static ArrayList<String> timeRegexAdapt(ArrayList<String> expressionList) {
+        expressionList.forEach(s -> {
+            //Days
+            if (s.matches("[0-9]*d")) {
+                expressionList.set(expressionList.indexOf(s),
+                        String.valueOf(Long.parseLong(s.replaceAll("d", "")) * 86400000));
+            }
+            //Hours
+            if (s.matches("[0-9]*h")) {
+                expressionList.set(expressionList.indexOf(s),
+                        String.valueOf(Long.parseLong(s.replaceAll("h", "")) * 3600000));
+            }
+            //minutes
+            if (s.matches("[0-9]*m")) {
+                expressionList.set(expressionList.indexOf(s),
+                        String.valueOf(Long.parseLong(s.replaceAll("m", "")) * 60000));
+            }
+            //seconds
+            if (s.matches("[0-9]*s")) {
+                expressionList.set(expressionList.indexOf(s),
+                        String.valueOf(Long.parseLong(s.replaceAll("s", "")) * 1000));
+            }
+        });
+
+        return expressionList;
+    }
 }
