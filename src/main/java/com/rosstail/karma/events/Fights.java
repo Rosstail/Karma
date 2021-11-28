@@ -89,7 +89,6 @@ public class Fights {
         }
 
         double attackerNewKarma = attackerInitialKarma + result;
-        attacker.sendMessage(expression + ": " + result);
         if (configData.wantedEnable && !(attacker.hasMetadata("NPC") || victim.hasMetadata("NPC"))) {
             wantedHandler(attacker, attackerNewKarma, victim, event);
         }

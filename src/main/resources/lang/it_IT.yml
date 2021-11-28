@@ -26,6 +26,11 @@ help:
     - "&6/karma add [player] [value] &8: &rAggiungi al Karma del giocatore un valore"
     - "&6/karma remove [player] [value] &8: &rSottrai al Karma del giocatore un valore"
     - "&6/karma reset [player] &8: &rImposta il valore dal Karma di un giocatore su default."
+    - "&6/karma wanted check (player) &8: Displays your research index or that of the targeted player."
+    - "&6/karma wanted set [player] [value] &8: &r Apply the specified value to the target player's research status"
+    - "&6/karma wanted add [player] [value] &8: &r Adds the specified value to the target player's research status"
+    - "&6/karma wanted remove [player] [value] &8: &r Remove the specified value from the target player's research status"
+    - "&6/karma wanted reset [player] &8: &rResets the target player's search status."
     - "&6/karma calculate [expression] &8: &rCalcola l'espressione assegnata."
     - "&6/karma reload &8: &rRicarica la configurazione."
 pvp:

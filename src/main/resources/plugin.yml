@@ -74,6 +74,10 @@ permissions:
     default: op
   karma.calculate:
     default: false
+  karma.wanted.own:
+    default: true
+  karma.wanted.other:
+    default: op
   karma.wanted.set:
     default: op
   karma.wanted.add:
@@ -99,6 +103,8 @@ permissions:
       karma.remove: true
       karma.reset: true
       karma.calculate: true
+      karma.wanted.own: true
+      karma.wanted.other: true
       karma.wanted.set: true
       karma.wanted.add: true
       karma.wanted.remove: true

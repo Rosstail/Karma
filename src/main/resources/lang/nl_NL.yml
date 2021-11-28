@@ -26,6 +26,11 @@ help:
     - "&6/karma add [speler] [value] &8: &rVoegt het gegeven aantal karma toe aan de gegeven speler"
     - "&6/karma remove [speler] [value] &8: &rHaalt het gegeven aantal karma weg van de gegeven speler"
     - "&6/karma reset [speler] &8: &rZet de karma en tier van de gegeven speler naar de standaardwaardes."
+    - "&6/karma wanted check (player) &8: Displays your research index or that of the targeted player."
+    - "&6/karma wanted set [player] [value] &8: &r Apply the specified value to the target player's research status"
+    - "&6/karma wanted add [player] [value] &8: &r Adds the specified value to the target player's research status"
+    - "&6/karma wanted remove [player] [value] &8: &r Remove the specified value from the target player's research status"
+    - "&6/karma wanted reset [player] &8: &rResets the target player's search status."
     - "&6/karma calculate [berekening] &8: &rBerekent de gegeven berekening."
     - "&6/karma reload &8: &rHerlaadt het configuratiebestand."
 pvp:
