@@ -32,7 +32,7 @@ public class AdaptMessage {
     private final ConfigData configData;
     private final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
 
-    public enum prints{
+    public enum prints {
         OUT,
         WARNING,
         ERROR;
@@ -122,7 +122,7 @@ public class AdaptMessage {
         message = message.replaceAll("%timestamp%", String.valueOf(System.currentTimeMillis()));
 
         message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
-        if (Integer.parseInt(Bukkit.getVersion().split("\\.")[1]) >= 16) {
+        if (Integer.parseInt(Bukkit.getVersion().split("\\.")[1].replaceAll("\\)", "")) >= 16) {
             Matcher matcher = hexPattern.matcher(message);
             while (matcher.find()) {
                 try {
@@ -221,7 +221,7 @@ public class AdaptMessage {
         }
     }
 
-    public static ArrayList<String> timeRegexAdapt(ArrayList<String> expressionList) {
+    public static void timeRegexAdapt(ArrayList<String> expressionList) {
         expressionList.forEach(s -> {
             //Days
             if (s.matches("[0-9]*d")) {
@@ -245,6 +245,5 @@ public class AdaptMessage {
             }
         });
 
-        return expressionList;
     }
 }
