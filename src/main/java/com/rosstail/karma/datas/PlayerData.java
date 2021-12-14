@@ -149,6 +149,10 @@ public class PlayerData {
         this.karma = value;
     }
 
+    public void addKarma(double value) {
+        setKarma(this.karma + value);
+    }
+
     public void setPreviousKarma(double previousKarma) {
         this.previousKarma = previousKarma;
     }
