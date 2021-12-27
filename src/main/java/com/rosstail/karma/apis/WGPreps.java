@@ -1,5 +1,7 @@
 package com.rosstail.karma.apis;
 
+import com.rosstail.karma.ConfigData;
+import com.rosstail.karma.datas.PlayerData;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -18,9 +20,12 @@ import java.util.logging.Level;
 
 public class WGPreps {
 
+    public static Karma plugin = Karma.getInstance();
     public static WGPreps wgPreps;
     public static DoubleFlag KARMA_MULTIPLICATION;
     public static IntegerFlag KARMA_CHANGE_CHANCE;
+    public static DoubleFlag KARMA_MINIMUM;
+    public static DoubleFlag KARMA_MAXIMUM;
 
     public static void initWGPreps() {
         wgPreps = new WGPreps();
@@ -68,6 +73,70 @@ public class WGPreps {
                 // hopefully this never actually happens
             }
         }
+        try {
+            // create a flag with the name "my-custom-flag", defaulting to true
+            DoubleFlag minKarmaEntryFlag = new DoubleFlag("entry-min-karma");
+            registry.register(minKarmaEntryFlag);
+            KARMA_MINIMUM = minKarmaEntryFlag; // only set our field if there was no error
+        } catch (FlagConflictException e) {
+            // some other plugin registered a flag by the same name already.
+            // you can use the existing flag, but this may cause conflicts - be sure to check type
+            Flag<?> existing = registry.get("entry-min-karma");
+            if (existing instanceof DoubleFlag) {
+                KARMA_MINIMUM = (DoubleFlag) existing;
+            } else {
+                Karma.getPlugin(Karma.class).getLogger().log(Level.WARNING,
+                    "[WARNING] CONFLICT BETWEEN KARMA entry-min-karma FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
+                // types don't match - this is bad news! some other plugin conflicts with you
+                // hopefully this never actually happens
+            }
+        }
+        try {
+            // create a flag with the name "my-custom-flag", defaulting to true
+            DoubleFlag maxKarmaEntryFlag = new DoubleFlag("entry-max-karma");
+            registry.register(maxKarmaEntryFlag);
+            KARMA_MAXIMUM = maxKarmaEntryFlag; // only set our field if there was no error
+        } catch (FlagConflictException e) {
+            // some other plugin registered a flag by the same name already.
+            // you can use the existing flag, but this may cause conflicts - be sure to check type
+            Flag<?> existing = registry.get("entry-max-karma");
+            if (existing instanceof DoubleFlag) {
+                KARMA_MAXIMUM = (DoubleFlag) existing;
+            } else {
+                Karma.getPlugin(Karma.class).getLogger().log(Level.WARNING,
+                    "[WARNING] CONFLICT BETWEEN KARMA entry-max-karma FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
+                // types don't match - this is bad news! some other plugin conflicts with you
+                // hopefully this never actually happens
+            }
+        }
+    }
+
+    public boolean checkRequiredKarmaFlags(Player player) {
+        double karma = PlayerData.gets(player).getKarma();
+        boolean value = true;
+        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
+        com.sk89q.worldedit.util.Location location = localPlayer.getLocation();
+        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
+        RegionQuery query = container.createQuery();
+
+        boolean hasMinKarma = hasReqFlag(location, localPlayer, query, KARMA_MINIMUM);
+        boolean hasMaxKarma = hasReqFlag(location, localPlayer, query, KARMA_MAXIMUM);
+
+        if (hasMinKarma) {
+            if (karma < query.queryValue(location, localPlayer, KARMA_MINIMUM)) {
+                value = false;
+            }
+        }
+        if (hasMaxKarma) {
+            if (karma > query.queryValue(location, localPlayer, KARMA_MAXIMUM)) {
+                value = false;
+            }
+        }
+        return value;
+    }
+
+    private boolean hasReqFlag(com.sk89q.worldedit.util.Location location, LocalPlayer localPlayer, RegionQuery query, DoubleFlag flag) {
+        return query.queryValue(location, localPlayer, flag) != null;
     }
 
     public double checkMultipleKarmaFlags(Player player) {

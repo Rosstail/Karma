@@ -6,7 +6,7 @@
 
     <groupId>com.github.Rosstail</groupId>
     <artifactId>karma</artifactId>
-    <version>1.9.2</version>
+    <version>1.9.3-beta</version>
     <packaging>jar</packaging>
 
     <distributionManagement>

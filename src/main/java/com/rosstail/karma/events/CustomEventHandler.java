@@ -2,6 +2,7 @@ package com.rosstail.karma.events;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
+import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
@@ -26,6 +27,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.Timestamp;
@@ -344,6 +346,20 @@ public class CustomEventHandler implements Listener {
             return (Player) event.getDamager();
         }
         return null;
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerMove(PlayerMoveEvent event) {
+        if (!ConfigData.getConfigData().useWorldGuard) {
+            return;
+        }
+        Player player = event.getPlayer();
+        if (!player.hasMetadata("NPC")) {
+            if (!WGPreps.getWgPreps().checkRequiredKarmaFlags(player)) {
+                event.setCancelled(true);
+                player.sendMessage("[TEST] Karma restricted access.");
+            }
+        }
     }
 
     public static void setConfigData(ConfigData configData) {
