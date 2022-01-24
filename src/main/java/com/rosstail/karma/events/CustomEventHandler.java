@@ -6,6 +6,7 @@ import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
+import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -255,10 +256,9 @@ public class CustomEventHandler implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerData.gets(player);
-        plugin.saveData(false, Collections.singletonMap(player, playerData));
-
         PlayerData.stopTimer(playerData.getOverTimerScheduler());
         PlayerData.stopTimer(playerData.getWantedScheduler());
+        plugin.saveData(DBInteractions.reasons.DISCONNECT, Collections.singletonMap(player, playerData));
     }
 
     /**

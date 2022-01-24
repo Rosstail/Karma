@@ -28,6 +28,15 @@ public class DBInteractions {
         this.plugin = plugin;
     }
 
+
+    public enum reasons {
+        CONNECT,
+        TIMED,
+        DISCONNECT,
+        COMMAND,
+        SERVER_CLOSE
+    }
+
     public void prepareConnection() {
         YamlConfiguration config = plugin.getCustomConfig();
         host = config.getString("mysql.host");
@@ -139,31 +148,29 @@ public class DBInteractions {
         });
     }
 
-    public void updatePlayersDB(boolean isSync, Map<Player, PlayerData> map) {
-        if (!isSync) {
-            for (Player player : map.keySet()) {
-                Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                    try {
-                        updateData(player, PlayerData.getPlayerList().get(player));
-                    } catch (SQLException throwable) {
-                        throwable.printStackTrace();
-                    }
-                });
-            }
+    public void updatePlayersDB(reasons reason, Map<Player, PlayerData> players) {
+        final int[] loop = {0};
+        if (!reason.equals(reasons.SERVER_CLOSE)) {
+            players.forEach((player, playerData) -> Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    updateData(player, PlayerData.getPlayerList().get(player), reason);
+                } catch (SQLException throwable) {
+                    throwable.printStackTrace();
+                }
+            }));
         } else {
-            for (Player player : map.keySet()) {
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    try {
-                        updateData(player, PlayerData.getPlayerList().get(player));
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
-                });
-            }
+            players.forEach((player, playerData) -> {
+                try {
+                    updateData(player, PlayerData.getPlayerList().get(player), reason);
+                } catch (SQLException throwable) {
+                    throwable.printStackTrace();
+                }
+                loop[0]++;
+            });
         }
     }
 
-    public void updateData(Player player, PlayerData playerData) throws SQLException {
+    public void updateData(Player player, PlayerData playerData, reasons reason) throws SQLException {
         String UUID = player.getUniqueId().toString();
         String query = "UPDATE " + plugin.getName() + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Wanted_Time = ? WHERE UUID = ?;";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
@@ -174,9 +181,12 @@ public class DBInteractions {
         preparedStatement.setString(4, playerData.getPreviousTier().getName());
         preparedStatement.setTimestamp(5, playerData.getWantedTimeStamp());
         preparedStatement.setString(6, UUID);
-
         preparedStatement.executeUpdate();
         preparedStatement.close();
+
+        if (reason.equals(reasons.DISCONNECT)) {
+            PlayerData.getPlayerList().remove(player);
+        }
     }
 
     public void closeConnexion() {

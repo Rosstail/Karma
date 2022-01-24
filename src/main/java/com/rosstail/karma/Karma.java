@@ -10,6 +10,7 @@ import java.util.TimerTask;
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.FileResourcesUtils;
 import com.rosstail.karma.datas.PlayerData;
@@ -88,7 +89,7 @@ public class Karma extends JavaPlugin implements Listener {
         updateDataTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                saveData(false, PlayerData.getPlayerList());
+                saveData(DBInteractions.reasons.TIMED, PlayerData.getPlayerList());
             }
         }, delay, delay);
     }
@@ -110,7 +111,7 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
-        saveData(true, PlayerData.getPlayerList());
+        saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerData.getPlayerList());
         updateDataTimer.cancel();
         DBInteractions dbInteractions = DBInteractions.getInstance();
         if (dbInteractions != null) {
@@ -118,12 +119,12 @@ public class Karma extends JavaPlugin implements Listener {
         }
     }
 
-    public void saveData(boolean isSync, Map<Player, PlayerData> map) {
+    public void saveData(DBInteractions.reasons reason, Map<Player, PlayerData> map) {
         DBInteractions dbInteractions = DBInteractions.getInstance();
         if (dbInteractions != null) {
-            dbInteractions.updatePlayersDB(isSync, map);
+            dbInteractions.updatePlayersDB(reason, map);
         } else {
-            Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
+            Bukkit.getScheduler().runTask(this, () -> {
                 for (PlayerData playerData : map.values()) {
                     File playerFile = playerData.getPlayerFile();
                     YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);

@@ -6,6 +6,7 @@ import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
+import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -647,7 +648,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private void karmaSave(CommandSender sender) {
         if (canLaunchCommand(sender, commands.KARMA_SAVE)) {
             Map<Player, PlayerData> playersData = PlayerData.getPlayerList();
-            plugin.saveData(false, playersData);
+            plugin.saveData(DBInteractions.reasons.COMMAND, playersData);
             sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.SAVED_DATA)
                     .replaceAll("%number%", String.valueOf(playersData.size())), null));
         }
