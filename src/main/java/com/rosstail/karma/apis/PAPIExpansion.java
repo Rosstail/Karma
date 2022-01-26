@@ -3,6 +3,7 @@ package com.rosstail.karma.apis;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.tiers.Tier;
@@ -133,13 +134,13 @@ public class PAPIExpansion extends PlaceholderExpansion {
             PlayerData playerData = PlayerData.getPlayerList().get(player);
             // %karma_value% here
             if(identifier.equals("player_karma")){
-                return String.valueOf(playerData.getKarma());
+                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma(), '.');
             }
             if(identifier.equals("player_previous_karma")){
-                return String.valueOf(playerData.getPreviousKarma());
+                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getPreviousKarma(), '.');
             }
             if(identifier.equals("player_diff")){
-                return String.valueOf(playerData.getKarma() - playerData.getPreviousKarma());
+                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma() - playerData.getPreviousKarma(), '.');
             }
 
             if(identifier.startsWith("player_tier")) {
@@ -154,10 +155,10 @@ public class PAPIExpansion extends PlaceholderExpansion {
                     return tier.getShortDisplay();
                 }
                 if (identifier.equals("player_tier_minimum")) {
-                    return String.valueOf(tier.getMinKarma());
+                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMinKarma(), '.');
                 }
                 if (identifier.equals("player_tier_maximum")) {
-                    return String.valueOf(tier.getMaxKarma());
+                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMaxKarma(), '.');
                 }
             }
 
@@ -173,15 +174,15 @@ public class PAPIExpansion extends PlaceholderExpansion {
                     return tier.getShortDisplay();
                 }
                 if (identifier.equals("player_previous_tier_minimum")) {
-                    return String.valueOf(tier.getMinKarma());
+                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMinKarma(), '.');
                 }
                 if (identifier.equals("player_previous_tier_maximum")) {
-                    return String.valueOf(tier.getMaxKarma());
+                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMaxKarma(), '.');
                 }
             }
 
             if (identifier.equals("player_wanted_time")) {
-                return String.valueOf(playerData.getWantedTimeStamp().getTime());
+                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getWantedTimeStamp().getTime(), '.');
             }
             if (identifier.equals("player_wanted_time_display")) {
                 float time = playerData.getWantedTimeStamp().getTime();

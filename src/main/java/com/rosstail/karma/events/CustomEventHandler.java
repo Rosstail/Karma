@@ -311,7 +311,7 @@ public class CustomEventHandler implements Listener {
 
         double damage = event.getFinalDamage();
         Entity entity = event.getEntity();
-        if (!(entity instanceof LivingEntity && damage >= 1d && ((LivingEntity) entity).getHealth() - damage > 0)) {
+        if (!(entity instanceof LivingEntity && damage >= 1f && ((LivingEntity) entity).getHealth() - damage > 0f)) {
             return;
         }
 
@@ -332,6 +332,8 @@ public class CustomEventHandler implements Listener {
                 } else {
                     Fights.pveHandler(attacker, victimEntity, event);
                 }
+            } else {
+                attacker.sendMessage("You are immune to karma change");
             }
         }
     }

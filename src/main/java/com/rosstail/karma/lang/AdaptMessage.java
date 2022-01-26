@@ -102,9 +102,9 @@ public class AdaptMessage {
                     status = LangManager.getMessage(LangMessage.STATUS_INNOCENT);
                 }
 
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(playerKarma));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_karma%", decimalFormat(playerPreviousKarma));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_diff_karma%", decimalFormat(playerKarma - playerPreviousKarma));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(playerKarma, '.'));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_karma%", decimalFormat(playerPreviousKarma, '.'));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_diff_karma%", decimalFormat(playerKarma - playerPreviousKarma, '.'));
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier%", playerTier.getName());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier%", playerPreviousTier.getName());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier_display%", playerTier.getDisplay());
@@ -116,7 +116,7 @@ public class AdaptMessage {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time%", String.valueOf(wantedTime.getTime()));
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_display%", simpleDateFormat.format(wantedTime.getTime()));
             } else {
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble()));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble(), '.'));
             }
         }
         message = message.replaceAll("%timestamp%", String.valueOf(System.currentTimeMillis()));
@@ -192,8 +192,8 @@ public class AdaptMessage {
         return message;
     }
 
-    private String decimalFormat(double value) {
-        return String.format("%." + configData.decNumber + "f", value).replaceAll(",", ".");
+    public String decimalFormat(double value, char replacement) {
+        return String.format("%." + configData.decNumber + "f", value).replaceAll(",", String.valueOf(replacement));
     }
 
     public static AdaptMessage getAdaptMessage() {

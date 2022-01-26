@@ -40,6 +40,8 @@ public class Fights {
         PlayerData victimData = PlayerData.gets(victim);
         PlayerData attackerData = PlayerData.gets(attacker);
         double attackerInitialKarma = attackerData.getKarma();
+        ConfigData configData = ConfigData.getConfigData();
+        String expression;
 
         if (event instanceof PlayerDeathEvent) {
             KarmaCommand.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
@@ -49,12 +51,7 @@ public class Fights {
             path = adaptMessage.adapt(victim, path, PlayerType.victim.toString());
             path = adaptMessage.adapt(attacker, path, PlayerType.attacker.toString());
             KarmaCommand.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
-        }
 
-        ConfigData configData = ConfigData.getConfigData();
-        String expression;
-
-        if (event instanceof PlayerDeathEvent) {
             expression = configData.pvpKillRewardExpression;
         } else {
             expression = configData.pvpHitRewardExpression;
@@ -66,9 +63,9 @@ public class Fights {
 
         double result;
 
+
         expression = adaptMessage.adapt(attacker, expression, PlayerType.attacker.toString());
         expression = adaptMessage.adapt(victim, expression, PlayerType.victim.toString());
-
         expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
                 String.valueOf(PlayerData.gets(attacker).getTier().getTierScore(PlayerData.gets(victim).getTier())));
 
