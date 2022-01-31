@@ -45,6 +45,7 @@ public class ConfigData {
 
     public final String useTimeValue;
     private final String dateTimeFormat;
+    private final String countDownFormat;
     public final String pvpHitRewardExpression;
     public final String pvpKillRewardExpression;
     public final String wantedDurationExpression;
@@ -95,6 +96,7 @@ public class ConfigData {
         wantedMaxDurationExpression = config.getString("pvp.wanted.max-duration");
 
         dateTimeFormat = config.getString("general.date-time-format");
+        countDownFormat = config.getString("general.countdown-format");
 
         useTimeValue = config.getString("times.use-both-system-and-worlds-time");
 
@@ -121,5 +123,12 @@ public class ConfigData {
             return "yyyy-MM-dd HH:mm:ss";
         }
         return dateTimeFormat;
+    }
+
+    public String getCountdownFormat() {
+        if (countDownFormat == null) {
+            return "{dd} {HH}:{mm}:{ss}";
+        }
+        return countDownFormat;
     }
 }

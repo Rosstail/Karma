@@ -268,7 +268,7 @@ public class PlayerData {
     public static void changePlayerTierMessage(Player player) {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
-            adaptMessage.sendToPlayer(player, adaptMessage.adapt(player, message, PlayerType.player.toString()));
+            adaptMessage.sendToPlayer(player, adaptMessage.adapt(player, message, PlayerType.PLAYER.getText()));
         }
     }
 

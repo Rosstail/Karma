@@ -218,7 +218,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private void permissionDenied(CommandSender sender, commands command) {
         String message = LangManager.getMessage(LangMessage.PERMISSION_DENIED);
         if (message != null) {
-            message = AdaptMessage.getAdaptMessage().adapt((Player) sender, message, PlayerType.player.toString());
+            message = AdaptMessage.getAdaptMessage().adapt((Player) sender, message, PlayerType.PLAYER.getText());
             message = message.replaceAll("%command%", command.command);
             message = message.replaceAll("%permission%", command.perm);
             sender.sendMessage(message);
@@ -258,11 +258,11 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     }
 
     private static void placeCommands(Player player, String command) {
-        command = AdaptMessage.getAdaptMessage().adapt(player, command, PlayerType.player.toString());
+        command = AdaptMessage.getAdaptMessage().adapt(player, command, PlayerType.PLAYER.getText());
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 
-        String regex = PlayerType.player.toString();
+        String regex = PlayerType.PLAYER.getText();
         if (command.startsWith(regex)) {
             command = command.replaceFirst(regex, "").trim();
             senderOrTarget = player;
@@ -279,15 +279,15 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     }
 
     private static void placeCommands(Player attacker, Player victim, String command) {
-        command = AdaptMessage.getAdaptMessage().adapt(attacker, command, PlayerType.attacker.toString());
-        command = AdaptMessage.getAdaptMessage().adapt(victim, command, PlayerType.victim.toString());
+        command = AdaptMessage.getAdaptMessage().adapt(attacker, command, PlayerType.ATTACKER.getText());
+        command = AdaptMessage.getAdaptMessage().adapt(victim, command, PlayerType.VICTIM.getText());
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
-        if (command.startsWith(PlayerType.victim.toString())) {
-            command = command.replaceFirst(PlayerType.victim.toString(), "").trim();
+        if (command.startsWith(PlayerType.VICTIM.getText())) {
+            command = command.replaceFirst(PlayerType.VICTIM.getText(), "").trim();
             senderOrTarget = victim;
-        } else if (command.startsWith(PlayerType.attacker.toString())) {
-            command = command.replaceFirst(PlayerType.attacker.toString(), "").trim();
+        } else if (command.startsWith(PlayerType.ATTACKER.getText())) {
+            command = command.replaceFirst(PlayerType.ATTACKER.getText(), "").trim();
             senderOrTarget = attacker;
         }
 
@@ -323,7 +323,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         }
 
         if (player != null && player.isOnline()) {
-            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.PLAYER.getText()));
         } else {
             disconnectedPlayer(sender);
         }
@@ -336,12 +336,12 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private void karmaSelf(CommandSender sender)
     {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
             return;
         }
         Player player = (Player) sender;
         if (canLaunchCommand(player, commands.KARMA_CHECK)) {
-            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.PLAYER.getText()));
         }
     }
 
@@ -493,7 +493,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         }
 
         if (player != null && player.isOnline()) {
-            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.WANTED_OTHER_CHECK), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.WANTED_OTHER_CHECK), PlayerType.PLAYER.getText()));
         } else {
             disconnectedPlayer(sender);
         }
@@ -506,12 +506,12 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private void wantedSelf(CommandSender sender)
     {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
             return;
         }
         Player player = (Player) sender;
         if (canLaunchCommand(player, commands.WANTED_CHECK)) {
-            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.WANTED_OWN_CHECK), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(player, LangManager.getMessage(LangMessage.WANTED_OWN_CHECK), PlayerType.PLAYER.getText()));
         }
     }
 
@@ -534,7 +534,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 expressionList.remove(playerName);
                 AdaptMessage.timeRegexAdapt(expressionList);
                 expression = String.join(" ", expressionList);
-                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.player.toString());
+                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.PLAYER.getText());
                 value = new Timestamp((long) ExpressionCalculator.eval(expression));
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 errorMessage(sender, e);
@@ -569,7 +569,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 expressionList.remove(playerName);
                 AdaptMessage.timeRegexAdapt(expressionList);
                 expression = String.join(" ", expressionList);
-                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.player.toString());
+                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.PLAYER.getText());
                 value = new Timestamp(PlayerData.gets(player).getWantedTimeStamp().getTime() + (long) ExpressionCalculator.eval(expression));
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 errorMessage(sender, e);
@@ -604,7 +604,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 expressionList.remove(playerName);
                 AdaptMessage.timeRegexAdapt(expressionList);
                 expression = String.join(" ", expressionList);
-                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.player.toString());
+                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.PLAYER.getText());
                 value = new Timestamp(PlayerData.gets(player).getWantedTimeStamp().getTime() - (long) ExpressionCalculator.eval(expression));
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 errorMessage(sender, e);
@@ -657,14 +657,14 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
     private void tryKarmaChange(PlayerKarmaChangeEvent playerKarmaChangeEvent, CommandSender sender, LangMessage message) {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         if (!playerKarmaChangeEvent.isCancelled()) {
-            sender.sendMessage(adaptMessage.adapt(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.PLAYER.getText()));
         }
     }
 
     private void tryWantedChange(PlayerWantedChangeEvent playerWantedChangeEvent, CommandSender sender, LangMessage message) {
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
         if (!playerWantedChangeEvent.isCancelled()) {
-            sender.sendMessage(adaptMessage.adapt(playerWantedChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.player.toString()));
+            sender.sendMessage(adaptMessage.adapt(playerWantedChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.PLAYER.getText()));
         }
     }
 }

@@ -18,7 +18,7 @@ reload: "[Karma] Configuration rechargée."
 permission-denied: "[Karma] &cVous n'avez pas la permission %permission% !"
 wrong-value: "&c[Karma] Vous devez renseigner un nombre. Exemple : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] Trop peu d'arguments"
-saved-data: "[Karma] #00DDCDles données de %number% ont été sauvegardées"
+saved-data: "[Karma] {#00DDCD}Les données de %number% ont été sauvegardées"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (joueur) &8: &rAffiche votre karma et votre alignement ou ceux du joueur ciblé."
@@ -38,10 +38,10 @@ pvp:
     hit-karma-unchanged: "&fVous combattez sans conséquence."
     hit-karma-decrease: "&c%attacker%, Vous attaquez une personne hônnete !"
     kill-karma-increase: "&b%victim% a payé !"
-    kill-karma-unchanged: "##666666ce meurtre n'a aucune conséquence."
-    kill-karma-decrease: "#DD0000&lVous avez assassiné un innocent !"
+    kill-karma-unchanged: "{#666666}ce meurtre n'a aucune conséquence."
+    kill-karma-decrease: "{#DD0000}&lVous avez assassiné un innocent !"
 wanted:
-    enter: "%msg-title%#FF0000WANTED
+    enter: "%msg-title%{#FF0000}WANTED
     %msg-subtitle%Vous êtes activement recherché."
     update: "%msg-actionbar%&cVotre statut de recherche est raffraichit."
     exit: "&aVous n'êtes plus activement recherché."

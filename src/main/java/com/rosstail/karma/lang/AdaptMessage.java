@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ public class AdaptMessage {
     private static AdaptMessage adaptMessage;
     private final Karma plugin;
     private final ConfigData configData;
-    private final Pattern hexPattern = Pattern.compile("#[a-fA-F0-9]{6}");
+    private final Pattern hexPattern = Pattern.compile("\\{#[a-fA-F0-9]{6}}");
 
     public enum prints {
         OUT,
@@ -68,12 +69,12 @@ public class AdaptMessage {
     }
 
     private void sendActionBar(Player player, String message) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(adaptMessage.adapt(player, message, PlayerType.player.toString())));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(adaptMessage.adapt(player, message, PlayerType.PLAYER.getText())));
     }
 
     private void sendTitle(Player player, String title, String subTitle) {
-        player.sendTitle(adaptMessage.adapt(player, title, PlayerType.player.toString()),
-                adaptMessage.adapt(player, subTitle, PlayerType.player.toString()), configData.titleFadeIn, configData.titleStay, configData.titleFadeOut);
+        player.sendTitle(adaptMessage.adapt(player, title, PlayerType.PLAYER.getText()),
+                adaptMessage.adapt(player, subTitle, PlayerType.PLAYER.getText()), configData.titleFadeIn, configData.titleStay, configData.titleFadeOut);
     }
 
     public String adapt(Player player, String message, String playerType) {
@@ -115,6 +116,8 @@ public class AdaptMessage {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time%", String.valueOf(wantedTime.getTime()));
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_display%", simpleDateFormat.format(wantedTime.getTime()));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay%", String.valueOf(wantedTime.getTime() - System.currentTimeMillis()));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay_display%", countDownFormat(wantedTime.getTime() - System.currentTimeMillis()));
             } else {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble(), '.'));
             }
@@ -129,7 +132,8 @@ public class AdaptMessage {
                     String color = message.substring(matcher.start(), matcher.end());
                     message = message.replaceAll(color, String.valueOf(ChatColor.of(color)));
                     matcher = hexPattern.matcher(message);
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
         }
         return message;
@@ -138,7 +142,7 @@ public class AdaptMessage {
     public String[] listMessage(Player player, List<String> messages) {
         ArrayList<String> newMessages = new ArrayList<>();
         messages.forEach(s -> {
-            newMessages.add(adapt(player, s, PlayerType.player.toString()));
+            newMessages.add(adapt(player, s, PlayerType.PLAYER.getText()));
         });
         return newMessages.toArray(new String[0]);
     }
@@ -161,7 +165,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adapt(player, message, PlayerType.attacker.toString());
+        message = adapt(player, message, PlayerType.ATTACKER.getText());
 
         coolDown.put(player, System.currentTimeMillis());
         sendToPlayer(player, message);
@@ -174,7 +178,7 @@ public class AdaptMessage {
         if (coolDown.containsKey(attacker)) {
             double seconds;
 
-            if(cause instanceof EntityDamageByEntityEvent) {
+            if (cause instanceof EntityDamageByEntityEvent) {
                 seconds = configData.hitMessageDelay;
             } else {
                 seconds = configData.killMessageDelay;
@@ -185,8 +189,8 @@ public class AdaptMessage {
             }
         }
 
-        message = adapt(attacker, message, PlayerType.attacker.toString());
-        message = adapt(victim, message, PlayerType.victim.toString());
+        message = adapt(attacker, message, PlayerType.ATTACKER.getText());
+        message = adapt(victim, message, PlayerType.VICTIM.getText());
 
         coolDown.put(attacker, System.currentTimeMillis());
         return message;
@@ -194,6 +198,39 @@ public class AdaptMessage {
 
     public String decimalFormat(double value, char replacement) {
         return String.format("%." + configData.decNumber + "f", value).replaceAll(",", String.valueOf(replacement));
+    }
+
+    public String countDownFormat(long diff) {
+        String format = ConfigData.getConfigData().getCountdownFormat();
+        long days = TimeUnit.MILLISECONDS.toDays(diff);
+        long hoursInDay =TimeUnit.MILLISECONDS.toHours(diff) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(diff));
+        long hours = TimeUnit.MILLISECONDS.toHours(diff);
+        long minutesInHour = TimeUnit.MILLISECONDS.toMinutes(diff)
+                - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(diff));
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(diff);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(diff);
+        long secondsInMinute = TimeUnit.MILLISECONDS.toSeconds(diff)
+                - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(diff));
+
+        format = format.replaceAll("\\{dd}", (days / 10 == 0 ? "0" : "") + days);
+        format = format.replaceAll("\\{d}", String.valueOf(days));
+
+        format = format.replaceAll("\\{HH}", (hoursInDay / 10 == 0 ? "0" : "") + hoursInDay);
+        format = format.replaceAll("\\{H}", String.valueOf(hoursInDay));
+        format = format.replaceAll("\\{hh}", (hours / 10 == 0 ? "0" : "") + hours);
+        format = format.replaceAll("\\{h}", String.valueOf(hours));
+
+        format = format.replaceAll("\\{mm}", (minutesInHour / 10 == 0 ? "0" : "") + minutesInHour);
+        format = format.replaceAll("\\{m}", String.valueOf(minutesInHour));
+        format = format.replaceAll("\\{MM}", (minutes / 10 == 0 ? "0" : "") + minutes);
+        format = format.replaceAll("\\{M}", String.valueOf(minutes));
+
+        format = format.replaceAll("\\{ss}", (secondsInMinute / 10 == 0 ? "0" : "") + secondsInMinute);
+        format = format.replaceAll("\\{s}", String.valueOf(secondsInMinute));
+        format = format.replaceAll("\\{SS}", (seconds / 10 == 0 ? "0" : "") + seconds);
+        format = format.replaceAll("\\{S}", String.valueOf(seconds));
+
+        return format;
     }
 
     public static AdaptMessage getAdaptMessage() {

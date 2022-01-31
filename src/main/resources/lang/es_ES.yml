@@ -18,7 +18,7 @@ reload: "[Karma] Configuration reloaded."
 permission-denied: "[Karma] &c¡No tienes %permission% permiso!"
 wrong-value: "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] Too few arguments"
-saved-data: "[Karma] #00DDCDSaved data of %number% players"
+saved-data: "[Karma] {#00DDCD}Saved data of %number% players"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (player) &8: &rDisplays targeted player karma and tier or sender by default"
@@ -38,10 +38,10 @@ pvp:
     hit-karma-unchanged: "&fYou have hit someone without consequence."
     hit-karma-decrease: "&c%attacker%, you attack a honest people !"
     kill-karma-increase: "&b%victim% is now finished !"
-    kill-karma-unchanged: "##666666You have killed someone without consequence."
-    kill-karma-decrease: "#DD0000&lYou murdered an innocent !"
+    kill-karma-unchanged: "{#666666}You have killed someone without consequence."
+    kill-karma-decrease: "{#DD0000}&lYou murdered an innocent !"
     wanted:
-        enter: "%msg-title%#DD0000&lWANTED.
+        enter: "%msg-title%{#DD0000}&lWANTED.
             %msg-subtitle% &r&cThe police is after you !"
         refresh: "%msg-actionbar%&cYou are wanted."
         exit: "&aYou are not actively wanted anymore."

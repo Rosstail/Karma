@@ -175,7 +175,7 @@ public class CustomEventHandler implements Listener {
         Timestamp duration = event.getTimestamp();
         String wantedMaxDurationExp = configData.wantedMaxDurationExpression;
         Timestamp durationMaxTimeStamp = new Timestamp((long) ExpressionCalculator.eval(
-                AdaptMessage.getAdaptMessage().adapt(player, wantedMaxDurationExp, PlayerType.player.toString())));
+                AdaptMessage.getAdaptMessage().adapt(player, wantedMaxDurationExp, PlayerType.PLAYER.getText())));
         if (duration.compareTo(durationMaxTimeStamp) > 0) {
             duration = durationMaxTimeStamp;
         }
@@ -217,7 +217,7 @@ public class CustomEventHandler implements Listener {
         playerData.setWanted(true);
         PlayerData.replaceWantedScheduler(player);
         if (message != null) {
-            adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.player.toString()));
+            adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
         }
     }
 
@@ -227,7 +227,7 @@ public class CustomEventHandler implements Listener {
         String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
         PlayerData.replaceWantedScheduler(player);
         if (message != null) {
-            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.player.toString()));
+            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
         }
     }
 
@@ -240,7 +240,7 @@ public class CustomEventHandler implements Listener {
         PlayerData.stopTimer(playerData.getWantedScheduler());
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
         if (message != null) {
-            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.player.toString()));
+            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
         }
     }
 

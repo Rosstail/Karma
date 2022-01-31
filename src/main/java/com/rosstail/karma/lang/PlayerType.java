@@ -1,10 +1,16 @@
 package com.rosstail.karma.lang;
 
 public enum PlayerType {
-    player,
-    attacker,
-    victim;
+    PLAYER("player"),
+    ATTACKER("attacker"),
+    VICTIM("victim");
 
-    PlayerType() {
+    private final String text;
+    PlayerType(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
     }
 }

@@ -36,10 +36,10 @@ pvp:
     hit-karma-unchanged: "&fYou have hit someone without consequence."
     hit-karma-decrease: "&c%attacker%, you attack a honest people !"
     kill-karma-increase: "&b%victim% is now finished !"
-    kill-karma-unchanged: "##666666You have killed someone without consequence."
-    kill-karma-decrease: "#DD0000&lYou murdered an innocent !"
+    kill-karma-unchanged: "{#666666}You have killed someone without consequence."
+    kill-karma-decrease: "{#DD0000}&lYou murdered an innocent !"
 wanted:
-    enter: "%msg-title%#DD0000&lWANTED.
+    enter: "%msg-title%{#DD0000}&lWANTED.
     %msg-subtitle% &r&cThe police is after you !"
     refresh: "%msg-actionbar%&cYou are wanted."
     exit: "&aYou are not actively wanted anymore."

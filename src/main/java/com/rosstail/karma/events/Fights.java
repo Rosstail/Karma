@@ -48,8 +48,8 @@ public class Fights {
 
             String path = configData.killedByTierPath;
 
-            path = adaptMessage.adapt(victim, path, PlayerType.victim.toString());
-            path = adaptMessage.adapt(attacker, path, PlayerType.attacker.toString());
+            path = adaptMessage.adapt(victim, path, PlayerType.VICTIM.getText());
+            path = adaptMessage.adapt(attacker, path, PlayerType.ATTACKER.getText());
             KarmaCommand.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
 
             expression = configData.pvpKillRewardExpression;
@@ -64,8 +64,8 @@ public class Fights {
         double result;
 
 
-        expression = adaptMessage.adapt(attacker, expression, PlayerType.attacker.toString());
-        expression = adaptMessage.adapt(victim, expression, PlayerType.victim.toString());
+        expression = adaptMessage.adapt(attacker, expression, PlayerType.ATTACKER.getText());
+        expression = adaptMessage.adapt(victim, expression, PlayerType.VICTIM.getText());
         expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
                 String.valueOf(PlayerData.gets(attacker).getTier().getTierScore(PlayerData.gets(victim).getTier())));
 
@@ -180,7 +180,7 @@ public class Fights {
             if (attackerLastWanted < System.currentTimeMillis()) {
                 expression = expression.replaceAll("%karma_player_wanted_time%", "%timestamp%");
             }
-            expression = AdaptMessage.getAdaptMessage().adapt(attacker, expression, PlayerType.player.toString());
+            expression = AdaptMessage.getAdaptMessage().adapt(attacker, expression, PlayerType.PLAYER.getText());
             Timestamp timestamp = new Timestamp((long) ExpressionCalculator.eval(expression));
             PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(attacker, timestamp, cause);
             Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);

@@ -18,7 +18,7 @@ reload: "[Karma] Configurazione ricaricata."
 permission-denied: "[Karma] &cNon hai i permessi : %permission% !"
 wrong-value: "&c[Karma] Devi indicare un numero. Esempio : &f\"/karma add Melito 15\"&c."
 too-few-arguments: "&c[Karma] Pochi argomenti"
-saved-data: "[Karma] #00DDCDSaved data of %number% players"
+saved-data: "[Karma] {#00DDCD}Saved data of %number% players"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (player) &8: &rMostra il karma e il Tier del Player selezionato"
@@ -38,10 +38,10 @@ pvp:
     hit-karma-unchanged: "&fHai colpito qualcuno senza conseguenze."
     hit-karma-decrease: "&c%attacker%, hai colpito un innocente!"
     kill-karma-increase: "&b%victim% è finalmente morto !"
-    kill-karma-unchanged: "##666666Hai ucciso un player senza conseguenze."
-    kill-karma-decrease: "#DD0000&lHai ucciso un innocente !"
+    kill-karma-unchanged: "{#666666}Hai ucciso un player senza conseguenze."
+    kill-karma-decrease: "{#DD0000}&lHai ucciso un innocente !"
 wanted:
-    enter: "%msg-title%#DD0000&lWANTED.
+    enter: "%msg-title%{#DD0000}&lWANTED.
     %msg-subtitle% &r&cLa polizia ti è alle spalle!"
     refresh: "%msg-actionbar%&cSei RICERCATO."
     exit: "&aNon sei più RICERCATO."
