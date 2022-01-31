@@ -39,12 +39,12 @@ overtime: #Automatically increase or decrease karma over time
       value: 5
       limit: 0
       commands:
-        - "player %msg-actionbar% #DD0000You lose 5 karma from the overtime"
+        - "player %msg-actionbar% {#DD0000}You lose 5 karma from the overtime"
     increase:
       value: 5
       limit: 0
       commands:
-        - "player %msg-actionbar% #87CC72You won 5 karma from the overtime"
+        - "player %msg-actionbar% {#87CC72}You won 5 karma from the overtime"
 
 tiers:
   none-display: "&f[&8None&f]&r"
@@ -65,7 +65,7 @@ tiers:
         join-commands:
           - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
         join-on-down-commands:
-          - "player %msg-title% #FF0000&lWANTED
+          - "player %msg-title% {#FF0000}&lWANTED
           %msg-subtitle%&cEverybody is now trying to kill you."
         killed-commands:
           sheriff:
