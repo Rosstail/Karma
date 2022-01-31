@@ -149,7 +149,6 @@ public class DBInteractions {
     }
 
     public void updatePlayersDB(reasons reason, Map<Player, PlayerData> players) {
-        final int[] loop = {0};
         if (!reason.equals(reasons.SERVER_CLOSE)) {
             players.forEach((player, playerData) -> Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
@@ -165,7 +164,6 @@ public class DBInteractions {
                 } catch (SQLException throwable) {
                     throwable.printStackTrace();
                 }
-                loop[0]++;
             });
         }
     }

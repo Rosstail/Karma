@@ -124,22 +124,20 @@ public class Karma extends JavaPlugin implements Listener {
         if (dbInteractions != null) {
             dbInteractions.updatePlayersDB(reason, map);
         } else {
-            Bukkit.getScheduler().runTask(this, () -> {
-                for (PlayerData playerData : map.values()) {
-                    File playerFile = playerData.getPlayerFile();
-                    YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                    playerConfig.set("karma", playerData.getKarma());
-                    playerConfig.set("previous-karma", playerData.getPreviousKarma());
-                    playerConfig.set("tier", playerData.getTier().getName());
-                    playerConfig.set("previous-tier", playerData.getPreviousTier().getName());
-                    playerConfig.set("wanted-time", playerData.getWantedTimeStamp().getTime());
-                    try {
-                        playerConfig.save(playerFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+            for (PlayerData playerData : map.values()) {
+                File playerFile = playerData.getPlayerFile();
+                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+                playerConfig.set("karma", playerData.getKarma());
+                playerConfig.set("previous-karma", playerData.getPreviousKarma());
+                playerConfig.set("tier", playerData.getTier().getName());
+                playerConfig.set("previous-tier", playerData.getPreviousTier().getName());
+                playerConfig.set("wanted-time", playerData.getWantedTimeStamp().getTime());
+                try {
+                    playerConfig.save(playerFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
         }
     }
 
