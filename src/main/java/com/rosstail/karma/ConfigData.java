@@ -38,6 +38,7 @@ public class ConfigData {
     public final boolean wantedOnKarmaUnchanged;
     public final boolean wantedOnKarmaLoss;
     public final boolean wantedRefresh;
+    public final boolean wantedCountdownApplyOnDisconnect;
     public final boolean cancelWantedKarmaGain;
     public final boolean cancelWantedKarmaLoss;
     public final boolean cancelInnocentKarmaGain;
@@ -88,6 +89,7 @@ public class ConfigData {
 
         useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard");
         wantedEnable = config.getString("pvp.wanted.enable") != null && config.getBoolean("pvp.wanted.enable");
+        wantedCountdownApplyOnDisconnect = config.getString("pvp.wanted.countdown-on-disconnect") != null && config.getBoolean("pvp.wanted.countdown-on-disconnect");
         wantedOnKarmaGain = config.getString("pvp.wanted.conditions.on-karma-gain") != null && config.getBoolean("pvp.wanted.conditions.on-karma-gain");
         wantedOnKarmaUnchanged = config.getString("pvp.wanted.conditions.on-karma-unchanged") != null && config.getBoolean("pvp.wanted.conditions.on-karma-unchanged");
         wantedOnKarmaLoss = config.getString("pvp.wanted.conditions.on-karma-loss") != null && config.getBoolean("pvp.wanted.conditions.on-karma-loss");

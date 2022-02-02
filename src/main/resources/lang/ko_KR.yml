@@ -44,6 +44,8 @@ wanted:
   enter: "%msg-title%{#DD0000}&lWANTED.
     %msg-subtitle% &r&cThe police is after you !"
   refresh: "%msg-actionbar%&cYou are wanted."
+    connect-refresh: "%msg-title%{#DD0000}&lWANTED.
+    %msg-subtitle% &r&cYou must still careful."
   exit: "&aYou are not actively wanted anymore."
   status:
     innocent: "&fInnocent"

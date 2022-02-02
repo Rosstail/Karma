@@ -43,7 +43,9 @@ pvp:
 wanted:
     enter: "%msg-title%{#FF0000}WANTED
     %msg-subtitle%Vous êtes activement recherché."
-    update: "%msg-actionbar%&cVotre statut de recherche est raffraichit."
+    refresh: "%msg-actionbar%&cVotre statut de recherche est raffraichit."
+    connect-refresh: "%msg-title%{#DD0000}&lWANTED.
+    %msg-subtitle% &r&cRestez prudent."
     exit: "&aVous n'êtes plus activement recherché."
     status:
         innocent: "&fInnocent"

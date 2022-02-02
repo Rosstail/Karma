@@ -23,6 +23,8 @@ public class DBInteractions {
     public Connection connection;
     public String host, database, username, password;
     public int port;
+    public Timer connChecker = new Timer();
+
 
     private DBInteractions(Karma plugin) {
         this.plugin = plugin;
@@ -47,8 +49,16 @@ public class DBInteractions {
         try {
             openConnection();
             setTableToDataBase();
-
-
+            connChecker.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        ping();
+                    } catch (SQLException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 3600000, 3600000);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -69,6 +79,14 @@ public class DBInteractions {
         }
     }
 
+    private void ping() throws SQLException, ClassNotFoundException {
+        if (connection != null && !connection.isClosed()) {
+            AdaptMessage.print("[Karma] Hourly ping to maintain database connexion.", AdaptMessage.prints.OUT);
+            PreparedStatement statement = connection.prepareStatement("SELECT 1 FROM " + plugin.getName() + ";");
+            statement.executeQuery();
+        }
+    }
+
     public boolean getPlayerData(Player player) {
         boolean reached = false;
         String UUID = player.getUniqueId().toString();
@@ -81,7 +99,13 @@ public class DBInteractions {
                 playerData.setPreviousKarma(result.getDouble("Previous_Karma"));
                 playerData.setTier(TierManager.getTierManager().getTiers().get(result.getString("Tier")));
                 playerData.setPreviousTier(TierManager.getTierManager().getTiers().get(result.getString("Previous_Tier")));
-                playerData.setWantedTimeStamp(result.getTimestamp("Wanted_Time"));
+                long wantedTime = result.getLong("Wanted_Time");
+                playerData.setWantedTimeStamp(new Timestamp(
+                        (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect
+                                ? result.getTimestamp("Last_Update").getTime()
+                                : System.currentTimeMillis())
+                                + wantedTime)
+                );
                 reached = true;
             }
             result.close();
@@ -89,7 +113,6 @@ public class DBInteractions {
         } catch (Exception e) {
             AdaptMessage.print(e.toString(), AdaptMessage.prints.ERROR);
         }
-        playerData.setWanted(Fights.isPlayerWanted(playerData.getWantedTimeStamp().getTime()));
         if (playerData.isWanted()) {
             PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, "Player connect", false);
             Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
@@ -104,7 +127,8 @@ public class DBInteractions {
                 " Previous_Karma double,\n" +
                 " Tier varchar(50),\n" +
                 " Previous_Tier varchar(50),\n" +
-                " Wanted_Time DATETIME NOT NULL DEFAULT '1970-01-01 01:00:00');";
+                " Wanted_Time bigint UNSIGNED DEFAULT 0,\n" +
+                " Last_Update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);";
         try {
             if (connection != null && !connection.isClosed()) {
                 Statement statement = connection.createStatement();
@@ -130,7 +154,7 @@ public class DBInteractions {
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 PreparedStatement preparedStatement = connection.prepareStatement(
-                        "INSERT INTO " + plugin.getName() + " (UUID, Karma, Previous_Karma, Tier, Previous_Tier, Wanted_Time)\n"
+                        "INSERT INTO " + plugin.getName() + " (UUID, Karma, Previous_Karma, Tier, Previous_Tier, Last_Update)\n"
                                 + "VALUES (?, ?, ?, ?, ?, ?);");
 
                 preparedStatement.setString(1, UUID);
@@ -138,7 +162,7 @@ public class DBInteractions {
                 preparedStatement.setDouble(3, playerData.getPreviousKarma());
                 preparedStatement.setString(4, playerData.getTier().getName());
                 preparedStatement.setString(5, playerData.getPreviousTier().getName());
-                preparedStatement.setTimestamp(6, playerData.getWantedTimeStamp());
+                preparedStatement.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
 
                 preparedStatement.execute();
                 preparedStatement.close();
@@ -170,15 +194,17 @@ public class DBInteractions {
 
     public void updateData(Player player, PlayerData playerData, reasons reason) throws SQLException {
         String UUID = player.getUniqueId().toString();
-        String query = "UPDATE " + plugin.getName() + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?, Wanted_Time = ? WHERE UUID = ?;";
+        String query = "UPDATE " + plugin.getName() + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?," +
+                " Wanted_Time = ?, Last_Update = ? WHERE UUID = ?;";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
 
         preparedStatement.setDouble(1, playerData.getKarma());
         preparedStatement.setDouble(2, playerData.getPreviousKarma());
         preparedStatement.setString(3, playerData.getTier().getName());
         preparedStatement.setString(4, playerData.getPreviousTier().getName());
-        preparedStatement.setTimestamp(5, playerData.getWantedTimeStamp());
-        preparedStatement.setString(6, UUID);
+        preparedStatement.setLong(5, playerData.getWantedTime());
+        preparedStatement.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+        preparedStatement.setString(7, UUID);
         preparedStatement.executeUpdate();
         preparedStatement.close();
 
@@ -203,5 +229,9 @@ public class DBInteractions {
 
     public static DBInteractions getInstance() {
         return dbInteractions;
+    }
+
+    public void cancelTimer() {
+        connChecker.cancel();
     }
 }

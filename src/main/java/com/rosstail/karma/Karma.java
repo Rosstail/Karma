@@ -115,6 +115,7 @@ public class Karma extends JavaPlugin implements Listener {
         updateDataTimer.cancel();
         DBInteractions dbInteractions = DBInteractions.getInstance();
         if (dbInteractions != null) {
+            dbInteractions.cancelTimer();
             dbInteractions.closeConnexion();
         }
     }
@@ -131,7 +132,7 @@ public class Karma extends JavaPlugin implements Listener {
                 playerConfig.set("previous-karma", playerData.getPreviousKarma());
                 playerConfig.set("tier", playerData.getTier().getName());
                 playerConfig.set("previous-tier", playerData.getPreviousTier().getName());
-                playerConfig.set("wanted-time", playerData.getWantedTimeStamp().getTime());
+                playerConfig.set("wanted-time", playerData.getWantedTime());
                 try {
                     playerConfig.save(playerFile);
                 } catch (IOException e) {

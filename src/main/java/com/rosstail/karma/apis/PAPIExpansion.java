@@ -197,15 +197,12 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getWantedTimeStamp().getTime() - System.currentTimeMillis(), '.');
             }
             if (identifier.equals("player_wanted_time_delay_display")) {
-                long time = playerData.getWantedTimeStamp().getTime() - System.currentTimeMillis();
+                long time = playerData.getWantedTime();
                 if (time > 0f) {
                     return AdaptMessage.getAdaptMessage().countDownFormat(time);
                 }
                 return "-";
             }
-            /*
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay_display%", countDownFormat(wantedTime.getTime() - System.currentTimeMillis()));
-             */
             if (identifier.equals("player_wanted_status")) {
                 if (playerData.isWanted()) {
                     return LangManager.getMessage(LangMessage.STATUS_WANTED);

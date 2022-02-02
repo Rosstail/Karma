@@ -190,6 +190,7 @@ pvp:
     kill: 10
   wanted: #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is wanted too)
     enable: true
+    countdown-on-disconnect: true
     #%karma_player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
     duration: "(%karma_player_wanted_time% + (300 * 1000))" #delay in milliseconds.
     max-duration: "(%timestamp% + (3600 * 1000))"

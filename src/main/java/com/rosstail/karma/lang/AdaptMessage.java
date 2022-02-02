@@ -31,7 +31,7 @@ public class AdaptMessage {
     private static AdaptMessage adaptMessage;
     private final Karma plugin;
     private final ConfigData configData;
-    private final Pattern hexPattern = Pattern.compile("\\{#[a-fA-F0-9]{6}}");
+    private static final Pattern hexPattern = Pattern.compile("\\{(#[a-fA-F0-9]{6})}");
 
     public enum prints {
         OUT,
@@ -93,7 +93,8 @@ public class AdaptMessage {
 
                 Tier playerTier = playerData.getTier();
                 Tier playerPreviousTier = playerData.getPreviousTier();
-                Timestamp wantedTime = playerData.getWantedTimeStamp();
+                long wantedTime = playerData.getWantedTime();
+                Timestamp wantedTimeStamp = playerData.getWantedTimeStamp();
 
                 String status;
 
@@ -114,10 +115,10 @@ public class AdaptMessage {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_short_display%", playerPreviousTier.getShortDisplay());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_status%", status);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time%", String.valueOf(wantedTime.getTime()));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_display%", simpleDateFormat.format(wantedTime.getTime()));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay%", String.valueOf(wantedTime.getTime() - System.currentTimeMillis()));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay_display%", countDownFormat(wantedTime.getTime() - System.currentTimeMillis()));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time%", String.valueOf(wantedTimeStamp.getTime()));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_display%", simpleDateFormat.format(wantedTimeStamp.getTime()));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay%", String.valueOf(wantedTime));
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay_display%", countDownFormat(wantedTime));
             } else {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble(), '.'));
             }
@@ -129,10 +130,11 @@ public class AdaptMessage {
             Matcher matcher = hexPattern.matcher(message);
             while (matcher.find()) {
                 try {
-                    String color = message.substring(matcher.start(), matcher.end());
-                    message = message.replaceAll(color, String.valueOf(ChatColor.of(color)));
-                    matcher = hexPattern.matcher(message);
+                    String matched = matcher.group(0);
+                    String color = matcher.group(1);
+                    message = message.replace(matched, String.valueOf(ChatColor.of(color)));
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }

@@ -10,6 +10,7 @@ public class LangManager {
 
     private static Lang currentLang;
 
+
     /**
      * Initialize the current lang from the configuration
      */

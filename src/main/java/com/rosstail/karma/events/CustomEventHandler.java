@@ -186,23 +186,20 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedHasChangedEvent(PlayerWantedHasChangedEvent event) {
         Player player = event.getPlayer();
-        Timestamp duration = event.getTimestamp();
         PlayerData playerData = PlayerData.gets(player);
+        playerData.setWantedTimeStamp(event.getTimestamp());
+        boolean hasWantedToken = playerData.isWantedToken();
         boolean isWanted = playerData.isWanted();
-        Timestamp now = new Timestamp(System.currentTimeMillis());
 
         Event newEvent = null;
 
-        int tsCompare = duration.compareTo(now);
-        if (!isWanted && tsCompare >= 0) {
+        if (isWanted && !hasWantedToken) {
             newEvent = new PlayerWantedPeriodStartEvent(player, event);
-        } else if (isWanted && tsCompare >= 0) {
-            newEvent = new PlayerWantedPeriodRefreshEvent(player, event, true);
         } else if (isWanted) {
+            newEvent = new PlayerWantedPeriodRefreshEvent(player, event, true);
+        } else if (hasWantedToken) {
             newEvent = new PlayerWantedPeriodEndEvent(player, event);
         }
-
-        playerData.setWantedTimeStamp(duration);
         if (newEvent != null) {
             Bukkit.getPluginManager().callEvent(newEvent);
         }
@@ -214,7 +211,7 @@ public class CustomEventHandler implements Listener {
         PlayerData playerData = PlayerData.gets(player);
         String message = LangManager.getMessage(LangMessage.WANTED_ENTER);
 
-        playerData.setWanted(true);
+        playerData.setWantedToken(true);
         PlayerData.replaceWantedScheduler(player);
         if (message != null) {
             adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
@@ -224,7 +221,9 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodRefreshEvent(PlayerWantedPeriodRefreshEvent event) {
         Player player = event.getPlayer();
+        PlayerData playerData = PlayerData.gets(player);
         String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
+        playerData.setWantedToken(true);
         PlayerData.replaceWantedScheduler(player);
         if (message != null) {
             AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
@@ -236,7 +235,7 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerData.gets(player);
 
-        playerData.setWanted(false);
+        playerData.setWantedToken(false);
         PlayerData.stopTimer(playerData.getWantedScheduler());
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
         if (message != null) {

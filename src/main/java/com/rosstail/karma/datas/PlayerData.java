@@ -14,6 +14,7 @@ import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +40,7 @@ public class PlayerData {
     private Timestamp wantedTimeStamp = new Timestamp(0L);
     private int overTimerScheduler;
     private int wantedScheduler;
-    private boolean wanted;
+    private boolean wantedToken;
 
     private PlayerData(Player player) {
         this.player = player;
@@ -48,7 +49,7 @@ public class PlayerData {
     }
 
     public static PlayerData gets(Player player) {
-        if(!playerList.containsKey(player)){ // If player doesn't have instance
+        if (!playerList.containsKey(player)) { // If player doesn't have instance
             playerList.put(player, new PlayerData(player));
         }
         return playerList.get(player);
@@ -82,7 +83,6 @@ public class PlayerData {
 
     /**
      * Request the player Tier inside file
-     *
      */
     public void loadPlayerData() {
         DBInteractions dbInteractions = DBInteractions.getInstance();
@@ -92,14 +92,22 @@ public class PlayerData {
             previousKarma = playerConfig.getDouble("previous-karma");
             tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
             previousTier = TierManager.getTierManager().getTiers().get(playerConfig.getString("previous-tier"));
-            wantedTimeStamp = new Timestamp(playerConfig.getLong("wanted-time"));
-            wanted = isWanted();
+            wantedTimeStamp = new Timestamp(
+                    (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect
+                            ? playerFile.lastModified()
+                            : System.currentTimeMillis())
+            + playerConfig.getLong("wanted-time"));
+            if (isWanted()) {
+                PlayerWantedPeriodRefreshEvent event = new PlayerWantedPeriodRefreshEvent(player, Cause.OTHER, true);
+                Bukkit.getPluginManager().callEvent(event);
+
+                player.sendMessage(AdaptMessage.getAdaptMessage().adapt(player, LangManager.getMessage(LangMessage.WANTED_CONNECT_REFRESH), PlayerType.PLAYER.getText()));
+            }
         }
     }
 
     /**
      * Initialize the file / Line of the player with UUID, name, karma and tier
-     *
      */
     public void initPlayerData() {
         DBInteractions dbInteractions = DBInteractions.getInstance();
@@ -107,7 +115,7 @@ public class PlayerData {
             if (!dbInteractions.getPlayerData(player)) {
                 dbInteractions.initPlayerDB(player);
             }
-        } else if (!playerFile.exists()){
+        } else if (!playerFile.exists()) {
             initPlayerDataLocale();
         }
     }
@@ -134,7 +142,7 @@ public class PlayerData {
      * Update the new karma of the player if change is needed.
      * Uses local files or Database if connection is active
      *
-     * @param value  -> The new karma amount of the player
+     * @param value -> The new karma amount of the player
      */
     public void setKarma(double value) {
         double min = ConfigData.getConfigData().minKarma;
@@ -160,7 +168,6 @@ public class PlayerData {
     /**
      * Set the new tier of the player if change is needed.
      * Uses local files or Database if connection is active
-     *
      */
     public void checkTier() {
         for (Tier tier : TierManager.getTierManager().getTiers().values()) {
@@ -201,18 +208,19 @@ public class PlayerData {
             Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
         }, ConfigData.getConfigData().overtimeFirstDelay, ConfigData.getConfigData().overtimeNextDelay);
     }
+
     private static int setupNewWantedPeriod(Player player) {
         return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             PlayerData playerData = PlayerData.gets(player);
-            if (playerData.isWanted() && !Fights.isPlayerWanted(playerData.getWantedTimeStamp().getTime())) {
+            if (playerData.isWantedToken() && !playerData.isWanted()) {
                 PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
                 Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
             }
         }, 1, 1);
     }
 
-    public void setWanted(boolean b) {
-        this.wanted = b;
+    public long getWantedTime() {
+        return Math.max(0L, wantedTimeStamp.getTime() - System.currentTimeMillis());
     }
 
     public static void triggerOverTime(Player player) {
@@ -256,13 +264,12 @@ public class PlayerData {
 
     /**
      * Set the timestamp of the player's attack moment if needed
-     *
      */
-    public void setWantedTimeStamp(Timestamp lastAttack) {
+    public void setWantedTimeStamp(Timestamp wantedTimeStamp) {
         if (player.hasMetadata("NPC")) {
             return;
         }
-        this.wantedTimeStamp = lastAttack;
+        this.wantedTimeStamp = wantedTimeStamp;
     }
 
     public static void changePlayerTierMessage(Player player) {
@@ -273,7 +280,15 @@ public class PlayerData {
     }
 
     public boolean isWanted() {
-        return wanted;
+        return getWantedTime() > 0L;
+    }
+
+    public boolean isWantedToken() {
+        return wantedToken;
+    }
+
+    public void setWantedToken(boolean wantedToken) {
+        this.wantedToken = wantedToken;
     }
 
     public File getPlayerFile() {

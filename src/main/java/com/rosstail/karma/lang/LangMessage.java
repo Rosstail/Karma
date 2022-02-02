@@ -31,6 +31,7 @@ public enum LangMessage {
     WANTED_OTHER_CHECK("wanted.check.other"),
     WANTED_ENTER("wanted.enter"),
     WANTED_REFRESH("wanted.refresh"),
+    WANTED_CONNECT_REFRESH("wanted.connect-refresh"),
     WANTED_EXIT("wanted.exit"),
     STATUS_INNOCENT("wanted.status.innocent"),
     STATUS_WANTED("wanted.status.wanted");
