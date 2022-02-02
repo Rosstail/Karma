@@ -3,6 +3,7 @@ package com.rosstail.karma;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -10,7 +11,6 @@ import java.util.TimerTask;
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
-import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.FileResourcesUtils;
 import com.rosstail.karma.datas.PlayerData;
@@ -74,7 +74,7 @@ public class Karma extends JavaPlugin implements Listener {
         if (this.getCustomConfig().getBoolean("mysql.active")) {
             try {
                 DBInteractions.initDBInteractions(this);
-                DBInteractions.getInstance().prepareConnection();
+                DBInteractions.getInstance().prepareTable();
             } catch (Exception e) {
                 AdaptMessage.print(e.toString(), AdaptMessage.prints.ERROR);
             }
@@ -113,17 +113,16 @@ public class Karma extends JavaPlugin implements Listener {
     public void onDisable() {
         saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerData.getPlayerList());
         updateDataTimer.cancel();
-        DBInteractions dbInteractions = DBInteractions.getInstance();
-        if (dbInteractions != null) {
-            dbInteractions.cancelTimer();
-            dbInteractions.closeConnexion();
-        }
     }
 
     public void saveData(DBInteractions.reasons reason, Map<Player, PlayerData> map) {
         DBInteractions dbInteractions = DBInteractions.getInstance();
         if (dbInteractions != null) {
-            dbInteractions.updatePlayersDB(reason, map);
+            try {
+                dbInteractions.updatePlayersDB(reason, map);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         } else {
             for (PlayerData playerData : map.values()) {
                 File playerFile = playerData.getPlayerFile();
