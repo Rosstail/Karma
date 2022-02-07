@@ -59,6 +59,16 @@ public class Karma extends JavaPlugin implements Listener {
         TimeManager.initTimeManager(this);
 
         initDefaultConfigs();
+
+        if (ConfigData.getConfigData().isOvertimeActive) {
+            PlayerData.setupOverTimeScheduler();
+        }
+
+        if (ConfigData.getConfigData().wantedEnable) {
+            PlayerData.setupWantedScheduler();
+        }
+
+
         LangManager.initCurrentLang(getCustomConfig().getString("general.lang"));
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -111,6 +121,12 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
+        if (ConfigData.getConfigData().isOvertimeActive) {
+            PlayerData.stopTimer(PlayerData.getOverTimerScheduler());
+        }
+        if (ConfigData.getConfigData().wantedEnable) {
+            PlayerData.stopTimer(PlayerData.getWantedScheduler());
+        }
         saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerData.getPlayerList());
         updateDataTimer.cancel();
     }

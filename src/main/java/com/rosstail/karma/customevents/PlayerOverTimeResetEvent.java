@@ -10,7 +10,6 @@ public class PlayerOverTimeResetEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
-    private int triggerID;
     private boolean cancelled;
 
     public PlayerOverTimeResetEvent(Player player) {
@@ -19,14 +18,6 @@ public class PlayerOverTimeResetEvent extends Event implements Cancellable {
 
     public Player getPlayer() {
         return player;
-    }
-
-    public int getTriggerID() {
-        return triggerID;
-    }
-
-    public void setTriggerID(int triggerID) {
-        this.triggerID = triggerID;
     }
 
     @Override

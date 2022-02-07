@@ -78,8 +78,8 @@ public class ConfigData {
         pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");
 
         isOvertimeActive = config.getString("overtime.active") != null && config.getBoolean("overtime.active");
-        overtimeFirstDelay = config.getLong("overtime.first-delay") * 20L;
-        overtimeNextDelay = config.getLong("overtime.next-delay") * 20L;
+        overtimeFirstDelay = config.getLong("overtime.first-delay") * 1000L;
+        overtimeNextDelay = config.getLong("overtime.next-delay") * 1000L;
         overtimeDecreaseValue = config.getDouble("overtime.values.decrease.value");
         overtimeDecreaseLimit = config.getDouble("overtime.values.decrease.limit");
         overtimeDecreaseCommands = config.getStringList("overtime.values.decrease.commands");

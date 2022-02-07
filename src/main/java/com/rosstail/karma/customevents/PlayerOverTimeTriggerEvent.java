@@ -40,12 +40,4 @@ public class PlayerOverTimeTriggerEvent extends Event implements Cancellable {
     public Player getPlayer() {
         return player;
     }
-
-    public int getOvertimeScheduler() {
-        return overtimeScheduler;
-    }
-
-    public void setOvertimeScheduler(int overtimeScheduler) {
-        this.overtimeScheduler = overtimeScheduler;
-    }
 }

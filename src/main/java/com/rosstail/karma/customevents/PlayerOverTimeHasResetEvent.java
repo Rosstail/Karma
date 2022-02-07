@@ -9,11 +9,9 @@ public class PlayerOverTimeHasResetEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
-    private final int overtimeScheduler;
 
-    public PlayerOverTimeHasResetEvent(Player player, int overtimeScheduler) {
+    public PlayerOverTimeHasResetEvent(Player player) {
         this.player = player;
-        this.overtimeScheduler = overtimeScheduler;
     }
 
     @Override
@@ -27,9 +25,5 @@ public class PlayerOverTimeHasResetEvent extends Event {
 
     public Player getPlayer() {
         return player;
-    }
-
-    public int getOvertimeScheduler() {
-        return overtimeScheduler;
     }
 }

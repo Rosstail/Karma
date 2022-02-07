@@ -4,7 +4,6 @@ import com.rosstail.karma.Karma;
 import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
-import com.rosstail.karma.events.Fights;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -14,11 +13,9 @@ import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +27,10 @@ public class PlayerData {
     private static final Karma plugin = Karma.getInstance();
     private static ConfigData configData = ConfigData.getConfigData();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+    private static int overTimerScheduler;
+    private static int wantedScheduler;
 
-    private static final Map<Player, PlayerData> playerList = new HashMap<Player, PlayerData>();
+    private static final Map<Player, PlayerData> playerList = new HashMap<>();
     private final File playerFile;
     private final Player player;
     private double karma;
@@ -39,8 +38,7 @@ public class PlayerData {
     private Tier tier;
     private Tier previousTier;
     private Timestamp wantedTimeStamp = new Timestamp(0L);
-    private int overTimerScheduler;
-    private int wantedScheduler;
+    private Timestamp overTimeStamp = new Timestamp(0L);
     private boolean wantedToken;
 
     private PlayerData(Player player) {
@@ -188,40 +186,39 @@ public class PlayerData {
         this.previousTier = previousTier;
     }
 
-    public static void setOverTimerChange(Player player) {
-        PlayerData playerData = PlayerData.gets(player);
-        stopTimer(playerData.getOverTimerScheduler());
-        if (!ConfigData.getConfigData().isOvertimeActive) {
-            return;
-        }
-        playerData.setOverTimerScheduler(setupNewOverTime(player));
-    }
+    public static void setupOverTimeScheduler() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            for (Player player : playerList.keySet()) {
+                PlayerData playerData = playerList.get(player);
 
-    public static void replaceWantedScheduler(Player player) {
-        PlayerData playerData = PlayerData.gets(player);
-        stopTimer(playerData.getWantedScheduler());
-        playerData.setWantedScheduler(setupNewWantedPeriod(player));
-    }
+                if (playerData.isOverTime()) {
+                    PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player);
+                    Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
 
-    private static int setupNewOverTime(Player player) {
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player);
-            Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
-        }, ConfigData.getConfigData().overtimeFirstDelay, ConfigData.getConfigData().overtimeNextDelay);
-    }
-
-    private static int setupNewWantedPeriod(Player player) {
-        return Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            PlayerData playerData = PlayerData.gets(player);
-            if (playerData.isWantedToken() && !playerData.isWanted()) {
-                PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
-                Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
+                    playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeNextDelay);
+                }
             }
-        }, 1, 1);
+        }, 20L, 20L);
+    }
+
+    public static void setupWantedScheduler() {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+            for (Player player : playerList.keySet()) {
+                PlayerData playerData = playerList.get(player);
+                if (playerData.isWantedToken() && !playerData.isWanted()) {
+                    PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
+                    Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
+                }
+            }
+        }, 20L, 20L);
     }
 
     public long getWantedTime() {
         return Math.max(0L, wantedTimeStamp.getTime() - System.currentTimeMillis());
+    }
+
+    public long getOverTime() {
+        return overTimeStamp.getTime() - System.currentTimeMillis();
     }
 
     public static void triggerOverTime(Player player) {
@@ -284,6 +281,10 @@ public class PlayerData {
         return getWantedTime() > 0L;
     }
 
+    public boolean isOverTime() {
+        return getOverTime() <= 0L;
+    }
+
     public boolean isWantedToken() {
         return wantedToken;
     }
@@ -300,20 +301,20 @@ public class PlayerData {
         return playerList;
     }
 
-    public int getOverTimerScheduler() {
+    public Timestamp getOverTimeStamp() {
+        return overTimeStamp;
+    }
+
+    public void setOverTimeStamp(long value) {
+        this.overTimeStamp = new Timestamp(System.currentTimeMillis() + value);
+    }
+
+    public static int getOverTimerScheduler() {
         return overTimerScheduler;
     }
 
-    public int getWantedScheduler() {
+    public static int getWantedScheduler() {
         return wantedScheduler;
-    }
-
-    public void setOverTimerScheduler(int overTimerScheduler) {
-        this.overTimerScheduler = overTimerScheduler;
-    }
-
-    public void setWantedScheduler(int wantedScheduler) {
-        this.wantedScheduler = wantedScheduler;
     }
 
     public static void setConfigData(ConfigData configData) {
