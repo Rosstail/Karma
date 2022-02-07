@@ -96,7 +96,7 @@ public class PlayerData {
                             ? playerFile.lastModified()
                             : System.currentTimeMillis())
             + playerConfig.getLong("wanted-time"));
-            if (isWanted()) {
+            if (configData.wantedEnable && isWanted()) {
                 PlayerWantedPeriodRefreshEvent event = new PlayerWantedPeriodRefreshEvent(player, Cause.OTHER, true);
                 Bukkit.getPluginManager().callEvent(event);
 
@@ -187,7 +187,7 @@ public class PlayerData {
     }
 
     public static void setupOverTimeScheduler() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+        overTimerScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             for (Player player : playerList.keySet()) {
                 PlayerData playerData = playerList.get(player);
 
@@ -202,7 +202,7 @@ public class PlayerData {
     }
 
     public static void setupWantedScheduler() {
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
+        wantedScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             for (Player player : playerList.keySet()) {
                 PlayerData playerData = playerList.get(player);
                 if (playerData.isWantedToken() && !playerData.isWanted()) {

@@ -10,6 +10,7 @@ import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.enginehub.piston.config.Config;
 
 import java.sql.*;
 import java.util.*;
@@ -92,7 +93,7 @@ public class DBInteractions {
         } finally {
             closeConnexion(connection);
         }
-        if (playerData.isWanted()) {
+        if (ConfigData.getConfigData().wantedEnable && playerData.isWanted()) {
             PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, "Player connect", false);
             Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
         }
