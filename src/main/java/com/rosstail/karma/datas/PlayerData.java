@@ -16,8 +16,8 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,13 +26,9 @@ import java.util.Map;
 public class PlayerData {
     private static final Karma plugin = Karma.getInstance();
     private static ConfigData configData = ConfigData.getConfigData();
-    private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
-    private static int overTimerScheduler;
-    private static int wantedScheduler;
 
-    private static final Map<Player, PlayerData> playerList = new HashMap<>();
     private final File playerFile;
-    private final Player player;
+    final Player player;
     private double karma;
     private double previousKarma;
     private Tier tier;
@@ -41,17 +37,10 @@ public class PlayerData {
     private Timestamp overTimeStamp = new Timestamp(0L);
     private boolean wantedToken;
 
-    private PlayerData(Player player) {
+    PlayerData(Player player) {
         this.player = player;
         playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
         loadPlayerData();
-    }
-
-    public static PlayerData gets(Player player) {
-        if (!playerList.containsKey(player)) { // If player doesn't have instance
-            playerList.put(player, new PlayerData(player));
-        }
-        return playerList.get(player);
     }
 
     public double getKarma() {
@@ -156,10 +145,6 @@ public class PlayerData {
         this.karma = value;
     }
 
-    public void addKarma(double value) {
-        setKarma(this.karma + value);
-    }
-
     public void setPreviousKarma(double previousKarma) {
         this.previousKarma = previousKarma;
     }
@@ -178,6 +163,10 @@ public class PlayerData {
         }
     }
 
+    public Player getPlayer() {
+        return player;
+    }
+
     public void setTier(Tier tier) {
         this.tier = tier;
     }
@@ -186,74 +175,12 @@ public class PlayerData {
         this.previousTier = previousTier;
     }
 
-    public static void setupOverTimeScheduler() {
-        overTimerScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            for (Player player : playerList.keySet()) {
-                PlayerData playerData = playerList.get(player);
-
-                if (playerData.isOverTime()) {
-                    PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player);
-                    Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
-
-                    playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeNextDelay);
-                }
-            }
-        }, 20L, 20L);
-    }
-
-    public static void setupWantedScheduler() {
-        wantedScheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            for (Player player : playerList.keySet()) {
-                PlayerData playerData = playerList.get(player);
-                if (playerData.isWantedToken() && !playerData.isWanted()) {
-                    PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
-                    Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
-                }
-            }
-        }, 20L, 20L);
-    }
-
     public long getWantedTime() {
         return Math.max(0L, wantedTimeStamp.getTime() - System.currentTimeMillis());
     }
 
     public long getOverTime() {
         return overTimeStamp.getTime() - System.currentTimeMillis();
-    }
-
-    public static void triggerOverTime(Player player) {
-        PlayerData playerData = PlayerData.gets(player);
-        double currentKarma = playerData.getKarma();
-        double newKarma = currentKarma;
-        double decreaseValue = ConfigData.getConfigData().overtimeDecreaseValue;
-        double increaseValue = ConfigData.getConfigData().overtimeIncreaseValue;
-        if (decreaseValue > 0) {
-            double decreaseLimit = ConfigData.getConfigData().overtimeDecreaseLimit;
-            if (currentKarma > decreaseLimit) {
-                newKarma = currentKarma - decreaseValue;
-                if (newKarma < decreaseLimit) {
-                    newKarma = decreaseLimit;
-                }
-
-                KarmaCommand.commandsLauncher(player, ConfigData.getConfigData().overtimeDecreaseCommands);
-            }
-        }
-        if (increaseValue > 0) {
-            double increaseLimit = ConfigData.getConfigData().overtimeIncreaseLimit;
-            if (currentKarma < increaseLimit) {
-                newKarma = currentKarma + increaseValue;
-                if (newKarma > increaseLimit) {
-                    newKarma = increaseLimit;
-                }
-
-                KarmaCommand.commandsLauncher(player, ConfigData.getConfigData().overtimeIncreaseCommands);
-            }
-        }
-
-        if (newKarma != currentKarma) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false, Cause.TIMER);
-            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-        }
     }
 
     public static void stopTimer(int scheduler) {
@@ -268,13 +195,6 @@ public class PlayerData {
             return;
         }
         this.wantedTimeStamp = wantedTimeStamp;
-    }
-
-    public static void changePlayerTierMessage(Player player) {
-        String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
-        if (message != null) {
-            adaptMessage.sendToPlayer(player, adaptMessage.adapt(player, message, PlayerType.PLAYER.getText()));
-        }
     }
 
     public boolean isWanted() {
@@ -297,24 +217,8 @@ public class PlayerData {
         return playerFile;
     }
 
-    public static Map<Player, PlayerData> getPlayerList() {
-        return playerList;
-    }
-
-    public Timestamp getOverTimeStamp() {
-        return overTimeStamp;
-    }
-
     public void setOverTimeStamp(long value) {
         this.overTimeStamp = new Timestamp(System.currentTimeMillis() + value);
-    }
-
-    public static int getOverTimerScheduler() {
-        return overTimerScheduler;
-    }
-
-    public static int getWantedScheduler() {
-        return wantedScheduler;
     }
 
     public static void setConfigData(ConfigData configData) {

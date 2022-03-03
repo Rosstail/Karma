@@ -3,6 +3,7 @@ package com.rosstail.karma.lang;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
@@ -87,7 +88,7 @@ public class AdaptMessage {
         if (player != null) {
             message = message.replaceAll("%" + playerType + "%", player.getName());
             if (!player.hasMetadata("NPC")) {
-                PlayerData playerData = PlayerData.gets(player);
+                PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
                 double playerKarma = playerData.getKarma();
                 double playerPreviousKarma = playerData.getPreviousKarma();
 

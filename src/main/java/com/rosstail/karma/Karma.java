@@ -1,30 +1,28 @@
 package com.rosstail.karma;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.FileResourcesUtils;
 import com.rosstail.karma.datas.PlayerData;
-import com.rosstail.karma.events.WorldFights;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.events.CustomEventHandler;
+import com.rosstail.karma.events.WorldFights;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Main class and methods of the plugin
@@ -60,14 +58,9 @@ public class Karma extends JavaPlugin implements Listener {
 
         initDefaultConfigs();
 
-        if (ConfigData.getConfigData().isOvertimeActive) {
-            PlayerData.setupOverTimeScheduler();
+        if (ConfigData.getConfigData().isOvertimeActive || ConfigData.getConfigData().wantedEnable) {
+            PlayerDataManager.setupScheduler();
         }
-
-        if (ConfigData.getConfigData().wantedEnable) {
-            PlayerData.setupWantedScheduler();
-        }
-
 
         LangManager.initCurrentLang(getCustomConfig().getString("general.lang"));
 
@@ -99,15 +92,19 @@ public class Karma extends JavaPlugin implements Listener {
         updateDataTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                saveData(DBInteractions.reasons.TIMED, PlayerData.getPlayerList());
+                PlayerDataManager.saveData(DBInteractions.reasons.TIMED, PlayerDataManager.getPlayerDataMap());
             }
         }, delay, delay);
+
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            PlayerDataManager.getSet(player).initPlayerData();
+        });
     }
 
     /**
      * Create the folder for player's datas
      */
-    public void createPlayerDataFolder() {
+    private void createPlayerDataFolder() {
         File folder = new File(this.getDataFolder(), "playerdata/");
         if (!folder.exists()) {
             String message = this.getCustomConfig().getString("messages.creating-playerdata-folder");
@@ -121,42 +118,12 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
-        if (ConfigData.getConfigData().isOvertimeActive) {
-            PlayerData.stopTimer(PlayerData.getOverTimerScheduler());
+        if (ConfigData.getConfigData().isOvertimeActive || ConfigData.getConfigData().wantedEnable) {
+            PlayerData.stopTimer(PlayerDataManager.getScheduler());
         }
-        if (ConfigData.getConfigData().wantedEnable) {
-            PlayerData.stopTimer(PlayerData.getWantedScheduler());
-        }
-        saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerData.getPlayerList());
+        PlayerDataManager.saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerDataManager.getPlayerDataMap());
         updateDataTimer.cancel();
     }
-
-    public void saveData(DBInteractions.reasons reason, Map<Player, PlayerData> map) {
-        DBInteractions dbInteractions = DBInteractions.getInstance();
-        if (dbInteractions != null) {
-            try {
-                dbInteractions.updatePlayersDB(reason, map);
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            for (PlayerData playerData : map.values()) {
-                File playerFile = playerData.getPlayerFile();
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                playerConfig.set("karma", playerData.getKarma());
-                playerConfig.set("previous-karma", playerData.getPreviousKarma());
-                playerConfig.set("tier", playerData.getTier().getName());
-                playerConfig.set("previous-tier", playerData.getPreviousTier().getName());
-                playerConfig.set("wanted-time", playerData.getWantedTime());
-                try {
-                    playerConfig.save(playerFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 
     private void initDefaultConfigs() {
         try {

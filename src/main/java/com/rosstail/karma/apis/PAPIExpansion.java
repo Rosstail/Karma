@@ -3,6 +3,7 @@ package com.rosstail.karma.apis;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -131,7 +132,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier){
         if (player != null) {
-            PlayerData playerData = PlayerData.getPlayerList().get(player);
+            PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
             // %karma_value% here
             if(identifier.equals("player_karma")){
                 return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma(), '.');

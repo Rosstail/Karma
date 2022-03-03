@@ -1,7 +1,7 @@
 package com.rosstail.karma.apis;
 
-import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -112,7 +112,7 @@ public class WGPreps {
     }
 
     public boolean checkRequiredKarmaFlags(Player player) {
-        double karma = PlayerData.gets(player).getKarma();
+        double karma = PlayerDataManager.getPlayerDataMap().get(player).getKarma();
         boolean value = true;
         LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
         com.sk89q.worldedit.util.Location location = localPlayer.getLocation();

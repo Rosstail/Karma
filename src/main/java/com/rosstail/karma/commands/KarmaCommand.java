@@ -8,6 +8,7 @@ import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -30,7 +31,6 @@ import java.util.*;
 public class KarmaCommand implements CommandExecutor, TabExecutor {
     private final AdaptMessage adaptMessage;
     private final ConfigData configData;
-    private final Karma plugin = Karma.getInstance();
 
     private enum commands {
         KARMA("", "karma"),
@@ -400,7 +400,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerData playerData = PlayerData.gets(player);
+                PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.ADD_KARMA);
             } else {
@@ -433,7 +433,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 return;
             }
             if (player != null && player.isOnline()) {
-                PlayerData playerData = PlayerData.gets(player);
+                PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() - value, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.REMOVE_KARMA);
             } else {
@@ -570,7 +570,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 AdaptMessage.timeRegexAdapt(expressionList);
                 expression = String.join(" ", expressionList);
                 expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.PLAYER.getText());
-                value = new Timestamp(PlayerData.gets(player).getWantedTimeStamp().getTime() + (long) ExpressionCalculator.eval(expression));
+                value = new Timestamp(PlayerDataManager.getPlayerDataMap().get(player).getWantedTimeStamp().getTime() + (long) ExpressionCalculator.eval(expression));
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 errorMessage(sender, e);
                 return;
@@ -605,7 +605,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 AdaptMessage.timeRegexAdapt(expressionList);
                 expression = String.join(" ", expressionList);
                 expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.PLAYER.getText());
-                value = new Timestamp(PlayerData.gets(player).getWantedTimeStamp().getTime() - (long) ExpressionCalculator.eval(expression));
+                value = new Timestamp(PlayerDataManager.getPlayerDataMap().get(player).getWantedTimeStamp().getTime() - (long) ExpressionCalculator.eval(expression));
             } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
                 errorMessage(sender, e);
                 return;
@@ -647,8 +647,8 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
 
     private void karmaSave(CommandSender sender) {
         if (canLaunchCommand(sender, commands.KARMA_SAVE)) {
-            Map<Player, PlayerData> playersData = PlayerData.getPlayerList();
-            plugin.saveData(DBInteractions.reasons.COMMAND, playersData);
+            Map<Player, PlayerData> playersData = PlayerDataManager.getPlayerDataMap();
+            PlayerDataManager.saveData(DBInteractions.reasons.COMMAND, playersData);
             sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.SAVED_DATA)
                     .replaceAll("%number%", String.valueOf(playersData.size())), null));
         }

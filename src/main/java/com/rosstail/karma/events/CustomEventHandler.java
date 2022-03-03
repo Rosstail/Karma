@@ -8,6 +8,7 @@ import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -33,7 +34,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.Timestamp;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class CustomEventHandler implements Listener {
     private static ConfigData configData = ConfigData.getConfigData();
@@ -47,7 +47,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKarmaChange(PlayerKarmaChangeEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.getPlayerList().get(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
 
         playerData.setKarma(event.getValue());
         if (event.isOverTimeReset()) {
@@ -61,7 +61,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerKarmaHasChanged(PlayerKarmaHasChangedEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.getPlayerList().get(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
 
         Object cause = event.getCause().getCause();
         if (cause instanceof EntityDamageByEntityEvent || cause instanceof PlayerDeathEvent) {
@@ -110,7 +110,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerTierChange(PlayerTierChangeEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.getPlayerList().get(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         playerData.setPreviousTier(playerData.getTier());
         playerData.setTier(event.getTier());
 
@@ -122,12 +122,12 @@ public class CustomEventHandler implements Listener {
     public void onPlayerTierHasChanged(PlayerTierHasChangedEvent event) {
         Player player = event.getPlayer();
         Tier tier = event.getTier();
-        PlayerData playerData = PlayerData.getPlayerList().get(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         Tier previousTier = playerData.getPreviousTier();
         double karma = playerData.getKarma();
         double previousKarma = playerData.getPreviousKarma();
 
-        PlayerData.changePlayerTierMessage(player);
+        PlayerDataManager.changePlayerTierMessage(player);
         KarmaCommand.commandsLauncher(player, tier.getJoinCommands());
         if (previousTier != null) {
             if (karma > previousKarma) {
@@ -141,8 +141,8 @@ public class CustomEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
-        PlayerData.triggerOverTime(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerDataManager.triggerOverTime(playerData);
         playerData.setOverTimeStamp(configData.overtimeNextDelay);
         PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
         Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
@@ -151,7 +151,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         playerData.setOverTimeStamp(configData.overtimeFirstDelay);
 
         PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player);
@@ -175,7 +175,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedHasChangedEvent(PlayerWantedHasChangedEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         playerData.setWantedTimeStamp(event.getTimestamp());
         boolean hasWantedToken = playerData.isWantedToken();
         boolean isWanted = playerData.isWanted();
@@ -197,7 +197,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodStartEvent(PlayerWantedPeriodStartEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         String message = LangManager.getMessage(LangMessage.WANTED_ENTER);
 
         playerData.setWantedToken(true);
@@ -209,7 +209,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodRefreshEvent(PlayerWantedPeriodRefreshEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
         playerData.setWantedToken(true);
         if (message != null) {
@@ -220,10 +220,9 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodEndEvent(PlayerWantedPeriodEndEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
 
         playerData.setWantedToken(false);
-        PlayerData.stopTimer(playerData.getWantedScheduler());
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
         if (message != null) {
             AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
@@ -233,7 +232,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getSet(player);
         playerData.initPlayerData();
         playerData.setOverTimeStamp(configData.overtimeFirstDelay);
     }
@@ -241,8 +240,8 @@ public class CustomEventHandler implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerData.gets(player);
-        plugin.saveData(DBInteractions.reasons.DISCONNECT, Collections.singletonMap(player, playerData));
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerDataManager.saveData(DBInteractions.reasons.DISCONNECT, Collections.singletonMap(player, playerData));
     }
 
     /**

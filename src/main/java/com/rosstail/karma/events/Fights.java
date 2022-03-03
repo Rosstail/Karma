@@ -8,6 +8,7 @@ import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.timemanagement.TimeManager;
@@ -19,7 +20,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.sql.Timestamp;
 
@@ -37,8 +37,8 @@ public class Fights {
             return;
         }
 
-        PlayerData victimData = PlayerData.gets(victim);
-        PlayerData attackerData = PlayerData.gets(attacker);
+        PlayerData victimData = PlayerDataManager.getPlayerDataMap().get(victim);
+        PlayerData attackerData = PlayerDataManager.getPlayerDataMap().get(attacker);
         double attackerInitialKarma = attackerData.getKarma();
         ConfigData configData = ConfigData.getConfigData();
         String expression;
@@ -67,7 +67,7 @@ public class Fights {
         expression = adaptMessage.adapt(attacker, expression, PlayerType.ATTACKER.getText());
         expression = adaptMessage.adapt(victim, expression, PlayerType.VICTIM.getText());
         expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
-                String.valueOf(PlayerData.gets(attacker).getTier().getTierScore(PlayerData.gets(victim).getTier())));
+                String.valueOf(PlayerDataManager.getPlayerDataMap().get(attacker).getTier().getTierScore(PlayerDataManager.getPlayerDataMap().get(victim).getTier())));
 
         result = ExpressionCalculator.eval(expression);
         if (configData.useWorldGuard) {
@@ -76,10 +76,10 @@ public class Fights {
         }
 
         if (!attackerData.isWanted() && victimData.isWanted()) {
-            if ((result > 0 && configData.cancelInnocentKarmaGain) ||(result < 0 && configData.cancelInnocentKarmaLoss)) {
+            if ((result > 0 && configData.cancelInnocentKarmaGain) || (result < 0 && configData.cancelInnocentKarmaLoss)) {
                 doesKarmaChange = false;
             }
-        } else if (attackerData.isWanted()){
+        } else if (attackerData.isWanted()) {
             if ((result > 0 && configData.cancelWantedKarmaGain) || (result < 0 && configData.cancelWantedKarmaLoss)) {
                 doesKarmaChange = false;
             }
@@ -108,7 +108,7 @@ public class Fights {
             return;
         }
 
-        PlayerData attackerData = PlayerData.gets(attacker);
+        PlayerData attackerData = PlayerDataManager.getPlayerDataMap().get(attacker);
         double attackerKarma = attackerData.getKarma();
 
         if (configData.useWorldGuard) {
@@ -146,11 +146,11 @@ public class Fights {
     }
 
     private static void wantedHandler(Player attacker, double newKarma, Player victim, Object cause) {
-        PlayerData attackerData = PlayerData.gets(attacker);
+        PlayerData attackerData = PlayerDataManager.getPlayerDataMap().get(attacker);
 
         double attackerInitialKarma = attackerData.getKarma();
         long attackerLastWanted = attackerData.getWantedTimeStamp().getTime();
-        long victimLastWanted = PlayerData.gets(victim).getWantedTimeStamp().getTime();
+        long victimLastWanted = PlayerDataManager.getPlayerDataMap().get(victim).getWantedTimeStamp().getTime();
 
         boolean hasAttackerWantedOnce = hasBeenWantedOnce(attackerLastWanted);
         boolean hasVictimWantedOnce = hasBeenWantedOnce(victimLastWanted);

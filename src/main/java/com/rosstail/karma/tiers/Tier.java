@@ -116,9 +116,9 @@ public class Tier {
 
     public void initScores(TierManager tierManager) {
         YamlConfiguration config = Karma.getInstance().getCustomConfig();
-        for (Tier tier : tierManager.getTiers().values()) {
+        tierManager.getTiers().forEach((s, tier) -> {
             scores.put(tier, config.getDouble("tiers.list." + this.getName() + ".score." + tier.getName()));
-        }
+        });
         scores.put(TierManager.getNoTier(), config.getDouble("tiers.list." + this.getName() + ".score.none"));
     }
 }

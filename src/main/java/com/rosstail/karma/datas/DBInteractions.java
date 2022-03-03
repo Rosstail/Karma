@@ -10,7 +10,6 @@ import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.enginehub.piston.config.Config;
 
 import java.sql.*;
 import java.util.*;
@@ -66,7 +65,7 @@ public class DBInteractions {
     public boolean getPlayerData(Player player) {
         boolean reached = false;
         String UUID = player.getUniqueId().toString();
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         Connection connection = null;
         try {
             connection = openConnection();
@@ -121,7 +120,7 @@ public class DBInteractions {
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, value, true, Cause.OTHER);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
-        PlayerData playerData = PlayerData.gets(player);
+        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         playerData.setPreviousKarma(playerData.getKarma());
         playerData.checkTier();
 
@@ -154,13 +153,13 @@ public class DBInteractions {
         Connection connection = openConnection();
         if (reason.equals(reasons.SERVER_CLOSE)) {
             players.forEach((player, playerData) -> {
-                updateData(player, PlayerData.getPlayerList().get(player), connection, reason);
+                updateData(player, PlayerDataManager.getPlayerDataMap().get(player), connection, reason);
             });
             closeConnexion(connection);
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 players.forEach((player, playerData) -> {
-                    updateData(player, PlayerData.getPlayerList().get(player), connection, reason);
+                    updateData(player, PlayerDataManager.getPlayerDataMap().get(player), connection, reason);
                 });
                 closeConnexion(connection);
             });
@@ -188,7 +187,7 @@ public class DBInteractions {
         }
 
         if (reason.equals(reasons.DISCONNECT)) {
-            PlayerData.getPlayerList().remove(player);
+            PlayerDataManager.getPlayerDataMap().remove(player);
         }
     }
 
