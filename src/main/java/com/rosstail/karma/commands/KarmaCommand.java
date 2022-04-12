@@ -659,6 +659,10 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
         if (canLaunchCommand(sender, commands.KARMA_RELOAD)) {
             Karma.getInstance().loadCustomConfig();
             sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.CONFIG_RELOAD), null));
+            PlayerDataManager.getPlayerDataMap().forEach((player, playerData) -> {
+                playerData.checkKarma();
+                playerData.checkTier();
+            });
         }
     }
 

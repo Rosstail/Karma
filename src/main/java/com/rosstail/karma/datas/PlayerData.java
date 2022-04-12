@@ -148,10 +148,17 @@ public class PlayerData {
         this.previousKarma = previousKarma;
     }
 
-    /**
-     * Set the new tier of the player if change is needed.
-     * Uses local files or Database if connection is active
-     */
+    public void checkKarma() {
+        ConfigData configData = ConfigData.getConfigData();
+        if (!(karma >= configData.minKarma && karma <= configData.maxKarma)) {
+            double newKarma = configData.minKarma;
+            if (karma > configData.maxKarma) {
+                newKarma = configData.maxKarma;
+            }
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, true, Cause.COMMAND);
+            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        }
+    }
     public void checkTier() {
         for (Tier tier : TierManager.getTierManager().getTiers().values()) {
             if (karma >= tier.getMinKarma() && karma <= tier.getMaxKarma() && !tier.equals(getTier())) {

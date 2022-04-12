@@ -13,20 +13,22 @@ import java.util.Map;
 public class Tier {
 
     private final String name;
-    private final String display;
-    private final String shortDisplay;
-    private final double minKarma;
-    private final double maxKarma;
-    private final List<String> joinCommands;
-    private final List<String> joinOnDownCommands;
-    private final List<String> joinOnUpCommands;
-    private final List<String> killedCommands;
-    private final Map<Tier, Double> scores = new HashMap<>();
+    private String display;
+    private String shortDisplay;
+    private double minKarma;
+    private double maxKarma;
+    private List<String> joinCommands;
+    private List<String> joinOnDownCommands;
+    private List<String> joinOnUpCommands;
+    private List<String> killedCommands;
+    private Map<Tier, Double> scores = new HashMap<>();
 
 
-    Tier(ConfigurationSection section, String name) {
+    Tier(String name) {
         this.name = name;
+    }
 
+    public void init(ConfigurationSection section) {
         String display = section.getString("display");
         if (display == null) {
             display = "&7" + name;
@@ -51,9 +53,11 @@ public class Tier {
     /**
      * NULL TIER
      */
-    Tier(String display, String shortDisplay) {
+    Tier() {
         this.name = null;
+    }
 
+    public void initNoTier(String display, String shortDisplay) {
         if (display == null) {
             display = "&7";
         }

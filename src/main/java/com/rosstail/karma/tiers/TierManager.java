@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class TierManager {
     private final Karma plugin;
@@ -28,14 +29,32 @@ public class TierManager {
 
     public void setupTiers() {
         FileConfiguration config = plugin.getCustomConfig();
-        tiers.clear();
-        config.getConfigurationSection("tiers.list").getKeys(false).forEach(tierID -> {
+        Set<String> configTiers = config.getConfigurationSection("tiers.list").getKeys(false);
+
+        for (Map.Entry<String, Tier> entry : tiers.entrySet()) { //Check and remove tiers that do not exist anymore
+            String s = entry.getKey();
+            ConfigurationSection tierConfigSection = config.getConfigurationSection("tiers.list." + s);
+            if (tierConfigSection == null) {
+                tiers.remove(s);
+            }
+        }
+
+        configTiers.forEach(tierID -> {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("tiers.list." + tierID);
             if (tierConfigSection != null) {
-                tiers.put(tierID, new Tier(tierConfigSection, tierID));
+                if (tiers.containsKey(tierID)) { //Just update
+                    tiers.get(tierID).init(tierConfigSection);
+                } else { //create and update
+                    Tier tier = new Tier(tierID);
+                    tier.init(tierConfigSection);
+                    tiers.put(tierID, tier);
+                }
             }
         });
-        noTier = new Tier(config.getString("tiers.none-display"), config.getString("tiers.none-short-display"));
+        if (noTier == null) {
+            noTier = new Tier();
+        }
+        noTier.initNoTier(config.getString("tiers.none-display"), config.getString("tiers.none-short-display"));
 
         for (Tier tier : tiers.values()) {
             tier.initScores(this);
