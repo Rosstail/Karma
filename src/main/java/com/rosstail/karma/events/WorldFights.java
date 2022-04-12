@@ -10,18 +10,22 @@ import java.util.List;
 
 public class WorldFights {
 
+    private final Karma plugin;
     private static WorldFights worldFights = null;
-    private final List<World> enabledWorlds;
+    private final List<World> enabledWorlds = new ArrayList<>();
 
-    public static void setUp(Karma plugin) {
+    public static void initWorldFights(Karma plugin) {
         if (worldFights == null) {
             worldFights = new WorldFights(plugin);
         }
     }
 
     WorldFights(Karma plugin) {
-        ArrayList<World> tempList = new ArrayList<>();
+        this.plugin = plugin;
+    }
 
+    public void setEnabledWorlds() {
+        enabledWorlds.clear();
         boolean isBlackList;
         FileConfiguration config = plugin.getCustomConfig();
         boolean enabled = config.getString("worlds.enable") != null
@@ -37,27 +41,25 @@ public class WorldFights {
             for (World world : Bukkit.getWorlds()) {
                 if (!isBlackList) {
                     if (configWorldsList.contains(world.getName())) {
-                        tempList.add(world);
+                        enabledWorlds.add(world);
                     }
                 } else {
                     if (!configWorldsList.contains(world.getName())) {
-                        tempList.add(world);
+                        enabledWorlds.add(world);
                     }
                 }
             }
         } else {
-            tempList.addAll(Bukkit.getWorlds());
+            enabledWorlds.addAll(Bukkit.getWorlds());
         }
-
-        enabledWorlds = tempList;
     }
 
-    public static WorldFights getCustomFightWorlds() {
+    public static WorldFights getWorldFights() {
         return worldFights;
     }
 
     public static List<World> getEnabledWorlds() {
-        return getCustomFightWorlds().enabledWorlds;
+        return getWorldFights().enabledWorlds;
     }
 
     public static boolean isFightEnabledInWorld(World world) {

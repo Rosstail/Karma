@@ -16,11 +16,10 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class TimeManager {
-
+    private final Karma plugin;
     private static TimeManager timeManager;
-    private final List<SystemTimes> systemTimes;
-    private final List<WorldsTimes> worldTimes;
-    private final String type = ConfigData.getConfigData().useTimeValue;
+    private final List<SystemTimes> systemTimes = new ArrayList<>();
+    private final List<WorldsTimes> worldTimes = new ArrayList<>();
 
     public static void initTimeManager(Karma plugin) {
         if (timeManager == null) {
@@ -29,27 +28,30 @@ public class TimeManager {
     }
 
     TimeManager(Karma plugin) {
+        this.plugin = plugin;
+    }
+
+    public void setupTimes() {
+        systemTimes.clear();
+        worldTimes.clear();
         FileConfiguration config = plugin.getCustomConfig();
-        ArrayList<SystemTimes> systemTimes = new ArrayList<>();
-        ArrayList<WorldsTimes> worldsTimes = new ArrayList<>();
         for (String timeName : config.getConfigurationSection("times.system-times").getKeys(false)) {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("times.system-times." + timeName);
             if (tierConfigSection != null) {
                 systemTimes.add(new SystemTimes(tierConfigSection, timeName));
             }
         }
-        this.systemTimes = systemTimes;
 
         for (String timeName : config.getConfigurationSection("times.worlds-times").getKeys(false)) {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("times.worlds-times." + timeName);
             if (tierConfigSection != null) {
-                worldsTimes.add(new WorldsTimes(tierConfigSection, timeName));
+                worldTimes.add(new WorldsTimes(tierConfigSection, timeName));
             }
         }
-        this.worldTimes = worldsTimes;
     }
 
     public boolean isPlayerInTime(Player player) {
+        String type = ConfigData.getConfigData().useTimeValue;
         if (type != null && !type.equalsIgnoreCase("NONE")) {
             if (type.equalsIgnoreCase("BOTH")) {
                 return isPlayerInSystemTime() || isPlayerInWorldTime(player);

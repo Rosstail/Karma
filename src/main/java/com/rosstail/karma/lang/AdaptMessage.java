@@ -31,7 +31,6 @@ public class AdaptMessage {
 
     private static AdaptMessage adaptMessage;
     private final Karma plugin;
-    private final ConfigData configData;
     private static final Pattern hexPattern = Pattern.compile("\\{(#[a-fA-F0-9]{6})}");
 
     public enum prints {
@@ -42,7 +41,6 @@ public class AdaptMessage {
 
     public AdaptMessage(Karma plugin) {
         this.plugin = plugin;
-        configData = ConfigData.getConfigData();
     }
 
     private final Map<Player, Long> coolDown = new HashMap<>();
@@ -74,6 +72,7 @@ public class AdaptMessage {
     }
 
     private void sendTitle(Player player, String title, String subTitle) {
+        ConfigData configData = ConfigData.getConfigData();
         player.sendTitle(adaptMessage.adapt(player, title, PlayerType.PLAYER.getText()),
                 adaptMessage.adapt(player, subTitle, PlayerType.PLAYER.getText()), configData.titleFadeIn, configData.titleStay, configData.titleFadeOut);
     }
@@ -151,6 +150,7 @@ public class AdaptMessage {
     }
 
     public void entityHitMessage(String message, Player player, Event event) {
+        ConfigData configData = ConfigData.getConfigData();
         if (message == null) {
             return;
         }
@@ -175,6 +175,7 @@ public class AdaptMessage {
     }
 
     public String playerHitAdapt(String message, Player attacker, Player victim, Object cause) {
+        ConfigData configData = ConfigData.getConfigData();
         if (message == null) {
             return null;
         }
@@ -200,6 +201,7 @@ public class AdaptMessage {
     }
 
     public String decimalFormat(double value, char replacement) {
+        ConfigData configData = ConfigData.getConfigData();
         return String.format("%." + configData.decNumber + "f", value).replaceAll(",", String.valueOf(replacement));
     }
 

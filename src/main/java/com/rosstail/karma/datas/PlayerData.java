@@ -25,7 +25,6 @@ import java.util.Map;
  */
 public class PlayerData {
     private static final Karma plugin = Karma.getInstance();
-    private static ConfigData configData = ConfigData.getConfigData();
 
     private final File playerFile;
     final Player player;
@@ -85,7 +84,7 @@ public class PlayerData {
                             ? playerFile.lastModified()
                             : System.currentTimeMillis())
             + playerConfig.getLong("wanted-time"));
-            if (configData.wantedEnable && isWanted()) {
+            if (ConfigData.getConfigData().wantedEnable && isWanted()) {
                 PlayerWantedPeriodRefreshEvent event = new PlayerWantedPeriodRefreshEvent(player, Cause.OTHER, true);
                 Bukkit.getPluginManager().callEvent(event);
 
@@ -109,7 +108,7 @@ public class PlayerData {
     }
 
     private void initPlayerDataLocale() {
-        double defaultKarma = configData.defaultKarma;
+        double defaultKarma = ConfigData.getConfigData().defaultKarma;
 
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, defaultKarma, true, Cause.OTHER);
@@ -219,9 +218,5 @@ public class PlayerData {
 
     public void setOverTimeStamp(long value) {
         this.overTimeStamp = new Timestamp(System.currentTimeMillis() + value);
-    }
-
-    public static void setConfigData(ConfigData configData) {
-        PlayerData.configData = configData;
     }
 }

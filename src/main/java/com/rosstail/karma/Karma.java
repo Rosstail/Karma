@@ -43,24 +43,13 @@ public class Karma extends JavaPlugin implements Listener {
 
     public void onEnable() {
         instance = this;
-        File fileConfig = new File("plugins/" + getName() + "/config.yml");
-        if (!(fileConfig.exists())) {
-            AdaptMessage.print("Preparing default config.yml", AdaptMessage.prints.OUT);
-            this.saveDefaultConfig();
-        }
 
-        config = YamlConfiguration.loadConfiguration(fileConfig);
-        ConfigData.init(getCustomConfig());
         AdaptMessage.initAdaptMessage(this);
-        WorldFights.setUp(this);
         TierManager.initTierManager(this);
         TimeManager.initTimeManager(this);
+        WorldFights.initWorldFights(this);
 
-        initDefaultConfigs();
-
-        if (ConfigData.getConfigData().isOvertimeActive || ConfigData.getConfigData().wantedEnable) {
-            PlayerDataManager.setupScheduler();
-        }
+        loadCustomConfig();
 
         LangManager.initCurrentLang(getCustomConfig().getString("general.lang"));
 
@@ -74,7 +63,7 @@ public class Karma extends JavaPlugin implements Listener {
             }
         }
 
-        if (this.getCustomConfig().getBoolean("mysql.active")) {
+        if (getCustomConfig().getBoolean("mysql.active")) {
             try {
                 DBInteractions.initDBInteractions(this);
                 DBInteractions.getInstance().prepareTable();
@@ -125,7 +114,7 @@ public class Karma extends JavaPlugin implements Listener {
         updateDataTimer.cancel();
     }
 
-    private void initDefaultConfigs() {
+    private void initDefaultLocales() {
         try {
             FileResourcesUtils.main("lang",this);
         } catch (IOException e) {
@@ -135,6 +124,27 @@ public class Karma extends JavaPlugin implements Listener {
 
     public static Karma getInstance() {
         return instance;
+    }
+
+    public void loadCustomConfig() {
+        File fileConfig = new File("plugins/" + getName() + "/config.yml");
+        if (!(fileConfig.exists())) {
+            AdaptMessage.print("Preparing default config.yml", AdaptMessage.prints.OUT);
+            this.saveDefaultConfig();
+        }
+        config = YamlConfiguration.loadConfiguration(fileConfig);
+
+        ConfigData.init(getCustomConfig());
+        initDefaultLocales();
+
+        if (ConfigData.getConfigData().isOvertimeActive || ConfigData.getConfigData().wantedEnable) {
+            PlayerDataManager.setupScheduler();
+        } else {
+            PlayerData.stopTimer(PlayerDataManager.getScheduler());
+        }
+        WorldFights.getWorldFights().setEnabledWorlds();
+        TierManager.getTierManager().setupTiers();
+        TimeManager.getTimeManager().setupTimes();
     }
 
     public YamlConfiguration getCustomConfig() {

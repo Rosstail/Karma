@@ -31,6 +31,7 @@ public class Tier {
         if (display == null) {
             display = "&7" + name;
         }
+
         this.display = AdaptMessage.getAdaptMessage().adapt(null, display, null);
 
         String shortDisplay = section.getString("short-display");

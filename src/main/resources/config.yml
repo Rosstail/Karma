@@ -18,6 +18,7 @@ general:
   use-worldguard: false #works only for Worldguard 7+
   datetime-format: "yyyy-MM-dd HH:mm:ss"
   countdown-format: "{dd} {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s between {} without cap.
+  debug-mode: false
 
 karma:
   default:     0

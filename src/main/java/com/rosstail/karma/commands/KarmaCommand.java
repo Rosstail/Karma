@@ -30,7 +30,6 @@ import java.util.*;
  */
 public class KarmaCommand implements CommandExecutor, TabExecutor {
     private final AdaptMessage adaptMessage;
-    private final ConfigData configData;
 
     private enum commands {
         KARMA("", "karma"),
@@ -62,7 +61,6 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
 
     public KarmaCommand() {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
-        this.configData = ConfigData.getConfigData();
     }
 
     @Override
@@ -102,6 +100,8 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             wantedReset(sender, args);
         } else if (string.startsWith(commands.KARMA_SAVE.command)) {
             karmaSave(sender);
+        }  else if (string.startsWith(commands.KARMA_RELOAD.command)) {
+            karmaReload(sender);
         } else if (string.startsWith(commands.KARMA_CALCULATE.command)) {
           if (canLaunchCommand(sender, commands.KARMA_CALCULATE)) {
               if (args.length > 1) {
@@ -149,6 +149,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             list.add("calculate");
             list.add("check");
             list.add("help");
+            list.add("reload");
             list.add("remove");
             list.add("reset");
             list.add("save");
@@ -463,7 +464,7 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
                 return;
             }
             if (player != null && player.isOnline()) {
-                double resKarma = configData.defaultKarma;
+                double resKarma = ConfigData.getConfigData().defaultKarma;
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset, Cause.COMMAND);
                 tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
             } else {
@@ -651,6 +652,13 @@ public class KarmaCommand implements CommandExecutor, TabExecutor {
             PlayerDataManager.saveData(DBInteractions.reasons.COMMAND, playersData);
             sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.SAVED_DATA)
                     .replaceAll("%number%", String.valueOf(playersData.size())), null));
+        }
+    }
+
+    private void karmaReload(CommandSender sender) {
+        if (canLaunchCommand(sender, commands.KARMA_RELOAD)) {
+            Karma.getInstance().loadCustomConfig();
+            sender.sendMessage(adaptMessage.adapt(null, LangManager.getMessage(LangMessage.CONFIG_RELOAD), null));
         }
     }
 

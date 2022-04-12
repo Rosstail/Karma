@@ -8,6 +8,8 @@ import java.util.List;
 public class ConfigData {
     private static ConfigData configValues;
 
+    public final boolean debugMode;
+
     public final double defaultKarma;
     public final double minKarma;
     public final double maxKarma;
@@ -54,6 +56,8 @@ public class ConfigData {
 
 
     ConfigData(FileConfiguration config) {
+        debugMode = config.getBoolean("general.debug-mode");
+
         defaultKarma = config.getDouble("karma.default-karma");
         minKarma = config.getDouble("karma.minimum");
         maxKarma = config.getDouble("karma.maximum");

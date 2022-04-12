@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TierManager {
-
+    private final Karma plugin;
     private static TierManager tierManager;
     private final Map<String, Tier> tiers = new HashMap<>();
     private static Tier noTier;
@@ -23,15 +23,20 @@ public class TierManager {
     }
 
     TierManager(Karma plugin) {
-        FileConfiguration config = plugin.getCustomConfig();
+        this.plugin = plugin;
+    }
 
-        noTier = new Tier(config.getString("tiers.none-display"), config.getString("tiers.none-short-display"));
+    public void setupTiers() {
+        FileConfiguration config = plugin.getCustomConfig();
+        tiers.clear();
         config.getConfigurationSection("tiers.list").getKeys(false).forEach(tierID -> {
             ConfigurationSection tierConfigSection = config.getConfigurationSection("tiers.list." + tierID);
             if (tierConfigSection != null) {
                 tiers.put(tierID, new Tier(tierConfigSection, tierID));
             }
         });
+        noTier = new Tier(config.getString("tiers.none-display"), config.getString("tiers.none-short-display"));
+
         for (Tier tier : tiers.values()) {
             tier.initScores(this);
         }
@@ -51,19 +56,6 @@ public class TierManager {
         } else {
             return noTier;
         }
-    }
-
-    public Tier getTierReplacement(Player player, String tierName) {
-        if (getTier(tierName) == noTier) {
-            double karma = PlayerDataManager.getPlayerDataMap().get(player).getKarma();
-            for (Map.Entry<String, Tier> entry : tiers.entrySet()) {
-                Tier tier = entry.getValue();
-                if (tier.getMinKarma() <= karma && tier.getMaxKarma() >= karma) {
-                    return tier;
-                }
-            }
-        }
-        return noTier;
     }
 
     public static Tier getNoTier() {

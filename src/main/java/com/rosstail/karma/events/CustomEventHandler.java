@@ -1,10 +1,9 @@
 package com.rosstail.karma.events;
 
-import com.rosstail.karma.Karma;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.KarmaCommand;
-import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
@@ -36,9 +35,7 @@ import java.sql.Timestamp;
 import java.util.Collections;
 
 public class CustomEventHandler implements Listener {
-    private static ConfigData configData = ConfigData.getConfigData();
     private final AdaptMessage adaptMessage;
-    private final Karma plugin = Karma.getInstance();
 
     public CustomEventHandler() {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
@@ -51,7 +48,7 @@ public class CustomEventHandler implements Listener {
 
         playerData.setKarma(event.getValue());
         if (event.isOverTimeReset()) {
-            playerData.setOverTimeStamp(configData.overtimeFirstDelay);
+            playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeFirstDelay);
         }
 
         PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeReset(), event);
@@ -132,7 +129,7 @@ public class CustomEventHandler implements Listener {
         if (previousTier != null) {
             if (karma > previousKarma) {
                 KarmaCommand.commandsLauncher(player, tier.getJoinOnUpCommands());
-            } else {
+            } else if (karma < previousKarma) {
                 KarmaCommand.commandsLauncher(player, tier.getJoinOnDownCommands());
             }
         }
@@ -143,7 +140,7 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         PlayerDataManager.triggerOverTime(playerData);
-        playerData.setOverTimeStamp(configData.overtimeNextDelay);
+        playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeNextDelay);
         PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
         Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
     }
@@ -152,7 +149,7 @@ public class CustomEventHandler implements Listener {
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-        playerData.setOverTimeStamp(configData.overtimeFirstDelay);
+        playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeFirstDelay);
 
         PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player);
         Bukkit.getPluginManager().callEvent(hasResetEvent);
@@ -162,7 +159,7 @@ public class CustomEventHandler implements Listener {
     public void onPlayerWantedChangeEvent(PlayerWantedChangeEvent event) {
         Player player = event.getPlayer();
         Timestamp duration = event.getTimestamp();
-        String wantedMaxDurationExp = configData.wantedMaxDurationExpression;
+        String wantedMaxDurationExp = ConfigData.getConfigData().wantedMaxDurationExpression;
         Timestamp durationMaxTimeStamp = new Timestamp((long) ExpressionCalculator.eval(
                 AdaptMessage.getAdaptMessage().adapt(player, wantedMaxDurationExp, PlayerType.PLAYER.getText())));
         if (duration.compareTo(durationMaxTimeStamp) > 0) {
@@ -234,7 +231,7 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getSet(player);
         playerData.initPlayerData();
-        playerData.setOverTimeStamp(configData.overtimeFirstDelay);
+        playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeFirstDelay);
     }
 
     @EventHandler
@@ -345,9 +342,5 @@ public class CustomEventHandler implements Listener {
                 player.sendMessage("[TEST] Karma restricted access.");
             }
         }
-    }
-
-    public static void setConfigData(ConfigData configData) {
-        CustomEventHandler.configData = configData;
     }
 }

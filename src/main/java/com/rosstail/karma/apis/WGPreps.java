@@ -1,5 +1,6 @@
 package com.rosstail.karma.apis;
 
+import com.rosstail.karma.KarmaAPI;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.sk89q.worldguard.LocalPlayer;
