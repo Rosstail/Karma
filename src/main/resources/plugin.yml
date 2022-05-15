@@ -14,46 +14,6 @@ commands:
     usage: /karma
     permission: karma
     permission-message: You don't have permission !
-  karma help:
-    description: Displays list of plugin commands
-    usage: /karma help
-    permission: karma.help
-    permission-message: You don't have permission !
-  karma check:
-    description: Check karma of a player
-    usage: /karma
-    permission: karma.own
-    permission-message: You don't have permission !
-  karma set:
-    description: Set the karma of a player
-    usage: /karma set [player] [amount]
-    permission: karma.set
-    permission-message: You don't have permission !
-  karma add:
-    description: Add specified amount of a player karma
-    usage: /karma add [player] [amount]
-    permission: karma.add
-    permission-message: You don't have permission !
-  karma remove:
-    description: Remove specified amount of a player karma
-    usage: /karma remove [player] [amount]
-    permission: karma.remove
-    permission-message: You don't have permission !
-  karma reset:
-    description: Set player's karma to default
-    usage: /karma [player] reset
-    permission: karma.reset
-    permission-message: You don't have permission !
-  karma save:
-    description: Saves all datas from players connected
-    usage: /karma save
-    permission: karma.save
-    permission-message: You don't have permission !
-  karma calculate:
-    description: Calculate a mathematical formula
-    usage: /karma [expression]
-    permission: karma.calculate
-    permission-message: You don't have permission !
 
 permissions:
   karma:
@@ -63,7 +23,7 @@ permissions:
   karma.own:
     default: true
   karma.other:
-    default: false
+    default: op
   karma.set:
     default: op
   karma.add:
@@ -73,7 +33,7 @@ permissions:
   karma.reset:
     default: op
   karma.calculate:
-    default: false
+    default: op
   karma.wanted.own:
     default: true
   karma.wanted.other:
