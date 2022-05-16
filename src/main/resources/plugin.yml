@@ -1,5 +1,5 @@
 name: Karma
-version: 1.10.4
+version: ${project.version}
 description: Make your players actions have consequences !
 api-version: 1.15
 author: Rosstail
@@ -51,7 +51,7 @@ permissions:
   karma.immune:
     default: false
   karma.*:
-    default: op
+    default: false
     description: Gives all karma plugin permissions
     children:
       karma: true
