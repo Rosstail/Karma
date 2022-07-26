@@ -139,8 +139,9 @@ public class CustomEventHandler implements Listener {
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-        PlayerDataManager.triggerOverTime(playerData);
-        playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeNextDelay);
+        long nextDelay = event.getNextDelay();
+        PlayerDataManager.triggerOverTime(playerData, event.getAmount());
+        playerData.setOverTimeStamp(nextDelay);
         PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
         Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
     }
@@ -228,10 +229,7 @@ public class CustomEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getSet(player);
-        playerData.initPlayerData();
-        playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeFirstDelay);
+        PlayerDataManager.getSet(event.getPlayer()).loadPlayerData();
     }
 
     @EventHandler

@@ -10,7 +10,8 @@ public class PlayerOverTimeTriggerEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
-    private int overtimeScheduler;
+    private final int amount;
+    private final long nextDelay;
     private boolean cancelled;
 
     @Override
@@ -22,8 +23,10 @@ public class PlayerOverTimeTriggerEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    public PlayerOverTimeTriggerEvent(Player player) {
+    public PlayerOverTimeTriggerEvent(Player player, int amount, long nextDelay) {
         this.player = player;
+        this.amount = amount;
+        this.nextDelay = nextDelay;
         this.cancelled = false;
     }
 
@@ -39,5 +42,13 @@ public class PlayerOverTimeTriggerEvent extends Event implements Cancellable {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public long getNextDelay() {
+        return nextDelay;
     }
 }

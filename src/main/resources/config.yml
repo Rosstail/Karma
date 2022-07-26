@@ -33,6 +33,7 @@ worlds:
 
 overtime: #Automatically increase or decrease karma over time
   active: false
+  countdown-on-disconnect: true #apply overtime of disconnected players upon reconnection
   first-delay: 60 #first occurrence in seconds after a karma change.
   next-delay: 10 #every occurrence in seconds after the first one
   values:

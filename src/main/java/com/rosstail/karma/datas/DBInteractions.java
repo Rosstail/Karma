@@ -76,6 +76,7 @@ public class DBInteractions {
                 playerData.setPreviousKarma(result.getDouble("Previous_Karma"));
                 playerData.setTier(TierManager.getTierManager().getTiers().get(result.getString("Tier")));
                 playerData.setPreviousTier(TierManager.getTierManager().getTiers().get(result.getString("Previous_Tier")));
+                playerData.setLastUpdate(result.getTimestamp("Last_Update").getTime());
                 long wantedTime = result.getLong("Wanted_Time");
                 playerData.setWantedTimeStamp(new Timestamp(
                         (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect

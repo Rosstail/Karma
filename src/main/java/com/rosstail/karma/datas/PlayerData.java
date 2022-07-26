@@ -13,10 +13,12 @@ import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ public class PlayerData {
     private double previousKarma;
     private Tier tier;
     private Tier previousTier;
+    private long lastUpdate = 0;
     private Timestamp wantedTimeStamp = new Timestamp(0L);
     private Timestamp overTimeStamp = new Timestamp(0L);
     private boolean wantedToken;
@@ -39,7 +42,6 @@ public class PlayerData {
     PlayerData(Player player) {
         this.player = player;
         playerFile = new File(plugin.getDataFolder(), "playerdata/" + player.getUniqueId() + ".yml");
-        loadPlayerData();
     }
 
     public double getKarma() {
@@ -69,34 +71,9 @@ public class PlayerData {
     }
 
     /**
-     * Request the player Tier inside file
+     * Load data of player or initiate it
      */
     public void loadPlayerData() {
-        DBInteractions dbInteractions = DBInteractions.getInstance();
-        if (dbInteractions == null) {
-            YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-            karma = playerConfig.getDouble("karma");
-            previousKarma = playerConfig.getDouble("previous-karma");
-            tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
-            previousTier = TierManager.getTierManager().getTiers().get(playerConfig.getString("previous-tier"));
-            wantedTimeStamp = new Timestamp(
-                    (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect
-                            ? playerFile.lastModified()
-                            : System.currentTimeMillis())
-            + playerConfig.getLong("wanted-time"));
-            if (ConfigData.getConfigData().wantedEnable && isWanted()) {
-                PlayerWantedPeriodRefreshEvent event = new PlayerWantedPeriodRefreshEvent(player, Cause.OTHER, true);
-                Bukkit.getPluginManager().callEvent(event);
-
-                player.sendMessage(AdaptMessage.getAdaptMessage().adapt(player, LangManager.getMessage(LangMessage.WANTED_CONNECT_REFRESH), PlayerType.PLAYER.getText()));
-            }
-        }
-    }
-
-    /**
-     * Initialize the file / Line of the player with UUID, name, karma and tier
-     */
-    public void initPlayerData() {
         DBInteractions dbInteractions = DBInteractions.getInstance();
         if (dbInteractions != null) {
             if (!dbInteractions.getPlayerData(player)) {
@@ -104,6 +81,47 @@ public class PlayerData {
             }
         } else if (!playerFile.exists()) {
             initPlayerDataLocale();
+        } else {
+            loadPlayerDataFile();
+        }
+
+        long nextDelay = ConfigData.getConfigData().overtimeFirstDelay;
+
+        if (ConfigData.getConfigData().isOvertimeActive) {
+            if (ConfigData.getConfigData().isOvertimeCountownOnDisconnect) {
+                long deltaUpdates = System.currentTimeMillis() - lastUpdate;
+                deltaUpdates -= ConfigData.getConfigData().overtimeFirstDelay;
+                if (deltaUpdates >= 0f) {
+                    int occurrence = (int) (Math.floorDiv(deltaUpdates, ConfigData.getConfigData().overtimeNextDelay) + 1);
+                    nextDelay = deltaUpdates % ConfigData.getConfigData().overtimeNextDelay;
+                    new PlayerOverTimeTriggerEvent(player, occurrence, nextDelay);
+                    Bukkit.getPluginManager().callEvent(new PlayerOverTimeTriggerEvent(player, occurrence, nextDelay));
+                } else {
+                    nextDelay = -deltaUpdates;
+                }
+            }
+        }
+        setOverTimeStamp(nextDelay);
+    }
+
+    public void loadPlayerDataFile() {
+        YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
+        karma = playerConfig.getDouble("karma");
+        previousKarma = playerConfig.getDouble("previous-karma");
+        tier = TierManager.getTierManager().getTiers().get(playerConfig.getString("tier"));
+        previousTier = TierManager.getTierManager().getTiers().get(playerConfig.getString("previous-tier"));
+        lastUpdate = playerFile.lastModified();
+
+        wantedTimeStamp = new Timestamp(
+                (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect
+                        ? playerFile.lastModified()
+                        : System.currentTimeMillis())
+                        + playerConfig.getLong("wanted-time"));
+        if (ConfigData.getConfigData().wantedEnable && isWanted()) {
+            PlayerWantedPeriodRefreshEvent event = new PlayerWantedPeriodRefreshEvent(player, Cause.OTHER, true);
+            Bukkit.getPluginManager().callEvent(event);
+
+            player.sendMessage(AdaptMessage.getAdaptMessage().adapt(player, LangManager.getMessage(LangMessage.WANTED_CONNECT_REFRESH), PlayerType.PLAYER.getText()));
         }
     }
 
@@ -113,6 +131,7 @@ public class PlayerData {
         YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, defaultKarma, true, Cause.OTHER);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        lastUpdate = System.currentTimeMillis();
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             playerConfig.set("karma", getKarma());
             playerConfig.set("tier", getTier().getName());
@@ -209,6 +228,14 @@ public class PlayerData {
 
     public boolean isOverTime() {
         return getOverTime() <= 0L;
+    }
+
+    public long getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     public boolean isWantedToken() {

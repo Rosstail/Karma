@@ -85,7 +85,7 @@ public class PlayerDataManager {
                 Player player = playerData.player;
 
                 if (ConfigData.getConfigData().isOvertimeActive && playerData.isOverTime()) {
-                    PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player);
+                    PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player, 1, ConfigData.getConfigData().overtimeFirstDelay);
                     Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
 
                     playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeNextDelay);
@@ -99,12 +99,12 @@ public class PlayerDataManager {
         }, 20L, 20L);
     }
 
-    public static void triggerOverTime(PlayerData playerData) {
+    public static void triggerOverTime(PlayerData playerData, int mulitplier) {
         Player player = playerData.player;
         double currentKarma = playerData.getKarma();
         double newKarma = currentKarma;
-        double decreaseValue = ConfigData.getConfigData().overtimeDecreaseValue;
-        double increaseValue = ConfigData.getConfigData().overtimeIncreaseValue;
+        double decreaseValue = ConfigData.getConfigData().overtimeDecreaseValue * mulitplier;
+        double increaseValue = ConfigData.getConfigData().overtimeIncreaseValue * mulitplier;
         if (decreaseValue > 0) {
             double decreaseLimit = ConfigData.getConfigData().overtimeDecreaseLimit;
             if (currentKarma > decreaseLimit) {
