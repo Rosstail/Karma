@@ -20,7 +20,7 @@ permissions:
     default: true
   karma.help:
     default: true
-  karma.own:
+  karma.self:
     default: true
   karma.other:
     default: op
@@ -34,7 +34,7 @@ permissions:
     default: op
   karma.calculate:
     default: op
-  karma.wanted.own:
+  karma.wanted.self:
     default: true
   karma.wanted.other:
     default: op
@@ -56,14 +56,14 @@ permissions:
     children:
       karma: true
       karma.help: true
-      karma.own: true
+      karma.self: true
       karma.other: true
       karma.set: true
       karma.add: true
       karma.remove: true
       karma.reset: true
       karma.calculate: true
-      karma.wanted.own: true
+      karma.wanted.self: true
       karma.wanted.other: true
       karma.wanted.set: true
       karma.wanted.add: true
