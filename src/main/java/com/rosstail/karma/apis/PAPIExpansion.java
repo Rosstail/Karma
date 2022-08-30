@@ -7,6 +7,7 @@ import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -206,9 +207,9 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
             if (identifier.equals("player_wanted_status")) {
                 if (playerData.isWanted()) {
-                    return LangManager.getMessage(LangMessage.STATUS_WANTED);
+                    return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED), null);
                 }
-                return LangManager.getMessage(LangMessage.STATUS_INNOCENT);
+                return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT), null);
             }
         }
 
