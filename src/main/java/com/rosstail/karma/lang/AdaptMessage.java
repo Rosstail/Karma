@@ -97,11 +97,14 @@ public class AdaptMessage {
                 Timestamp wantedTimeStamp = playerData.getWantedTimeStamp();
 
                 String status;
+                String shortStatus;
 
                 if (playerData.isWanted()) {
                     status = LangManager.getMessage(LangMessage.STATUS_WANTED);
+                    shortStatus = LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT);
                 } else {
                     status = LangManager.getMessage(LangMessage.STATUS_INNOCENT);
+                    shortStatus = LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT);
                 }
 
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(playerKarma, '.'));
@@ -114,6 +117,7 @@ public class AdaptMessage {
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_display%", playerPreviousTier.getDisplay());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_short_display%", playerPreviousTier.getShortDisplay());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_status%", status);
+                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_status_short%", shortStatus);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time%", String.valueOf(wantedTimeStamp.getTime()));
                 message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_display%", simpleDateFormat.format(wantedTimeStamp.getTime()));

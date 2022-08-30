@@ -34,7 +34,9 @@ public enum LangMessage {
     WANTED_CONNECT_REFRESH("wanted.connect-refresh"),
     WANTED_EXIT("wanted.exit"),
     STATUS_INNOCENT("wanted.status.innocent"),
+    STATUS_INNOCENT_SHORT("wanted.status.innocent-short"),
     STATUS_WANTED("wanted.status.wanted"),
+    STATUS_WANTED_SHORT("wanted.status.wanted-short"),
     CONFIG_RELOAD("reload");
 
     private final String text;

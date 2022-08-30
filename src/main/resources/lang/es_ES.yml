@@ -49,6 +49,8 @@ wanted:
     exit: "&aYou are not actively wanted anymore."
     status:
         innocent: "&fInnocent"
+        innocent-short: "&f"
+        wanted-short: "&4"
         wanted: "&4&lWANTED"
     check:
         own: "[Karma] You are currently %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"

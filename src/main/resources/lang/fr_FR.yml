@@ -49,7 +49,9 @@ wanted:
     exit: "&aVous n'êtes plus activement recherché."
     status:
         innocent: "&fInnocent"
+        innocent-short: "&f"
         wanted: "&4&lRECHERCHÉ"
+        wanted-short: "&4"
     check:
         own: "[Karma] Vous êtes actuellement %karma_player_wanted_status% &rau %karma_player_wanted_time_display%"
         other: "[Karma] Le statut de %player% est de %karma_player_wanted_status% &rau %karma_player_wanted_time_display%"

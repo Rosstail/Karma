@@ -50,6 +50,8 @@ wanted:
     status:
         innocent: "&fInnocente"
         wanted: "&4&lWANTED"
+        innocent-short: "&f"
+        wanted-short: "&4"
     check:
         own: "[Karma] You are currently %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
         other: "[Karma] %player% status is %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"

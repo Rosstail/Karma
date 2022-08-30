@@ -211,6 +211,12 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
                 return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT), null);
             }
+            if (identifier.equals("player_wanted_status_short")) {
+                if (playerData.isWanted()) {
+                    return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT), null);
+                }
+                return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT), null);
+            }
         }
 
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
