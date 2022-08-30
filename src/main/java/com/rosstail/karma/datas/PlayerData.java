@@ -1,7 +1,6 @@
 package com.rosstail.karma.datas;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.commands.KarmaCommand;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -13,14 +12,10 @@ import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Map;
 
 /**
  * Gonna be used to optimize the research of values
@@ -88,7 +83,7 @@ public class PlayerData {
         long nextDelay = ConfigData.getConfigData().overtimeFirstDelay;
 
         if (ConfigData.getConfigData().isOvertimeActive) {
-            if (ConfigData.getConfigData().isOvertimeCountownOnDisconnect) {
+            if (ConfigData.getConfigData().isOvertimeCountdownOnDisconnect) {
                 long deltaUpdates = System.currentTimeMillis() - lastUpdate;
                 deltaUpdates -= ConfigData.getConfigData().overtimeFirstDelay;
                 if (deltaUpdates >= 0f) {

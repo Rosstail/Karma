@@ -65,7 +65,7 @@ tiers:
         sheriff: -150
       commands:
         join-commands:
-          - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
+          - "broadcast &f%attacker% is now the most wanted %karma_player_tier_display% &r."
         join-on-down-commands:
           - "player %msg-title% {#FF0000}&lWANTED
           %msg-subtitle%&cEverybody is now trying to kill you."
@@ -210,25 +210,33 @@ pvp:
         on-karma-loss: true
 
 entities:
-  #default entities names
-  Cat:
-    hit-karma-reward:    -10
-    hit-message: "&cYou DARE put a hand on your Master ?!!"
-    kill-karma-reward:   -76
-    kill-message: "&4&lWILFRIIIIIIIED !!!"
-  Trader Llama:
-    hit-karma-reward:    -11
-    kill-karma-reward:  -356
-  Wolf:
-    hit-message: "Hunt a wolf doesn't change your karma : &d%karma_attacker_karma%"
-    kill-message: "You successfully hunt the wolf : &5%karma_attacker_karma%"
-  Zombie:
-    hit-karma-reward:      5
-    hit-message: "Aim his head !"
-    kill-karma-reward:    58
-    kill-message: "Burn the corpse."
-  #renamed entities
-  Galsia:
-    hit-karma-reward: 3
-    hit-message: "HIT !"
-    kill-karma-reward: 8
+  messages-delay:
+    hit: 5
+    kill: 10
+  list:
+    #default entities names
+    Ender Dragon:
+      kill-karma-reward: 10000
+      kill-commands:
+        - "bc %player% &aKILLED THE ENDERDRAGON, GG !!!"
+    Cat:
+      hit-karma-reward:    -10
+      hit-message: "&cYou DARE put a hand on your Master ?!!"
+      kill-karma-reward:   -76
+      kill-message: "&4&lWILFRIIIIIIIED !!!"
+    Trader Llama:
+      hit-karma-reward:    -11
+      kill-karma-reward:  -356
+    Wolf:
+      hit-message: "Hunt a wolf doesn't change your karma : &d%karma_attacker_karma%"
+      kill-message: "You successfully hunt the wolf : &5%karma_attacker_karma%"
+    Zombie:
+      hit-karma-reward:      5
+      hit-message: "Aim his head !"
+      kill-karma-reward:    58
+      kill-message: "Burn the corpse."
+    #renamed entities
+    Galsia:
+      hit-karma-reward: 3
+      hit-message: "HIT !"
+      kill-karma-reward: 8

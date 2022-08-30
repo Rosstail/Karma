@@ -158,9 +158,17 @@ public class AdaptMessage {
             double seconds = 0;
 
             if (event instanceof EntityDamageByEntityEvent) {
-                seconds = configData.hitMessageDelay;
+                if (((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
+                    seconds = configData.pvpHitMessageDelay;
+                } else {
+                    seconds = configData.pveHitMessageDelay;
+                }
             } else if (event instanceof EntityDeathEvent) {
-                seconds = configData.killMessageDelay;
+                if (((EntityDeathEvent) event).getEntity() instanceof Player) {
+                    seconds = configData.pvpKillMessageDelay;
+                } else {
+                    seconds = configData.pveKillMessageDelay;
+                }
             }
             double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
@@ -183,9 +191,9 @@ public class AdaptMessage {
             double seconds;
 
             if (cause instanceof EntityDamageByEntityEvent) {
-                seconds = configData.hitMessageDelay;
+                seconds = configData.pvpHitMessageDelay;
             } else {
-                seconds = configData.killMessageDelay;
+                seconds = configData.pvpKillMessageDelay;
             }
             double timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {

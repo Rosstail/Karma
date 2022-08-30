@@ -20,12 +20,14 @@ public class ConfigData {
     public final int titleFadeIn;
     public final int titleStay;
     public final int titleFadeOut;
-    public final int hitMessageDelay;
-    public final int killMessageDelay;
+    public final int pvpHitMessageDelay;
+    public final int pvpKillMessageDelay;
+    public final int pveHitMessageDelay;
+    public final int pveKillMessageDelay;
     public final int saveDelay;
 
     public final boolean isOvertimeActive;
-    public final boolean isOvertimeCountownOnDisconnect;
+    public final boolean isOvertimeCountdownOnDisconnect;
     public final long overtimeFirstDelay;
     public final long overtimeNextDelay;
     public final double overtimeDecreaseValue;
@@ -67,8 +69,10 @@ public class ConfigData {
         killedByTierPath = "tiers.list.%" + pluginName.toLowerCase() + "_victim_tier%.commands.killed-commands.%" + pluginName.toLowerCase() + "_attacker_tier%";
 
         decNumber = config.getInt("general.decimal-display");
-        hitMessageDelay = config.getInt("pvp.messages-delay.hit");
-        killMessageDelay = config.getInt("pvp.messages-delay.kill");
+        pvpHitMessageDelay = config.getInt("pvp.messages-delay.hit");
+        pvpKillMessageDelay = config.getInt("pvp.messages-delay.kill");
+        pveHitMessageDelay = config.getInt("entities.messages-delay.hit");
+        pveKillMessageDelay = config.getInt("entities.messages-delay.kill");
         titleFadeIn = config.getInt("general.title.fade-in");
         titleStay = config.getInt("general.title.stay");
         titleFadeOut = config.getInt("general.title.fade-out");
@@ -83,7 +87,7 @@ public class ConfigData {
         pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");
 
         isOvertimeActive = config.getBoolean("overtime.active", false);
-        isOvertimeCountownOnDisconnect = config.getBoolean("overtime.countdown-on-disconnect", true);
+        isOvertimeCountdownOnDisconnect = config.getBoolean("overtime.countdown-on-disconnect", true);
         overtimeFirstDelay = config.getLong("overtime.first-delay") * 1000L;
         overtimeNextDelay = config.getLong("overtime.next-delay") * 1000L;
         overtimeDecreaseValue = config.getDouble("overtime.values.decrease.value");

@@ -101,9 +101,11 @@ public class Fights {
         YamlConfiguration config = plugin.getCustomConfig();
         double reward;
         if (event instanceof EntityDeathEvent) {
-            reward = config.getInt("entities." + entityName + ".kill-karma-reward");
+            reward = config.getInt("entities.list." + entityName + ".kill-karma-reward");
+            KarmaCommand.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".kill-commands"));
         } else if (event instanceof EntityDamageByEntityEvent) {
-            reward = config.getInt("entities." + entityName + ".hit-karma-reward");
+            reward = config.getInt("entities.list." + entityName + ".hit-karma-reward");
+            KarmaCommand.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".hit-commands"));
         } else {
             return;
         }
@@ -120,9 +122,9 @@ public class Fights {
 
         if (!playerKarmaChangeEvent.isCancelled()) {
             if (event instanceof EntityDeathEvent) {
-                adaptMessage.entityHitMessage(config.getString("entities." + entityName + ".kill-message"), attacker, event);
+                adaptMessage.entityHitMessage(config.getString("entities.list." + entityName + ".kill-message"), attacker, event);
             } else {
-                adaptMessage.entityHitMessage(config.getString("entities." + entityName + ".hit-message"), attacker, event);
+                adaptMessage.entityHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker, event);
             }
         }
     }
