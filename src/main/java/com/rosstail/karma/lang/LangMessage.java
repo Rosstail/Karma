@@ -54,6 +54,7 @@ public enum LangMessage {
     SHOP_LINE("shop.list.line"),
     SHOP_SUCCESS("shop.success"),
     SHOP_FAILURE("shop.failure"),
+    SHOP_NOT_EXIST("shop.not-exist"),
     STATUS_INNOCENT("wanted.status.innocent"),
     STATUS_INNOCENT_SHORT("wanted.status.innocent-short"),
     STATUS_WANTED("wanted.status.wanted"),

@@ -47,13 +47,6 @@ public class FileResourcesUtils {
                     plugin.saveResource(filePathInJAR, false);
                     AdaptMessage.print(" > Creating " + file + " config.", AdaptMessage.prints.OUT);
                 }
-
-
-                //System.out.println("filePathInJAR : " + filePathInJAR);
-
-                // read a file from resource folder
-                //InputStream is = app.getFileFromResourceAsStream(filePathInJAR);
-                //printInputStream(is);
             }
 
         } catch (URISyntaxException | IOException e) {

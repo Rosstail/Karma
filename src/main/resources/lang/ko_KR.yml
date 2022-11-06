@@ -25,6 +25,7 @@ shop:
     line: " &6> &9%karma_shop_display% &8: &f%karma_shop_description% &8| &a%karma_shop_price%"
   success: "&aTransaction successful."
   failure: "&cYou can't afford the shop"
+    not-exist: "&cThis shop does not exist"
 
   help:
     header: "&b====== &6카르마 도움말 &b======"

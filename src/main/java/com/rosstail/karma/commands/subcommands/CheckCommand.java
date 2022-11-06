@@ -32,7 +32,7 @@ public class CheckCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma check";
+        return "karma check (player)";
     }
 
     @Override

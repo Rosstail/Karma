@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShopCommand extends SubCommand {
@@ -49,31 +50,11 @@ public class ShopCommand extends SubCommand {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-        ShopManager shopManager = ShopManager.getShopManager();
-        if (args.length > 1 && shopManager.getShops().containsKey(args[1])) {
-            Shop shop = ShopManager.getShopManager().getShops().get(args[1]);
-            Player target = null;
-            if (args.length > 2) {
-                if (CommandManager.canLaunchCommand(sender, subCommands.get(1))) {
-                    for (Player player : Bukkit.getOnlinePlayers()) {
-                        if (player.getName().equals(args[2])) {
-                            target = player;
-                            break;
-                        }
-                    }
-                    if (target == null) {
-                        sender.sendMessage("(not lang file) This player does not exist");
-                    }
-                }
+        if (args.length >= 3) {
+            if (args.length >= 4) {
+                subCommands.get(1).perform(sender, args);
             } else {
-                if (sender instanceof Player) {
-                    target = ((Player) sender).getPlayer();
-                } else {
-                    sender.sendMessage("(not lang file) Shop is only available to players");
-                }
-            }
-            if (target != null) {
-                shop.handle(target);
+                subCommands.get(0).perform(sender, args);
             }
         } else {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_HEADER), PlayerType.PLAYER.getText()));
@@ -90,6 +71,19 @@ public class ShopCommand extends SubCommand {
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args) {
+        if (args.length <= 2) {
+            ArrayList<String> subCommands = new ArrayList<>();
+            for (SubCommand subCommand : getSubCommands()) {
+                subCommands.add(subCommand.getName());
+            }
+            return subCommands;
+        } else {
+            for (SubCommand subCommand : getSubCommands()) {
+                if (args[1].equalsIgnoreCase(subCommand.getName())) {
+                    return subCommand.getSubCommandsArguments(sender, args);
+                }
+            }
+        }
         return null;
     }
 }

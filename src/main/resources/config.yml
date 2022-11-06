@@ -248,7 +248,7 @@ shops:
       description: "&fFirst Shop. Usable by player"
       price: 1000.0
       cost-reset-overtime: false
-      min-karma: 0
+      min-karma: 1000
       sender: PLAYER #PLAYER / OTHER
       commands:
         - "bc %player% bought the first item from karma shop !"
@@ -257,7 +257,7 @@ shops:
       description: "&fSecond Shop. Not usable by player"
       price: -500.0
       cost-reset-overtime: false
-      max-karma: 0
-      sender: OTHER #PLAYER / OTHER
+      max-karma: -500
+      sender: CONSOLE #PLAYER / OTHER
       commands:
         - "bc %player% bought the second item from karma shop !"

@@ -6,7 +6,10 @@ import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.shops.SendType;
+import com.rosstail.karma.shops.Shop;
 import com.rosstail.karma.shops.ShopManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -31,7 +34,7 @@ public class KarmaShopBuySelfCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma shop <shopName>";
+        return "karma shop buy <shopName>";
     }
 
     @Override
@@ -49,12 +52,25 @@ public class KarmaShopBuySelfCommand extends SubCommand {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
             return;
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt((Player) sender, LangManager.getMessage(LangMessage.WANTED_OWN_CHECK), PlayerType.PLAYER.getText()));
+
+        String shopName = args[2];
+
+        if (ShopManager.getShopManager().getShops().containsKey(shopName)) {
+            Shop shop = ShopManager.getShopManager().getShops().get(shopName);
+            if (shop.getSendType() != SendType.CONSOLE) {
+                System.out.println(shop.getSendType() +"  " + SendType.CONSOLE);
+                shop.handle(((Player) sender).getPlayer());
+            } else {
+                AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_FAILURE), null);
+            }
+        } else {
+            AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_NOT_EXIST), null);
+        }
     }
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        if (args.length <= 1) {
+        if (args.length <= 3) {
             ArrayList<String> shops = new ArrayList<>();
             ShopManager.getShopManager().getShops().forEach((s, shop) -> {
                 shops.add(s);

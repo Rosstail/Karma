@@ -88,7 +88,6 @@ public class Karma extends JavaPlugin implements Listener {
         }, delay, delay);
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            System.out.println(player.getName());
             PlayerDataManager.getSet(player).loadPlayerData();
         });
     }

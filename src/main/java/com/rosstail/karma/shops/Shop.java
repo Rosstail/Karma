@@ -38,7 +38,7 @@ public class Shop {
         costResetOvertime = section.getBoolean("cost-reset-overtime", true);
         minShopKarma = (float) section.getDouble("min-karma", ConfigData.getConfigData().defaultKarma);
         maxShopKarma = (float) section.getDouble("max-karma", ConfigData.getConfigData().defaultKarma);
-        sendType = SendType.valueOf(section.getString("sender", "both").toUpperCase());
+        sendType = SendType.valueOf(section.getString("send-by", "both").toUpperCase());
         commands = section.getStringList("commands");
     }
 

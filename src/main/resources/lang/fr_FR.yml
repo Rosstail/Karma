@@ -25,6 +25,7 @@ shop:
         line: " &6> &9%karma_shop_display% &8: &f%karma_shop_description% &8| &e%karma_shop_price%"
     success: "&aTransaction effectuée"
     failure: "&cTransaction échouée"
+    not-exist: "&cCe shop n'existe pas"
 
 help:
     header: "&b====== &6AIDE KARMA &b======"
