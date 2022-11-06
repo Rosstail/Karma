@@ -15,6 +15,10 @@ import java.util.List;
 
 public class KarmaShopBuyOtherCommand extends SubCommand {
 
+    public KarmaShopBuyOtherCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "buy";

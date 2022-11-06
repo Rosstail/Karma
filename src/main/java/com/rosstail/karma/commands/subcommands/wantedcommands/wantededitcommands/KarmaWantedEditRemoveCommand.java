@@ -22,6 +22,10 @@ import java.util.List;
 
 public class KarmaWantedEditRemoveCommand extends SubCommand {
 
+    public KarmaWantedEditRemoveCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_REMOVE).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "remove";
@@ -34,7 +38,7 @@ public class KarmaWantedEditRemoveCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma wanted remove <player> <value>";
+        return "karma wanted edit remove <player> <value>";
     }
 
     @Override

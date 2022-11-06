@@ -14,10 +14,12 @@ public class HelpCommand extends SubCommand {
 
     public HelpCommand(final CommandManager manager) {
         subCommands = manager.getSubCommands();
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_HEADER).replaceAll("%command-syntax%", getSyntax()), null);
     }
 
     public HelpCommand(final SubCommand subCommand) {
         subCommands = subCommand.getSubCommands();
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_HEADER).replaceAll("%command-syntax%", getSyntax()), null);
     }
 
     @Override
@@ -46,9 +48,11 @@ public class HelpCommand extends SubCommand {
             return;
         }
 
-        StringBuilder helpCommand = new StringBuilder("&a=====&6" + getName().toUpperCase() + "&a=====&r");
+        StringBuilder helpCommand = new StringBuilder(getHelp());
         for (SubCommand subCommand : subCommands) {
-            helpCommand.append("\n").append("&b > &2/").append(subCommand.getSyntax()).append("&8: &r").append(subCommand.getDescription());
+            if (subCommand.getHelp() != null) {
+                helpCommand.append("\n").append(subCommand.getHelp());
+            }
         }
         sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, helpCommand.toString(), null));
     }

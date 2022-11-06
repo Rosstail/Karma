@@ -21,6 +21,10 @@ import java.util.List;
 
 public class KarmaWantedEditSetCommand extends SubCommand {
 
+    public KarmaWantedEditSetCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_SET).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "set";
@@ -33,7 +37,7 @@ public class KarmaWantedEditSetCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma wanted set <player> <value>";
+        return "karma wanted edit set <player> <value>";
     }
 
     @Override

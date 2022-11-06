@@ -15,6 +15,9 @@ import java.util.List;
 
 public class CheckSelfCommand extends SubCommand {
 
+    public CheckSelfCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%command-syntax%", getSyntax()), null);
+    }
     @Override
     public String getName() {
         return "check";

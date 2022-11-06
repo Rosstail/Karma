@@ -1,10 +1,7 @@
 package com.rosstail.karma.commands.subcommands;
 
-import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.shopcommands.KarmaShopBuyOtherCommand;
-import com.rosstail.karma.commands.subcommands.shopcommands.KarmaShopBuySelfCommand;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
@@ -14,12 +11,14 @@ import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class SaveCommand extends SubCommand {
 
+    public SaveCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SAVE).replaceAll("%command-syntax%", getSyntax()), null);
+    }
     @Override
     public String getName() {
         return "save";

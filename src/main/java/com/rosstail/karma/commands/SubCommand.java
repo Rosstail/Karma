@@ -8,7 +8,7 @@ import java.util.List;
 
 public abstract class SubCommand {
     public List<SubCommand> subCommands = new ArrayList<>();
-
+    public String help = "";
     public abstract String getName();
 
     public abstract String getDescription();
@@ -18,6 +18,9 @@ public abstract class SubCommand {
 
     public List<SubCommand> getSubCommands() {
         return subCommands;
+    }
+    public String getHelp() {
+        return help;
     }
     public abstract List<String> getSubCommandsArguments(Player sender, String args[]);
 }

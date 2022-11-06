@@ -9,6 +9,9 @@ import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands
 import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditRemoveCommand;
 import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditResetCommand;
 import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditSetCommand;
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -20,6 +23,7 @@ public class WantedCheckCommand extends SubCommand {
     public WantedCheckCommand() {
         subCommands.add(new KarmaWantedCheckSelfCommand());
         subCommands.add(new KarmaWantedCheckOtherCommand());
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%command-syntax%", getSyntax()), null);
     }
 
     @Override

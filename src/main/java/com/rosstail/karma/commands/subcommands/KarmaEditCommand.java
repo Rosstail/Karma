@@ -6,6 +6,9 @@ import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditAddCom
 import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditRemoveCommand;
 import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditResetCommand;
 import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditSetCommand;
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -19,6 +22,7 @@ public class KarmaEditCommand extends SubCommand {
         subCommands.add(new KarmaEditAddCommand());
         subCommands.add(new KarmaEditRemoveCommand());
         subCommands.add(new KarmaEditResetCommand());
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT).replaceAll("%command-syntax%", getSyntax()), null);
     }
 
     @Override
@@ -33,7 +37,7 @@ public class KarmaEditCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit <editType> <player> <value>";
+        return "karma edit <editType> <player> <value> (reset)";
     }
 
     @Override

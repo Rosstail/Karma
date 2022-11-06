@@ -18,6 +18,7 @@ import java.util.List;
 public class Shop {
 
     private String name;
+    private String display;
     private String description;
     private float price;
     private boolean useMinKarma = false;
@@ -29,11 +30,12 @@ public class Shop {
     private List<String> commands;
 
     public void init(ConfigurationSection section) {
-        description = section.getString("description", "&c-&r");
+        display = AdaptMessage.getAdaptMessage().adapt(null, section.getString("display", name.toUpperCase()), null);
+        description = AdaptMessage.getAdaptMessage().adapt(null, section.getString("description", "&c-&r"), null);
         price = (float) section.getDouble("price", 0f);
         useMinKarma = section.get("min-karma") != null;
         useMaxKarma = section.get("max-karma") != null;
-        costResetOvertime = section.getBoolean("cost-reset-overtime", false);
+        costResetOvertime = section.getBoolean("cost-reset-overtime", true);
         minShopKarma = (float) section.getDouble("min-karma", ConfigData.getConfigData().defaultKarma);
         maxShopKarma = (float) section.getDouble("max-karma", ConfigData.getConfigData().defaultKarma);
         sendType = SendType.valueOf(section.getString("sender", "both").toUpperCase());
@@ -67,6 +69,10 @@ public class Shop {
 
     public String getName() {
         return name;
+    }
+
+    public String getDisplay() {
+        return display;
     }
 
     public String getDescription() {

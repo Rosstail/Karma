@@ -20,6 +20,10 @@ import static com.rosstail.karma.commands.CommandManager.canLaunchCommand;
 
 public class KarmaEditSetCommand extends SubCommand {
 
+    public KarmaEditSetCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "set";

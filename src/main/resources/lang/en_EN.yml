@@ -20,24 +20,33 @@ saved-data: "[Karma] #00DDCDSaved data of %number% players"
 shop:
     list:
         header: "&b====== &6KARMA SHOP &b======"
-        line: " &6> &9%karma_shop_name% &8: &f%karma_shop_description% &8| &a%karma_shop_price%"
+        line: " &6> &9%karma_shop_display% &8: &f%karma_shop_description% &8| &a%karma_shop_price%"
     success: "&aTransaction successful."
     failure: "&cYou can't afford the shop"
 help:
-    - "&b====== &6KARMA HELP &b======"
-    - "&6/karma check (player) &8: &rDisplays targeted player karma and tier or sender by default"
-    - "&6/karma shop (shop) (player) &8: &rLet target or sender buy something with his/your karma"
-    - "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value"
-    - "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma"
-    - "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma"
-    - "&6/karma reset [player] &8: &rSet the targeted player karma to the default one."
-    - "&6/karma wanted check (player) &8: Displays your research index or that of the targeted player."
-    - "&6/karma wanted set [player] [value] &8: &r Apply the specified value to the target player's research status"
-    - "&6/karma wanted add [player] [value] &8: &r Adds the specified value to the target player's research status"
-    - "&6/karma wanted remove [player] [value] &8: &r Remove the specified value from the target player's research status"
-    - "&6/karma wanted reset [player] &8: &rResets the target player's search status."
-    - "&6/karma calculate [expression] &8: &rCalculate the given expression."
-    - "&6/karma reload &8: &rReload configuration file."
+    header: "&b====== &6KARMA HELP &b======"
+    list:
+        calculate: "&a► &6/%command-syntax% &8: &rCalculate the given expression."
+        check: "&a► &6/%command-syntax% &8: &rDisplays targeted player karma and tier or sender by default"
+        edit:
+            default: "&a► &6/%command-syntax% &8: &rEdit karma of the specified player"
+            set: "&a► &6/%command-syntax% &8: &rSet the karma of targeted player to specified value"
+            add: "&a► &6/%command-syntax% &8: &rAdd the specified value to the targeted player's karma"
+            remove: "&a► &6/%command-syntax% &8: &rSubtract the specified value from the targeted player karma"
+            reset: "&a► &6/%command-syntax% &8: &rSet the targeted player karma to the default one."
+        wanted:
+            default: "&a► &6/%command-syntax% &8: &rDisplays Wanted commands."
+            check: "&a► &6/%command-syntax% &8: &rDisplays your research index or that of the targeted player."
+            edit:
+                default: "&a► &6/%command-syntax% &8: &rEdit the wanted status of the specified player"
+                set: "&a► &6/%command-syntax% &8: &rApply the specified value to the target player's research status"
+                add: "&a► &6/%command-syntax% &8: &rAdds the specified value to the target player's research status"
+                remove: "&a► &6/%command-syntax% &8: &rRemove the specified value from the target player's research status"
+                reset: "&a► &6/%command-syntax% &8: &rResets the target player's search status."
+        reload: "&a► &6/%command-syntax% &8: &rReload configuration file."
+        save: "&a► &6/%command-syntax% &8: &rSaves data of connected players."
+        shop: "&a► &6/%command-syntax% &8: &rLet target or sender buy something with his/your karma"
+
 pvp:
     hit-karma-increase: "&aThat scum will not escape from that !"
     hit-karma-unchanged: "&fYou have hit someone without consequence."

@@ -1,7 +1,6 @@
 package com.rosstail.karma.commands;
 
 import com.rosstail.karma.commands.subcommands.*;
-import com.rosstail.karma.commands.subcommands.wantedcommands.WantedEditCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -28,7 +27,6 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         subCommands.add(new CalculateCommand());
         subCommands.add(new CheckCommand());
         subCommands.add(new KarmaEditCommand());
-        subCommands.add(new HelpCommand(this));
         subCommands.add(new ReloadCommand());
         subCommands.add(new SaveCommand());
         subCommands.add(new ShopCommand());

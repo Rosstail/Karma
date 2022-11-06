@@ -17,6 +17,10 @@ import java.util.List;
 
 public class KarmaWantedEditResetCommand extends SubCommand {
 
+    public KarmaWantedEditResetCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_RESET).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "reset";
@@ -29,7 +33,7 @@ public class KarmaWantedEditResetCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma wanted reset <player>";
+        return "karma wanted edit reset <player>";
     }
 
     @Override

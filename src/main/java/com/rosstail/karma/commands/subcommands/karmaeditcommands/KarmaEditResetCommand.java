@@ -21,6 +21,10 @@ import static com.rosstail.karma.commands.CommandManager.canLaunchCommand;
 
 public class KarmaEditResetCommand extends SubCommand {
 
+    public KarmaEditResetCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_RESET).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "reset";

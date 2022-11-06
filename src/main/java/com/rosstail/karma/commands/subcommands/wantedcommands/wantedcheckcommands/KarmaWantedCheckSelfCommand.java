@@ -13,6 +13,10 @@ import java.util.List;
 
 public class KarmaWantedCheckSelfCommand extends SubCommand {
 
+    public KarmaWantedCheckSelfCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_CHECK).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "check";

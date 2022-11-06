@@ -241,9 +241,11 @@ entities:
       hit-message: "HIT !"
       kill-karma-reward: 8
 
-shops: #Uses Vault only
+shops:
   list:
     first:
+      display: "&aFirst"
+      description: "&fFirst Shop. Usable by player"
       price: 1000.0
       cost-reset-overtime: false
       min-karma: 0
@@ -251,10 +253,11 @@ shops: #Uses Vault only
       commands:
         - "bc %player% bought the first item from karma shop !"
     second:
+      display: "&9First"
+      description: "&fSecond Shop. Not usable by player"
       price: -500.0
       cost-reset-overtime: false
       max-karma: 0
       sender: OTHER #PLAYER / OTHER
       commands:
         - "bc %player% bought the second item from karma shop !"
-

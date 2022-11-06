@@ -14,6 +14,10 @@ import java.util.List;
 
 public class KarmaWantedCheckOtherCommand extends SubCommand {
 
+    public KarmaWantedCheckOtherCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_CHECK).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "check";

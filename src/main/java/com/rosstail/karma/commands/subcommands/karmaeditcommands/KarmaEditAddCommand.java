@@ -22,6 +22,10 @@ import static com.rosstail.karma.commands.CommandManager.canLaunchCommand;
 
 public class KarmaEditAddCommand extends SubCommand {
 
+    public KarmaEditAddCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_ADD).replaceAll("%command-syntax%", getSyntax()), null);
+    }
+
     @Override
     public String getName() {
         return "add";
