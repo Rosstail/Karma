@@ -3,7 +3,7 @@ package com.rosstail.karma.events;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.apis.WGPreps;
-import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.customevents.*;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
@@ -125,12 +125,12 @@ public class CustomEventHandler implements Listener {
         double previousKarma = playerData.getPreviousKarma();
 
         PlayerDataManager.changePlayerTierMessage(player);
-        KarmaCommand.commandsLauncher(player, tier.getJoinCommands());
+        CommandManager.commandsLauncher(player, tier.getJoinCommands());
         if (previousTier != null) {
             if (karma > previousKarma) {
-                KarmaCommand.commandsLauncher(player, tier.getJoinOnUpCommands());
+                CommandManager.commandsLauncher(player, tier.getJoinOnUpCommands());
             } else if (karma < previousKarma) {
-                KarmaCommand.commandsLauncher(player, tier.getJoinOnDownCommands());
+                CommandManager.commandsLauncher(player, tier.getJoinOnDownCommands());
             }
         }
     }

@@ -3,7 +3,7 @@ package com.rosstail.karma;
 
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
-import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.DBInteractions;
 import com.rosstail.karma.datas.FileResourcesUtils;
 import com.rosstail.karma.datas.PlayerData;
@@ -12,6 +12,7 @@ import com.rosstail.karma.events.CustomEventHandler;
 import com.rosstail.karma.events.WorldFights;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.shops.ShopManager;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
@@ -47,6 +48,7 @@ public class Karma extends JavaPlugin implements Listener {
         AdaptMessage.initAdaptMessage(this);
         TierManager.initTierManager(this);
         TimeManager.initTimeManager(this);
+        ShopManager.initShopManager(this);
         WorldFights.initWorldFights(this);
 
         loadCustomConfig();
@@ -74,7 +76,7 @@ public class Karma extends JavaPlugin implements Listener {
         this.createPlayerDataFolder();
         
         Bukkit.getPluginManager().registerEvents(new CustomEventHandler(), this);
-        this.getCommand(getName().toLowerCase()).setExecutor(new KarmaCommand());
+        this.getCommand(getName().toLowerCase()).setExecutor(new CommandManager());
 
         this.updateDataTimer = new Timer();
         int delay = Math.max(1, ConfigData.getConfigData().saveDelay);
@@ -146,6 +148,7 @@ public class Karma extends JavaPlugin implements Listener {
         WorldFights.getWorldFights().setEnabledWorlds();
         TierManager.getTierManager().setupTiers();
         TimeManager.getTimeManager().setupTimes();
+        ShopManager.getShopManager().setupShops();
     }
 
     public YamlConfiguration getCustomConfig() {

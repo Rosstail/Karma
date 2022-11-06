@@ -240,3 +240,21 @@ entities:
       hit-karma-reward: 3
       hit-message: "HIT !"
       kill-karma-reward: 8
+
+shops: #Uses Vault only
+  list:
+    first:
+      price: 1000.0
+      cost-reset-overtime: false
+      min-karma: 0
+      sender: PLAYER #PLAYER / OTHER
+      commands:
+        - "bc %player% bought the first item from karma shop !"
+    second:
+      price: -500.0
+      cost-reset-overtime: false
+      max-karma: 0
+      sender: OTHER #PLAYER / OTHER
+      commands:
+        - "bc %player% bought the second item from karma shop !"
+

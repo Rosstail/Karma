@@ -3,7 +3,7 @@ package com.rosstail.karma.events;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.apis.WGPreps;
-import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
@@ -44,13 +44,13 @@ public class Fights {
         String expression;
 
         if (event instanceof PlayerDeathEvent) {
-            KarmaCommand.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
+            CommandManager.commandsLauncher(attacker, victim, victimData.getTier().getKilledCommands());
 
             String path = configData.killedByTierPath;
 
             path = adaptMessage.adapt(victim, path, PlayerType.VICTIM.getText());
             path = adaptMessage.adapt(attacker, path, PlayerType.ATTACKER.getText());
-            KarmaCommand.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
+            CommandManager.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
 
             expression = configData.pvpKillRewardExpression;
         } else {
@@ -102,10 +102,10 @@ public class Fights {
         double reward;
         if (event instanceof EntityDeathEvent) {
             reward = config.getInt("entities.list." + entityName + ".kill-karma-reward");
-            KarmaCommand.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".kill-commands"));
+            CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".kill-commands"));
         } else if (event instanceof EntityDamageByEntityEvent) {
             reward = config.getInt("entities.list." + entityName + ".hit-karma-reward");
-            KarmaCommand.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".hit-commands"));
+            CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".hit-commands"));
         } else {
             return;
         }

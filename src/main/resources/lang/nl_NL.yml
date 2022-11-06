@@ -19,6 +19,12 @@ permission-denied: "[Karma] &cJe hebt geen toegang tot de %permission% permissie
 wrong-value: "&c[Karma] Je moet een getal opgeven. Voorbeeld : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] Te weinig argumenten"
 saved-data: "[Karma] {#00DDCD}Saved data of %number% players"
+shop:
+    list:
+        header: "&b====== &6KARMA SHOP &b======"
+        line: " &6> &9%karma_shop_name% &8: &f%karma_shop_description% &8| &a%karma_shop_price%"
+    success: "&aTransaction successful."
+    failure: "&cYou can't afford the shop"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (speler) &8: &rWeergeeft de karma en tier van de gegeven speler of jezelf wanneer leeg gelaten"

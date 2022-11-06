@@ -12,62 +12,55 @@ commands:
   karma:
     description: Karma plugin by Rosstail
     usage: /karma
-    permission: karma
+    permission: karma.command
     permission-message: You don't have permission !
 
 permissions:
-  karma:
+  karma.command:
     default: true
-  karma.help:
+  karma.command.help:
     default: true
-  karma.self:
+  karma.command.shop.self:
     default: true
-  karma.other:
+  karma.command.shop.other:
     default: op
-  karma.set:
-    default: op
-  karma.add:
-    default: op
-  karma.remove:
-    default: op
-  karma.reset:
-    default: op
-  karma.calculate:
-    default: op
-  karma.wanted.self:
+  karma.command.check.self:
     default: true
-  karma.wanted.other:
+  karma.command.check.other:
     default: op
-  karma.wanted.set:
+  karma.command.edit:
     default: op
-  karma.wanted.add:
+  karma.command.calculate:
     default: op
-  karma.wanted.remove:
+  karma.command.check.save:
     default: op
-  karma.wanted.reset:
+  karma.command.wanted.self:
+    default: true
+  karma.command.wanted.other:
     default: op
-  karma.save:
+  karma.command.wanted.edit:
     default: op
   karma.immune:
     default: false
+  karma.command.*:
+    default: op
+    description: Gives all commands permissions
+    children:
+      karma.command: true
+      karma.command.calculate: true
+      karma.command.help: true
+      karma.command.check.self: true
+      karma.command.check.other: true
+      karma.command.shop.self: true
+      karma.command.shop.other: true
+      karma.command.edit: true
+      karma.command.save: true
+      karma.command.wanted.self: true
+      karma.command.wanted.other: true
+      karma.command.wanted.edit: true
   karma.*:
     default: false
     description: Gives all karma plugin permissions
     children:
-      karma: true
-      karma.help: true
-      karma.self: true
-      karma.other: true
-      karma.set: true
-      karma.add: true
-      karma.remove: true
-      karma.reset: true
-      karma.calculate: true
-      karma.wanted.self: true
-      karma.wanted.other: true
-      karma.wanted.set: true
-      karma.wanted.add: true
-      karma.wanted.remove: true
-      karma.wanted.reset: true
-      karma.save: false
-      karma.immune: false
+      karma.command.*: true
+      karma.immune: true

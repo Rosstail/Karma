@@ -19,6 +19,12 @@ permission-denied: "[Karma] &cNon hai i permessi : %permission% !"
 wrong-value: "&c[Karma] Devi indicare un numero. Esempio : &f\"/karma add Melito 15\"&c."
 too-few-arguments: "&c[Karma] Pochi argomenti"
 saved-data: "[Karma] {#00DDCD}Saved data of %number% players"
+shop:
+    list:
+        header: "&b====== &6KARMA SHOP &b======"
+        line: " &6> &9%karma_shop_name% &8: &f%karma_shop_description% &8| &a%karma_shop_price%"
+    success: "&aTransaction successful."
+    failure: "&cYou can't afford the shop"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (player) &8: &rMostra il karma e il Tier del Player selezionato"

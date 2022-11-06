@@ -19,6 +19,12 @@ permission-denied: "[Karma] &cVous n'avez pas la permission %permission% !"
 wrong-value: "&c[Karma] Vous devez renseigner un nombre. Exemple : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] Trop peu d'arguments"
 saved-data: "[Karma] {#00DDCD}Les données de %number% ont été sauvegardées"
+shop:
+    list:
+        header: "&b====== &6 BOUTIQUE KARMA &b======"
+        line: " &6> &9%karma_shop_name% &8: &f%karma_shop_description% &8| &e%karma_shop_price%"
+    success: "&aTransaction effectuée"
+    failure: "&cTransaction échouée"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (joueur) &8: &rAffiche votre karma et votre alignement ou ceux du joueur ciblé."

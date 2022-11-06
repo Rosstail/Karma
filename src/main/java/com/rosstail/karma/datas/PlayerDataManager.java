@@ -2,7 +2,7 @@ package com.rosstail.karma.datas;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.commands.KarmaCommand;
+import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerOverTimeTriggerEvent;
@@ -113,7 +113,7 @@ public class PlayerDataManager {
                     newKarma = decreaseLimit;
                 }
 
-                KarmaCommand.commandsLauncher(player, ConfigData.getConfigData().overtimeDecreaseCommands);
+                CommandManager.commandsLauncher(player, ConfigData.getConfigData().overtimeDecreaseCommands);
             }
         }
         if (increaseValue > 0) {
@@ -124,7 +124,7 @@ public class PlayerDataManager {
                     newKarma = increaseLimit;
                 }
 
-                KarmaCommand.commandsLauncher(player, ConfigData.getConfigData().overtimeIncreaseCommands);
+                CommandManager.commandsLauncher(player, ConfigData.getConfigData().overtimeIncreaseCommands);
             }
         }
 

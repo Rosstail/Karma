@@ -17,9 +17,16 @@ permission-denied: "[Karma] &cYou don't have %permission% permission !"
 wrong-value: "&c[Karma] You must indicate a number. Example : &f\"/karma add Notch 15\"&c."
 too-few-arguments: "&c[Karma] Too few arguments"
 saved-data: "[Karma] #00DDCDSaved data of %number% players"
+shop:
+    list:
+        header: "&b====== &6KARMA SHOP &b======"
+        line: " &6> &9%karma_shop_name% &8: &f%karma_shop_description% &8| &a%karma_shop_price%"
+    success: "&aTransaction successful."
+    failure: "&cYou can't afford the shop"
 help:
     - "&b====== &6KARMA HELP &b======"
     - "&6/karma check (player) &8: &rDisplays targeted player karma and tier or sender by default"
+    - "&6/karma shop (shop) (player) &8: &rLet target or sender buy something with his/your karma"
     - "&6/karma set [player] [value] &8: &rSet the karma of targeted player to specified value"
     - "&6/karma add [player] [value] &8: &rAdd the specified value to the targeted player's karma"
     - "&6/karma remove [player] [value] &8: &rsubstract the specified value from the targeted player karma"
