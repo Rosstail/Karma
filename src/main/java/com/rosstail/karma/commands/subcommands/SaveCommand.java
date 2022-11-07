@@ -17,7 +17,7 @@ import java.util.Map;
 public class SaveCommand extends SubCommand {
 
     public SaveCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SAVE).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SAVE).replaceAll("%syntax%", getSyntax()), null);
     }
     @Override
     public String getName() {

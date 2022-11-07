@@ -30,26 +30,26 @@ shop:
   help:
     header: "&b====== &6카르마 도움말 &b======"
     list:
-      calculate: "&a► &6/%command-syntax% &8: &r주어진 식을 계산합니다."
-      check: "&a► &6/%command-syntax% &8: &r해당 플레이어의 카르마 수치와 등급을 확인합니다"
+      calculate: "&a► &6/%syntax% &8: &r주어진 식을 계산합니다."
+      check: "&a► &6/%syntax% &8: &r해당 플레이어의 카르마 수치와 등급을 확인합니다"
       edit:
-        default: "&a► &6/%command-syntax% &8: &rEdit karma of the specified player"
-        set: "&a► &6/%command-syntax% &8: &r해당 플레이어의 카르마수치를 지정합니다."
-        add: "&a► &6/%command-syntax% &8: &r해당 플레이어의 카르마수치에 값을 추가합니다."
-        remove: "&a► &6/%command-syntax% &8: &r해당 플레이어의 카르마수치에서 값을 차감합니다."
-        reset: "&a► &6/%command-syntax% &8: &r해당 플레이어의 카르마수치를 기본값으로 되돌립니다."
+        default: "&a► &6/%syntax% &8: &rEdit karma of the specified player"
+        set: "&a► &6/%syntax% &8: &r해당 플레이어의 카르마수치를 지정합니다."
+        add: "&a► &6/%syntax% &8: &r해당 플레이어의 카르마수치에 값을 추가합니다."
+        remove: "&a► &6/%syntax% &8: &r해당 플레이어의 카르마수치에서 값을 차감합니다."
+        reset: "&a► &6/%syntax% &8: &r해당 플레이어의 카르마수치를 기본값으로 되돌립니다."
       wanted:
-        default: "&a► &6/%command-syntax% &8: &rDisplays Wanted commands."
-        check: "&a► &6/%command-syntax% &8: &rDisplays your research index or that of the targeted player."
+        default: "&a► &6/%syntax% &8: &rDisplays Wanted commands."
+        check: "&a► &6/%syntax% &8: &rDisplays your research index or that of the targeted player."
         edit:
-          default: "&a► &6/%command-syntax% &8: &rEdit the wanted status of the specified player"
-          set: "&a► &6/%command-syntax% &8: &rApply the specified value to the target player's research status"
-          add: "&a► &6/%command-syntax% &8: &rAdds the specified value to the target player's research status"
-          remove: "&a► &6/%command-syntax% &8: &rRemove the specified value from the target player's research status"
-          reset: "&a► &6/%command-syntax% &8: &rResets the target player's search status."
-      reload: "&a► &6/%command-syntax% &8: &r설정파일을 다시 불러옵니다."
-      save: "&a► &6/%command-syntax% &8: &rSaves data of connected players."
-      shop: "&a► &6/%command-syntax% &8: &rLet target or sender buy something with his/your karma"
+          default: "&a► &6/%syntax% &8: &rEdit the wanted status of the specified player"
+          set: "&a► &6/%syntax% &8: &rApply the specified value to the target player's research status"
+          add: "&a► &6/%syntax% &8: &rAdds the specified value to the target player's research status"
+          remove: "&a► &6/%syntax% &8: &rRemove the specified value from the target player's research status"
+          reset: "&a► &6/%syntax% &8: &rResets the target player's search status."
+      reload: "&a► &6/%syntax% &8: &r설정파일을 다시 불러옵니다."
+      save: "&a► &6/%syntax% &8: &rSaves data of connected players."
+      shop: "&a► &6/%syntax% &8: &rLet target or sender buy something with his/your karma"
 
 pvp:
   hit-karma-increase: "&aThat scum will not escape from that !"

@@ -14,12 +14,20 @@ public class HelpCommand extends SubCommand {
 
     public HelpCommand(final CommandManager manager) {
         subCommands = manager.getSubCommands();
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_HEADER).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null,
+                LangManager.getMessage(LangMessage.HELP_HEADER)
+                        .replaceAll("%syntax%", getSyntax())
+                        .replaceAll("%permission%", getPermission())
+                , null);
     }
 
     public HelpCommand(final SubCommand subCommand) {
         subCommands = subCommand.getSubCommands();
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_HEADER).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null,
+                LangManager.getMessage(LangMessage.HELP_HEADER)
+                        .replaceAll("%syntax%", getSyntax())
+                        .replaceAll("%permission%", getPermission())
+                , null);
     }
 
     @Override

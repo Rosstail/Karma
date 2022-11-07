@@ -22,7 +22,7 @@ public class WantedCommand extends SubCommand {
     public WantedCommand() {
         subCommands.add(new WantedCheckCommand());
         subCommands.add(new WantedEditCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override

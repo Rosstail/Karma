@@ -23,7 +23,7 @@ public class WantedEditCommand extends SubCommand {
         subCommands.add(new KarmaWantedEditAddCommand());
         subCommands.add(new KarmaWantedEditRemoveCommand());
         subCommands.add(new KarmaWantedEditResetCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override

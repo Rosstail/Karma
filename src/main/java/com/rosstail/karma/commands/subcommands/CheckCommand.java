@@ -15,7 +15,7 @@ import java.util.List;
 public class CheckCommand extends SubCommand {
 
     public CheckCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
         subCommands.add(new CheckSelfCommand());
         subCommands.add(new CheckOtherCommand());
     }

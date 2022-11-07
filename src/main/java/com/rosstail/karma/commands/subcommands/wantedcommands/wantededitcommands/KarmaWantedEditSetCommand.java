@@ -22,7 +22,7 @@ import java.util.List;
 public class KarmaWantedEditSetCommand extends SubCommand {
 
     public KarmaWantedEditSetCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_SET).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override

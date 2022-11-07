@@ -21,7 +21,7 @@ public class CalculateCommand extends SubCommand {
     public CalculateCommand() {
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CALCULATE).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CALCULATE).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override

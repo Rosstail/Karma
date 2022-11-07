@@ -23,7 +23,7 @@ import java.util.List;
 public class KarmaWantedEditRemoveCommand extends SubCommand {
 
     public KarmaWantedEditRemoveCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_REMOVE).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_REMOVE).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override
