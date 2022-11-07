@@ -12,6 +12,7 @@ import com.rosstail.karma.shops.ShopManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import sun.security.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,10 +59,9 @@ public class KarmaShopBuySelfCommand extends SubCommand {
         if (ShopManager.getShopManager().getShops().containsKey(shopName)) {
             Shop shop = ShopManager.getShopManager().getShops().get(shopName);
             if (shop.getSendType() != SendType.CONSOLE) {
-                System.out.println(shop.getSendType() +"  " + SendType.CONSOLE);
                 shop.handle(((Player) sender).getPlayer());
             } else {
-                AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_FAILURE), null);
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_FAILURE), null));
             }
         } else {
             AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_NOT_EXIST), null);

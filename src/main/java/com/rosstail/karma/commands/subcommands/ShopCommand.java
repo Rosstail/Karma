@@ -10,7 +10,6 @@ import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.shops.Shop;
 import com.rosstail.karma.shops.ShopManager;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -37,7 +36,7 @@ public class ShopCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma shop <shopname>";
+        return "karma shop buy <shopname>";
     }
 
     @Override
