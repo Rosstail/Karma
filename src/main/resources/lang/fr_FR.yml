@@ -30,26 +30,26 @@ shop:
 help:
     header: "&b====== &6AIDE KARMA &b======"
     list:
-        calculate: "&a► &6/%command-syntax% &8: &rCalcule une expression donnée."
-        check: "&a► &6/%command-syntax% &8: &rAffiche votre karma et votre alignement ou ceux du joueur ciblé."
+        calculate: "&a► &6/%syntax% &8: &rCalcule une expression donnée."
+        check: "&a► &6/%syntax% &8: &rAffiche votre karma et votre alignement ou ceux du joueur ciblé."
         edit:
-            default: "&a► &6/%command-syntax% &8: &rÉdite le karma du joueur ciblé"
-            set: "&a► &6/%command-syntax% &8: &rApplique la valeur spécifiée au karma du joueur ciblé"
-            add: "&a► &6/%command-syntax% &8: &rAjoute la valeur spécifiée au karma du joueur ciblé"
-            remove: "&a► &6/%command-syntax% &8: &rSoustrait la valeur indiquée du karma du joueur ciblé"
-            reset: "&a► &6/%command-syntax% &8: &rRéinitialise le karma du joueur ciblé."
+            default: "&a► &6/%syntax% &8: &rÉdite le karma du joueur ciblé"
+            set: "&a► &6/%syntax% &8: &rApplique la valeur spécifiée au karma du joueur ciblé"
+            add: "&a► &6/%syntax% &8: &rAjoute la valeur spécifiée au karma du joueur ciblé"
+            remove: "&a► &6/%syntax% &8: &rSoustrait la valeur indiquée du karma du joueur ciblé"
+            reset: "&a► &6/%syntax% &8: &rRéinitialise le karma du joueur ciblé."
         wanted:
-            default: "&a► &6/%command-syntax% &8: &rAfficher les commandes de statut de recherche."
-            check: "&a► &6/%command-syntax% &8: &rAffiche vos informations de statut de recherche ou celles du joueur ciblé."
+            default: "&a► &6/%syntax% &8: &rAfficher les commandes de statut de recherche."
+            check: "&a► &6/%syntax% &8: &rAffiche vos informations de statut de recherche ou celles du joueur ciblé."
             edit:
-                default: "&a► &6/%command-syntax% &8: &rÉdite le statut de recherche du joueur ciblé."
-                set: "&a► &6/%command-syntax% &8: &rApplique la valeur spécifiée au statut de recherche du joueur ciblé"
-                add: "&a► &6/%command-syntax% &8: &rAjoute la valeur spécifiée au statut de recherche du joueur ciblé"
-                remove: "&a► &6/%command-syntax% &8: &rRetire la valeur spécifiée au statut de recherche du joueur ciblé"
-                reset: "&a► &6/%command-syntax% &8: &rRéinitialise le statut de recherche du joueur ciblé."
-        reload: "&a► &6/%command-syntax% &8: &rRecharge le fichier de configuration."
-        save: "&a► &6/%command-syntax% &8: &rForce la sauvegarde des données des joueurs connectés."
-        shop: "&a► &6/%command-syntax% &8: &rAchetez des services avec du Karma."
+                default: "&a► &6/%syntax% &8: &rÉdite le statut de recherche du joueur ciblé."
+                set: "&a► &6/%syntax% &8: &rApplique la valeur spécifiée au statut de recherche du joueur ciblé"
+                add: "&a► &6/%syntax% &8: &rAjoute la valeur spécifiée au statut de recherche du joueur ciblé"
+                remove: "&a► &6/%syntax% &8: &rRetire la valeur spécifiée au statut de recherche du joueur ciblé"
+                reset: "&a► &6/%syntax% &8: &rRéinitialise le statut de recherche du joueur ciblé."
+        reload: "&a► &6/%syntax% &8: &rRecharge le fichier de configuration."
+        save: "&a► &6/%syntax% &8: &rForce la sauvegarde des données des joueurs connectés."
+        shop: "&a► &6/%syntax% &8: &rAchetez des services avec du Karma."
 
 pvp:
     hit-karma-increase: "&aCe salaud ne s'en sortira pas !"

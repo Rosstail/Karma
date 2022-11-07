@@ -22,7 +22,7 @@ public class KarmaEditCommand extends SubCommand {
         subCommands.add(new KarmaEditAddCommand());
         subCommands.add(new KarmaEditRemoveCommand());
         subCommands.add(new KarmaEditResetCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override

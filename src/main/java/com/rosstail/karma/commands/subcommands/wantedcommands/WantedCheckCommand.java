@@ -23,7 +23,7 @@ public class WantedCheckCommand extends SubCommand {
     public WantedCheckCommand() {
         subCommands.add(new KarmaWantedCheckSelfCommand());
         subCommands.add(new KarmaWantedCheckOtherCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override

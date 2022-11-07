@@ -17,7 +17,7 @@ import java.util.List;
 public class ReloadCommand extends SubCommand {
 
     public ReloadCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_RELOAD).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_RELOAD).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override

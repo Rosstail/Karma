@@ -249,7 +249,7 @@ shops:
       price: 1000.0
       cost-reset-overtime: false
       min-karma: 1000
-      sender: PLAYER #PLAYER / OTHER
+      sender: PLAYER #PLAYER / CONSOLE / BOTH
       commands:
         - "bc %player% bought the first item from karma shop !"
     second:
@@ -258,6 +258,6 @@ shops:
       price: -500.0
       cost-reset-overtime: false
       max-karma: -500
-      sender: CONSOLE #PLAYER / OTHER
+      sender: CONSOLE #PLAYER / CONSOLE / BOTH
       commands:
         - "bc %player% bought the second item from karma shop !"

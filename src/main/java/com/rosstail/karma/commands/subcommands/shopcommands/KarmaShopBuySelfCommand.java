@@ -20,7 +20,7 @@ import java.util.List;
 public class KarmaShopBuySelfCommand extends SubCommand {
 
     public KarmaShopBuySelfCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%command-syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override
