@@ -54,7 +54,7 @@ public class KarmaWantedEditSetCommand extends SubCommand {
         Player player;
         Timestamp value;
         try {
-            String playerName = args[2];
+            String playerName = args[3];
             player = Bukkit.getPlayerExact(playerName);
             if (player == null || !player.isOnline()) {
                 CommandManager.disconnectedPlayer(sender);
@@ -63,6 +63,7 @@ public class KarmaWantedEditSetCommand extends SubCommand {
             String expression;
             ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
             expressionList.remove("wanted");
+            expressionList.remove("edit");
             expressionList.remove("set");
             expressionList.remove(playerName);
             AdaptMessage.timeRegexAdapt(expressionList);
@@ -87,10 +88,10 @@ public class KarmaWantedEditSetCommand extends SubCommand {
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        if (args.length <= 3) {
+        if (args.length <= 4) {
             return null;
         }
-        if (args.length <= 4) {
+        if (args.length <= 5) {
             ArrayList<String> expressions = new ArrayList<>();
             expressions.add(ConfigData.getConfigData().wantedDurationExpression);
             expressions.add(ConfigData.getConfigData().wantedMaxDurationExpression);
