@@ -50,7 +50,7 @@ public class KarmaWantedEditResetCommand extends SubCommand {
         Player player;
         Timestamp value;
         try {
-            String playerName = args[2];
+            String playerName = args[3];
             player = Bukkit.getPlayerExact(playerName);
             if (player == null || !player.isOnline()) {
                 CommandManager.disconnectedPlayer(sender);
