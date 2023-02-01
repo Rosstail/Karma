@@ -20,28 +20,68 @@ permissions:
     default: true
   karma.command.help:
     default: true
-  karma.command.shop.self:
-    default: true
-  karma.command.shop.other:
-    default: op
-  karma.command.check.self:
-    default: true
-  karma.command.check.other:
-    default: op
   karma.command.edit:
     default: op
   karma.command.calculate:
     default: op
-  karma.command.check.save:
-    default: op
-  karma.command.wanted.self:
-    default: true
-  karma.command.wanted.other:
-    default: op
-  karma.command.wanted.edit:
+  karma.command.save:
     default: op
   karma.immune:
     default: false
+
+  karma.command.check:
+    default: true
+  karma.command.check.self:
+    default: true
+  karma.command.check.other:
+    default: op
+  karma.command.check.*:
+    default: op
+    children:
+      karma.command.check: true
+      karma.command.check.self: true
+      karma.command.check.other: true
+
+  karma.command.shop:
+    default: true
+  karma.command.shop.self:
+    default: true
+  karma.command.shop.other:
+    default: op
+  karma.command.shop.*:
+    default: op
+    description: Gives all shop commands permission
+    children:
+      karma.command.shop: true
+      karma.command.shop.self: true
+      karma.command.shop.other: true
+
+
+  karma.command.wanted:
+    default: true
+  karma.command.wanted.check:
+    default: true
+  karma.command.wanted.check.self:
+    default: true
+  karma.command.wanted.check.other:
+    default: op
+  karma.command.wanted.check.*:
+    default: op
+    description: Gives all wanted check commands permission
+    children:
+      karma.command.wanted.check: true
+      karma.command.wanted.check.self: true
+      karma.command.wanted.check.other: true
+  karma.command.wanted.edit:
+    default: op
+  karma.command.wanted.*:
+    default: op
+    description: Gives all wanted check commands permission
+    children:
+      karma.command.wanted: true
+      karma.command.wanted.check.*: true
+      karma.command.wanted.edit: true
+
   karma.command.*:
     default: op
     description: Gives all commands permissions
@@ -49,15 +89,11 @@ permissions:
       karma.command: true
       karma.command.calculate: true
       karma.command.help: true
-      karma.command.check.self: true
-      karma.command.check.other: true
-      karma.command.shop.self: true
-      karma.command.shop.other: true
       karma.command.edit: true
       karma.command.save: true
-      karma.command.wanted.self: true
-      karma.command.wanted.other: true
-      karma.command.wanted.edit: true
+      karma.command.check.*: true
+      karma.command.shop.*: true
+      karma.command.wanted.*: true
   karma.*:
     default: false
     description: Gives all karma plugin permissions
