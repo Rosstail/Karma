@@ -9,10 +9,8 @@ import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.shops.SendType;
 import com.rosstail.karma.shops.Shop;
 import com.rosstail.karma.shops.ShopManager;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import sun.security.util.Debug;
 
 import java.util.ArrayList;
 import java.util.List;
