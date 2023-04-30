@@ -74,7 +74,7 @@ wanted:
         own: "[Karma] You are currently %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
         other: "[Karma] %player% status is %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
     edit:
-        set-wanted: "[Karma] &9%player% &rwanted time set to% karma_player_wanted_time_display%. It is now% karma_player_wanted_status%"
+        set-wanted: "[Karma] &9%player% &rwanted time set to %karma_player_wanted_time_display%. It is now %karma_player_wanted_status%"
         add-wanted: "[Karma] &aAdded wanted time to &9%player%&r for %karma_player_wanted_time_display% and is now %karma_player_wanted_status%"
         remove-wanted: "[Karma] &cReduced wanted time for &9%player% &rto %karma_player_wanted_time_display% and is now %karma_player_wanted_status%"
         reset-wanted: "[Karma]&9%player% &ris now fully %karma_player_wanted_status% (and always has been!)."

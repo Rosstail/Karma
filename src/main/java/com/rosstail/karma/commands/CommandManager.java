@@ -126,7 +126,6 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
     private static void placeCommands(Player player, String command) {
         command = AdaptMessage.getAdaptMessage().adapt(player, command, PlayerType.PLAYER.getText());
-
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 
         String regex = PlayerType.PLAYER.getText();

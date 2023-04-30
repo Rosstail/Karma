@@ -6,6 +6,7 @@ import com.rosstail.karma.lang.AdaptMessage;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -18,12 +19,12 @@ import java.util.stream.Collectors;
 public class FileResourcesUtils {
 
     public static void main(String folder, Karma plugin) throws IOException {
-
         FileResourcesUtils app = new FileResourcesUtils();
+        String pluginFolderPath = (plugin.getDataFolder() + "/" + folder).replaceAll(" ", "%20");
 
         // Sample 3 - read all files from a resources folder (JAR version)
         try {
-            File pluginFolder = new File(plugin.getDataFolder() + "/" + folder);
+            File pluginFolder = new File(pluginFolderPath);
             if (!pluginFolder.exists()) {
                 pluginFolder.mkdir();
                 AdaptMessage.print("Creating " + pluginFolder.getName() + " folder.", AdaptMessage.prints.OUT);
@@ -75,7 +76,7 @@ public class FileResourcesUtils {
     // Get all paths from a folder that inside the JAR file
     private List<Path> getPathsFromResourceJAR(String folder)
             throws URISyntaxException, IOException {
-
+        String folderPath = folder.replaceAll(" ", "%20");
         List<Path> result;
 
         // get path of the current running JAR
@@ -83,19 +84,19 @@ public class FileResourcesUtils {
                 .getCodeSource()
                 .getLocation()
                 .toURI()
-                .getPath();
+                .getPath().replaceAll(" ", "%20");
         //System.out.println("JAR Path :" + jarPath);
 
         // file walks JAR
         URI uri = new URI("jar", "file:" + jarPath, null);
         try (FileSystem fs = FileSystems.newFileSystem(uri, Collections.emptyMap())) {
-            result = Files.walk(fs.getPath(folder))
+
+            result = Files.walk(fs.getPath(URLEncoder.encode(folderPath, "UTF-8")))
                     .filter(Files::isRegularFile)
                     .collect(Collectors.toList());
         }
 
         return result;
-
     }
 
     // print input stream
