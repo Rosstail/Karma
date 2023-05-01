@@ -56,7 +56,7 @@ public class AdaptMessage {
                 if (titles.length > 1) {
                     subTitle = titles[1];
                 }
-                sendTitle(player, title.trim(), subTitle.trim());
+                sendTitle(player, title.trim(), subTitle != null ? subTitle.trim() : null);
             } else if (message.startsWith("%msg-actionbar%")) {
                 sendActionBar(player, message.replace("%msg-actionbar%", "").trim());
             } else if (message.startsWith("%msg%")) {
@@ -86,6 +86,7 @@ public class AdaptMessage {
 
         if (player != null) {
             message = message.replaceAll("%" + playerType + "%", player.getName());
+            String playerPluginPlaceholder = "%" + pluginName + "_" + playerType + "_";
             if (!player.hasMetadata("NPC")) {
                 PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
                 double playerKarma = playerData.getKarma();
@@ -107,24 +108,24 @@ public class AdaptMessage {
                     shortStatus = LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT);
                 }
 
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(playerKarma, '.'));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_karma%", decimalFormat(playerPreviousKarma, '.'));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_diff_karma%", decimalFormat(playerKarma - playerPreviousKarma, '.'));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier%", playerTier.getName());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier%", playerPreviousTier.getName());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier_display%", playerTier.getDisplay());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_tier_short_display%", playerTier.getShortDisplay());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_display%", playerPreviousTier.getDisplay());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_previous_tier_short_display%", playerPreviousTier.getShortDisplay());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_status%", status);
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_status_short%", shortStatus);
+                message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(playerKarma, '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "previous_karma%", decimalFormat(playerPreviousKarma, '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "diff_karma%", decimalFormat(playerKarma - playerPreviousKarma, '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "tier%", playerTier.getName());
+                message = message.replaceAll(playerPluginPlaceholder + "previous_tier%", playerPreviousTier.getName());
+                message = message.replaceAll(playerPluginPlaceholder + "tier_display%", playerTier.getDisplay());
+                message = message.replaceAll(playerPluginPlaceholder + "tier_short_display%", playerTier.getShortDisplay());
+                message = message.replaceAll(playerPluginPlaceholder + "previous_tier_display%", playerPreviousTier.getDisplay());
+                message = message.replaceAll(playerPluginPlaceholder + "previous_tier_short_display%", playerPreviousTier.getShortDisplay());
+                message = message.replaceAll(playerPluginPlaceholder + "wanted_status%", status);
+                message = message.replaceAll(playerPluginPlaceholder + "wanted_status_short%", shortStatus);
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time%", String.valueOf(wantedTimeStamp.getTime()));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_display%", simpleDateFormat.format(wantedTimeStamp.getTime()));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay%", String.valueOf(wantedTime));
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_wanted_time_delay_display%", countDownFormat(wantedTime));
+                message = message.replaceAll(playerPluginPlaceholder + "wanted_time%", String.valueOf(wantedTimeStamp.getTime()));
+                message = message.replaceAll(playerPluginPlaceholder + "wanted_time_display%", simpleDateFormat.format(wantedTimeStamp.getTime()));
+                message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay%", String.valueOf(wantedTime));
+                message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay_display%", countDownFormat(wantedTime));
             } else {
-                message = message.replaceAll("%" + pluginName + "_" + playerType + "_karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble(), '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble(), '.'));
             }
         }
         message = message.replaceAll("%timestamp%", String.valueOf(System.currentTimeMillis()));

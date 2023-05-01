@@ -38,7 +38,7 @@ public class KarmaShopBuyOtherCommand extends SubCommand {
 
     @Override
     public String getPermission() {
-        return "karma.command.shop.self";
+        return "karma.command.shop.other";
     }
 
     @Override

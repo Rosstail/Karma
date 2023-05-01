@@ -65,7 +65,7 @@ tiers:
         sheriff: -150
       commands:
         join-commands:
-          - "broadcast &f%attacker% is now the most wanted %karma_player_tier_display% &r."
+          - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
         join-on-down-commands:
           - "player %msg-title% {#FF0000}&lWANTED
           %msg-subtitle%&cEverybody is now trying to kill you."

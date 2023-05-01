@@ -116,7 +116,7 @@ public class PlayerData {
             PlayerWantedPeriodRefreshEvent event = new PlayerWantedPeriodRefreshEvent(player, Cause.OTHER, true);
             Bukkit.getPluginManager().callEvent(event);
 
-            player.sendMessage(AdaptMessage.getAdaptMessage().adapt(player, LangManager.getMessage(LangMessage.WANTED_CONNECT_REFRESH), PlayerType.PLAYER.getText()));
+            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, LangManager.getMessage(LangMessage.WANTED_CONNECT_REFRESH), PlayerType.PLAYER.getText()));
         }
     }
 
