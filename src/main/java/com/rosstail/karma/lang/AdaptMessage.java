@@ -129,6 +129,7 @@ public class AdaptMessage {
             }
         }
         message = message.replaceAll("%timestamp%", String.valueOf(System.currentTimeMillis()));
+        message = message.replaceAll("%now%", String.valueOf(System.currentTimeMillis()));
 
         message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
         if (Integer.parseInt(Bukkit.getVersion().split("\\.")[1].replaceAll("\\)", "")) >= 16) {
@@ -276,29 +277,35 @@ public class AdaptMessage {
         }
     }
 
-    public static void timeRegexAdapt(ArrayList<String> expressionList) {
-        expressionList.forEach(s -> {
-            //Days
-            if (s.matches("[0-9]*d")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("d", "")) * 86400000));
-            }
-            //Hours
-            if (s.matches("[0-9]*h")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("h", "")) * 3600000));
-            }
-            //minutes
-            if (s.matches("[0-9]*m")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("m", "")) * 60000));
-            }
-            //seconds
-            if (s.matches("[0-9]*s")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("s", "")) * 1000));
-            }
-        });
+    public static long calculateDuration(Player player, String expression) {
+        Pattern pattern = Pattern.compile("(\\d+)d(\\d+)h(\\d+)m(\\d+)s(\\d+)ms");
+        Matcher matcher = pattern.matcher(expression.replaceAll(" ", ""));
+        int days = 0;
+        int hours = 0;
+        int minutes = 0;
+        int seconds = 0;
+        int milliSeconds = 0;
+        if (matcher.find()) {
+            days = Integer.parseInt(matcher.group(1));
+            hours = Integer.parseInt(matcher.group(2));
+            minutes = Integer.parseInt(matcher.group(3));
+            seconds = Integer.parseInt(matcher.group(4));
+            milliSeconds = Integer.parseInt(matcher.group(5));
+        }
+        long totalTimeMs = days * 24 * 60 * 60 * 1000L
+                + hours * 60 * 60 * 1000L
+                + minutes * 60 * 1000L
+                + seconds * 1000L
+                + milliSeconds;
 
+        if (expression.contains("%now%") || expression.contains("%timestamp%")) {
+            totalTimeMs += System.currentTimeMillis();
+        }
+        if (expression.contains("%player_wanted_time%")) {
+            PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+            totalTimeMs += Math.max(playerData.getWantedTime(), System.currentTimeMillis());
+        }
+
+        return totalTimeMs;
     }
 }

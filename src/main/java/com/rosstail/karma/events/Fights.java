@@ -178,9 +178,9 @@ public class Fights {
         }
 
         if (isGuilty) {
-            String expression = configData.wantedDurationExpression;
+            String expression = "(" + configData.wantedDurationExpression + ")";
             if (attackerLastWanted < System.currentTimeMillis()) {
-                expression = expression.replaceAll("%karma_player_wanted_time%", "%timestamp%");
+                expression = expression.replaceAll("%karma_player_wanted_time%", "%now%");
             }
             expression = AdaptMessage.getAdaptMessage().adapt(attacker, expression, PlayerType.PLAYER.getText());
             Timestamp timestamp = new Timestamp((long) ExpressionCalculator.eval(expression));

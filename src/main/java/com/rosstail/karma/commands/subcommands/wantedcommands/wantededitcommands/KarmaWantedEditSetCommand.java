@@ -18,6 +18,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class KarmaWantedEditSetCommand extends SubCommand {
 
@@ -66,12 +68,11 @@ public class KarmaWantedEditSetCommand extends SubCommand {
             expressionList.remove("edit");
             expressionList.remove("set");
             expressionList.remove(playerName);
-            AdaptMessage.timeRegexAdapt(expressionList);
-            expression = String.join(" ", expressionList);
-            expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.PLAYER.getText());
-            value = new Timestamp((long) ExpressionCalculator.eval(expression));
+            expression = String.join(" ", expressionList).trim();
 
-            PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, value, Cause.COMMAND);
+            long duration = AdaptMessage.calculateDuration(player, expression);
+
+            PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, new Timestamp(duration), Cause.COMMAND);
             tryWantedChange(playerWantedChangeEvent, player, LangMessage.SET_WANTED);
 
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {

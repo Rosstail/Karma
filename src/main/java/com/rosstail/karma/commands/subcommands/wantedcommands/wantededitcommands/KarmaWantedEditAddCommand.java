@@ -67,12 +67,12 @@ public class KarmaWantedEditAddCommand extends SubCommand {
             expressionList.remove("edit");
             expressionList.remove("add");
             expressionList.remove(playerName);
-            AdaptMessage.timeRegexAdapt(expressionList);
             expression = String.join(" ", expressionList);
-            expression = AdaptMessage.getAdaptMessage().adapt(player, expression, PlayerType.PLAYER.getText());
-            value = new Timestamp(PlayerDataManager.getPlayerDataMap().get(player).getWantedTimeStamp().getTime() + (long) ExpressionCalculator.eval(expression));
 
-            PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, value, Cause.COMMAND);
+            long baseDuration = PlayerDataManager.getPlayerDataMap().get(player).getWantedTimeStamp().getTime();
+            long addDuration = AdaptMessage.calculateDuration(player, expression);
+
+            PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, new Timestamp(baseDuration + addDuration), Cause.COMMAND);
             tryWantedChange(playerWantedChangeEvent, player, LangMessage.ADD_WANTED);
 
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
