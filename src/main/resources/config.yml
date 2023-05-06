@@ -194,8 +194,8 @@ pvp:
     enable: true
     countdown-on-disconnect: true
     #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
-    duration: "%player_wanted_time% 0d 0h 5m 0s 0ms"
-    max-duration: "%now% 0d 0h 0m 0s 0ms"
+    duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
+    max-duration: "%now% 8h" #compatible with: d h m s ms
     conditions:
       on-karma-gain: false
       on-karma-unchanged: false

@@ -53,7 +53,6 @@ public class KarmaWantedEditAddCommand extends SubCommand {
         }
 
         Player player;
-        Timestamp value;
         try {
             String playerName = args[3];
             player = Bukkit.getPlayerExact(playerName);

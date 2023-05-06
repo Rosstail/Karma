@@ -15,12 +15,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -278,25 +276,19 @@ public class AdaptMessage {
     }
 
     public static long calculateDuration(Player player, String expression) {
-        Pattern pattern = Pattern.compile("(\\d+)d(\\d+)h(\\d+)m(\\d+)s(\\d+)ms");
-        Matcher matcher = pattern.matcher(expression.replaceAll(" ", ""));
-        int days = 0;
-        int hours = 0;
-        int minutes = 0;
-        int seconds = 0;
-        int milliSeconds = 0;
-        if (matcher.find()) {
-            days = Integer.parseInt(matcher.group(1));
-            hours = Integer.parseInt(matcher.group(2));
-            minutes = Integer.parseInt(matcher.group(3));
-            seconds = Integer.parseInt(matcher.group(4));
-            milliSeconds = Integer.parseInt(matcher.group(5));
+        List<String> matches = Arrays.asList("(\\d+)ms", "(\\d+)s", "(\\d+)m", "(\\d+)h", "(\\d+)d");
+        List<Integer> ints = Arrays.asList(1, 1000, 60, 60, 24);
+
+        int multiplier = 1;
+        long totalTimeMs = 0;
+        for (int i = 0; i < matches.size(); i++) {
+            Pattern pattern = Pattern.compile(matches.get(i));
+            multiplier *= ints.get(i);
+            Matcher matcher = pattern.matcher(expression.replaceAll(" ", ""));
+            if (matcher.find()) {
+                totalTimeMs += (long) Integer.parseInt(String.valueOf(matcher.group(1))) * multiplier;
+            }
         }
-        long totalTimeMs = days * 24 * 60 * 60 * 1000L
-                + hours * 60 * 60 * 1000L
-                + minutes * 60 * 1000L
-                + seconds * 1000L
-                + milliSeconds;
 
         if (expression.contains("%now%") || expression.contains("%timestamp%")) {
             totalTimeMs += System.currentTimeMillis();
