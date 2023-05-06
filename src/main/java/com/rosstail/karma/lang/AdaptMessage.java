@@ -15,12 +15,10 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,6 +127,7 @@ public class AdaptMessage {
             }
         }
         message = message.replaceAll("%timestamp%", String.valueOf(System.currentTimeMillis()));
+        message = message.replaceAll("%now%", String.valueOf(System.currentTimeMillis()));
 
         message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
         if (Integer.parseInt(Bukkit.getVersion().split("\\.")[1].replaceAll("\\)", "")) >= 16) {
@@ -276,29 +275,29 @@ public class AdaptMessage {
         }
     }
 
-    public static void timeRegexAdapt(ArrayList<String> expressionList) {
-        expressionList.forEach(s -> {
-            //Days
-            if (s.matches("[0-9]*d")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("d", "")) * 86400000));
-            }
-            //Hours
-            if (s.matches("[0-9]*h")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("h", "")) * 3600000));
-            }
-            //minutes
-            if (s.matches("[0-9]*m")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("m", "")) * 60000));
-            }
-            //seconds
-            if (s.matches("[0-9]*s")) {
-                expressionList.set(expressionList.indexOf(s),
-                        String.valueOf(Long.parseLong(s.replaceAll("s", "")) * 1000));
-            }
-        });
+    public static long calculateDuration(Player player, String expression) {
+        List<String> matches = Arrays.asList("(\\d+)ms", "(\\d+)s", "(\\d+)m", "(\\d+)h", "(\\d+)d");
+        List<Integer> ints = Arrays.asList(1, 1000, 60, 60, 24);
 
+        int multiplier = 1;
+        long totalTimeMs = 0;
+        for (int i = 0; i < matches.size(); i++) {
+            Pattern pattern = Pattern.compile(matches.get(i));
+            multiplier *= ints.get(i);
+            Matcher matcher = pattern.matcher(expression.replaceAll(" ", ""));
+            if (matcher.find()) {
+                totalTimeMs += (long) Integer.parseInt(String.valueOf(matcher.group(1))) * multiplier;
+            }
+        }
+
+        if (expression.contains("%now%") || expression.contains("%timestamp%")) {
+            totalTimeMs += System.currentTimeMillis();
+        }
+        if (expression.contains("%player_wanted_time%")) {
+            PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+            totalTimeMs += Math.max(playerData.getWantedTime(), System.currentTimeMillis());
+        }
+
+        return totalTimeMs;
     }
 }

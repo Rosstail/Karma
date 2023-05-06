@@ -105,6 +105,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         }
         if (e instanceof NumberFormatException) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.WRONG_VALUE), null));
+            e.printStackTrace();
         }
     }
 

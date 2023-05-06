@@ -185,17 +185,17 @@ times:
 
 pvp:
   # You can make your own expression, any error will lead to a result of 0.
-  hit-reward-expression: "(-1 * (%karma_victim_karma% + 200) / 50)"
-  kill-reward-expression: "(-1 * (%karma_victim_karma% + 200) / 10)"
+  hit-reward-expression: "-1 * (%karma_victim_karma% + 200) / 50"
+  kill-reward-expression: "-1 * (%karma_victim_karma% + 200) / 10"
   messages-delay:
     hit: 5
     kill: 10
   wanted: #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is wanted too)
     enable: true
     countdown-on-disconnect: true
-    #%karma_player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
-    duration: "(%karma_player_wanted_time% + (300 * 1000))" #delay in milliseconds.
-    max-duration: "(%timestamp% + (3600 * 1000))"
+    #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
+    duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
+    max-duration: "%now% 8h" #compatible with: d h m s ms
     conditions:
       on-karma-gain: false
       on-karma-unchanged: false
@@ -208,6 +208,13 @@ pvp:
       innocent:
         on-karma-gain: false
         on-karma-loss: true
+    commands:
+      enter:
+        - "bc %player% is now WANTED"
+      refresh:
+        - "bc %player% is STILL WANTED"
+      exit:
+        - "bc %player% is now INNOCENT"
 
 entities:
   messages-delay:

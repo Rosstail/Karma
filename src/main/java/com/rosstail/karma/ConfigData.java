@@ -3,6 +3,7 @@ package com.rosstail.karma;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConfigData {
@@ -57,6 +58,9 @@ public class ConfigData {
     public final String wantedDurationExpression;
     public final String wantedMaxDurationExpression;
 
+    public final ArrayList<String> enterWantedCommands = new ArrayList<>();
+    public final ArrayList<String> refreshWantedCommands = new ArrayList<>();
+    public final ArrayList<String> leaveWantedCommands = new ArrayList<>();
 
     ConfigData(FileConfiguration config) {
         debugMode = config.getBoolean("general.debug-mode");
@@ -116,6 +120,9 @@ public class ConfigData {
         cancelWantedKarmaLoss = config.getBoolean("pvp.wanted.cancel-karma-change.wanted.on-karma-loss", false);
         cancelInnocentKarmaGain = config.getBoolean("pvp.wanted.cancel-karma-change.innocent.on-karma-gain", false);
         cancelInnocentKarmaLoss = config.getBoolean("pvp.wanted.cancel-karma-change.innocent.on-karma-loss", true);
+        enterWantedCommands.addAll(config.getStringList("pvp.wanted.commands.enter"));
+        refreshWantedCommands.addAll(config.getStringList("pvp.wanted.commands.refresh"));
+        leaveWantedCommands.addAll(config.getStringList("pvp.wanted.commands.exit"));
     }
 
     public static void init(FileConfiguration config) {

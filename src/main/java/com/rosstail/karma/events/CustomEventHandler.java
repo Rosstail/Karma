@@ -151,7 +151,6 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeFirstDelay);
-
         PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player);
         Bukkit.getPluginManager().callEvent(hasResetEvent);
     }
@@ -161,8 +160,7 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         Timestamp duration = event.getTimestamp();
         String wantedMaxDurationExp = ConfigData.getConfigData().wantedMaxDurationExpression;
-        Timestamp durationMaxTimeStamp = new Timestamp((long) ExpressionCalculator.eval(
-                AdaptMessage.getAdaptMessage().adapt(player, wantedMaxDurationExp, PlayerType.PLAYER.getText())));
+        Timestamp durationMaxTimeStamp = new Timestamp(AdaptMessage.calculateDuration(player, wantedMaxDurationExp));
         if (duration.compareTo(durationMaxTimeStamp) > 0) {
             duration = durationMaxTimeStamp;
         }
@@ -198,6 +196,7 @@ public class CustomEventHandler implements Listener {
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         String message = LangManager.getMessage(LangMessage.WANTED_ENTER);
 
+        CommandManager.commandsLauncher(player, ConfigData.getConfigData().enterWantedCommands);
         playerData.setWantedToken(true);
         if (message != null) {
             adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
@@ -210,6 +209,7 @@ public class CustomEventHandler implements Listener {
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
         playerData.setWantedToken(true);
+        CommandManager.commandsLauncher(player, ConfigData.getConfigData().refreshWantedCommands);
         if (message != null) {
             AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
         }
@@ -222,6 +222,7 @@ public class CustomEventHandler implements Listener {
 
         playerData.setWantedToken(false);
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
+        CommandManager.commandsLauncher(player, ConfigData.getConfigData().leaveWantedCommands);
         if (message != null) {
             AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
         }
