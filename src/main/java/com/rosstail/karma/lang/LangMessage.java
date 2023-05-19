@@ -62,12 +62,18 @@ public enum LangMessage {
     CONFIG_RELOAD("reload");
 
     private final String text;
+    private final String displayText;
 
     LangMessage(String text) {
         this.text = text;
+        this.displayText = AdaptMessage.getAdaptMessage().adapt(null, this.text, null);
     }
 
     String getText() {
         return this.text;
+    }
+
+    public String getDisplayText() {
+        return displayText;
     }
 }

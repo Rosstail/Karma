@@ -31,22 +31,63 @@ worlds:
   worlds:
     - world
 
-overtime: #Automatically increase or decrease karma over time
-  active: false
-  countdown-on-disconnect: true #apply overtime of disconnected players upon reconnection
-  first-delay: 60 #first occurrence in seconds after a karma change.
-  next-delay: 10 #every occurrence in seconds after the first one
-  values:
-    decrease:
-      value: 5
-      limit: 0
+overtime:
+  enable: true
+  loops:
+    #loopName: #name it however you want
+    #  timers:
+    #    first: <long> # First timer, generally longer or equal to the NEXT.
+    #    next: <long>  # Timer after first occurence. Generally shorter or equal
+    #  requirements:
+    #    karma:
+    #      minimum: <double> #Ignored if empty
+    #      maximum: <double> #ignored if empty
+    #    online: <boolean> #true by default
+    #    offline: <boolean> #false by default
+    #  amount: <double> #0 by default. If offline is true, applies for every delays reached
+    #  commands: <String[]> #ignored if empty. If offline is true, applies only once on reconnection.
+    online-citizen:
+      timers:
+        first: 3600
+        next: 1800
+      requirements:
+        karma:
+          minimum: 10000
+      amount: 100
       commands:
-        - "player %msg-actionbar% {#DD0000}You lose 5 karma from the overtime"
-    increase:
-      value: 5
-      limit: 0
+        - "bc Removed 100 karma to online %player% (online only, hourly then mid-hourly)."
+    offline-citizen:
+      timers:
+        first: 43200
+      requirements:
+        online: false
+        offline: true
+        karma:
+          minimum: 0
+      amount: -2250
       commands:
-        - "player %msg-actionbar% {#87CC72}You won 5 karma from the overtime"
+        - "bc Removed %karma_player_diff_karma% karma to %player% (offline only, daily)."
+    online-criminal:
+      timers:
+        first: 3600
+        next: 1800
+      requirements:
+        karma:
+          maximum: -4500
+      amount: 250
+      commands:
+        - "bc Added 250 karma to %player% (online only, hourly then mid-hourly)."
+    offline-criminal:
+      timers:
+        first: 43200
+      requirements:
+        online: false
+        offline: true
+        karma:
+          maximum: -4500
+      amount: 1500
+      commands:
+        - "bc Added 1500 karma to %player% (offline only, daily)."
 
 tiers:
   none-display: "&f[&8None&f]&r"

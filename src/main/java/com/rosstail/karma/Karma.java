@@ -109,7 +109,7 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
-        if (ConfigData.getConfigData().isOvertimeActive || ConfigData.getConfigData().wantedEnable) {
+        if (ConfigData.getConfigData().overtimeActive || ConfigData.getConfigData().wantedEnable) {
             PlayerData.stopTimer(PlayerDataManager.getScheduler());
         }
         PlayerDataManager.saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerDataManager.getPlayerDataMap());
@@ -139,7 +139,7 @@ public class Karma extends JavaPlugin implements Listener {
         ConfigData.init(getCustomConfig());
         initDefaultLocales();
 
-        if (ConfigData.getConfigData().isOvertimeActive || ConfigData.getConfigData().wantedEnable) {
+        if (ConfigData.getConfigData().overtimeActive || ConfigData.getConfigData().wantedEnable) {
             PlayerDataManager.setupScheduler();
         } else {
             PlayerData.stopTimer(PlayerDataManager.getScheduler());

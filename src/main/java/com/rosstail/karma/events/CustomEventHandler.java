@@ -12,6 +12,7 @@ import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
@@ -48,7 +49,9 @@ public class CustomEventHandler implements Listener {
 
         playerData.setKarma(event.getValue());
         if (event.isOverTimeReset()) {
-            playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeFirstDelay);
+            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+                playerData.setOverTimeStamp(s, overtimeLoop.firstTimer);
+            });
         }
 
         PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeReset(), event);
@@ -140,8 +143,8 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         long nextDelay = event.getNextDelay();
-        PlayerDataManager.triggerOverTime(playerData, event.getAmount());
-        playerData.setOverTimeStamp(nextDelay);
+        PlayerDataManager.triggerOverTime(playerData, event.getOvertimeLoopName(), event.getAmount());
+        playerData.setOverTimeStamp(event.getOvertimeLoopName(), nextDelay);
         PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
         Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
     }
@@ -150,7 +153,8 @@ public class CustomEventHandler implements Listener {
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-        playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeFirstDelay);
+        OvertimeLoop loop = ConfigData.getConfigData().overtimeLoopMap.get(event.getOvertimeLoopName());
+        playerData.setOverTimeStamp(event.getOvertimeLoopName(), loop.firstTimer);
         PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player);
         Bukkit.getPluginManager().callEvent(hasResetEvent);
     }

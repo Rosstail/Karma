@@ -108,6 +108,7 @@ public class AdaptMessage {
 
                 message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(playerKarma, '.'));
                 message = message.replaceAll(playerPluginPlaceholder + "previous_karma%", decimalFormat(playerPreviousKarma, '.'));
+
                 message = message.replaceAll(playerPluginPlaceholder + "diff_karma%", decimalFormat(playerKarma - playerPreviousKarma, '.'));
                 message = message.replaceAll(playerPluginPlaceholder + "tier%", playerTier.getName());
                 message = message.replaceAll(playerPluginPlaceholder + "previous_tier%", playerPreviousTier.getName());
