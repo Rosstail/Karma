@@ -52,10 +52,10 @@ overtime:
         next: 1800
       requirements:
         karma:
-          minimum: 10000
-      amount: 100
+          minimum: 500
+      amount: -50
       commands:
-        - "bc Removed 100 karma to online %player% (online only, hourly then mid-hourly)."
+        - "bc Removed 50 karma to online %player% (online only, hourly then mid-hourly)."
     offline-citizen:
       timers:
         first: 43200
@@ -63,8 +63,8 @@ overtime:
         online: false
         offline: true
         karma:
-          minimum: 0
-      amount: -2250
+          minimum: 500
+      amount: -250
       commands:
         - "bc Removed %karma_player_diff_karma% karma to %player% (offline only, daily)."
     online-criminal:
@@ -73,10 +73,10 @@ overtime:
         next: 1800
       requirements:
         karma:
-          maximum: -4500
-      amount: 250
+          maximum: -1500
+      amount: 25
       commands:
-        - "bc Added 250 karma to %player% (online only, hourly then mid-hourly)."
+        - "bc Added 25 karma to %player% (online only, hourly then mid-hourly)."
     offline-criminal:
       timers:
         first: 43200
@@ -84,8 +84,8 @@ overtime:
         online: false
         offline: true
         karma:
-          maximum: -4500
-      amount: 1500
+          maximum: -1500
+      amount: 125
       commands:
         - "bc Added %karma_player_diff_karma% karma to %player% (offline only, daily)."
 
