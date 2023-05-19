@@ -87,7 +87,7 @@ overtime:
           maximum: -4500
       amount: 1500
       commands:
-        - "bc Added 1500 karma to %player% (offline only, daily)."
+        - "bc Added %karma_player_diff_karma% karma to %player% (offline only, daily)."
 
 tiers:
   none-display: "&f[&8None&f]&r"
