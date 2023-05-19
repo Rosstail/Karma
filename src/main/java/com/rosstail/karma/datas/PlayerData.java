@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Gonna be used to optimize the research of values
@@ -31,7 +33,7 @@ public class PlayerData {
     private Tier previousTier;
     private long lastUpdate = 0;
     private Timestamp wantedTimeStamp = new Timestamp(0L);
-    private Timestamp overTimeStamp = new Timestamp(0L);
+    private Map<String, Timestamp> overTimeStampMap = new HashMap<>();
     private boolean wantedToken;
 
     PlayerData(Player player) {
@@ -80,23 +82,28 @@ public class PlayerData {
             loadPlayerDataFile();
         }
 
-        long nextDelay = ConfigData.getConfigData().overtimeFirstDelay;
+        if (ConfigData.getConfigData().overtimeActive) {
 
-        if (ConfigData.getConfigData().isOvertimeActive) {
-            if (ConfigData.getConfigData().isOvertimeCountdownOnDisconnect) {
+            ConfigData.getConfigData().overtimeLoopMap.forEach((overtimeName, overtimeLoop) -> {
                 long deltaUpdates = System.currentTimeMillis() - lastUpdate;
-                deltaUpdates -= ConfigData.getConfigData().overtimeFirstDelay;
-                if (deltaUpdates >= 0f) {
-                    int occurrence = (int) (Math.floorDiv(deltaUpdates, ConfigData.getConfigData().overtimeNextDelay) + 1);
-                    nextDelay = deltaUpdates % ConfigData.getConfigData().overtimeNextDelay;
-                    new PlayerOverTimeTriggerEvent(player, occurrence, nextDelay);
-                    Bukkit.getPluginManager().callEvent(new PlayerOverTimeTriggerEvent(player, occurrence, nextDelay));
-                } else {
-                    nextDelay = -deltaUpdates;
+                deltaUpdates -= overtimeLoop.firstTimer;
+
+                long delay = overtimeLoop.firstTimer;
+                if (overtimeLoop.offline) {
+                    int occurrenceAmount = (int) (Math.floorDiv(deltaUpdates, overtimeLoop.nextTimer) + 1);
+                    delay = deltaUpdates % overtimeLoop.nextTimer;
+
+                    if (occurrenceAmount > 0) {
+                        Bukkit.getPluginManager().callEvent(new PlayerOverTimeTriggerEvent(player, overtimeName, occurrenceAmount, delay));
+                    } else {
+                        delay = -deltaUpdates;
+                    }
                 }
-            }
+
+                setOverTimeStamp(overtimeName, delay);
+
+            });
         }
-        setOverTimeStamp(nextDelay);
     }
 
     public void loadPlayerDataFile() {
@@ -199,8 +206,16 @@ public class PlayerData {
         return Math.max(0L, wantedTimeStamp.getTime() - System.currentTimeMillis());
     }
 
-    public long getOverTime() {
-        return overTimeStamp.getTime() - System.currentTimeMillis();
+    public Map<String, Timestamp> getOvertimeStampMap() {
+        return overTimeStampMap;
+    }
+
+    public long getOvertime(String name) {
+        return overTimeStampMap.get(name).getTime() - System.currentTimeMillis();
+    }
+
+    public boolean isOverTime(String name) {
+        return getOvertime(name) <= 0L;
     }
 
     public static void stopTimer(int scheduler) {
@@ -219,10 +234,6 @@ public class PlayerData {
 
     public boolean isWanted() {
         return getWantedTime() > 0L;
-    }
-
-    public boolean isOverTime() {
-        return getOverTime() <= 0L;
     }
 
     public long getLastUpdate() {
@@ -245,7 +256,7 @@ public class PlayerData {
         return playerFile;
     }
 
-    public void setOverTimeStamp(long value) {
-        this.overTimeStamp = new Timestamp(System.currentTimeMillis() + value);
+    public void setOverTimeStamp(String name, long value) {
+        overTimeStampMap.put(name, new Timestamp(System.currentTimeMillis() + value));
     }
 }

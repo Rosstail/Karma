@@ -11,6 +11,7 @@ import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.overtime.OvertimeLoop;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -84,54 +85,60 @@ public class PlayerDataManager {
             for (PlayerData playerData : PlayerDataManager.getPlayerDataMap().values()) {
                 Player player = playerData.player;
 
-                if (ConfigData.getConfigData().isOvertimeActive && playerData.isOverTime()) {
-                    PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player, 1, ConfigData.getConfigData().overtimeFirstDelay);
-                    Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
+                if (ConfigData.getConfigData().overtimeActive) {
+                    for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
+                        String s = entry.getKey();
+                        OvertimeLoop overtimeLoop = entry.getValue();
 
-                    playerData.setOverTimeStamp(ConfigData.getConfigData().overtimeNextDelay);
+                        if (playerData.isOverTime(overtimeLoop.name)) {
+                            PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player, s, 1, overtimeLoop.firstTimer);
+                            Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
+
+                            playerData.setOverTimeStamp(s, overtimeLoop.nextTimer);
+                        }
+                    }
                 }
 
                 if (ConfigData.getConfigData().wantedEnable && playerData.isWantedToken() && !playerData.isWanted()) {
                     PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
                     Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
                 }
+
+
             }
         }, 20L, 20L);
     }
 
-    public static void triggerOverTime(PlayerData playerData, int mulitplier) {
+    public static void triggerOverTime(PlayerData playerData, String overtimeName, int multiplier) {
         Player player = playerData.player;
         double currentKarma = playerData.getKarma();
         double newKarma = currentKarma;
-        double decreaseValue = ConfigData.getConfigData().overtimeDecreaseValue * mulitplier;
-        double increaseValue = ConfigData.getConfigData().overtimeIncreaseValue * mulitplier;
-        if (decreaseValue > 0) {
-            double decreaseLimit = ConfigData.getConfigData().overtimeDecreaseLimit;
-            if (currentKarma > decreaseLimit) {
-                newKarma = currentKarma - decreaseValue;
-                if (newKarma < decreaseLimit) {
-                    newKarma = decreaseLimit;
-                }
 
-                CommandManager.commandsLauncher(player, ConfigData.getConfigData().overtimeDecreaseCommands);
-            }
+        OvertimeLoop overtimeLoop = ConfigData.getConfigData().overtimeLoopMap.get(overtimeName);
+
+        if (overtimeLoop.hasMinKarma && currentKarma <= overtimeLoop.minKarma) {
+            return;
         }
-        if (increaseValue > 0) {
-            double increaseLimit = ConfigData.getConfigData().overtimeIncreaseLimit;
-            if (currentKarma < increaseLimit) {
-                newKarma = currentKarma + increaseValue;
-                if (newKarma > increaseLimit) {
-                    newKarma = increaseLimit;
-                }
+        if (overtimeLoop.hasMaxKarma && currentKarma >= overtimeLoop.maxKarma) {
+            return;
+        }
 
-                CommandManager.commandsLauncher(player, ConfigData.getConfigData().overtimeIncreaseCommands);
+        double amount = overtimeLoop.amount;
+        if (amount != 0D) {
+            amount *= multiplier;
+            if (overtimeLoop.hasMaxKarma && currentKarma < overtimeLoop.maxKarma) {
+                newKarma = Math.min(currentKarma + amount, overtimeLoop.maxKarma);
+            } else if (overtimeLoop.hasMinKarma && currentKarma > overtimeLoop.minKarma) {
+                newKarma = Math.max(currentKarma + amount, overtimeLoop.minKarma);
             }
+
         }
 
         if (newKarma != currentKarma) {
             PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false, Cause.TIMER);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         }
+        CommandManager.commandsLauncher(player, overtimeLoop.commands);
     }
 
     public static int getScheduler() {

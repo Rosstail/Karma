@@ -141,7 +141,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
             if(identifier.equals("player_previous_karma")){
                 return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getPreviousKarma(), '.');
             }
-            if(identifier.equals("player_diff")){
+            if(identifier.equals("player_diff")) {
                 return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma() - playerData.getPreviousKarma(), '.');
             }
 

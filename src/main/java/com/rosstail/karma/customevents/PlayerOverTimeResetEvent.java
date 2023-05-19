@@ -10,14 +10,20 @@ public class PlayerOverTimeResetEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
+    private final String overtimeLoopName;
     private boolean cancelled;
 
-    public PlayerOverTimeResetEvent(Player player) {
+    public PlayerOverTimeResetEvent(Player player, String overtimeLoopName) {
         this.player = player;
+        this.overtimeLoopName = overtimeLoopName;
     }
 
     public Player getPlayer() {
         return player;
+    }
+
+    public String getOvertimeLoopName() {
+        return overtimeLoopName;
     }
 
     @Override

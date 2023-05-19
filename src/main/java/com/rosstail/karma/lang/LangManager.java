@@ -48,7 +48,7 @@ public class LangManager {
      */
     public static String getMessage(Lang lang, LangMessage message) {
         if (lang != null && lang.available()) {
-            return lang.getConfiguration().getString(message.getText());
+            return lang.getConfiguration().getString(message.getDisplayText());
         }
         return "no-lang selected";
     }

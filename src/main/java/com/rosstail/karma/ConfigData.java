@@ -1,10 +1,13 @@
 package com.rosstail.karma;
 
+import com.rosstail.karma.overtime.OvertimeLoop;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigData {
     private static ConfigData configValues;
@@ -27,16 +30,8 @@ public class ConfigData {
     public final int pveKillMessageDelay;
     public final int saveDelay;
 
-    public final boolean isOvertimeActive;
-    public final boolean isOvertimeCountdownOnDisconnect;
-    public final long overtimeFirstDelay;
-    public final long overtimeNextDelay;
-    public final double overtimeDecreaseValue;
-    public final double overtimeDecreaseLimit;
-    public final double overtimeIncreaseValue;
-    public final double overtimeIncreaseLimit;
-    public final List<String> overtimeDecreaseCommands;
-    public final List<String> overtimeIncreaseCommands;
+    public final boolean overtimeActive;
+    public final Map<String, OvertimeLoop> overtimeLoopMap = new HashMap<>();
 
     public final boolean useWorldGuard;
     public final boolean wantedEnable;
@@ -90,16 +85,13 @@ public class ConfigData {
         pvpHitRewardExpression = config.getString("pvp.hit-reward-expression");
         pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");
 
-        isOvertimeActive = config.getBoolean("overtime.active", false);
-        isOvertimeCountdownOnDisconnect = config.getBoolean("overtime.countdown-on-disconnect", true);
-        overtimeFirstDelay = config.getLong("overtime.first-delay") * 1000L;
-        overtimeNextDelay = config.getLong("overtime.next-delay") * 1000L;
-        overtimeDecreaseValue = config.getDouble("overtime.values.decrease.value");
-        overtimeDecreaseLimit = config.getDouble("overtime.values.decrease.limit");
-        overtimeDecreaseCommands = config.getStringList("overtime.values.decrease.commands");
-        overtimeIncreaseValue = config.getDouble("overtime.values.increase.value");
-        overtimeIncreaseLimit = config.getDouble("overtime.values.increase.limit");
-        overtimeIncreaseCommands = config.getStringList("overtime.values.increase.commands");
+        overtimeActive = config.getBoolean("overtime.enable", false);
+        if (overtimeActive) {
+            config.getConfigurationSection("overtime.loops").getKeys(false).forEach(s -> {
+                OvertimeLoop loop = new OvertimeLoop(config.getConfigurationSection("overtime.loops." + s));
+                overtimeLoopMap.put(s, loop);
+            });
+        }
 
         useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard", false);
         wantedEnable = config.getBoolean("pvp.wanted.enable", true);

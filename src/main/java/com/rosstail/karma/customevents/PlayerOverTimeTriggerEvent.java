@@ -1,5 +1,6 @@
 package com.rosstail.karma.customevents;
 
+import com.rosstail.karma.overtime.OvertimeLoop;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -10,6 +11,7 @@ public class PlayerOverTimeTriggerEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
+    private final String overtimeLoopName;
     private final int amount;
     private final long nextDelay;
     private boolean cancelled;
@@ -23,8 +25,9 @@ public class PlayerOverTimeTriggerEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    public PlayerOverTimeTriggerEvent(Player player, int amount, long nextDelay) {
+    public PlayerOverTimeTriggerEvent(Player player, String loopName, int amount, long nextDelay) {
         this.player = player;
+        this.overtimeLoopName = loopName;
         this.amount = amount;
         this.nextDelay = nextDelay;
         this.cancelled = false;
@@ -42,6 +45,10 @@ public class PlayerOverTimeTriggerEvent extends Event implements Cancellable {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public String getOvertimeLoopName() {
+        return overtimeLoopName;
     }
 
     public int getAmount() {
