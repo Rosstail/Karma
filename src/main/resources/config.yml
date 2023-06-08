@@ -98,7 +98,7 @@ tiers:
       short-display: "&4"
       minimum: -3000
       maximum: -1500
-      punish-wanted: false
+      punish-wanted: true
       score:
         criminal: 50
         thug: 5
