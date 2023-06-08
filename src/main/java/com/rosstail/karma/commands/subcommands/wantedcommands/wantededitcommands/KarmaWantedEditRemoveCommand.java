@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class KarmaWantedEditRemoveCommand extends SubCommand {
@@ -92,10 +93,7 @@ public class KarmaWantedEditRemoveCommand extends SubCommand {
             return null;
         }
         if (args.length <= 5) {
-            ArrayList<String> expressions = new ArrayList<>();
-            expressions.add(ConfigData.getConfigData().wantedDurationExpression);
-            expressions.add(ConfigData.getConfigData().wantedMaxDurationExpression);
-            return expressions;
+            return Collections.singletonList("0d");
         }
 
         return null;

@@ -178,7 +178,7 @@ public class DBInteractions {
             preparedStatement.setDouble(2, playerData.getPreviousKarma());
             preparedStatement.setString(3, playerData.getTier().getName());
             preparedStatement.setString(4, playerData.getPreviousTier().getName());
-            preparedStatement.setLong(5, playerData.getWantedTime());
+            preparedStatement.setLong(5, playerData.getWantedTimeLeft());
             preparedStatement.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
             preparedStatement.setString(7, UUID);
             preparedStatement.executeUpdate();

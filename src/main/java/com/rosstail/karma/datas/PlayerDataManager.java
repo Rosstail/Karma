@@ -70,7 +70,7 @@ public class PlayerDataManager {
                 playerConfig.set("previous-karma", playerData.getPreviousKarma());
                 playerConfig.set("tier", playerData.getTier().getName());
                 playerConfig.set("previous-tier", playerData.getPreviousTier().getName());
-                playerConfig.set("wanted-time", playerData.getWantedTime());
+                playerConfig.set("wanted-time", playerData.getWantedTimeLeft());
                 try {
                     playerConfig.save(playerFile);
                 } catch (IOException e) {

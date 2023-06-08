@@ -55,6 +55,7 @@ public class ConfigData {
 
     public final ArrayList<String> enterWantedCommands = new ArrayList<>();
     public final ArrayList<String> refreshWantedCommands = new ArrayList<>();
+    public final ArrayList<String> punishWantedCommands = new ArrayList<>();
     public final ArrayList<String> leaveWantedCommands = new ArrayList<>();
 
     ConfigData(FileConfiguration config) {
@@ -114,6 +115,7 @@ public class ConfigData {
         cancelInnocentKarmaLoss = config.getBoolean("pvp.wanted.cancel-karma-change.innocent.on-karma-loss", true);
         enterWantedCommands.addAll(config.getStringList("pvp.wanted.commands.enter"));
         refreshWantedCommands.addAll(config.getStringList("pvp.wanted.commands.refresh"));
+        punishWantedCommands.addAll(config.getStringList("pvp.wanted.commands.punish"));
         leaveWantedCommands.addAll(config.getStringList("pvp.wanted.commands.exit"));
     }
 

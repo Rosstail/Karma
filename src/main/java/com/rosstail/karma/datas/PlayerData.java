@@ -203,6 +203,10 @@ public class PlayerData {
     }
 
     public long getWantedTime() {
+        return wantedTimeStamp.getTime();
+    }
+
+    public long getWantedTimeLeft() {
         return Math.max(0L, wantedTimeStamp.getTime() - System.currentTimeMillis());
     }
 
@@ -233,7 +237,7 @@ public class PlayerData {
     }
 
     public boolean isWanted() {
-        return getWantedTime() > 0L;
+        return getWantedTimeLeft() > 0L;
     }
 
     public long getLastUpdate() {

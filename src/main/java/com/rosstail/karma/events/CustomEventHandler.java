@@ -220,6 +220,13 @@ public class CustomEventHandler implements Listener {
     }
 
     @EventHandler
+    public void onPlayerWantedPunishEvent(PlayerWantedPunishEvent event) {
+        Player punishedPlayer = event.getPunishedPlayer();
+        Player punisherPlayer = event.getPunisherPlayer();
+        CommandManager.commandsLauncher(punisherPlayer, punishedPlayer, ConfigData.getConfigData().punishWantedCommands);
+    }
+
+    @EventHandler
     public void onPlayerWantedPeriodEndEvent(PlayerWantedPeriodEndEvent event) {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);

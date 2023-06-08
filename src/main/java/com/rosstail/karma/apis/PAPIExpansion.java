@@ -7,7 +7,6 @@ import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
-import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
@@ -199,7 +198,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getWantedTimeStamp().getTime() - System.currentTimeMillis(), '.');
             }
             if (identifier.equals("player_wanted_time_delay_display")) {
-                long time = playerData.getWantedTime();
+                long time = playerData.getWantedTimeLeft();
                 if (time > 0f) {
                     return AdaptMessage.getAdaptMessage().countDownFormat(time);
                 }
