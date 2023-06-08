@@ -15,7 +15,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -92,7 +91,7 @@ public class AdaptMessage {
 
                 Tier playerTier = playerData.getTier();
                 Tier playerPreviousTier = playerData.getPreviousTier();
-                long wantedTime = playerData.getWantedTime();
+                long wantedTime = playerData.getWantedTimeLeft();
                 Timestamp wantedTimeStamp = playerData.getWantedTimeStamp();
 
                 String status;
@@ -296,7 +295,11 @@ public class AdaptMessage {
         }
         if (expression.contains("%player_wanted_time%")) {
             PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-            totalTimeMs += Math.max(playerData.getWantedTime(), System.currentTimeMillis());
+            if (playerData.getWantedTimeLeft() > 0L) {
+                totalTimeMs += playerData.getWantedTime();
+            } else {
+                totalTimeMs += System.currentTimeMillis();
+            }
         }
 
         return totalTimeMs;

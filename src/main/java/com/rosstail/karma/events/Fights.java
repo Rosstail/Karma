@@ -7,11 +7,13 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
+import com.rosstail.karma.customevents.PlayerWantedPunishEvent;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.timemanagement.TimeManager;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
@@ -20,6 +22,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.sql.Timestamp;
 
@@ -179,13 +182,16 @@ public class Fights {
 
         if (isGuilty) {
             String expression = "(" + configData.wantedDurationExpression + ")";
-            if (attackerLastWanted < System.currentTimeMillis()) {
-                expression = expression.replaceAll("%karma_player_wanted_time%", "%now%");
-            }
             expression = AdaptMessage.getAdaptMessage().adapt(attacker, expression, PlayerType.PLAYER.getText());
-            Timestamp timestamp = new Timestamp((long) ExpressionCalculator.eval(expression));
+            Timestamp timestamp = new Timestamp(AdaptMessage.calculateDuration(attacker, expression));
             PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(attacker, timestamp, cause);
             Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
+        } else {
+            boolean doPunishWanted = attackerData.getTier().doPunishWanted();
+            if (isVictimWanted && doPunishWanted) {
+                PlayerWantedPunishEvent playerWantedPunishEvent = new PlayerWantedPunishEvent(victim, attacker);
+                Bukkit.getPluginManager().callEvent(playerWantedPunishEvent);
+            }
         }
 
     }

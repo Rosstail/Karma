@@ -98,6 +98,7 @@ tiers:
       short-display: "&4"
       minimum: -3000
       maximum: -1500
+      punish-wanted: true
       score:
         criminal: 50
         thug: 5
@@ -120,6 +121,7 @@ tiers:
       short-display: "&5"
       minimum: -1499
       maximum: -50
+      punish-wanted: false
       score:
         criminal: 35
         citizen: -10
@@ -143,6 +145,7 @@ tiers:
       short-display: "&f"
       minimum: -49
       maximum: 500
+      punish-wanted: false
       score:
         criminal: 40
         citizen: -20
@@ -157,6 +160,7 @@ tiers:
       short-display: "&a"
       minimum: 501
       maximum: 1250
+      punish-wanted: false
       score:
         criminal: 30
         thug: 8
@@ -178,6 +182,7 @@ tiers:
       short-display: "&6"
       minimum: 1251
       maximum: 1500
+      punish-wanted: true
       score:
         criminal: 20
         thug: 5
@@ -256,6 +261,9 @@ pvp:
         - "bc %player% is STILL WANTED"
       exit:
         - "bc %player% is now INNOCENT"
+      punish:
+        - "bc %victim% has been arrested by %attacker% !"
+        - "bc Jailed now !"
 
 entities:
   messages-delay:
@@ -297,7 +305,7 @@ shops:
       price: 1000.0
       cost-reset-overtime: false
       min-karma: 1000
-      sender: PLAYER #PLAYER / CONSOLE / BOTH
+      send-by: PLAYER #PLAYER / CONSOLE / BOTH
       commands:
         - "bc %player% bought the first item from karma shop !"
     second:
@@ -306,6 +314,6 @@ shops:
       price: -500.0
       cost-reset-overtime: false
       max-karma: -500
-      sender: CONSOLE #PLAYER / CONSOLE / BOTH
+      send-by: CONSOLE #PLAYER / CONSOLE / BOTH
       commands:
         - "bc %player% bought the second item from karma shop !"

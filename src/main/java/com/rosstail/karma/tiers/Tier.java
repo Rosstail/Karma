@@ -17,6 +17,7 @@ public class Tier {
     private String shortDisplay;
     private double minKarma;
     private double maxKarma;
+    private boolean punishWanted;
     private List<String> joinCommands;
     private List<String> joinOnDownCommands;
     private List<String> joinOnUpCommands;
@@ -44,6 +45,7 @@ public class Tier {
 
         this.minKarma = section.getDouble("minimum");
         this.maxKarma = section.getDouble("maximum");
+        this.punishWanted = section.getBoolean("punish-wanted", false);
         this.joinCommands = section.getStringList("commands.join-commands");
         this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
         this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
@@ -93,6 +95,10 @@ public class Tier {
 
     public double getMaxKarma() {
         return maxKarma;
+    }
+
+    public boolean doPunishWanted() {
+        return punishWanted;
     }
 
     public List<String> getJoinCommands() {
