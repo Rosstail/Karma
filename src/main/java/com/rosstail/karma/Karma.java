@@ -4,10 +4,7 @@ package com.rosstail.karma;
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.datas.DBInteractions;
-import com.rosstail.karma.datas.FileResourcesUtils;
-import com.rosstail.karma.datas.PlayerData;
-import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.*;
 import com.rosstail.karma.events.CustomEventHandler;
 import com.rosstail.karma.events.WorldFights;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -73,6 +70,7 @@ public class Karma extends JavaPlugin implements Listener {
                 AdaptMessage.print(e.toString(), AdaptMessage.prints.ERROR);
             }
         }
+        TopFlopScoreManager.getTopFlopScoreManager().getScores();
         this.createPlayerDataFolder();
         
         Bukkit.getPluginManager().registerEvents(new CustomEventHandler(), this);

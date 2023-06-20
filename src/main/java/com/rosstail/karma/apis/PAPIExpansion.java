@@ -4,6 +4,7 @@ import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.TopFlopScoreManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -14,6 +15,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class PAPIExpansion extends PlaceholderExpansion {
     // We get an instance of the plugin later.
@@ -134,14 +139,35 @@ public class PAPIExpansion extends PlaceholderExpansion {
         if (player != null) {
             PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
             // %karma_value% here
-            if(identifier.equals("player_karma")){
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma(), '.');
+            if(identifier.startsWith("player_karma")){
+                double karma = playerData.getKarma();
+                if (identifier.contains("_abs")) {
+                    karma = Math.abs(karma);
+                }
+                if (identifier.contains("_int")) {
+                    return String.valueOf(((int) karma));
+                }
+                return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
-            if(identifier.equals("player_previous_karma")){
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getPreviousKarma(), '.');
+            if(identifier.startsWith("player_previous_karma")){
+                double karma = playerData.getPreviousKarma();
+                if (identifier.contains("_abs")) {
+                    karma = Math.abs(karma);
+                }
+                if (identifier.contains("_int")) {
+                    return String.valueOf(((int) karma));
+                }
+                return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
-            if(identifier.equals("player_diff")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma() - playerData.getPreviousKarma(), '.');
+            if(identifier.startsWith("player_diff")) {
+                double karma = playerData.getKarma() - playerData.getPreviousKarma();
+                if (identifier.contains("_abs")) {
+                    karma = Math.abs(karma);
+                }
+                if (identifier.contains("_int")) {
+                    return String.valueOf(((int) karma));
+                }
+                return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
 
             if(identifier.startsWith("player_tier")) {
@@ -215,6 +241,39 @@ public class PAPIExpansion extends PlaceholderExpansion {
                     return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT), null);
                 }
                 return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT), null);
+            }
+        }
+
+        //%karma_scoreboard_top_name_X% / %karma_scoreboard_bottom_karma_X%
+        if (identifier.startsWith("scoreboard_")) {
+            TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
+            List<AbstractMap.SimpleEntry<String, Double>> topFlopList;
+            List<String> playerNameList;
+
+            if (identifier.contains("_top_") || identifier.contains("_bottom_")) {
+                if (identifier.contains("_top_")) {
+                    topFlopList = topFlopScoreManager.getPlayerTopScoreList();
+                    playerNameList = topFlopScoreManager.getPlayerTopScoreListDisplay();
+                } else {
+                    topFlopList = topFlopScoreManager.getPlayerFlopScoreList();
+                    playerNameList = topFlopScoreManager.getPlayerFlopScoreListDisplay();
+                }
+                String indexStr = identifier.replaceAll("[^0-9]", "");
+                int index;
+                try {
+                    int max = Math.min(ConfigData.getConfigData().topScoreLimit, topFlopList.size());
+                    index = Math.max(1, Math.min(Integer.parseInt(indexStr), max));
+
+                    if (identifier.contains("_karma_")) {
+                        return AdaptMessage.getAdaptMessage().decimalFormat(topFlopList.get(index - 1).getValue(), '.');
+                    } else if (identifier.contains("_name_")) {
+                        return playerNameList.get(index - 1);
+                    }
+
+                } catch (NumberFormatException | IndexOutOfBoundsException e) {
+                    //e.printStackTrace();
+                    return identifier;
+                }
             }
         }
 

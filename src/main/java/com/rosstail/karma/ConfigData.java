@@ -12,6 +12,7 @@ import java.util.Map;
 public class ConfigData {
     private static ConfigData configValues;
 
+    public final FileConfiguration config;
     public final boolean debugMode;
 
     public final double defaultKarma;
@@ -29,6 +30,7 @@ public class ConfigData {
     public final int pveHitMessageDelay;
     public final int pveKillMessageDelay;
     public final int saveDelay;
+    public final int topScoreLimit;
 
     public final boolean overtimeActive;
     public final Map<String, OvertimeLoop> overtimeLoopMap = new HashMap<>();
@@ -59,6 +61,7 @@ public class ConfigData {
     public final ArrayList<String> leaveWantedCommands = new ArrayList<>();
 
     ConfigData(FileConfiguration config) {
+        this.config = config;
         debugMode = config.getBoolean("general.debug-mode");
 
         defaultKarma = config.getDouble("karma.default");
@@ -76,6 +79,7 @@ public class ConfigData {
         titleFadeIn = config.getInt("general.title.fade-in");
         titleStay = config.getInt("general.title.stay");
         titleFadeOut = config.getInt("general.title.fade-out");
+        topScoreLimit = config.getInt("general.topscore-limit", 10);
 
         int saveDelay = config.getInt("data-save-delay", 300);
         if (saveDelay <= 0) {

@@ -19,6 +19,7 @@ general:
   datetime-format: "yyyy-MM-dd HH:mm:ss"
   countdown-format: "{dd} {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s between {} without cap.
   debug-mode: false
+  topscore-limit: 10
 
 karma:
   default:     0
@@ -55,7 +56,7 @@ overtime:
           minimum: 500
       amount: -50
       commands:
-        - "bc Removed 50 karma to online %player% (online only, hourly then mid-hourly)."
+        - "%msg% Removed 50 karma, hourly."
     offline-citizen:
       timers:
         first: 43200
@@ -66,7 +67,7 @@ overtime:
           minimum: 500
       amount: -250
       commands:
-        - "bc Removed %karma_player_diff_karma% karma to %player% (offline only, daily)."
+        - "%msg% Removed %karma_player_diff_karma% karma, offline only and daily."
     online-criminal:
       timers:
         first: 3600
@@ -76,7 +77,7 @@ overtime:
           maximum: -1500
       amount: 25
       commands:
-        - "bc Added 25 karma to %player% (online only, hourly then mid-hourly)."
+        - "%msg% Added 25 karma. Online only, hourly then mid-hourly)."
     offline-criminal:
       timers:
         first: 43200
@@ -87,7 +88,7 @@ overtime:
           maximum: -1500
       amount: 125
       commands:
-        - "bc Added %karma_player_diff_karma% karma to %player% (offline only, daily)."
+        - "%msg% Added %karma_player_diff_karma% karma (offline only, daily)."
 
 tiers:
   none-display: "&f[&8None&f]&r"
@@ -109,7 +110,7 @@ tiers:
         join-commands:
           - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
         join-on-down-commands:
-          - "player %msg-title% {#FF0000}&lWANTED
+          - "%msg-title% {#FF0000}&lWANTED
           %msg-subtitle%&cEverybody is now trying to kill you."
         killed-commands:
           sheriff:
@@ -129,12 +130,12 @@ tiers:
         sheriff: -150
       commands:
         join-commands:
-          - "player message &fYou are now a filthy %karma_player_tier% &r."
-          - "player me &5is now in the dark side of the law."
+          - "%msg% &fYou are now a filthy %karma_player_tier% &r."
+          - "%msg% me &5is now in the dark side of the law."
         join-on-down-commands:
-          - "player message &bThe police is now hunting you."
+          - "%msg% &bThe police is now hunting you."
         join-on-up-commands:
-          - "playermessage &aKeep a low profile."
+          - "%msg% &aKeep a low profile."
         killed-commands:
           commands:
             - "jail %victim% jail %karma_victim_karma%"
@@ -153,8 +154,8 @@ tiers:
         sheriff: -150
       commands:
         join-commands:
-          - "player%msg% &fYou are a %karma_player_tier_display% &r."
-          - "player%msg-actionbar% &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
+          - "%msg% &fYou are a %karma_player_tier_display% &r."
+          - "%msg-actionbar% &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
     vigilante:
       display: "&aVigilante"
       short-display: "&a"
@@ -169,11 +170,11 @@ tiers:
         sheriff: -150
       commands:
         join-commands:
-          - "player %msg% &fYour are a %karma_player_tier_display% &r."
+          - "%msg% &fYour are a %karma_player_tier_display% &r."
         join-on-up-commands:
-          - "player%msg% &bYou can help the police now."
+          - "%msg% &bYou can help the police now."
         join-on-down-commands:
-          - "player %msg% &bYou have been demoted from the police forces."
+          - "%msg% &bYou have been demoted from the police forces."
         killed-commands:
           commands:
             - "attacker %msg% You killed a %karma_victim_tier_display%, you got %karma_attacker_diff_karma% karma"
@@ -191,9 +192,9 @@ tiers:
         sheriff: -200
       commands:
         join-commands:
-          - "player %msg% &fYour wanted level is now %karma_player_tier_display% &r."
+          - "%msg% &fYour wanted level is now %karma_player_tier_display% &r."
         join-on-up-commands:
-          - "player %msg% &bYou are got promoted from %karma_player_previous_tier_display%."
+          - "%msg% &bYou are got promoted from %karma_player_previous_tier_display%."
         killed-commands:
           commands:
             - "broadcast %victim% has been assassinated by %attacker% with %karma_attacker_previous_karma% karma before the act."
@@ -296,6 +297,36 @@ entities:
       hit-karma-reward: 3
       hit-message: "HIT !"
       kill-karma-reward: 8
+
+blocks:
+  list:
+    # https://minecraft-ids.grahamedgecombe.com/
+    # Be careful to use the blocks name, not the item (carrot for item, CARROTS for block)
+    WHEAT:
+      break:
+        data:
+          age:
+            blacklist: true
+            ages:
+              - 7
+        value: -5
+        reset-overtime: true #Don't fuck with the cultures !
+    FARMLAND:
+      place: #Using a hoe to transform dirt to farmland
+        value: 1
+    TNT:
+      place:
+        value: -100
+        reset-overtime: true #Reset all the player overtimes timers. Default to false
+      break:
+        value: 10
+    FIRE:
+      place: #place fire (flint, fireball)
+        value: -5
+        reset-overtime: true #Reset all the player overtimes timers. Default to false
+      break: #Hit fire
+        value: 2
+    
 
 shops:
   list:

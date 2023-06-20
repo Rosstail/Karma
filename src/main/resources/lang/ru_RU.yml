@@ -1,0 +1,77 @@
+by-player-only: "[Карма] Эта команда должна быть отправлена игроком."
+creating-playerdata-folder: "[Карма] &9playerdata/ папка не существует. &aСоздание&7."
+creating-player: "[Карма] &9Создание файла игрока для &a%player%&9."
+disconnected: "[Карма] &cИгрок не подключен или не существует."
+check:
+    own: "[Карма] Ваша карма &a%karma_player_karma% &rи ваш уровень &6%karma_player_tier_display%&r."
+    other: "[Карма] &6%player%'s &rкарма это &6%karma_player_karma% &rи его уровень&6%karma_player_tier_display%&r."
+edit:
+    set-karma: "[Карма] &9%player%'s &rКарма сейчас &9%karma_player_karma% &rи его уровень &9%karma_player_tier_display%&r."
+    add-karma: "[Карма] &aДобавлен &6%karma_player_diff_karma% &rКарма для &6%player% &rв общей сложности &6%karma_player_karma% &rкарма и статус %karma_player_tier_display%."
+    remove-karma: "[Карма] &cУдаленный &6%karma_player_diff_karma% &rКарма для &6%player% &rв общей сложности &6%karma_player_karma% &rкарма и статус  %karma_player_tier_display%."
+    reset-karma: "[Карма] &6%player%&r's карма сброшена. Карма: &6%karma_player_karma% &rи уровень &6%karma_player_tier_display%&r."
+tier-change: "[Карма] Вы теперь &6%karma_player_tier_display% &r!"
+calculation: "[Карма] &a%expression% &r= &b%result%"
+reload: "[Карма] Конфигурация перезагружена."
+permission-denied: "[Карма] &cУ вас нет %permission% permission !"
+wrong-value: "&c[Карма] Вы должны указать число. Пример : &f\"/karma add Notch 15\"&c."
+too-few-arguments: "&c[Карма] Слишком мало аргументов"
+saved-data: "[Карма] #00DDCDСохраненные данные %number% players"
+shop:
+    list:
+        header: "&b====== &6Кармазин &b======"
+        line: " &6> &9%karma_shop_display% &8: &f%karma_shop_description% &8| &a%karma_shop_price%"
+    success: "&aТранзакция прошла успешно."
+    failure: "&cВы не можете позволить себе магазин"
+    not-exist: "&cЭтот магазин не существует"
+help:
+    header: "&b====== &6Помогайло &b======"
+    list:
+        calculate: "&a► &6/%syntax% &8: &rВычислить заданное выражение."
+        check: "&a► &6/%syntax% &8: &rОтображает карму целевого игрока и уровень или отправителя по умолчанию"
+        edit:
+            default: "&a► &6/%syntax% &8: &rРедактировать карму указанного игрока"
+            set: "&a► &6/%syntax% &8: &rУстановить карму целевого игрока на указанное значение"
+            add: "&a► &6/%syntax% &8: &rДобавить указанное значение к карме целевого игрока"
+            remove: "&a► &6/%syntax% &8: &rВычесть указанное значение из кармы целевого игрока"
+            reset: "&a► &6/%syntax% &8: &rУстановите карму целевого игрока на карму по умолчанию."
+        wanted:
+            default: "&a► &6/%syntax% &8: &rОтображает команды розыска."
+            check: "&a► &6/%syntax% &8: &rОтображает ваш исследовательский индекс или индекс целевого игрока."
+            edit:
+                default: "&a► &6/%syntax% &8: &rИзменить статус розыска указанного игрока"
+                set: "&a► &6/%syntax% &8: &rПрименить указанное значение к исследовательскому статусу целевого игрока"
+                add: "&a► &6/%syntax% &8: &rДобавляет указанное значение к исследовательскому статусу целевого игрока."
+                remove: "&a► &6/%syntax% &8: &rУдалить указанное значение из исследовательского статуса целевого игрока"
+                reset: "&a► &6/%syntax% &8: &rСбрасывает статус поиска целевого игрока."
+        reload: "&a► &6/%syntax% &8: &rПерезагрузить файл конфигурации."
+        save: "&a► &6/%syntax% &8: &rСохраняет данные подключенных игроков."
+        shop: "&a► &6/%syntax% &8: &rПусть цель или отправитель что-то купит на свою/вашу карму"
+
+pvp:
+    hit-karma-increase: "&aЭта мразь от этого не убежит !"
+    hit-karma-unchanged: "&fВы ударили кого-то без последствий."
+    hit-karma-decrease: "&c%attacker%, ты нападаешь на честных людей !"
+    kill-karma-increase: "&b%victim% теперь закончено !"
+    kill-karma-unchanged: "{#666666}Вы убили кого-то без последствий."
+    kill-karma-decrease: "{#DD0000}&lВы убили невиновного !"
+wanted:
+    enter: "%msg-title%{#DD0000}&lВ РОЗЫСКЕ.
+    %msg-subtitle% &r&cПолиция преследует тебя !"
+    refresh: "%msg-actionbar%&cВас разыскивают."
+    connect-refresh: "%msg-title%{#DD0000}&lВ РОЗЫСКЕ.
+    %msg-subtitle% &r&cВы все еще должны быть осторожны."
+    exit: "&aВы больше не нужны активно."
+    status:
+        innocent: "&fНевиновный"
+        wanted: "&4&lВ РОЗЫСКЕ"
+        innocent-short: "&f"
+        wanted-short: "&4"
+    check:
+        own: "[Карма] Вы в настоящее время %karma_player_wanted_status% &rat %karma_player_wanted_time_display%"
+        other: "[Карма] %player% статус %karma_player_wanted_status% &rв %karma_player_wanted_time_display%"
+    edit:
+        set-wanted: "[Карма] &9%player% &rжелаемое время установлено на %karma_player_wanted_time_display%. Сейчас %karma_player_wanted_status%"
+        add-wanted: "[Карма] &aДобавлено время розыска в &9%player%&r для %karma_player_wanted_time_display% и сейчас %karma_player_wanted_status%"
+        remove-wanted: "[Карма] &cСокращение времени розыска для &9%player% &rк %karma_player_wanted_time_display% и сейчас %karma_player_wanted_status%"
+        reset-wanted: "[Карма]&9%player% &rтеперь полностью %karma_player_wanted_status% (и всегда был!)."

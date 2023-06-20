@@ -1,7 +1,6 @@
 package com.rosstail.karma.events;
 
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.customevents.*;
@@ -16,14 +15,16 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
+import org.bukkit.block.Block;
+import org.bukkit.block.data.Ageable;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.*;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
@@ -34,6 +35,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.Timestamp;
 import java.util.Collections;
+import java.util.List;
 
 public class CustomEventHandler implements Listener {
     private final AdaptMessage adaptMessage;
@@ -352,5 +354,76 @@ public class CustomEventHandler implements Listener {
                 player.sendMessage("[TEST] Karma restricted access.");
             }
         }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void OnPlayerPlaceBlock(BlockPlaceEvent event) {
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerDataManager.getSet(player);
+        Block placedBlock = event.getBlockPlaced();
+        String blockName = placedBlock.getBlockData().getMaterial().name();
+        ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".place");
+        if (section == null) {
+            return;
+        }
+
+        boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
+        List<Integer> ages = section.getIntegerList("data.age.ages");
+        if (!ages.isEmpty()) {
+            Ageable ageable = (Ageable) placedBlock.getBlockData();
+            if (ageBlackList) {
+                if (ages.contains(ageable.getAge())) {
+                    return;
+                }
+            } else {
+                if (!ages.contains(ageable.getAge())) {
+                    return;
+                }
+            }
+        }
+
+        float karma = (float) (playerData.getKarma() + section.getDouble("value"));
+        boolean resetOvertime = section.getBoolean("reset-overtime", false);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player,
+                karma,
+                resetOvertime,
+                Cause.OTHER);
+        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+    }
+
+
+    @EventHandler(ignoreCancelled = true)
+    public void OnPlayerBreakBlock(BlockBreakEvent event) {
+        Player player = event.getPlayer();
+        PlayerData playerData = PlayerDataManager.getSet(player);
+        Block brokenBlock = event.getBlock();
+        String blockName = brokenBlock.getBlockData().getMaterial().name();
+        ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".break");
+        if (section == null) {
+            return;
+        }
+
+        boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
+        List<Integer> ages = section.getIntegerList("data.age.ages");
+        if (!ages.isEmpty()) {
+            Ageable ageable = (Ageable) brokenBlock.getBlockData();
+            if (ageBlackList) {
+                if (ages.contains(ageable.getAge())) {
+                    return;
+                }
+            } else {
+                if (!ages.contains(ageable.getAge())) {
+                    return;
+                }
+            }
+        }
+
+        float karma = (float) (playerData.getKarma() + section.getDouble("value"));
+        boolean resetOvertime = section.getBoolean("reset-overtime", false);
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player,
+                karma,
+                resetOvertime,
+                Cause.OTHER);
+        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
     }
 }

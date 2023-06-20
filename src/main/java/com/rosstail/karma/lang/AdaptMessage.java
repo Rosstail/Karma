@@ -88,6 +88,7 @@ public class AdaptMessage {
                 PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
                 double playerKarma = playerData.getKarma();
                 double playerPreviousKarma = playerData.getPreviousKarma();
+                double difPlayerDiffKarma = playerKarma - playerPreviousKarma;
 
                 Tier playerTier = playerData.getTier();
                 Tier playerPreviousTier = playerData.getPreviousTier();
@@ -106,9 +107,18 @@ public class AdaptMessage {
                 }
 
                 message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(playerKarma, '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "karma_abs%", decimalFormat(Math.abs(playerKarma), '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "karma_int%", String.valueOf((int) playerKarma));
+                message = message.replaceAll(playerPluginPlaceholder + "karma_int_abs%", String.valueOf(Math.abs((int) playerKarma)));
                 message = message.replaceAll(playerPluginPlaceholder + "previous_karma%", decimalFormat(playerPreviousKarma, '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "previous_karma_abs%", decimalFormat(Math.abs(playerPreviousKarma), '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "previous_karma_int%", String.valueOf((int) playerPreviousKarma));
+                message = message.replaceAll(playerPluginPlaceholder + "previous_karma_int_abs%", String.valueOf(Math.abs((int) playerPreviousKarma)));
+                message = message.replaceAll(playerPluginPlaceholder + "diff_karma%", decimalFormat(difPlayerDiffKarma, '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "diff_karma%_abs", decimalFormat(Math.abs(difPlayerDiffKarma), '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "diff_karma_int%", String.valueOf((int) difPlayerDiffKarma));
+                message = message.replaceAll(playerPluginPlaceholder + "diff_karma_int_abs%", String.valueOf(Math.abs((int) difPlayerDiffKarma)));
 
-                message = message.replaceAll(playerPluginPlaceholder + "diff_karma%", decimalFormat(playerKarma - playerPreviousKarma, '.'));
                 message = message.replaceAll(playerPluginPlaceholder + "tier%", playerTier.getName());
                 message = message.replaceAll(playerPluginPlaceholder + "previous_tier%", playerPreviousTier.getName());
                 message = message.replaceAll(playerPluginPlaceholder + "tier_display%", playerTier.getDisplay());

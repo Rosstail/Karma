@@ -116,8 +116,7 @@ public class ExpressionCalculator {
                 }
             }.parse(); //parse Object to double before returning it
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             AdaptMessage.print("An exception as occurred during the calculation : " + expression, AdaptMessage.prints.ERROR);
         }
         return 0D;
