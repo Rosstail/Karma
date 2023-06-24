@@ -26,16 +26,25 @@ public class DBInteractions {
     public int port;
 
     private final String playerDataString;
-    private final String scoreboardString;
+    private final String scoreboardTopString;
+    private final String scoreboardBottomString;
     private final String updatePlayerDataString;
     private final String createTableString;
     private final String initPlayerDBString;
 
-    private DBInteractions(Karma plugin) {
+    public DBInteractions(Karma plugin) {
         this.plugin = plugin;
+        YamlConfiguration config = plugin.getCustomConfig();
+        host = config.getString("mysql.host");
+        database = config.getString("mysql.database");
+        username = config.getString("mysql.username");
+        password = config.getString("mysql.password");
+        port = config.getInt("mysql.port");
+
         String pluginName = plugin.getName();
         this.playerDataString = "SELECT * FROM " + pluginName + " WHERE UUID = ?";
-        this.scoreboardString =  "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".Karma ? LIMIT ?";
+        this.scoreboardTopString =  "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".Karma DESC LIMIT ?";
+        this.scoreboardBottomString =  "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".Karma ASC LIMIT ?";
         this.updatePlayerDataString = "UPDATE " + pluginName + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?," +
                 " Wanted_Time = ?, Last_Update = ? WHERE UUID = ?;";
         this.createTableString = "CREATE TABLE IF NOT EXISTS " + pluginName + " ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL," +
@@ -63,13 +72,6 @@ public class DBInteractions {
     }
 
     public void prepareTable() {
-        YamlConfiguration config = plugin.getCustomConfig();
-        host = config.getString("mysql.host");
-        database = config.getString("mysql.database");
-        username = config.getString("mysql.username");
-        password = config.getString("mysql.password");
-        port = config.getInt("mysql.port");
-
         try {
             if (checkConnection(connection) || openConnection()) {
                 setTableToDataBase(connection);
@@ -92,8 +94,9 @@ public class DBInteractions {
         synchronized (this) {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection;
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
             for (int index = 0; index < 3; index++) {
-                connection = getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, username, password);
+                connection = getConnection(url, username, password);
                 if (checkConnection(connection)) {
                     this.connection = connection;
                     return true;
@@ -142,9 +145,8 @@ public class DBInteractions {
 
 
     private void setTableToDataBase(Connection connection) throws SQLException {
-        String sql = createTableString;
         Statement statement = connection.createStatement();
-        statement.execute(sql);
+        statement.execute(createTableString);
         statement.close();
     }
 
@@ -214,13 +216,21 @@ public class DBInteractions {
         }
     }
 
-    public List<AbstractMap.SimpleEntry<String, Double>> getPlayersKarmaTop(String order, Integer limit) {
+    public void updateOfflinePlayerKarma(String uuid, double karma) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE Karma WHERE UUID = ? ");
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    public List<AbstractMap.SimpleEntry<String, Double>> getPlayersKarmaTop(Integer limit) {
         List<AbstractMap.SimpleEntry<String, Double>> playersTopList = new ArrayList<>();
 
         try {
-            PreparedStatement statement = connection.prepareStatement(scoreboardString);
-            statement.setString(1, order);
-            statement.setInt(2, limit);
+            PreparedStatement statement = connection.prepareStatement(scoreboardTopString);
+            statement.setInt(1, limit);
             ResultSet result = statement.executeQuery();
             while (result.next()) {
                 String uuid = result.getString("UUID");
@@ -236,7 +246,28 @@ public class DBInteractions {
         return playersTopList;
     }
 
-    public void closeConnexion(Connection connection) {
+    public List<AbstractMap.SimpleEntry<String, Double>> getPlayersKarmaBottom(Integer limit) {
+        List<AbstractMap.SimpleEntry<String, Double>> playersTopList = new ArrayList<>();
+
+        try {
+            PreparedStatement statement = connection.prepareStatement(scoreboardBottomString);
+            statement.setInt(1, limit);
+            ResultSet result = statement.executeQuery();
+            while (result.next()) {
+                String uuid = result.getString("UUID");
+                Double karma = result.getDouble("Karma");
+                playersTopList.add(new AbstractMap.SimpleEntry<>(uuid, karma));
+            }
+
+            result.close();
+            statement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return playersTopList;
+    }
+
+    public void closeConnexion() {
         try {
             if (connection != null && !connection.isClosed()) {
                 connection.close();

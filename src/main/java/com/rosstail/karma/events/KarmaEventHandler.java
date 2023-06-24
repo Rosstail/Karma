@@ -4,9 +4,11 @@ import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.customevents.*;
-import com.rosstail.karma.datas.DBInteractions;
+import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.datas.storage.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -243,7 +245,24 @@ public class CustomEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        String uuid = event.getPlayer().getUniqueId().toString();
+        String username = event.getPlayer().getName();
+        PlayerModel model = StorageManager.getManager().selectPlayerModel(uuid);
+        if (model == null) {
+            System.out.println("New player " + username);
+            model = new PlayerModel(uuid, username);
+            StorageManager.getManager().insertPlayerModel(model);
+        } else {
+            System.out.println("Player return " + username);
+        }
+
+
+
+        /*
         PlayerDataManager.getSet(event.getPlayer()).loadPlayerData();
+
+        PlayerDataManager.initPlayerModelToMap(event.getPlayer());
+         */
     }
 
     @EventHandler
@@ -251,6 +270,8 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
         PlayerDataManager.saveData(DBInteractions.reasons.DISCONNECT, Collections.singletonMap(player, playerData));
+
+        PlayerDataManager.removePlayerModelFromMap(player);
     }
 
     /**
