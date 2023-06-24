@@ -4,6 +4,7 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerWantedChangeEvent;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -53,7 +54,8 @@ public class KarmaWantedEditResetCommand extends SubCommand {
             String playerName = args[3];
             player = Bukkit.getPlayerExact(playerName);
             if (player == null || !player.isOnline()) {
-                CommandManager.disconnectedPlayer(sender);
+                sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[3]));
+            //CommandManager.disconnectedPlayer(sender);
                 return;
             }
             value = new Timestamp(0);

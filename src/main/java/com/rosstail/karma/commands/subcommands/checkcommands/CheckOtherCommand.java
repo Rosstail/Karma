@@ -2,11 +2,14 @@ package com.rosstail.karma.commands.subcommands.checkcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.HelpCommand;
+import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -46,12 +49,31 @@ public class CheckOtherCommand extends SubCommand {
         }
 
         Player target = Bukkit.getServer().getPlayer(args[1]);
+        PlayerModel model = null;
 
         if (target != null && target.isOnline()) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.PLAYER.getText()));
+            model = StorageManager.getManager().selectPlayerModel(target.getUniqueId().toString());
+            //sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.PLAYER.getText()));
         } else {
-            CommandManager.disconnectedPlayer(sender);
+            String uuid = PlayerDataManager.getPlayerUUIDFromName(args[1]);
+            if (uuid != null) {
+                model = StorageManager.getManager().selectPlayerModel(uuid); //READ
+            }
         }
+
+        if (model == null) {
+            sender.sendMessage("CheckOtherCommand#perform :" +
+                    "\nThis player " + args[1] + " does not exist");
+            return;
+        }
+
+        sender.sendMessage("CheckOtherCommand#perform : "
+                + "\n" + model.getUuid() + " | " + model.getUsername()
+                + "\n" + model.getKarma() + " | " + model.getPreviousKarma()
+                + "\n" + model.getTierName() + " | " + model.getPreviousTierName()
+                + "\n" + model.getWantedTimeStamp().getTime() + " | " + model.isWanted()
+                + "\n" + model.getLastUpdate()
+        );
     }
 
     @Override

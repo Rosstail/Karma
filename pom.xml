@@ -6,7 +6,7 @@
 
     <groupId>com.github.Rosstail</groupId>
     <artifactId>karma</artifactId>
-    <version>1.13.3-alpha</version>
+    <version>1.14.0-pre-alpha</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
@@ -153,6 +153,11 @@
             <artifactId>kotlin-test</artifactId>
             <version>${kotlin.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>3.12.12</version>
         </dependency>
     </dependencies>
 </project>

@@ -2,6 +2,7 @@ package com.rosstail.karma.commands.subcommands.wantedcommands.wantedcheckcomman
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -49,7 +50,8 @@ public class KarmaWantedCheckOtherCommand extends SubCommand {
         if (target != null && target.isOnline()) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.WANTED_OTHER_CHECK), PlayerType.PLAYER.getText()));
         } else {
-            CommandManager.disconnectedPlayer(sender);
+            sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[2]));
+            //CommandManager.disconnectedPlayer(sender);
         }
     }
 

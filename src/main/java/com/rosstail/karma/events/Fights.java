@@ -13,7 +13,6 @@ import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.timemanagement.TimeManager;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.LivingEntity;
@@ -22,7 +21,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.sql.Timestamp;
 
@@ -36,7 +34,7 @@ public class Fights {
     public static void pvpHandler(Player attacker, Player victim, Event event) {
         boolean isPlayerInTime = TimeManager.getTimeManager().isPlayerInTime(attacker);
         boolean doesKarmaChange = true;
-        if (isPlayerNPC(attacker) || (isPlayerNPC(victim) && !doesPlayerNPCHaveKarma(victim) || !isPlayerInTime)) {
+        if (isFakePlayer(attacker) || (isFakePlayer(victim) && !doesPlayerNPCHaveKarma(victim) || !isPlayerInTime)) {
             return;
         }
 
@@ -132,7 +130,7 @@ public class Fights {
         }
     }
 
-    public static boolean isPlayerNPC(Player player) {
+    public static boolean isFakePlayer(Player player) {
         return player.hasMetadata("NPC");
     }
 

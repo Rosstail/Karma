@@ -1,14 +1,15 @@
-package com.rosstail.karma.datas;
+package com.rosstail.karma.datas.storage;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerWantedPeriodRefreshEvent;
+import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.sql.*;
@@ -17,95 +18,39 @@ import java.util.*;
 import static java.sql.DriverManager.getConnection;
 
 public class DBInteractions {
-
-    private static DBInteractions dbInteractions;
     private final Karma plugin;
+    private static DBInteractions dbInteractions;
     private Connection connection;
 
     public String host, database, username, password;
-    public int port;
+    public short port;
 
     private final String playerDataString;
-    private final String scoreboardTopString;
-    private final String scoreboardBottomString;
     private final String updatePlayerDataString;
-    private final String createTableString;
     private final String initPlayerDBString;
 
     public DBInteractions(Karma plugin) {
         this.plugin = plugin;
-        YamlConfiguration config = plugin.getCustomConfig();
-        host = config.getString("mysql.host");
-        database = config.getString("mysql.database");
-        username = config.getString("mysql.username");
-        password = config.getString("mysql.password");
-        port = config.getInt("mysql.port");
 
-        String pluginName = plugin.getName();
-        this.playerDataString = "SELECT * FROM " + pluginName + " WHERE UUID = ?";
-        this.scoreboardTopString =  "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".Karma DESC LIMIT ?";
-        this.scoreboardBottomString =  "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".Karma ASC LIMIT ?";
-        this.updatePlayerDataString = "UPDATE " + pluginName + " SET Karma = ?, Previous_Karma = ?, Tier = ?, Previous_Tier = ?," +
-                " Wanted_Time = ?, Last_Update = ? WHERE UUID = ?;";
-        this.createTableString = "CREATE TABLE IF NOT EXISTS " + pluginName + " ( UUID varchar(40) PRIMARY KEY UNIQUE NOT NULL," +
-                " Karma double," +
-                " Previous_Karma double," +
-                " Tier varchar(50)," +
-                " Previous_Tier varchar(50)," +
-                " Wanted_Time bigint UNSIGNED DEFAULT 0," +
-                " Last_Update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);";
-        this.initPlayerDBString = "INSERT INTO " + pluginName + " (UUID, Karma, Previous_Karma, Tier, Previous_Tier, Last_Update)"
+        host = ConfigData.getConfigData().storageHost;
+        database = ConfigData.getConfigData().storageHost;
+        username = ConfigData.getConfigData().storageHost;
+        password = ConfigData.getConfigData().storageHost;
+        port = ConfigData.getConfigData().storagePort;
+
+        String pluginName = plugin.getName().toLowerCase();
+        this.playerDataString = "SELECT * FROM " + pluginName + " WHERE uuid = ?";
+        this.updatePlayerDataString = "UPDATE " + pluginName + " SET karma = ?, previous_karma = ?, tier = ?, previous_tier = ?," +
+                " wanted_time = ?, last_update = ? WHERE uuid = ?;";
+        this.initPlayerDBString = "INSERT INTO " + pluginName + " (uuid, karma, previous_karma, tier, previous_tier, last_update)"
                 + "VALUES (?, ?, ?, ?, ?, ?);";
-        try {
-            this.openConnection();
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     public enum reasons {
         CONNECT,
-        TIMED,
         DISCONNECT,
         COMMAND,
         SERVER_CLOSE
-    }
-
-    public void prepareTable() {
-        try {
-            if (checkConnection(connection) || openConnection()) {
-                setTableToDataBase(connection);
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private boolean checkConnection(Connection connection) {
-        try {
-            return (connection.isValid(5));
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    private boolean openConnection() throws SQLException, ClassNotFoundException {
-        synchronized (this) {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection;
-            String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
-            for (int index = 0; index < 3; index++) {
-                connection = getConnection(url, username, password);
-                if (checkConnection(connection)) {
-                    this.connection = connection;
-                    return true;
-                }
-            }
-
-        }
-        System.out.println("Could not open connection to database after 3 attempted tries.");
-        return false;
     }
 
     public boolean getPlayerData(Player player) {
@@ -117,15 +62,15 @@ public class DBInteractions {
             statement.setString(1, UUID);
             ResultSet result = statement.executeQuery();
             if (result.next()) {
-                playerData.setKarma(result.getDouble("Karma"));
-                playerData.setPreviousKarma(result.getDouble("Previous_Karma"));
-                playerData.setTier(TierManager.getTierManager().getTiers().get(result.getString("Tier")));
-                playerData.setPreviousTier(TierManager.getTierManager().getTiers().get(result.getString("Previous_Tier")));
-                playerData.setLastUpdate(result.getTimestamp("Last_Update").getTime());
-                long wantedTime = result.getLong("Wanted_Time");
+                playerData.setKarmaBetweenLimits(result.getDouble("karma"));
+                playerData.setPreviousKarma(result.getDouble("previous_karma"));
+                playerData.setTier(TierManager.getTierManager().getTiers().get(result.getString("tier")));
+                playerData.setPreviousTier(TierManager.getTierManager().getTiers().get(result.getString("previous_tier")));
+                playerData.setLastUpdate(result.getTimestamp("last_update").getTime());
+                long wantedTime = result.getLong("wanted_time");
                 playerData.setWantedTimeStamp(new Timestamp(
                         (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect
-                                ? result.getTimestamp("Last_Update").getTime()
+                                ? result.getTimestamp("last_update").getTime()
                                 : System.currentTimeMillis())
                                 + wantedTime));
                 reached = true;
@@ -141,13 +86,6 @@ public class DBInteractions {
             Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
         }
         return reached;
-    }
-
-
-    private void setTableToDataBase(Connection connection) throws SQLException {
-        Statement statement = connection.createStatement();
-        statement.execute(createTableString);
-        statement.close();
     }
 
     public void initPlayerDB(Player player) {
@@ -182,19 +120,23 @@ public class DBInteractions {
 
     public void updatePlayersDB(reasons reason, Map<Player, PlayerData> players) throws SQLException, ClassNotFoundException {
         if (reason.equals(reasons.SERVER_CLOSE)) {
-            players.forEach((player, playerData) -> {
-                updateData(player, PlayerDataManager.getPlayerDataMap().get(player), reason);
-            });
+            serverCloseUpdatePlayersDB(players, reason);
         } else {
             Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 players.forEach((player, playerData) -> {
-                    updateData(player, PlayerDataManager.getPlayerDataMap().get(player), reason);
+                    updateOnlinePlayer(player, PlayerDataManager.getPlayerDataMap().get(player), reason);
                 });
             });
         }
     }
 
-    public void updateData(Player player, PlayerData playerData, reasons reason) {
+    public void serverCloseUpdatePlayersDB(Map<Player, PlayerData> playerDataMap, reasons reason) throws SQLException, ClassNotFoundException{
+        playerDataMap.forEach((player, playerData) -> {
+            updateOnlinePlayer(player, PlayerDataManager.getPlayerDataMap().get(player), reason);
+        });
+    }
+
+    public void updateOnlinePlayer(Player player, PlayerData playerData, reasons reason) {
         String UUID = player.getUniqueId().toString();
         try {
             PreparedStatement statement = connection.prepareStatement(updatePlayerDataString);
@@ -214,71 +156,6 @@ public class DBInteractions {
         if (reason.equals(reasons.DISCONNECT)) {
             PlayerDataManager.getPlayerDataMap().remove(player);
         }
-    }
-
-    public void updateOfflinePlayerKarma(String uuid, double karma) {
-        try {
-            PreparedStatement statement = connection.prepareStatement("UPDATE Karma WHERE UUID = ? ");
-        } catch (Exception e) {
-
-        }
-
-    }
-
-    public List<AbstractMap.SimpleEntry<String, Double>> getPlayersKarmaTop(Integer limit) {
-        List<AbstractMap.SimpleEntry<String, Double>> playersTopList = new ArrayList<>();
-
-        try {
-            PreparedStatement statement = connection.prepareStatement(scoreboardTopString);
-            statement.setInt(1, limit);
-            ResultSet result = statement.executeQuery();
-            while (result.next()) {
-                String uuid = result.getString("UUID");
-                Double karma = result.getDouble("Karma");
-                playersTopList.add(new AbstractMap.SimpleEntry<>(uuid, karma));
-            }
-
-            result.close();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return playersTopList;
-    }
-
-    public List<AbstractMap.SimpleEntry<String, Double>> getPlayersKarmaBottom(Integer limit) {
-        List<AbstractMap.SimpleEntry<String, Double>> playersTopList = new ArrayList<>();
-
-        try {
-            PreparedStatement statement = connection.prepareStatement(scoreboardBottomString);
-            statement.setInt(1, limit);
-            ResultSet result = statement.executeQuery();
-            while (result.next()) {
-                String uuid = result.getString("UUID");
-                Double karma = result.getDouble("Karma");
-                playersTopList.add(new AbstractMap.SimpleEntry<>(uuid, karma));
-            }
-
-            result.close();
-            statement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return playersTopList;
-    }
-
-    public void closeConnexion() {
-        try {
-            if (connection != null && !connection.isClosed()) {
-                connection.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void initDBInteractions(Karma plugin) {
-        dbInteractions = new DBInteractions(plugin);
     }
 
     public static DBInteractions getInstance() {

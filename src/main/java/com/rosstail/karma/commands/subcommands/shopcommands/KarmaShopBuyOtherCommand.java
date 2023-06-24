@@ -2,6 +2,7 @@ package com.rosstail.karma.commands.subcommands.shopcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -52,7 +53,8 @@ public class KarmaShopBuyOtherCommand extends SubCommand {
         Player player = Bukkit.getPlayerExact(playerName);
 
         if (player == null) {
-            CommandManager.disconnectedPlayer(sender);
+            sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[3]));
+            //CommandManager.disconnectedPlayer(sender);
             return;
         }
 

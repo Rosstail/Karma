@@ -6,11 +6,17 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ConfigData {
     private static ConfigData configValues;
+
+    public final String storageType;
+    public final String storageHost;
+    public final short storagePort;
+    public final String storageDatabase;
+    public final String storageUser;
+    public final String storagePass;
 
     public final FileConfiguration config;
     public final boolean debugMode;
@@ -62,6 +68,20 @@ public class ConfigData {
 
     ConfigData(FileConfiguration config) {
         this.config = config;
+
+        storageType = config.getString("storage.type", "LocalStorage");
+        storageHost = config.getString("storage.host");
+        storagePort = (short) config.getInt("storage.port", 3306);
+        storageDatabase = config.getString("storage.database");
+        storageUser = config.getString("storage.username");
+        storagePass = config.getString("storage.password");
+        int saveDelay = config.getInt("storage.save-delay", 300);
+        if (saveDelay <= 0) {
+            saveDelay = 300;
+        }
+        this.saveDelay = saveDelay * 1000;
+
+
         debugMode = config.getBoolean("general.debug-mode");
 
         defaultKarma = config.getDouble("karma.default");
@@ -80,12 +100,6 @@ public class ConfigData {
         titleStay = config.getInt("general.title.stay");
         titleFadeOut = config.getInt("general.title.fade-out");
         topScoreLimit = config.getInt("general.topscore-limit", 10);
-
-        int saveDelay = config.getInt("data-save-delay", 300);
-        if (saveDelay <= 0) {
-            saveDelay = 300;
-        }
-        this.saveDelay = saveDelay * 1000;
 
         pvpHitRewardExpression = config.getString("pvp.hit-reward-expression");
         pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");

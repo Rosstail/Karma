@@ -95,9 +95,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     /**
      * @param sender
      */
-    public static void disconnectedPlayer(CommandSender sender) {
+    /*public static void disconnectedPlayer(CommandSender sender) {
         sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.DISCONNECTED), null));
-    }
+    }*/
 
     public static void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {

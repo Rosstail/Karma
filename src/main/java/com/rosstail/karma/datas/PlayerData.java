@@ -3,6 +3,7 @@ package com.rosstail.karma.datas;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.customevents.*;
+import com.rosstail.karma.datas.storage.DBInteractions;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -33,7 +34,7 @@ public class PlayerData {
     private Tier previousTier;
     private long lastUpdate = 0;
     private Timestamp wantedTimeStamp = new Timestamp(0L);
-    private Map<String, Timestamp> overTimeStampMap = new HashMap<>();
+    private final Map<String, Timestamp> overTimeStampMap = new HashMap<>();
     private boolean wantedToken;
 
     PlayerData(Player player) {
@@ -145,14 +146,12 @@ public class PlayerData {
         });
     }
 
+
     /**
-     * /**
-     * Update the new karma of the player if change is needed.
-     * Uses local files or Database if connection is active
-     *
-     * @param value -> The new karma amount of the player
+     * Set karma of player between karma limits from config
+     * @param value
      */
-    public void setKarma(double value) {
+    public void setKarmaBetweenLimits(double value) {
         double min = ConfigData.getConfigData().minKarma;
         double max = ConfigData.getConfigData().maxKarma;
         if (value < min) {

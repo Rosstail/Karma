@@ -58,7 +58,8 @@ public class KarmaWantedEditAddCommand extends SubCommand {
             String playerName = args[3];
             player = Bukkit.getPlayerExact(playerName);
             if (player == null || !player.isOnline()) {
-                CommandManager.disconnectedPlayer(sender);
+                sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[3]));
+                //CommandManager.disconnectedPlayer(sender);
                 return;
             }
             String expression;

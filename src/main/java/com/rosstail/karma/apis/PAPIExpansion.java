@@ -4,6 +4,7 @@ import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.TopFlopScoreManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -247,32 +248,41 @@ public class PAPIExpansion extends PlaceholderExpansion {
         //%karma_scoreboard_top_name_X% / %karma_scoreboard_bottom_karma_X%
         if (identifier.startsWith("scoreboard_")) {
             TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
-            List<AbstractMap.SimpleEntry<String, Double>> topFlopList;
-            List<String> playerNameList;
+            List<PlayerModel> topFlopList;
 
             if (identifier.contains("_top_") || identifier.contains("_bottom_")) {
                 if (identifier.contains("_top_")) {
                     topFlopList = topFlopScoreManager.getPlayerTopScoreList();
-                    playerNameList = topFlopScoreManager.getPlayerTopScoreListDisplay();
                 } else {
                     topFlopList = topFlopScoreManager.getPlayerFlopScoreList();
-                    playerNameList = topFlopScoreManager.getPlayerFlopScoreListDisplay();
                 }
                 String indexStr = identifier.replaceAll("[^0-9]", "");
-                int index;
+                int index = Math.max(1, Integer.parseInt(indexStr));
+                PlayerModel model = topFlopList.get(index);
                 try {
-                    int max = Math.min(ConfigData.getConfigData().topScoreLimit, topFlopList.size());
-                    index = Math.max(1, Math.min(Integer.parseInt(indexStr), max));
-
                     if (identifier.contains("_karma_")) {
-                        return AdaptMessage.getAdaptMessage().decimalFormat(topFlopList.get(index - 1).getValue(), '.');
+                        if (model == null) {
+                            return "-";
+                        }
+                        if (identifier.contains("_int_")) {
+                            int intValue = (int) model.getKarma();
+                            return String.valueOf(intValue);
+                        }
+                        double value = model.getKarma();
+                        return AdaptMessage.getAdaptMessage().decimalFormat(value, '.');
                     } else if (identifier.contains("_name_")) {
-                        return playerNameList.get(index - 1);
+                        if (model == null) {
+                            return "Unknown";
+                        }
+                        return model.getUsername();
                     }
-
-                } catch (NumberFormatException | IndexOutOfBoundsException e) {
-                    //e.printStackTrace();
-                    return identifier;
+                } catch (IndexOutOfBoundsException e) {
+                    if (identifier.contains("_karma_")) {
+                        return "-";
+                    }
+                    if (identifier.contains("_name_")) {
+                        return "Unknown";
+                    }
                 }
             }
         }

@@ -2,7 +2,7 @@ package com.rosstail.karma.commands.subcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.datas.DBInteractions;
+import com.rosstail.karma.datas.storage.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;

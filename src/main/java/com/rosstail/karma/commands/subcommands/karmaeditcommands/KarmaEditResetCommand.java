@@ -5,6 +5,7 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -68,7 +69,8 @@ public class KarmaEditResetCommand extends SubCommand {
             PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset, Cause.COMMAND);
             tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
         } else {
-            CommandManager.disconnectedPlayer(sender);
+            sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[2]));
+            //CommandManager.disconnectedPlayer(sender);
         }
     }
 

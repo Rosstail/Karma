@@ -5,7 +5,9 @@ import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.*;
-import com.rosstail.karma.events.CustomEventHandler;
+import com.rosstail.karma.datas.storage.StorageManager;
+import com.rosstail.karma.events.KarmaEventHandler;
+import com.rosstail.karma.events.MinecraftEventHandler;
 import com.rosstail.karma.events.WorldFights;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -26,10 +28,11 @@ import java.util.TimerTask;
  * Main class and methods of the plugin
  */
 public class Karma extends JavaPlugin implements Listener {
-
     private YamlConfiguration config;
     private static Karma instance;
     private Timer updateDataTimer;
+    private Timer scoreboardTimer;
+    private TopFlopScoreManager topFlopScoreManager;
 
     @Override
     public void onLoad() {
@@ -49,6 +52,8 @@ public class Karma extends JavaPlugin implements Listener {
         WorldFights.initWorldFights(this);
 
         loadCustomConfig();
+        StorageManager manager = StorageManager.initStorageManage(this);
+        manager.chooseDatabase();
 
         LangManager.initCurrentLang(getCustomConfig().getString("general.lang"));
 
@@ -62,31 +67,39 @@ public class Karma extends JavaPlugin implements Listener {
             }
         }
 
-        if (getCustomConfig().getBoolean("mysql.active")) {
-            try {
-                DBInteractions.initDBInteractions(this);
-                DBInteractions.getInstance().prepareTable();
-            } catch (Exception e) {
-                AdaptMessage.print(e.toString(), AdaptMessage.prints.ERROR);
-            }
-        }
-        TopFlopScoreManager.getTopFlopScoreManager().getScores();
         this.createPlayerDataFolder();
-        
-        Bukkit.getPluginManager().registerEvents(new CustomEventHandler(), this);
+
+        TopFlopScoreManager.init();
+        this.topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
+        topFlopScoreManager.getScores();
+
+
+        Bukkit.getPluginManager().registerEvents(new MinecraftEventHandler(), this);
+        Bukkit.getPluginManager().registerEvents(new KarmaEventHandler(), this);
         this.getCommand(getName().toLowerCase()).setExecutor(new CommandManager());
 
         this.updateDataTimer = new Timer();
+        this.scoreboardTimer = new Timer();
         int delay = Math.max(1, ConfigData.getConfigData().saveDelay);
+
         updateDataTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                PlayerDataManager.saveData(DBInteractions.reasons.TIMED, PlayerDataManager.getPlayerDataMap());
+                PlayerDataManager.getPlayerModelMap().forEach((s, model) -> {
+                    StorageManager.getManager().updatePlayerModel(model);
+                });
             }
         }, delay, delay);
 
+        scoreboardTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                topFlopScoreManager.getScores();
+            }
+        }, 60 * 1000, 60 * 1000);
+
         Bukkit.getOnlinePlayers().forEach(player -> {
-            PlayerDataManager.getSet(player).loadPlayerData();
+            PlayerDataManager.initPlayerModelToMap(StorageManager.getManager().selectPlayerModel(player.getUniqueId().toString()));
         });
     }
 
@@ -110,8 +123,15 @@ public class Karma extends JavaPlugin implements Listener {
         if (ConfigData.getConfigData().overtimeActive || ConfigData.getConfigData().wantedEnable) {
             PlayerData.stopTimer(PlayerDataManager.getScheduler());
         }
-        PlayerDataManager.saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerDataManager.getPlayerDataMap());
+        System.out.println("ondisable, dbInteract are cuck");
+        StorageManager.getManager().disconnect();
+        /*PlayerDataManager.saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerDataManager.getPlayerDataMap());
+        if (DBInteractions.getInstance() != null) {
+            DBInteractions.getInstance().closeConnexion();
+        }
+        */
         updateDataTimer.cancel();
+        scoreboardTimer.cancel();
     }
 
     private void initDefaultLocales() {

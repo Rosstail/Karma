@@ -4,45 +4,36 @@ import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.customevents.*;
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.DBInteractions;
 import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
-import com.rosstail.karma.timemanagement.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.sql.Timestamp;
-import java.util.Collections;
 import java.util.List;
 
-public class CustomEventHandler implements Listener {
+public class KarmaEventHandler implements Listener {
     private final AdaptMessage adaptMessage;
 
-    public CustomEventHandler() {
+    public KarmaEventHandler() {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
     }
 
@@ -51,7 +42,7 @@ public class CustomEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
 
-        playerData.setKarma(event.getValue());
+        playerData.setKarmaBetweenLimits(event.getValue());
         if (event.isOverTimeReset()) {
             ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
                 playerData.setOverTimeStamp(s, overtimeLoop.firstTimer);
@@ -243,144 +234,10 @@ public class CustomEventHandler implements Listener {
         }
     }
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        String uuid = event.getPlayer().getUniqueId().toString();
-        String username = event.getPlayer().getName();
-        PlayerModel model = StorageManager.getManager().selectPlayerModel(uuid);
-        if (model == null) {
-            System.out.println("New player " + username);
-            model = new PlayerModel(uuid, username);
-            StorageManager.getManager().insertPlayerModel(model);
-        } else {
-            System.out.println("Player return " + username);
-        }
-
-
-
-        /*
-        PlayerDataManager.getSet(event.getPlayer()).loadPlayerData();
-
-        PlayerDataManager.initPlayerModelToMap(event.getPlayer());
-         */
-    }
-
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent event) {
-        Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-        PlayerDataManager.saveData(DBInteractions.reasons.DISCONNECT, Collections.singletonMap(player, playerData));
-
-        PlayerDataManager.removePlayerModelFromMap(player);
-    }
-
-    /**
-     * Check and apply karma when a non-pLayer livingEntity is killed by a Player
-     *
-     * @param event
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    public void onEntityDeath(EntityDeathEvent event) {
-        LivingEntity victim = event.getEntity();
-        Player killer = victim.getKiller();
-        if (!WorldFights.isFightEnabledInWorld(victim.getWorld())) {
-            return;
-        }
-
-        if (!(killer == null || Fights.isPlayerNPC(killer))) {
-            if (!killer.hasPermission("karma.immune")) {
-                Fights.pveHandler(killer, victim, event);
-            }
-        }
-    }
-
-    /**
-     * Apply a new karma to the Player KILLER when he kills another player
-     *
-     * @param event
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    public void onPlayerDeath(PlayerDeathEvent event) {
-        Player victim = event.getEntity();
-        if (!WorldFights.isFightEnabledInWorld(victim.getWorld())) {
-            return;
-        }
-        Player killer = victim.getKiller();
-        if (!(killer == null || killer == victim || Fights.isPlayerNPC(killer))) {
-            if (!killer.hasPermission("karma.immune")) {
-                Fights.pvpHandler(killer, victim, event);
-            }
-        }
-    }
-
-    /**
-     * Changes karma when player attack another entity (animal or monster)
-     *
-     * @param event
-     */
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    public void onEntityHurt(EntityDamageByEntityEvent event) {
-        LivingEntity victimEntity;
-
-        double damage = event.getFinalDamage();
-        Entity entity = event.getEntity();
-        if (!(entity instanceof LivingEntity && damage >= 1f && ((LivingEntity) entity).getHealth() - damage > 0f)) {
-            return;
-        }
-
-        victimEntity = (LivingEntity) event.getEntity();
-        if (!WorldFights.isFightEnabledInWorld(victimEntity.getWorld())) {
-            return;
-        }
-
-        Player attacker = getFightAttacker(event);
-        if (attacker != null) {
-            if (Fights.isPlayerNPC(attacker) || !TimeManager.getTimeManager().isPlayerInTime(attacker)) {
-                return;
-            }
-
-            if (!attacker.hasPermission("karma.immune")) {
-                if (victimEntity instanceof Player && !attacker.equals(victimEntity)) {
-                    Fights.pvpHandler(attacker, (Player) victimEntity, event);
-                } else {
-                    Fights.pveHandler(attacker, victimEntity, event);
-                }
-            } else {
-                attacker.sendMessage("You are immune to karma change");
-            }
-        }
-    }
-
-    private Player getFightAttacker(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Projectile) {
-            Projectile projectile = (Projectile) event.getDamager();
-            if (projectile.getShooter() instanceof Player) {
-                return (Player) projectile.getShooter();
-            }
-        } else if (event.getDamager() instanceof Player) {
-            return (Player) event.getDamager();
-        }
-        return null;
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerMove(PlayerMoveEvent event) {
-        if (!ConfigData.getConfigData().useWorldGuard) {
-            return;
-        }
-        Player player = event.getPlayer();
-        if (!player.hasMetadata("NPC")) {
-            if (!WGPreps.getWgPreps().checkRequiredKarmaFlags(player)) {
-                event.setCancelled(true);
-                player.sendMessage("[TEST] Karma restricted access.");
-            }
-        }
-    }
-
     @EventHandler(ignoreCancelled = true)
     public void OnPlayerPlaceBlock(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getSet(player);
+        PlayerData playerData = PlayerDataManager.getNoSet(player);
         Block placedBlock = event.getBlockPlaced();
         String blockName = placedBlock.getBlockData().getMaterial().name();
         ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".place");
@@ -416,7 +273,7 @@ public class CustomEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void OnPlayerBreakBlock(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getSet(player);
+        PlayerData playerData = PlayerDataManager.getNoSet(player);
         Block brokenBlock = event.getBlock();
         String blockName = brokenBlock.getBlockData().getMaterial().name();
         ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".break");

@@ -38,7 +38,7 @@ public class KarmaEditAddCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit add <player> <value> (reset)";
+        return "karma edit add <player> <value> reset -f";
     }
 
     @Override
@@ -72,7 +72,8 @@ public class KarmaEditAddCommand extends SubCommand {
             PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, playerData.getKarma() + value, reset, Cause.COMMAND);
             tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.ADD_KARMA);
         } else {
-            CommandManager.disconnectedPlayer(sender);
+            sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[2]));
+            //CommandManager.disconnectedPlayer(sender);
         }
     }
 

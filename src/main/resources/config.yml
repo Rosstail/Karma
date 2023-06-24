@@ -1,12 +1,11 @@
-mysql:
-  active: false
+storage:
+  type: LOCALSTORAGE # LocalStorage, SQL, MariaDB, MongoDB, LiteSQL
   host: "localhost"
   port: 3306
   database: "database_name"
   username: "root"
   password: ""
-
-data-save-delay: 300
+  save-delay: 300
 
 general:
   lang: "en_EN"

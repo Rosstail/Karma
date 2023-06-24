@@ -7,6 +7,7 @@ import com.rosstail.karma.customevents.Cause;
 import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.customevents.PlayerOverTimeTriggerEvent;
 import com.rosstail.karma.customevents.PlayerWantedPeriodEndEvent;
+import com.rosstail.karma.datas.storage.DBInteractions;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -16,8 +17,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +33,14 @@ public class PlayerDataManager {
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
     private static final Map<Player, PlayerData> playerDataMap = new HashMap<>();
+    private static final Map<String, PlayerModel> playerModelMap = new HashMap<>();
 
-    public static PlayerData getSet(Player player) {
-        if (!playerDataMap.containsKey(player)) { // If player doesn't have instance
-            playerDataMap.put(player, new PlayerData(player));
-        }
-        return playerDataMap.get(player);
+    public static PlayerModel initPlayerModelToMap(PlayerModel model) {
+        return playerModelMap.put(model.getUsername(), model);
+    }
+
+    public static PlayerModel removePlayerModelFromMap(Player player) {
+        return playerModelMap.remove(player.getName());
     }
 
     public static PlayerData getNoSet(Player player) {
@@ -109,6 +116,22 @@ public class PlayerDataManager {
         }, 20L, 20L);
     }
 
+    /**
+     * Set karma of player between karma limits from config
+     * @param value
+     */
+    public static void setKarmaBetweenLimits(PlayerModel model, double value) {
+        double min = ConfigData.getConfigData().minKarma;
+        double max = ConfigData.getConfigData().maxKarma;
+        if (value < min) {
+            value = min;
+        } else if (value > max) {
+            value = max;
+        }
+
+        model.setKarma(value);
+    }
+
     public static void triggerOverTime(PlayerData playerData, String overtimeName, int multiplier) {
         Player player = playerData.player;
         double currentKarma = playerData.getKarma();
@@ -141,7 +164,106 @@ public class PlayerDataManager {
         CommandManager.commandsLauncher(player, overtimeLoop.commands);
     }
 
+    public static String getPlayerNameFromUUID(String uuid) {
+        String playerName = "UnknownPlayer";
+        try {
+            URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder responseBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseBuilder.append(line);
+                }
+                reader.close();
+
+                String response = responseBuilder.toString();
+
+                playerName = extractPlayerNameFromUUID(response);
+
+            }
+
+            connection.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return playerName;
+    }
+
+    private static String extractPlayerNameFromUUID(String response) {
+        // Analyse du JSON manuellement
+        int index = response.indexOf("\"name\" : \"");
+        if (index != -1) {
+            int startIndex = index + "\"name\" : \"".length();
+            int endIndex = response.indexOf("\"", startIndex);
+            if (endIndex != -1) {
+                return response.substring(startIndex, endIndex);
+            }
+        }
+        return null;
+    }
+
+    public static String getPlayerUUIDFromName(String username) {
+        try {
+            URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + username);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                StringBuilder responseBuilder = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseBuilder.append(line);
+                }
+                reader.close();
+
+                String uuid = extractUUID(responseBuilder.toString());
+
+                if (uuid != null) {
+                    return uuid.substring(0, 8) + "-" +
+                            uuid.substring(8, 12) + "-" +
+                            uuid.substring(12, 16) + "-" +
+                            uuid.substring(16, 20) + "-" +
+                            uuid.substring(20);
+                } else {
+                    System.out.println("Impossible de récupérer l'UUID du joueur " + username);
+                }
+            } else if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) {
+                System.out.println("Le joueur " + username + " n'a pas été trouvé.");
+            } else {
+                System.out.println("Erreur lors de la requête HTTP : " + responseCode);
+            }
+
+            connection.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static String extractUUID(String response) {
+        int index = response.indexOf("\"id\" : \"");
+        if (index != -1) {
+            int startIndex = index + "\"id\" : \"".length();
+            int endIndex = response.indexOf("\"", startIndex);
+            if (endIndex != -1) {
+                return response.substring(startIndex, endIndex);
+            }
+        }
+        return null;
+    }
+
     public static int getScheduler() {
         return scheduler;
+    }
+
+    public static Map<String, PlayerModel> getPlayerModelMap() {
+        return playerModelMap;
     }
 }
