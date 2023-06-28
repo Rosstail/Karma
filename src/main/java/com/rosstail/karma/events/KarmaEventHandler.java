@@ -1,31 +1,26 @@
 package com.rosstail.karma.events;
 
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.customevents.*;
-import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.events.karmaevents.*;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
+import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -39,26 +34,42 @@ public class KarmaEventHandler implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKarmaChange(PlayerKarmaChangeEvent event) {
-        Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-
-        playerData.setKarmaBetweenLimits(event.getValue());
-        if (event.isOverTimeReset()) {
-            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
-                playerData.setOverTimeStamp(s, overtimeLoop.firstTimer);
-            });
-        }
-
-        PlayerKarmaHasChangedEvent playerKarmaHasChangedEvent = new PlayerKarmaHasChangedEvent(player, playerData.getKarma(), event.isOverTimeReset(), event);
-        Bukkit.getPluginManager().callEvent(playerKarmaHasChangedEvent);
+        PlayerModel model = event.getModel();
+        model.setPreviousKarma(model.getKarma());
+        model.setKarma(event.getValue());
     }
 
     @EventHandler
+    public void onPlayerTierChange(PlayerTierChangeEvent event) {
+        Player player = event.getPlayer();
+        PlayerModel model = event.getModel();
+        model.setPreviousTierName(model.getTierName());
+        model.setTierName(event.getTierName());
+
+        float karma = model.getKarma();
+        float previousKarma = model.getPreviousKarma();
+
+        Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
+        Tier previousTier = TierManager.getTierManager().getTierByName(model.getPreviousTierName());
+
+        PlayerDataManager.changePlayerTierMessage(player);
+        CommandManager.commandsLauncher(player, tier.getJoinCommands());
+
+        if (!previousTier.equals(TierManager.getNoTier())) {
+            if (karma > previousKarma) {
+                CommandManager.commandsLauncher(player, tier.getJoinOnUpCommands());
+            } else if (karma < previousKarma) {
+                CommandManager.commandsLauncher(player, tier.getJoinOnDownCommands());
+            }
+        }
+    }
+
+    /*
+    @EventHandler
     public void onPlayerKarmaHasChanged(PlayerKarmaHasChangedEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerModel model = event.getModel();
 
-        Object cause = event.getCause().getCause();
         if (cause instanceof EntityDamageByEntityEvent || cause instanceof PlayerDeathEvent) {
             if (((EntityEvent) cause).getEntity() instanceof Player) {
                 double newKarma = event.getValue();
@@ -98,75 +109,41 @@ public class KarmaEventHandler implements Listener {
             }
         }
 
-
         playerData.checkTier();
     }
-
-    @EventHandler
-    public void onPlayerTierChange(PlayerTierChangeEvent event) {
-        Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-        playerData.setPreviousTier(playerData.getTier());
-        playerData.setTier(event.getTier());
-
-        PlayerTierHasChangedEvent playerTierHasChangedEvent = new PlayerTierHasChangedEvent(event.getPlayer(), event.getTier());
-        Bukkit.getPluginManager().callEvent(playerTierHasChangedEvent);
-    }
-
-    @EventHandler
-    public void onPlayerTierHasChanged(PlayerTierHasChangedEvent event) {
-        Player player = event.getPlayer();
-        Tier tier = event.getTier();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-        Tier previousTier = playerData.getPreviousTier();
-        double karma = playerData.getKarma();
-        double previousKarma = playerData.getPreviousKarma();
-
-        PlayerDataManager.changePlayerTierMessage(player);
-        CommandManager.commandsLauncher(player, tier.getJoinCommands());
-        if (previousTier != null) {
-            if (karma > previousKarma) {
-                CommandManager.commandsLauncher(player, tier.getJoinOnUpCommands());
-            } else if (karma < previousKarma) {
-                CommandManager.commandsLauncher(player, tier.getJoinOnDownCommands());
-            }
-        }
-    }
+     */
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         long nextDelay = event.getNextDelay();
-        PlayerDataManager.triggerOverTime(playerData, event.getOvertimeLoopName(), event.getAmount());
-        playerData.setOverTimeStamp(event.getOvertimeLoopName(), nextDelay);
-        PlayerOverTimeHasTriggeredEvent hasTriggeredEvent = new PlayerOverTimeHasTriggeredEvent(player);
-        Bukkit.getPluginManager().callEvent(hasTriggeredEvent);
+        PlayerDataManager.triggerOverTime(player, model, event.getOvertimeLoopName(), event.getAmount());
+        PlayerDataManager.setOverTimeStamp(model, event.getOvertimeLoopName(), nextDelay);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         OvertimeLoop loop = ConfigData.getConfigData().overtimeLoopMap.get(event.getOvertimeLoopName());
-        playerData.setOverTimeStamp(event.getOvertimeLoopName(), loop.firstTimer);
-        PlayerOverTimeHasResetEvent hasResetEvent = new PlayerOverTimeHasResetEvent(player);
-        Bukkit.getPluginManager().callEvent(hasResetEvent);
+        PlayerDataManager.triggerOverTime(player, model, event.getOvertimeLoopName(), (int) loop.firstTimer);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerWantedChangeEvent(PlayerWantedChangeEvent event) {
-        Player player = event.getPlayer();
+        PlayerModel model = event.getModel();
         Timestamp duration = event.getTimestamp();
         String wantedMaxDurationExp = ConfigData.getConfigData().wantedMaxDurationExpression;
-        Timestamp durationMaxTimeStamp = new Timestamp(AdaptMessage.calculateDuration(player, wantedMaxDurationExp));
+        Timestamp durationMaxTimeStamp = new Timestamp(AdaptMessage.calculateDuration(PlayerDataManager.getWantedTimeLeft(model), wantedMaxDurationExp));
         if (duration.compareTo(durationMaxTimeStamp) > 0) {
-            duration = durationMaxTimeStamp;
+            model.setWantedTimeStamp(durationMaxTimeStamp);
         }
-        PlayerWantedHasChangedEvent playerWantedHasChangedEvent = new PlayerWantedHasChangedEvent(player, duration, event);
-        Bukkit.getPluginManager().callEvent(playerWantedHasChangedEvent);
+        // PlayerWantedHasChangedEvent playerWantedHasChangedEvent = new PlayerWantedHasChangedEvent(player, duration, event);
+        //Bukkit.getPluginManager().callEvent(playerWantedHasChangedEvent);
     }
 
+    /*
     @EventHandler
     public void onPlayerWantedHasChangedEvent(PlayerWantedHasChangedEvent event) {
         Player player = event.getPlayer();
@@ -188,15 +165,16 @@ public class KarmaEventHandler implements Listener {
             Bukkit.getPluginManager().callEvent(newEvent);
         }
     }
+     */
 
     @EventHandler
     public void onPlayerWantedPeriodStartEvent(PlayerWantedPeriodStartEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_ENTER);
 
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().enterWantedCommands);
-        playerData.setWantedToken(true);
+        model.setWanted(true);
         if (message != null) {
             adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
         }
@@ -205,9 +183,9 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodRefreshEvent(PlayerWantedPeriodRefreshEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
-        playerData.setWantedToken(true);
+        model.setWanted(true);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().refreshWantedCommands);
         if (message != null) {
             AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
@@ -224,9 +202,9 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodEndEvent(PlayerWantedPeriodEndEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+        PlayerModel model= event.getModel();
 
-        playerData.setWantedToken(false);
+        model.setWanted(false);
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().leaveWantedCommands);
         if (message != null) {
@@ -237,7 +215,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void OnPlayerPlaceBlock(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getNoSet(player);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block placedBlock = event.getBlockPlaced();
         String blockName = placedBlock.getBlockData().getMaterial().name();
         ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".place");
@@ -247,7 +225,7 @@ public class KarmaEventHandler implements Listener {
 
         boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
         List<Integer> ages = section.getIntegerList("data.age.ages");
-        if (!ages.isEmpty()) {
+        if (!ages.isEmpty() && placedBlock.getBlockData() instanceof Ageable) {
             Ageable ageable = (Ageable) placedBlock.getBlockData();
             if (ageBlackList) {
                 if (ages.contains(ageable.getAge())) {
@@ -260,20 +238,22 @@ public class KarmaEventHandler implements Listener {
             }
         }
 
-        float karma = (float) (playerData.getKarma() + section.getDouble("value"));
-        boolean resetOvertime = section.getBoolean("reset-overtime", false);
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player,
-                karma,
-                resetOvertime,
-                Cause.OTHER);
+        float karma = model.getKarma() + (float) section.getDouble("value");
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, karma);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+
+
+        if (section.getBoolean("reset-overtime", false)) {
+            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
+            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+        }
     }
 
 
     @EventHandler(ignoreCancelled = true)
     public void OnPlayerBreakBlock(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getNoSet(player);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block brokenBlock = event.getBlock();
         String blockName = brokenBlock.getBlockData().getMaterial().name();
         ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".break");
@@ -283,7 +263,7 @@ public class KarmaEventHandler implements Listener {
 
         boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
         List<Integer> ages = section.getIntegerList("data.age.ages");
-        if (!ages.isEmpty()) {
+        if (!ages.isEmpty() && brokenBlock.getBlockData() instanceof Ageable) {
             Ageable ageable = (Ageable) brokenBlock.getBlockData();
             if (ageBlackList) {
                 if (ages.contains(ageable.getAge())) {
@@ -296,12 +276,14 @@ public class KarmaEventHandler implements Listener {
             }
         }
 
-        float karma = (float) (playerData.getKarma() + section.getDouble("value"));
-        boolean resetOvertime = section.getBoolean("reset-overtime", false);
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player,
-                karma,
-                resetOvertime,
-                Cause.OTHER);
+        float karma =  model.getKarma() + (float) section.getDouble("value");
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, karma);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+
+        if (section.getBoolean("reset-overtime", false)) {
+            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
+            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+        }
+
     }
 }

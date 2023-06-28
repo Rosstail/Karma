@@ -21,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -85,9 +86,7 @@ public class Karma extends JavaPlugin implements Listener {
         updateDataTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                PlayerDataManager.getPlayerModelMap().forEach((s, model) -> {
-                    StorageManager.getManager().updatePlayerModel(model);
-                });
+                PlayerDataManager.saveAllPlayerModelToStorage();
             }
         }, delay, delay);
 
@@ -121,15 +120,15 @@ public class Karma extends JavaPlugin implements Listener {
 
     public void onDisable() {
         if (ConfigData.getConfigData().overtimeActive || ConfigData.getConfigData().wantedEnable) {
-            PlayerData.stopTimer(PlayerDataManager.getScheduler());
+            PlayerDataManager.stopTimer(PlayerDataManager.getScheduler());
         }
-        System.out.println("ondisable, dbInteract are cuck");
+        Map<String, PlayerModel> playerModelMap = PlayerDataManager.getPlayerModelMap();
+        for (Map.Entry<String, PlayerModel> entry : playerModelMap.entrySet()) {
+            String s = entry.getKey();
+            PlayerModel model = entry.getValue();
+            StorageManager.getManager().updatePlayerModel(model);
+        }
         StorageManager.getManager().disconnect();
-        /*PlayerDataManager.saveData(DBInteractions.reasons.SERVER_CLOSE, PlayerDataManager.getPlayerDataMap());
-        if (DBInteractions.getInstance() != null) {
-            DBInteractions.getInstance().closeConnexion();
-        }
-        */
         updateDataTimer.cancel();
         scoreboardTimer.cancel();
     }
@@ -160,7 +159,7 @@ public class Karma extends JavaPlugin implements Listener {
         if (ConfigData.getConfigData().overtimeActive || ConfigData.getConfigData().wantedEnable) {
             PlayerDataManager.setupScheduler();
         } else {
-            PlayerData.stopTimer(PlayerDataManager.getScheduler());
+            PlayerDataManager.stopTimer(PlayerDataManager.getScheduler());
         }
         WorldFights.getWorldFights().setEnabledWorlds();
         TierManager.getTierManager().setupTiers();

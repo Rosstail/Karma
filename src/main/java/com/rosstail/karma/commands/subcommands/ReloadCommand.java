@@ -47,10 +47,8 @@ public class ReloadCommand extends SubCommand {
         }
         Karma.getInstance().loadCustomConfig();
         sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.CONFIG_RELOAD), null));
-        PlayerDataManager.getPlayerDataMap().forEach((player, playerData) -> {
-            playerData.checkKarma();
-            playerData.checkTier();
-        });
+        PlayerDataManager.saveAllPlayerModelToStorage();
+        //CHECK CURRENT TIER
     }
 
     @Override

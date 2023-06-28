@@ -9,14 +9,14 @@ storage:
 
 general:
   lang: "en_EN"
-  decimal-display: 2 #The number of digits behind Karma amounts on display (does not affect storage or calculations)
+  decimal-display: 2 #The number of digits behind Karma amounts on display (does not affect storage or calculations) # => locale file
   title: #Duration of the title in ticks (20ticks = 1 second)
     fade-in: 1
     stay: 20
     fade-out: 1
   use-worldguard: false #works only for Worldguard 7+
-  datetime-format: "yyyy-MM-dd HH:mm:ss"
-  countdown-format: "{dd} {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s between {} without cap.
+  datetime-format: "yyyy-MM-dd HH:mm:ss" # => locale file
+  countdown-format: "{dd} {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s between {} without cap. => locale file
   debug-mode: false
   topscore-limit: 10
 
@@ -40,11 +40,11 @@ overtime:
     #    next: <long>  # Timer after first occurence. Generally shorter or equal
     #  requirements:
     #    karma:
-    #      minimum: <double> #Ignored if empty
-    #      maximum: <double> #ignored if empty
+    #      minimum: <float> #Ignored if empty
+    #      maximum: <float> #ignored if empty
     #    online: <boolean> #true by default
     #    offline: <boolean> #false by default
-    #  amount: <double> #0 by default. If offline is true, applies for every delays reached
+    #  amount: <float> #0 by default. If offline is true, applies for every delays reached
     #  commands: <String[]> #ignored if empty. If offline is true, applies only once on reconnection.
     online-citizen:
       timers:

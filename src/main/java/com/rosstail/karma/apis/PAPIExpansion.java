@@ -2,7 +2,6 @@ package com.rosstail.karma.apis;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.TopFlopScoreManager;
@@ -10,16 +9,14 @@ import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.tiers.Tier;
+import com.rosstail.karma.tiers.TierManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.SimpleDateFormat;
-import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class PAPIExpansion extends PlaceholderExpansion {
     // We get an instance of the plugin later.
@@ -122,6 +119,8 @@ public class PAPIExpansion extends PlaceholderExpansion {
         return plugin.getDescription().getVersion();
     }
 
+
+
     /**
      * This is the method called when a placeholder with our identifier
      * is found and needs a value.
@@ -138,10 +137,10 @@ public class PAPIExpansion extends PlaceholderExpansion {
     @Override
     public String onPlaceholderRequest(Player player, String identifier){
         if (player != null) {
-            PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
+            PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
             // %karma_value% here
             if(identifier.startsWith("player_karma")){
-                double karma = playerData.getKarma();
+                float karma = model.getKarma();
                 if (identifier.contains("_abs")) {
                     karma = Math.abs(karma);
                 }
@@ -151,7 +150,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
             if(identifier.startsWith("player_previous_karma")){
-                double karma = playerData.getPreviousKarma();
+                float karma = model.getPreviousKarma();
                 if (identifier.contains("_abs")) {
                     karma = Math.abs(karma);
                 }
@@ -161,7 +160,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
             if(identifier.startsWith("player_diff")) {
-                double karma = playerData.getKarma() - playerData.getPreviousKarma();
+                float karma = model.getKarma() - model.getPreviousKarma();
                 if (identifier.contains("_abs")) {
                     karma = Math.abs(karma);
                 }
@@ -172,7 +171,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
 
             if(identifier.startsWith("player_tier")) {
-                Tier tier = playerData.getTier();
+                Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
                 if (identifier.equals("player_tier")) {
                     return tier.getName();
                 }
@@ -191,7 +190,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
 
             if(identifier.startsWith("player_previous_tier")) {
-                Tier tier = playerData.getPreviousTier();
+                Tier tier = TierManager.getTierManager().getTierByName(model.getPreviousTierName());
                 if (identifier.equals("player_previous_tier")) {
                     return tier.getName();
                 }
@@ -210,10 +209,10 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
 
             if (identifier.equals("player_wanted_time")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getWantedTimeStamp().getTime(), '.');
+                return AdaptMessage.getAdaptMessage().decimalFormat(model.getWantedTimeStamp().getTime(), '.');
             }
             if (identifier.equals("player_wanted_time_display")) {
-                long time = playerData.getWantedTimeStamp().getTime();
+                long time = model.getWantedTimeStamp().getTime();
                 if (time > 0f) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
                     return simpleDateFormat.format(time);
@@ -222,23 +221,23 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
 
             if (identifier.equals("player_wanted_time_delay")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getWantedTimeStamp().getTime() - System.currentTimeMillis(), '.');
+                return AdaptMessage.getAdaptMessage().decimalFormat(model.getWantedTimeStamp().getTime() - System.currentTimeMillis(), '.');
             }
             if (identifier.equals("player_wanted_time_delay_display")) {
-                long time = playerData.getWantedTimeLeft();
+                long time = PlayerDataManager.getWantedTimeLeft(model);
                 if (time > 0f) {
                     return AdaptMessage.getAdaptMessage().countDownFormat(time);
                 }
                 return "-";
             }
             if (identifier.equals("player_wanted_status")) {
-                if (playerData.isWanted()) {
+                if (model.isWanted()) {
                     return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED), null);
                 }
                 return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT), null);
             }
             if (identifier.equals("player_wanted_status_short")) {
-                if (playerData.isWanted()) {
+                if (model.isWanted()) {
                     return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT), null);
                 }
                 return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT), null);
@@ -268,7 +267,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                             int intValue = (int) model.getKarma();
                             return String.valueOf(intValue);
                         }
-                        double value = model.getKarma();
+                        float value = model.getKarma();
                         return AdaptMessage.getAdaptMessage().decimalFormat(value, '.');
                     } else if (identifier.contains("_name_")) {
                         if (model == null) {

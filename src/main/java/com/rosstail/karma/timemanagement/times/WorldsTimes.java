@@ -44,8 +44,7 @@ public class WorldsTimes {
     }
 
     public boolean roll() {
-        double diceRoll = Math.random() * 100;
-        boolean bool = diceRoll <= rate;
-        return bool;
+        float diceRoll = (float) Math.random() * 100;
+        return diceRoll <= rate;
     }
 }

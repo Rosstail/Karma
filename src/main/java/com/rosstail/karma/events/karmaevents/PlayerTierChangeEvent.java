@@ -1,5 +1,6 @@
-package com.rosstail.karma.customevents;
+package com.rosstail.karma.events.karmaevents;
 
+import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.tiers.Tier;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -18,22 +19,24 @@ public class PlayerTierChangeEvent extends Event {
     }
 
     private final Player player;
-    private Tier tier;
+    private final PlayerModel model;
+    private final String tierName;
 
-    public PlayerTierChangeEvent(Player player, Tier tier) {
+    public PlayerTierChangeEvent(Player player, PlayerModel model, String tierName) {
         this.player = player;
-        this.tier = tier;
-    }
-
-    public void setTier(Tier tier) {
-        this.tier = tier;
+        this.model = model;
+        this.tierName = tierName;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public Tier getTier() {
-        return tier;
+    public PlayerModel getModel() {
+        return model;
+    }
+
+    public String getTierName() {
+        return tierName;
     }
 }

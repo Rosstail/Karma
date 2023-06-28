@@ -3,22 +3,23 @@ package com.rosstail.karma.commands.subcommands.karmaeditcommands;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.customevents.Cause;
-import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
-import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-
-import static com.rosstail.karma.commands.CommandManager.canLaunchCommand;
+import java.util.Objects;
 
 public class KarmaEditResetCommand extends SubCommand {
 
@@ -38,7 +39,7 @@ public class KarmaEditResetCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit reset <player> (reset)";
+        return "karma edit reset <player> (-f -o -c)";
     }
 
     @Override
@@ -51,33 +52,84 @@ public class KarmaEditResetCommand extends SubCommand {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-        Player player;
-        boolean reset = true;
-        try {
-            player = Bukkit.getServer().getPlayer(args[2]);
-            try {
-                reset = Boolean.parseBoolean(args[3]);
-            } catch (Exception ignored) {
+        String playerName = args[2];
 
-            }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            CommandManager.errorMessage(sender, e);
-            return;
-        }
+        String command = Arrays.toString(args);
+        Player player;
+        player = Bukkit.getPlayerExact(playerName);
+
+        //If player is disconnected
         if (player != null && player.isOnline()) {
-            double resKarma = ConfigData.getConfigData().defaultKarma;
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, resKarma, reset, Cause.COMMAND);
-            tryKarmaChange(playerKarmaChangeEvent, sender, LangMessage.RESET_KARMA);
+            changeOnlineKarma(sender, player, args);
         } else {
-            sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[2]));
-            //CommandManager.disconnectedPlayer(sender);
+            //if not force
+            if (command.contains(" -f")) {
+                changeOfflineKarma(sender, playerName, args);
+            } else {
+                sender.sendMessage("Player " + playerName + " is disconnected. Use -f to override");
+            }
         }
     }
 
-    private void tryKarmaChange(PlayerKarmaChangeEvent playerKarmaChangeEvent, CommandSender sender, LangMessage message) {
+    public void changeOnlineKarma(CommandSender sender, Player player, String[] args) {
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        String command = Arrays.toString(args);
+
+        float value = ConfigData.getConfigData().defaultKarma;
+
+        if (!command.contains("-o")) {
+            value = PlayerDataManager.limitKarma(value);
+        }
+
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-        if (!playerKarmaChangeEvent.isCancelled()) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(playerKarmaChangeEvent.getPlayer(), LangManager.getMessage(message), PlayerType.PLAYER.getText()));
+
+        try {
+            if (!command.contains("-r")) {
+                ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+                    PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
+                });
+                PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
+                Bukkit.getPluginManager().callEvent(overTimeResetEvent);
+            }
+        } catch (Exception ignored) { }
+    }
+
+    public void changeOfflineKarma(CommandSender sender, String playerName, String[] args) {
+        String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
+        PlayerModel model = StorageManager.getManager().selectPlayerModel(playerUUID);
+        String command = Arrays.toString(args);
+
+        if (model == null) {
+            if (playerUUID == null) {
+                sender.sendMessage("The player " + playerName + " does not exist.");
+                return;
+            }
+            if (!command.contains("-c")) {
+                sender.sendMessage("Player " + playerName + " does not have data. Create by adding -c at the end of command");
+                return;
+            }
+            model = new PlayerModel(playerUUID, playerName);
+            StorageManager.getManager().insertPlayerModel(model);
+        }
+
+        float value = ConfigData.getConfigData().defaultKarma;
+
+        if (!command.contains("-o")) {
+            value = PlayerDataManager.limitKarma(value);
+        } else {
+            sender.sendMessage("new karma value is not limited.");
+        }
+
+        model.setPreviousKarma(model.getKarma());
+        model.setKarma(value);
+        StorageManager.getManager().updatePlayerModel(model);
+
+        sender.sendMessage("Edited offline karma of " + playerName + " :" + value);
+        String currentTierName = model.getTierName();
+        String futureTierName = TierManager.getTierManager().getTierByKarmaAmount(value).getName();
+        if (!Objects.equals(currentTierName, futureTierName)) { //Safe name check
+            sender.sendMessage("His tier will change from " + currentTierName + " to " + futureTierName);
         }
     }
 

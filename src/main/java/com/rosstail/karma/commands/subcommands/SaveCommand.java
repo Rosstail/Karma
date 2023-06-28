@@ -2,9 +2,9 @@ package com.rosstail.karma.commands.subcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.datas.storage.DBInteractions;
-import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -44,10 +44,12 @@ public class SaveCommand extends SubCommand {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-        Map<Player, PlayerData> playersData = PlayerDataManager.getPlayerDataMap();
-        PlayerDataManager.saveData(DBInteractions.reasons.COMMAND, playersData);
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SAVED_DATA)
-                .replaceAll("%number%", String.valueOf(playersData.size())), null));
+        PlayerDataManager.saveAllPlayerModelToStorage();
+        sender.sendMessage("SaveCommand#perform: saved" + PlayerDataManager.getPlayerModelMap().size() + " player models to storage");
+        /*sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SAVED_DATA)
+                .replaceAll("%number%", String.valueOf(playerModelMap.size())), null));
+
+         */
     }
 
     @Override

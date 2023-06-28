@@ -1,7 +1,6 @@
 package com.rosstail.karma.datas;
 
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.tiers.Tier;
 import org.bukkit.entity.Player;
 
 import java.sql.Timestamp;
@@ -12,8 +11,8 @@ public class PlayerModel {
     private String uuid;
     private String username;
 
-    private double karma = ConfigData.getConfigData().defaultKarma;
-    private double previousKarma = ConfigData.getConfigData().defaultKarma;
+    private float karma = ConfigData.getConfigData().defaultKarma;
+    private float previousKarma = ConfigData.getConfigData().defaultKarma;
 
     private String tierName;
     private String previousTierName;
@@ -22,7 +21,7 @@ public class PlayerModel {
     private Map<String, Timestamp> overTimeStampMap = new HashMap<>();
 
     private Timestamp wantedTimeStamp = new Timestamp(0L);
-    private boolean isWanted = false;
+    private boolean wanted = false;
 
     /**
      * Constructor if the selected player is connected
@@ -31,11 +30,6 @@ public class PlayerModel {
     public PlayerModel(Player player) {
         this.uuid = player.getUniqueId().toString();
         this.username = player.getName();
-        if (this.checkForData()) {
-
-        } else {
-            //init datas
-        }
     }
 
     /**
@@ -77,19 +71,19 @@ public class PlayerModel {
         this.username = username;
     }
 
-    public double getKarma() {
+    public float getKarma() {
         return karma;
     }
 
-    public void setKarma(double karma) {
+    public void setKarma(float karma) {
         this.karma = karma;
     }
 
-    public double getPreviousKarma() {
+    public float getPreviousKarma() {
         return previousKarma;
     }
 
-    public void setPreviousKarma(double previousKarma) {
+    public void setPreviousKarma(float previousKarma) {
         this.previousKarma = previousKarma;
     }
 
@@ -134,10 +128,10 @@ public class PlayerModel {
     }
 
     public boolean isWanted() {
-        return isWanted;
+        return wanted;
     }
 
     public void setWanted(boolean wanted) {
-        isWanted = wanted;
+        this.wanted = wanted;
     }
 }

@@ -58,7 +58,7 @@ public class CalculateCommand extends SubCommand {
                 player = ((Player) sender).getPlayer();
                 expression = AdaptMessage.getAdaptMessage().adapt(player, expression, null);
             }
-            double result = ExpressionCalculator.eval(expression);
+            float result = (float) ExpressionCalculator.eval(expression);
 
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(player,
                     LangManager.getMessage(LangMessage.CALCULATION)

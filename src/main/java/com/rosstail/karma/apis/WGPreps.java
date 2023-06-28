@@ -1,6 +1,6 @@
 package com.rosstail.karma.apis;
 
-import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.Karma;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -11,7 +11,6 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import com.rosstail.karma.Karma;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.ThreadLocalRandom;

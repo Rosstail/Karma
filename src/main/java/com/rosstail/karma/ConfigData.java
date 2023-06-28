@@ -21,9 +21,9 @@ public class ConfigData {
     public final FileConfiguration config;
     public final boolean debugMode;
 
-    public final double defaultKarma;
-    public final double minKarma;
-    public final double maxKarma;
+    public final float defaultKarma;
+    public final float minKarma;
+    public final float maxKarma;
 
     public final String killedByTierPath;
 
@@ -84,9 +84,9 @@ public class ConfigData {
 
         debugMode = config.getBoolean("general.debug-mode");
 
-        defaultKarma = config.getDouble("karma.default");
-        minKarma = config.getDouble("karma.minimum");
-        maxKarma = config.getDouble("karma.maximum");
+        defaultKarma = (float) config.getDouble("karma.default");
+        minKarma = (float) config.getDouble("karma.minimum", Float.MIN_VALUE);
+        maxKarma = (float) config.getDouble("karma.maximum", Float.MAX_VALUE);
 
         String pluginName = Karma.getInstance().getName();
         killedByTierPath = "tiers.list.%" + pluginName.toLowerCase() + "_victim_tier%.commands.killed-commands.%" + pluginName.toLowerCase() + "_attacker_tier%";

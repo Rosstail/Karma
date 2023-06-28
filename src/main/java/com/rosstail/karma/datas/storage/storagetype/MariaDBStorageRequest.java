@@ -1,5 +1,6 @@
 package com.rosstail.karma.datas.storage.storagetype;
 
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 
@@ -41,28 +42,28 @@ public class MariaDBStorageRequest implements StorageRequest {
 
     private void createKarmaTable() {
         String query = "CREATE TABLE IF NOT EXISTS " + pluginName + " ( uuid varchar(40) PRIMARY KEY UNIQUE NOT NULL," +
-                " karma double," +
-                " previous_karma double," +
+                " karma float NOT NULL DEFAULT 0," +
+                " previous_karma float NOT NULL DEFAULT 0," +
                 " tier varchar(50)," +
                 " previous_tier varchar(50)," +
-                " wanted_time bigint UNSIGNED DEFAULT 0," +
+                " wanted_time bigint UNSIGNED NOT NULL  DEFAULT 0," +
+                " is_wanted boolean NOT NULL DEFAULT false," +
                 " last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);";
         executeSQL(query);
     }
 
     @Override
     public void insertPayerModel(PlayerModel model) {
-        String query = "INSERT INTO " + pluginName + " (uuid, karma, previous_karma, tier, previous_tier, wanted_time)"
-                + " VALUES (?, ?, ?, ?, ?, ?);";
+        String query = "INSERT INTO " + pluginName + " (uuid, karma, previous_karma, tier, previous_tier)"
+                + " VALUES (?, ?, ?, ?, ?);";
 
         String uuid = model.getUuid();
-        double karma = model.getKarma();
-        double previousKarma = model.getPreviousKarma();
+        float karma = model.getKarma();
+        float previousKarma = model.getPreviousKarma();
         String tierName = model.getTierName();
         String previousTierName = model.getPreviousTierName();
-        long wantedTimeStamp = model.getWantedTimeStamp().getTime();
         try {
-            boolean success = executeSQLUpdate(query, uuid, karma, previousKarma, tierName, previousTierName, wantedTimeStamp) > 0;
+            boolean success = executeSQLUpdate(query, uuid, karma, previousKarma, tierName, previousTierName) > 0;
             System.out.println("INSERT SUCCESS " + success);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -77,12 +78,17 @@ public class MariaDBStorageRequest implements StorageRequest {
             if (result.next()) {
                 System.out.println("Found.");
                 PlayerModel model = new PlayerModel(uuid, PlayerDataManager.getPlayerNameFromUUID(uuid));
-                model.setKarma(result.getDouble("karma"));
-                model.setPreviousKarma(result.getDouble("previous_karma"));
+                model.setKarma(result.getFloat("karma"));
+                model.setPreviousKarma(result.getFloat("previous_karma"));
                 model.setTierName(result.getString("tier"));
                 model.setPreviousTierName(result.getString("previous_tier"));
                 model.setLastUpdate(result.getTimestamp("last_update").getTime());
-                model.setWantedTimeStamp(new Timestamp(model.getLastUpdate() + result.getLong("wanted_time"))); //A modifier
+                long wantedTime = result.getLong("wanted_time");
+                if (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect) {
+                    model.setWantedTimeStamp(new Timestamp(model.getLastUpdate() + wantedTime));
+                } else {
+                    model.setWantedTimeStamp(new Timestamp(System.currentTimeMillis() + wantedTime));
+                }
                 model.setWanted(model.getWantedTimeStamp().getTime() > System.currentTimeMillis());
                 return model;
             } else {
@@ -97,9 +103,14 @@ public class MariaDBStorageRequest implements StorageRequest {
 
     @Override
     public void updatePlayerModel(PlayerModel model) {
-        String query = "UPDATE " + pluginName + " SET karma = ?, previous_karma = ?, tier = ?, previous_tier = ?, wanted_time = ? WHERE uuid = ?";
+        String query = "UPDATE " + pluginName + " SET karma = ?, previous_karma = ?, tier = ?, previous_tier = ?, wanted_time = ?, is_wanted = ?, last_update = CURRENT_TIMESTAMP WHERE uuid = ?";
         try {
-            boolean success = executeSQLUpdate(query, model.getKarma(), model.getPreviousKarma(), model.getTierName(),model.getPreviousTierName(), model.getWantedTimeStamp().getTime(), model.getUuid())
+            boolean success = executeSQLUpdate(query,
+                    model.getKarma(), model.getPreviousKarma(),
+                    model.getTierName(),model.getPreviousTierName(),
+                    model.getWantedTimeStamp().getTime() - System.currentTimeMillis(),
+                    model.isWanted(),
+                    model.getUuid())
                     > 0;
             if (success) {
                 System.out.println("Updated successfully");
@@ -145,13 +156,13 @@ public class MariaDBStorageRequest implements StorageRequest {
                 String uuid = result.getString("uuid");
                 String username = PlayerDataManager.getPlayerNameFromUUID(uuid);
                 PlayerModel model = new PlayerModel(uuid, username);
-                model.setKarma(result.getDouble("karma"));
-                model.setPreviousKarma(result.getDouble("previous_karma"));
+                model.setKarma(result.getFloat("karma"));
+                model.setPreviousKarma(result.getFloat("previous_karma"));
                 model.setTierName(result.getString("tier"));
                 model.setPreviousTierName(result.getString("previous_tier"));
                 model.setLastUpdate(result.getTimestamp("last_update").getTime());
                 model.setWantedTimeStamp(new Timestamp(model.getLastUpdate() + result.getLong("wanted_time"))); //A modifier
-                model.setWanted(model.getWantedTimeStamp().getTime() > System.currentTimeMillis());
+                model.setWanted(result.getBoolean("is_wanted"));
                 modelList.add(model);
             }
         } catch (SQLException e) {

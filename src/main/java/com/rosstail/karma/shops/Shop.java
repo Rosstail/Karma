@@ -2,9 +2,9 @@ package com.rosstail.karma.shops;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -46,22 +46,21 @@ public class Shop {
         this.name = name;
     }
 
-    private boolean check(PlayerData playerData) {
-        if (useMinKarma && playerData.getKarma() < minShopKarma) {
+    private boolean checkHasKarma(PlayerModel model) {
+        if (useMinKarma && model.getKarma() < minShopKarma) {
             return false;
         }
-        return !useMaxKarma || !(playerData.getKarma() > maxShopKarma);
+        return !useMaxKarma || !(model.getKarma() > maxShopKarma);
     }
 
     public void handle(Player target) {
-        PlayerData playerData = PlayerDataManager.getNoSet(target);
-        if (check(playerData)) {
-            PlayerKarmaChangeEvent event = new PlayerKarmaChangeEvent(target, playerData.getKarma() - price, costResetOvertime, this);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(target.getName());
+        if (checkHasKarma(model)) {
+            PlayerKarmaChangeEvent event = new PlayerKarmaChangeEvent(target, model, model.getKarma() - price);
             Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                CommandManager.commandsLauncher(target, commands);
-                target.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.SHOP_SUCCESS), PlayerType.PLAYER.getText()));
-            }
+            //after event done
+            CommandManager.commandsLauncher(target, commands);
+            target.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.SHOP_SUCCESS), PlayerType.PLAYER.getText()));
         } else {
             target.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.SHOP_FAILURE), PlayerType.PLAYER.getText()));
         }

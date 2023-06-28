@@ -2,9 +2,10 @@ package com.rosstail.karma.lang;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.tiers.Tier;
+import com.rosstail.karma.tiers.TierManager;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -85,20 +86,20 @@ public class AdaptMessage {
             message = message.replaceAll("%" + playerType + "%", player.getName());
             String playerPluginPlaceholder = "%" + pluginName + "_" + playerType + "_";
             if (!player.hasMetadata("NPC")) {
-                PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-                double playerKarma = playerData.getKarma();
-                double playerPreviousKarma = playerData.getPreviousKarma();
-                double difPlayerDiffKarma = playerKarma - playerPreviousKarma;
+                PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+                float playerKarma = model.getKarma();
+                float playerPreviousKarma = model.getPreviousKarma();
+                float difPlayerDiffKarma = playerKarma - playerPreviousKarma;
 
-                Tier playerTier = playerData.getTier();
-                Tier playerPreviousTier = playerData.getPreviousTier();
-                long wantedTime = playerData.getWantedTimeLeft();
-                Timestamp wantedTimeStamp = playerData.getWantedTimeStamp();
+                Tier playerTier = TierManager.getTierManager().getTierByName(model.getTierName());
+                Tier playerPreviousTier = TierManager.getTierManager().getTierByName(model.getPreviousTierName());
+                long wantedTime = PlayerDataManager.getWantedTimeLeft(model);
+                Timestamp wantedTimeStamp = model.getWantedTimeStamp();
 
                 String status;
                 String shortStatus;
 
-                if (playerData.isWanted()) {
+                if (model.isWanted()) {
                     status = LangManager.getMessage(LangMessage.STATUS_WANTED);
                     shortStatus = LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT);
                 } else {
@@ -133,7 +134,7 @@ public class AdaptMessage {
                 message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay%", String.valueOf(wantedTime));
                 message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay_display%", countDownFormat(wantedTime));
             } else {
-                message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(player.getMetadata("Karma").get(0).asDouble(), '.'));
+                message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(player.getMetadata("Karma").get(0).asFloat(), '.'));
             }
         }
         message = message.replaceAll("%timestamp%", String.valueOf(System.currentTimeMillis()));
@@ -169,7 +170,7 @@ public class AdaptMessage {
             return;
         }
         if (coolDown.containsKey(player)) {
-            double seconds = 0;
+            float seconds = 0;
 
             if (event instanceof EntityDamageByEntityEvent) {
                 if (((EntityDamageByEntityEvent) event).getEntity() instanceof Player) {
@@ -184,7 +185,7 @@ public class AdaptMessage {
                     seconds = configData.pveKillMessageDelay;
                 }
             }
-            double timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
+            float timeLeft = coolDown.get(player) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
@@ -202,14 +203,14 @@ public class AdaptMessage {
             return null;
         }
         if (coolDown.containsKey(attacker)) {
-            double seconds;
+            float seconds;
 
             if (cause instanceof EntityDamageByEntityEvent) {
                 seconds = configData.pvpHitMessageDelay;
             } else {
                 seconds = configData.pvpKillMessageDelay;
             }
-            double timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
+            float timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + seconds * 1000f;
             if (!(timeLeft <= 0)) {
                 return null;
             }
@@ -222,7 +223,7 @@ public class AdaptMessage {
         return message;
     }
 
-    public String decimalFormat(double value, char replacement) {
+    public String decimalFormat(float value, char replacement) {
         ConfigData configData = ConfigData.getConfigData();
         return String.format("%." + configData.decNumber + "f", value).replaceAll(",", String.valueOf(replacement));
     }
@@ -285,7 +286,7 @@ public class AdaptMessage {
         }
     }
 
-    public static long calculateDuration(Player player, String expression) {
+    public static long calculateDuration(Long currentWantedTime, String expression) {
         List<String> matches = Arrays.asList("(\\d+)ms", "(\\d+)s", "(\\d+)m", "(\\d+)h", "(\\d+)d");
         List<Integer> ints = Arrays.asList(1, 1000, 60, 60, 24);
 
@@ -304,9 +305,8 @@ public class AdaptMessage {
             totalTimeMs += System.currentTimeMillis();
         }
         if (expression.contains("%player_wanted_time%")) {
-            PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-            if (playerData.getWantedTimeLeft() > 0L) {
-                totalTimeMs += playerData.getWantedTime();
+            if (currentWantedTime > 0L) {
+                totalTimeMs += currentWantedTime;
             } else {
                 totalTimeMs += System.currentTimeMillis();
             }

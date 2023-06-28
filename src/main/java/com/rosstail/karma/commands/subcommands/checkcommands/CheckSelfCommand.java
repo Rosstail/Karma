@@ -3,6 +3,8 @@ package com.rosstail.karma.commands.subcommands.checkcommands;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.HelpCommand;
+import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -48,7 +50,16 @@ public class CheckSelfCommand extends SubCommand {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
             return;
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt((Player) sender, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.PLAYER.getText()));
+        Player player = (Player) sender;
+
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        sender.sendMessage("CheckSelfCommand#perform : "
+                        + "\n" + model.getUuid() + " | " + model.getUsername()
+                        + "\n" + model.getKarma() + " | " + model.getPreviousKarma()
+                        + "\n" + model.getTierName() + " | " + model.getPreviousTierName()
+                        + "\n" + model.getWantedTimeStamp().getTime() + " | " + model.isWanted()
+                        + "\n" + model.getLastUpdate());
+        //sender.sendMessage(AdaptMessage.getAdaptMessage().adapt((Player) sender, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.PLAYER.getText()));
     }
 
     @Override

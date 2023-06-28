@@ -1,5 +1,6 @@
-package com.rosstail.karma.customevents;
+package com.rosstail.karma.events.karmaevents;
 
+import com.rosstail.karma.datas.PlayerModel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -8,12 +9,12 @@ import org.jetbrains.annotations.NotNull;
 public class PlayerWantedPeriodRefreshEvent extends Event {
 
     private final Player player;
-    private final Object cause;
+    private final PlayerModel model;
     private boolean timeExtend;
 
-    public PlayerWantedPeriodRefreshEvent (Player player, Object cause, boolean timeExtend) {
+    public PlayerWantedPeriodRefreshEvent (Player player, PlayerModel model, boolean timeExtend) {
         this.player = player;
-        this.cause = cause;
+        this.model = model;
         this.timeExtend = timeExtend;
     }
 
@@ -21,8 +22,8 @@ public class PlayerWantedPeriodRefreshEvent extends Event {
         return player;
     }
 
-    public Object getCause() {
-        return cause;
+    public PlayerModel getModel() {
+        return model;
     }
 
     public boolean isTimeExtend() {

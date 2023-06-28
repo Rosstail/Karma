@@ -15,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CheckOtherCommand extends SubCommand {
 
@@ -56,23 +57,28 @@ public class CheckOtherCommand extends SubCommand {
             //sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.PLAYER.getText()));
         } else {
             String uuid = PlayerDataManager.getPlayerUUIDFromName(args[1]);
-            if (uuid != null) {
-                model = StorageManager.getManager().selectPlayerModel(uuid); //READ
+            if (uuid == null) {
+                sender.sendMessage("The player " + args[1] + "does not exist.");
+                return;
             }
+            model = StorageManager.getManager().selectPlayerModel(uuid); //READ
         }
 
         if (model == null) {
             sender.sendMessage("CheckOtherCommand#perform :" +
-                    "\nThis player " + args[1] + " does not exist");
+                    "\nThis player " + args[1] + " does not have karma datas.");
             return;
         }
 
         sender.sendMessage("CheckOtherCommand#perform : "
-                + "\n" + model.getUuid() + " | " + model.getUsername()
-                + "\n" + model.getKarma() + " | " + model.getPreviousKarma()
-                + "\n" + model.getTierName() + " | " + model.getPreviousTierName()
-                + "\n" + model.getWantedTimeStamp().getTime() + " | " + model.isWanted()
-                + "\n" + model.getLastUpdate()
+                + "\nUUID AND NAME: " + model.getUuid() + " | " + model.getUsername()
+                + "\nSTATUS: " + (target != null && target.isOnline() ? " Connected" : "Disconnected")
+                + "\nCURRENT KARMA and PREVIOUS: " + model.getKarma() + " | " + model.getPreviousKarma()
+                + "\nCURRENT TIER and PREVIOUS: " + model.getTierName() + " | " + model.getPreviousTierName()
+                + (!Objects.equals(TierManager.getTierManager().getTierByKarmaAmount(model.getKarma()).getName(), model.getTierName())
+                ? " (Will become " + TierManager.getTierManager().getTierByKarmaAmount(model.getKarma()).getName() + " on next connection)" : "")
+                + "\nWANTED TIME and IS WANTED: " + model.getWantedTimeStamp().getTime() + " | " + model.isWanted()
+                + "\nLAST UPDATE: " + model.getLastUpdate()
         );
     }
 

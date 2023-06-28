@@ -1,11 +1,8 @@
 package com.rosstail.karma.tiers;
 
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.datas.PlayerData;
-import com.rosstail.karma.datas.PlayerDataManager;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -69,12 +66,23 @@ public class TierManager {
         return tiers;
     }
 
-    public Tier getTier(String tierName) {
+    public Tier getTierByName(String tierName) {
         if (tierName != null && tiers.containsKey(tierName)) {
             return tiers.get(tierName);
         } else {
             return noTier;
         }
+    }
+
+    public Tier getTierByKarmaAmount(float amount) {
+        for (Map.Entry<String, Tier> entry : tiers.entrySet()) {
+            String s = entry.getKey();
+            Tier tier = entry.getValue();
+            if (amount >= tier.getMinKarma() && amount <= tier.getMaxKarma()) {
+                return tier;
+            }
+        }
+        return null;
     }
 
     public static Tier getNoTier() {

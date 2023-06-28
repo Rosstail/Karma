@@ -1,4 +1,4 @@
-package com.rosstail.karma.customevents;
+package com.rosstail.karma.events.karmaevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

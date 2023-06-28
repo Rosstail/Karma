@@ -15,14 +15,15 @@ public class Tier {
     private final String name;
     private String display;
     private String shortDisplay;
-    private double minKarma;
-    private double maxKarma;
+    private float minKarma;
+    private float maxKarma;
+    private float defaultKarma;
     private boolean punishWanted;
     private List<String> joinCommands;
     private List<String> joinOnDownCommands;
     private List<String> joinOnUpCommands;
     private List<String> killedCommands;
-    private Map<Tier, Double> scores = new HashMap<>();
+    private Map<Tier, Float> scores = new HashMap<>();
 
 
     Tier(String name) {
@@ -43,12 +44,16 @@ public class Tier {
         }
         this.shortDisplay = AdaptMessage.getAdaptMessage().adapt(null, shortDisplay, null);
 
-        this.minKarma = section.getDouble("minimum");
-        this.maxKarma = section.getDouble("maximum");
+        this.minKarma = (float) section.getDouble("minimum", Float.MIN_VALUE);
+        this.maxKarma = (float) section.getDouble("maximum", Float.MAX_VALUE);
+        this.defaultKarma = (float) section.getDouble("default-karma", maxKarma - minKarma);
+
         this.punishWanted = section.getBoolean("punish-wanted", false);
+
         this.joinCommands = section.getStringList("commands.join-commands");
         this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
         this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
+
         this.killedCommands = section.getStringList("commands.killed-commands.commands");
     }
 
@@ -89,12 +94,16 @@ public class Tier {
         return shortDisplay;
     }
 
-    public double getMinKarma() {
+    public float getMinKarma() {
         return minKarma;
     }
 
-    public double getMaxKarma() {
+    public float getMaxKarma() {
         return maxKarma;
+    }
+
+    public float getDefaultKarma() {
+        return defaultKarma;
     }
 
     public boolean doPunishWanted() {
@@ -117,19 +126,19 @@ public class Tier {
         return killedCommands;
     }
 
-    public Map<Tier, Double> getScores() {
+    public Map<Tier, Float> getScores() {
         return scores;
     }
 
-    public double getTierScore(Tier tier) {
+    public float getTierScore(Tier tier) {
         return scores.get(tier);
     }
 
     public void initScores(TierManager tierManager) {
         YamlConfiguration config = Karma.getInstance().getCustomConfig();
         tierManager.getTiers().forEach((s, tier) -> {
-            scores.put(tier, config.getDouble("tiers.list." + this.getName() + ".score." + tier.getName()));
+            scores.put(tier, (float) config.getDouble("tiers.list." + this.getName() + ".score." + tier.getName()));
         });
-        scores.put(TierManager.getNoTier(), config.getDouble("tiers.list." + this.getName() + ".score.none"));
+        scores.put(TierManager.getNoTier(), (float) config.getDouble("tiers.list." + this.getName() + ".score.none"));
     }
 }

@@ -1,11 +1,17 @@
 package com.rosstail.karma.events;
 
-import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.ConfigData;
+import com.rosstail.karma.events.karmaevents.PlayerOverTimeTriggerEvent;
+import com.rosstail.karma.events.karmaevents.PlayerTierChangeEvent;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.DBInteractions;
 import com.rosstail.karma.datas.storage.StorageManager;
+import com.rosstail.karma.events.karmaevents.PlayerWantedPeriodRefreshEvent;
+import com.rosstail.karma.overtime.OvertimeLoop;
+import com.rosstail.karma.tiers.Tier;
+import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timemanagement.TimeManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -19,7 +25,8 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Collections;
+import java.sql.Timestamp;
+import java.util.Map;
 
 public class MinecraftEventHandler implements Listener {
 
@@ -29,12 +36,76 @@ public class MinecraftEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
         PlayerModel model = StorageManager.getManager().selectPlayerModel(event.getPlayer().getUniqueId().toString());
         if (model == null) {
             model = new PlayerModel(event.getPlayer());
             StorageManager.getManager().insertPlayerModel(model);
+            PlayerDataManager.initPlayerModelToMap(model);
+
+            //Event join tier by default
+            PlayerTierChangeEvent defaultTierJoinEvent = new PlayerTierChangeEvent(event.getPlayer(), model, TierManager.getTierManager().getTierByKarmaAmount(model.getKarma()).getName());
+            Bukkit.getPluginManager().callEvent(defaultTierJoinEvent);
+
+            /*
+            Overtime setup with initial timer
+             */
+            if (ConfigData.getConfigData().overtimeActive) {
+                for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
+                    String overtimeName = entry.getKey();
+                    OvertimeLoop overtimeLoop = entry.getValue();
+                    model.getOverTimeStampMap().put(overtimeName, new Timestamp(overtimeLoop.firstTimer));
+                }
+            }
+        } else {
+            PlayerDataManager.initPlayerModelToMap(model);
+
+            /*
+            Overtime setup WITH/OUT check
+             */
+            if (ConfigData.getConfigData().overtimeActive) {
+                long lastUpdate = model.getLastUpdate();
+                long deltaUpdates = System.currentTimeMillis() - lastUpdate;
+                for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
+                    String overtimeName = entry.getKey();
+                    OvertimeLoop overtimeLoop = entry.getValue();
+                    deltaUpdates -= overtimeLoop.firstTimer;
+
+                    long delay = overtimeLoop.firstTimer; //default online only overtime timer
+                    if (overtimeLoop.offline) {
+                        int occurrenceAmount = (int) (Math.floorDiv(deltaUpdates, overtimeLoop.nextTimer) + 1);
+                        delay = deltaUpdates % overtimeLoop.nextTimer;
+
+                        if (occurrenceAmount > 0) {
+                            Bukkit.getPluginManager().callEvent(new PlayerOverTimeTriggerEvent(player, overtimeName, occurrenceAmount, delay));
+                        } else {
+                            delay = -deltaUpdates;
+                        }
+                    }
+
+                    model.getOverTimeStampMap().put(overtimeName, new Timestamp(delay));
+                }
+            }
+
+            /*
+            CHECK PLAYER TIER
+             */
+            TierManager tierManager = TierManager.getTierManager();
+            Tier currentKarmaTier = tierManager.getTierByKarmaAmount(model.getKarma());
+            Tier modelTier = tierManager.getTierByName(model.getTierName());
+            if (!currentKarmaTier.equals(modelTier)) {
+                PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(player, model, currentKarmaTier.getName());
+                Bukkit.getPluginManager().callEvent(tierChangeEvent);
+            }
+
+            /*
+            CHECK PLAYER WANTED STATUS
+             */
+            if (ConfigData.getConfigData().wantedEnable && model.isWanted()) {
+                PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model, false);
+                Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
+            }
         }
-        PlayerDataManager.initPlayerModelToMap(model);
     }
 
     @EventHandler

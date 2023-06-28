@@ -3,27 +3,24 @@ package com.rosstail.karma.datas;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.customevents.Cause;
-import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.customevents.PlayerOverTimeTriggerEvent;
-import com.rosstail.karma.customevents.PlayerWantedPeriodEndEvent;
-import com.rosstail.karma.datas.storage.DBInteractions;
+import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.events.karmaevents.PlayerOverTimeTriggerEvent;
+import com.rosstail.karma.events.karmaevents.PlayerWantedPeriodEndEvent;
+import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +29,6 @@ public class PlayerDataManager {
     private static int scheduler;
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
-    private static final Map<Player, PlayerData> playerDataMap = new HashMap<>();
     private static final Map<String, PlayerModel> playerModelMap = new HashMap<>();
 
     public static PlayerModel initPlayerModelToMap(PlayerModel model) {
@@ -43,17 +39,6 @@ public class PlayerDataManager {
         return playerModelMap.remove(player.getName());
     }
 
-    public static PlayerData getNoSet(Player player) {
-        if (!playerDataMap.containsKey(player)) { // If player doesn't have instance
-            return new PlayerData(player);
-        }
-        return playerDataMap.get(player);
-    }
-
-    public static Map<Player, PlayerData> getPlayerDataMap() {
-        return playerDataMap;
-    }
-
     public static void changePlayerTierMessage(Player player) {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
@@ -61,57 +46,32 @@ public class PlayerDataManager {
         }
     }
 
-    public static void saveData(DBInteractions.reasons reason, Map<Player, PlayerData> map) {
-        DBInteractions dbInteractions = DBInteractions.getInstance();
-        if (dbInteractions != null) {
-            try {
-                dbInteractions.updatePlayersDB(reason, map);
-            } catch (SQLException | ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-        } else {
-            for (PlayerData playerData : map.values()) {
-                File playerFile = playerData.getPlayerFile();
-                YamlConfiguration playerConfig = YamlConfiguration.loadConfiguration(playerFile);
-                playerConfig.set("karma", playerData.getKarma());
-                playerConfig.set("previous-karma", playerData.getPreviousKarma());
-                playerConfig.set("tier", playerData.getTier().getName());
-                playerConfig.set("previous-tier", playerData.getPreviousTier().getName());
-                playerConfig.set("wanted-time", playerData.getWantedTimeLeft());
-                try {
-                    playerConfig.save(playerFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
     public static void setupScheduler() {
         scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            for (PlayerData playerData : PlayerDataManager.getPlayerDataMap().values()) {
-                Player player = playerData.player;
+            for (Map.Entry<String, PlayerModel> e : PlayerDataManager.getPlayerModelMap().entrySet()) {
+                String username = e.getKey();
+                PlayerModel model = e.getValue();
+
+                Player player = Bukkit.getPlayer(username);
 
                 if (ConfigData.getConfigData().overtimeActive) {
                     for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
                         String s = entry.getKey();
                         OvertimeLoop overtimeLoop = entry.getValue();
 
-                        if (playerData.isOverTime(overtimeLoop.name)) {
+                        if (model.getOverTimeStampMap().get(overtimeLoop.name).getTime() <= 0L) {
                             PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player, s, 1, overtimeLoop.firstTimer);
                             Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
 
-                            playerData.setOverTimeStamp(s, overtimeLoop.nextTimer);
+                            model.getOverTimeStampMap().put(s, new Timestamp(System.currentTimeMillis() + overtimeLoop.nextTimer));
                         }
                     }
                 }
 
-                if (ConfigData.getConfigData().wantedEnable && playerData.isWantedToken() && !playerData.isWanted()) {
+                if (ConfigData.getConfigData().wantedEnable && model.isWanted() && !(model.getWantedTimeStamp().getTime() > 0L)) {
                     PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
                     Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
                 }
-
-
             }
         }, 20L, 20L);
     }
@@ -120,22 +80,20 @@ public class PlayerDataManager {
      * Set karma of player between karma limits from config
      * @param value
      */
-    public static void setKarmaBetweenLimits(PlayerModel model, double value) {
-        double min = ConfigData.getConfigData().minKarma;
-        double max = ConfigData.getConfigData().maxKarma;
+    public static float limitKarma(float value) {
+        float min = ConfigData.getConfigData().minKarma;
+        float max = ConfigData.getConfigData().maxKarma;
         if (value < min) {
             value = min;
         } else if (value > max) {
             value = max;
         }
-
-        model.setKarma(value);
+        return value;
     }
 
-    public static void triggerOverTime(PlayerData playerData, String overtimeName, int multiplier) {
-        Player player = playerData.player;
-        double currentKarma = playerData.getKarma();
-        double newKarma = currentKarma;
+    public static void triggerOverTime(Player player, PlayerModel model, String overtimeName, int multiplier) {
+        float currentKarma = model.getKarma();
+        float newKarma = currentKarma;
 
         OvertimeLoop overtimeLoop = ConfigData.getConfigData().overtimeLoopMap.get(overtimeName);
 
@@ -146,8 +104,8 @@ public class PlayerDataManager {
             return;
         }
 
-        double amount = overtimeLoop.amount;
-        if (amount != 0D) {
+        float amount = overtimeLoop.amount;
+        if (amount != 0F) {
             amount *= multiplier;
             if (overtimeLoop.hasMaxKarma && currentKarma < overtimeLoop.maxKarma) {
                 newKarma = Math.min(currentKarma + amount, overtimeLoop.maxKarma);
@@ -158,7 +116,7 @@ public class PlayerDataManager {
         }
 
         if (newKarma != currentKarma) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, newKarma, false, Cause.TIMER);
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, newKarma);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         }
         CommandManager.commandsLauncher(player, overtimeLoop.commands);
@@ -265,5 +223,40 @@ public class PlayerDataManager {
 
     public static Map<String, PlayerModel> getPlayerModelMap() {
         return playerModelMap;
+    }
+
+    public static long getWantedTime(PlayerModel model) {
+        return model.getWantedTimeStamp().getTime();
+    }
+
+    public static long getWantedTimeLeft(PlayerModel model) {
+        return Math.max(0L, getWantedTime(model) - System.currentTimeMillis());
+    }
+
+    public static long getOvertime(PlayerModel model, String name) {
+        return model.getOverTimeStampMap().get(name).getTime() - System.currentTimeMillis();
+    }
+
+    public boolean isOverTime(PlayerModel model, String name) {
+        return getOvertime(model, name) <= 0L;
+    }
+
+    public static void stopTimer(int scheduler) {
+        Bukkit.getScheduler().cancelTask(scheduler);
+    }
+
+    public static boolean isWanted(PlayerModel model) {
+        return getWantedTimeLeft(model) > 0L;
+    }
+
+
+    public static void setOverTimeStamp(PlayerModel model, String name, long value) {
+        model.getOverTimeStampMap().put(name, new Timestamp(System.currentTimeMillis() + value));
+    }
+
+    public static void saveAllPlayerModelToStorage() {
+        getPlayerModelMap().forEach((s, model) -> {
+            StorageManager.getManager().updatePlayerModel(model);
+        });
     }
 }
