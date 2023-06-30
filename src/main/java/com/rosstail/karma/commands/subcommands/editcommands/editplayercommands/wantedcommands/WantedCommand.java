@@ -1,11 +1,8 @@
-package com.rosstail.karma.commands.subcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditAddCommand;
-import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditRemoveCommand;
-import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditResetCommand;
-import com.rosstail.karma.commands.subcommands.karmaeditcommands.KarmaEditSetCommand;
+import com.rosstail.karma.commands.subcommands.HelpCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -15,34 +12,32 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KarmaEditCommand extends SubCommand {
+public class WantedCommand extends SubCommand {
 
-    public KarmaEditCommand() {
-        subCommands.add(new KarmaEditSetCommand());
-        subCommands.add(new KarmaEditAddCommand());
-        subCommands.add(new KarmaEditRemoveCommand());
-        subCommands.add(new KarmaEditResetCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT).replaceAll("%syntax%", getSyntax()), null);
+    public WantedCommand() {
+        subCommands.add(new WantedCheckCommand());
+        subCommands.add(new WantedEditCommand());
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override
     public String getName() {
-        return "edit";
+        return "wanted";
     }
 
     @Override
     public String getDescription() {
-        return "Edit karma of a player";
+        return "Wanted commands";
     }
 
     @Override
     public String getSyntax() {
-        return "karma edit <editType> <player> <value> (reset)";
+        return "karma wanted";
     }
 
     @Override
     public String getPermission() {
-        return "karma.command.edit";
+        return "karma.command.wanted";
     }
 
     @Override
@@ -79,6 +74,7 @@ public class KarmaEditCommand extends SubCommand {
                 }
             }
         }
+
         return null;
     }
 }

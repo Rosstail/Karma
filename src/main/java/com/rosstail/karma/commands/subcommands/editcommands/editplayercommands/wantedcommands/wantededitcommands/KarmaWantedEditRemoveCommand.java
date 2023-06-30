@@ -1,6 +1,5 @@
-package com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantededitcommands;
 
-import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
@@ -17,33 +16,35 @@ import org.bukkit.entity.Player;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-public class KarmaWantedEditSetCommand extends SubCommand {
+public class KarmaWantedEditRemoveCommand extends SubCommand {
 
-    public KarmaWantedEditSetCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
+    public KarmaWantedEditRemoveCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT_REMOVE).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override
     public String getName() {
-        return "set";
+        return "remove";
     }
 
     @Override
     public String getDescription() {
-        return "Set the wanted time to player";
+        return "Remove wanted time from player";
     }
 
     @Override
     public String getSyntax() {
-        return "karma wanted edit set <player> <value> (-f -o -c)";
+        return "karma wanted edit remove <player> <value> (-f -o -c)";
     }
 
     @Override
     public String getPermission() {
         return "karma.command.wanted.edit";
     }
+
 
     @Override
     public void perform(CommandSender sender, String[] args) {
@@ -61,7 +62,7 @@ public class KarmaWantedEditSetCommand extends SubCommand {
             ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
             expressionList.remove("wanted");
             expressionList.remove("edit");
-            expressionList.remove("set");
+            expressionList.remove("remove");
             expressionList.remove(playerName);
             expression = String.join(" ", expressionList).trim();
 
@@ -69,7 +70,7 @@ public class KarmaWantedEditSetCommand extends SubCommand {
                 changeWantedOnline(sender, player, expression);
             } else {
                 //if not force
-                if (command.contains(" -f")) {
+                if (CommandManager.doesCommandMatchParameter(command, "f", "force")) {
                     changeWantedOffline(sender, playerName, expression);
                 } else {
                     sender.sendMessage("Player " + playerName + " is disconnected. Use -f to override");
@@ -85,28 +86,48 @@ public class KarmaWantedEditSetCommand extends SubCommand {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         long wantedTimeLeft = PlayerDataManager.getWantedTimeLeft(model);
         long duration = AdaptMessage.calculateDuration(wantedTimeLeft, expression);
-
-        sender.sendMessage("KarmaWantedEditSetCommand#changeWantedOnline set wanted time to " + duration);
-        PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(duration));
+        long baseDuration = model.getWantedTimeStamp().getTime();
+        long newDuration = baseDuration - duration;
+        sender.sendMessage("KarmaWantedEditRemoveCommand#changeWantedOnline set wanted time to " + newDuration);
+        PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(newDuration));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
     }
 
     private void changeWantedOffline(CommandSender sender, String playerName, String expression) {
-        PlayerModel model = StorageManager.getManager().selectPlayerModel(PlayerDataManager.getPlayerUUIDFromName(playerName));
+        String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
+        PlayerModel model = StorageManager.getManager().selectPlayerModel(playerUUID);
 
-        if (model == null && !expression.contains("-c")) {
-            System.out.println("Player " + playerName + " does not have data. Create by adding -c at the end of command");
-            return;
+        if (model == null) {
+            if (playerUUID == null) {
+                sender.sendMessage("The player " + playerName + " does not exist.");
+                return;
+            }
+            if (!CommandManager.doesCommandMatchParameter(expression, "c", "create")) {
+                sender.sendMessage("Player " + playerName + " does not have data. Create by adding -c at the end of command");
+                return;
+            }
+            model = new PlayerModel(playerUUID, playerName);
+            StorageManager.getManager().insertPlayerModel(model);
         }
 
         long wantedTimeLeft = PlayerDataManager.getWantedTimeLeft(model);
         long duration = AdaptMessage.calculateDuration(wantedTimeLeft, expression);
-
-        model.setWantedTimeStamp(new Timestamp(duration));
-        model.setWanted(PlayerDataManager.isWanted(model));
+        long baseDuration = model.getWantedTimeStamp().getTime();
+        long newDuration = baseDuration - duration;
+        model.setWantedTimeStamp(new Timestamp(newDuration));
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("KarmaWantedEditSetCommand#changeWantedOffline set wanted time to " + model.getWantedTimeStamp());
+        sender.sendMessage("KarmaWantedEditRemoveCommand#changeWantedOffline set wanted time to " + model.getWantedTimeStamp());
+
+        if (model.isWanted()) {
+            if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
+                sender.sendMessage(" He will become INNOCENT upon reconnect");
+            } else {
+                sender.sendMessage("His wanted status will be refreshed upon reconnect");
+            }
+        } else if (model.getWantedTimeStamp().getTime() > System.currentTimeMillis()) {
+            sender.sendMessage("His wanted level will become WANTED upon reconnect");
+        }
     }
 
     @Override
@@ -115,10 +136,7 @@ public class KarmaWantedEditSetCommand extends SubCommand {
             return null;
         }
         if (args.length <= 5) {
-            ArrayList<String> expressions = new ArrayList<>();
-            expressions.add(ConfigData.getConfigData().wantedDurationExpression);
-            expressions.add(ConfigData.getConfigData().wantedMaxDurationExpression);
-            return expressions;
+            return Collections.singletonList("0d");
         }
 
         return null;

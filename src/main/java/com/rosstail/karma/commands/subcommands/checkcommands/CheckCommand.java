@@ -1,4 +1,4 @@
-package com.rosstail.karma.commands.subcommands;
+package com.rosstail.karma.commands.subcommands.checkcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;

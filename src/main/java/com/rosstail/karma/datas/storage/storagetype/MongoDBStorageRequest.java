@@ -27,8 +27,8 @@ public class MongoDBStorageRequest implements StorageRequest {
     }
 
     @Override
-    public void insertPayerModel(PlayerModel model) {
-
+    public boolean insertPayerModel(PlayerModel model) {
+        return false;
     }
 
     @Override

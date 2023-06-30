@@ -53,7 +53,7 @@ public class LiteSQLStorageRequest implements StorageRequest {
     }
 
     @Override
-    public void insertPayerModel(PlayerModel model) {
+    public boolean insertPayerModel(PlayerModel model) {
         String query = "INSERT INTO " + pluginName + " (uuid, karma, previous_karma, tier, previous_tier)"
                 + " VALUES (?, ?, ?, ?, ?);";
 
@@ -65,8 +65,10 @@ public class LiteSQLStorageRequest implements StorageRequest {
         try {
             boolean success = executeSQLUpdate(query, uuid, karma, previousKarma, tierName, previousTierName) > 0;
             System.out.println("INSERT SUCCESS " + success);
+            return success;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -100,7 +102,8 @@ public class LiteSQLStorageRequest implements StorageRequest {
     public void updatePlayerModel(PlayerModel model) {
         String query = "UPDATE " + pluginName + " SET karma = ?, previous_karma = ?, tier = ?, previous_tier = ?, wanted_time = ?, is_wanted = ?, last_update = CURRENT_TIMESTAMP WHERE uuid = ?";
         try {
-            boolean success = executeSQLUpdate(query, model.getKarma(), model.getPreviousKarma(), model.getTierName(),model.getPreviousTierName(), model.getWantedTimeStamp().getTime(), model.isWanted(), model.getUuid())
+            boolean success = executeSQLUpdate(query, model.getKarma(), model.getPreviousKarma(), model.getTierName(), model.getPreviousTierName(),
+                    PlayerDataManager.getWantedTimeLeft(model), model.isWanted(), model.getUuid())
                     > 0;
             if (success) {
                 System.out.println("Updated successfully");
@@ -134,7 +137,8 @@ public class LiteSQLStorageRequest implements StorageRequest {
 
     /**
      * Executes an SQL request for INSERT, UPDATE and DELETE
-     * @param query # The query itself
+     *
+     * @param query  # The query itself
      * @param params #The values to put as WHERE
      * @return # Returns the number of rows affected
      */
@@ -153,7 +157,8 @@ public class LiteSQLStorageRequest implements StorageRequest {
 
     /**
      * Executes an SQL request for SELECT
-     * @param query # The query itself
+     *
+     * @param query  # The query itself
      * @param params #The values to put as WHERE
      * @return # Returns the ResultSet of the request
      */
@@ -172,6 +177,7 @@ public class LiteSQLStorageRequest implements StorageRequest {
 
     /**
      * Executes an SQL request for CREATE TABLE
+     *
      * @param query # The query itself
      * @return # Returns if the request succeeded
      */

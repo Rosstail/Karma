@@ -1,4 +1,4 @@
-package com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantededitcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
@@ -68,8 +68,7 @@ public class KarmaWantedEditAddCommand extends SubCommand {
             if (player != null && player.isOnline()) {
                 changeWantedOnline(sender, player, expression);
             } else {
-                //if not force
-                if (command.contains(" -f")) {
+                if (CommandManager.doesCommandMatchParameter(command, "f", "force")) {
                     changeWantedOffline(sender, playerName, expression);
                 } else {
                     sender.sendMessage("Player " + playerName + " is disconnected. Use -f to override");
@@ -93,11 +92,20 @@ public class KarmaWantedEditAddCommand extends SubCommand {
     }
 
     private void changeWantedOffline(CommandSender sender, String playerName, String expression) {
+        String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
         PlayerModel model = StorageManager.getManager().selectPlayerModel(PlayerDataManager.getPlayerUUIDFromName(playerName));
 
-        if (model == null && !expression.contains("-c")) {
-            System.out.println("Player " + playerName + " does not have data. Create by adding -c at the end of command");
-            return;
+        if (model == null) {
+            if (playerUUID == null) {
+                sender.sendMessage("The player " + playerName + " does not exist.");
+                return;
+            }
+            if (!CommandManager.doesCommandMatchParameter(expression, "c", "create")) {
+                sender.sendMessage("Player " + playerName + " does not have data. Create by adding -c at the end of command");
+                return;
+            }
+            model = new PlayerModel(playerUUID, playerName);
+            StorageManager.getManager().insertPlayerModel(model);
         }
 
         long wantedTimeLeft = PlayerDataManager.getWantedTimeLeft(model);
@@ -105,10 +113,18 @@ public class KarmaWantedEditAddCommand extends SubCommand {
         long baseDuration = model.getWantedTimeStamp().getTime();
         long newDuration = baseDuration + duration;
         model.setWantedTimeStamp(new Timestamp(newDuration));
-        model.setWanted(PlayerDataManager.isWanted(model));
         StorageManager.getManager().updatePlayerModel(model);
 
         sender.sendMessage("KarmaWantedEditAddCommand#changeWantedOffline set wanted time to " + model.getWantedTimeStamp());
+        if (model.isWanted()) {
+            if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
+                sender.sendMessage(" He will become INNOCENT upon reconnect");
+            } else {
+                sender.sendMessage("His wanted status will be refreshed upon reconnect");
+            }
+        } else if (model.getWantedTimeStamp().getTime() > System.currentTimeMillis()) {
+            sender.sendMessage("His wanted level will become WANTED upon reconnect");
+        }
     }
 
     @Override

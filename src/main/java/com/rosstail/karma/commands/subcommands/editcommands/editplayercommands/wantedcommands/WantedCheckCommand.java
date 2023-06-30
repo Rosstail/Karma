@@ -1,21 +1,15 @@
-package com.rosstail.karma.commands.subcommands.wantedcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.HelpCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantedcheckcommands.KarmaWantedCheckOtherCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantedcheckcommands.KarmaWantedCheckSelfCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditAddCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditRemoveCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditResetCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditSetCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantedcheckcommands.KarmaWantedCheckOtherCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantedcheckcommands.KarmaWantedCheckSelfCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WantedCheckCommand extends SubCommand {

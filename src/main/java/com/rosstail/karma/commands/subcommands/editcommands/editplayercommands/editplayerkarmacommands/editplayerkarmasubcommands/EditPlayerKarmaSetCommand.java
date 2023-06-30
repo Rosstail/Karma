@@ -1,8 +1,8 @@
-package com.rosstail.karma.commands.subcommands.karmaeditcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.commands.SubCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.EditPlayerKarmaSubCommand;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.datas.PlayerDataManager;
@@ -18,25 +18,25 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class KarmaEditRemoveCommand extends SubCommand {
+public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
 
-    public KarmaEditRemoveCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_REMOVE).replaceAll("%syntax%", getSyntax()), null);
+    public EditPlayerKarmaSetCommand() {
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override
     public String getName() {
-        return "remove";
+        return "set";
     }
 
     @Override
     public String getDescription() {
-        return "Removes karma of a player";
+        return "Set player's karma";
     }
 
     @Override
     public String getSyntax() {
-        return "karma edit remove <player> <value> (-f -o -c)";
+        return "karma edit player <player> karma set <value> (-f -o -c)";
     }
 
     @Override
@@ -46,42 +46,37 @@ public class KarmaEditRemoveCommand extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args) {
+    }
+
+    @Override
+    public void performOnline(CommandSender sender, PlayerModel model, String[] args, Player player) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-        String playerName = args[2];
-
-        String command = Arrays.toString(args);
-        Player player;
-        player = Bukkit.getPlayerExact(playerName);
-
-        //If player is disconnected
-        if (player != null && player.isOnline()) {
-            changeOnlineKarma(sender, player, args);
-        } else {
-            //if not force
-            if (command.contains(" -f")) {
-                changeOfflineKarma(sender, playerName, args);
-            } else {
-                sender.sendMessage("Player " + playerName + " is disconnected. Use -f to override");
-            }
-        }
+        changeOnlineKarma(sender, model, args, player);
     }
 
-    public void changeOnlineKarma(CommandSender sender, Player player, String[] args) {
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+    @Override
+    public void performOffline(CommandSender sender, PlayerModel model, String[] args) {
+        if (!CommandManager.canLaunchCommand(sender, this)) {
+            return;
+        }
+        changeOfflineKarma(sender, model, args);
+    }
+
+    public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, Player player) {
         String command = Arrays.toString(args);
 
         float value;
 
         try {
-            value = model.getKarma() - Float.parseFloat(args[3]);
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            CommandManager.errorMessage(sender, e);
+            value = Float.parseFloat(args[5]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage("You must set a number");
             return;
         }
 
-        if (!command.contains("-o")) {
+        if (!CommandManager.doesCommandMatchParameter(Arrays.toString(args), "o", "override")) {
             value = PlayerDataManager.limitKarma(value);
         }
 
@@ -89,7 +84,7 @@ public class KarmaEditRemoveCommand extends SubCommand {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         try {
-            if (!command.contains("-r")) {
+            if (!CommandManager.doesCommandMatchParameter(Arrays.toString(args), "r", "reset")) {
                 ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
                     PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
                 });
@@ -99,34 +94,19 @@ public class KarmaEditRemoveCommand extends SubCommand {
         } catch (Exception ignored) { }
     }
 
-    public void changeOfflineKarma(CommandSender sender, String playerName, String[] args) {
-        String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
-        PlayerModel model = StorageManager.getManager().selectPlayerModel(playerUUID);
+    public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args) {
         String command = Arrays.toString(args);
-
-        if (model == null) {
-            if (playerUUID == null) {
-                sender.sendMessage("The player " + playerName + " does not exist.");
-                return;
-            }
-            if (!command.contains("-c")) {
-                sender.sendMessage("Player " + playerName + " does not have data. Create by adding -c at the end of command");
-                return;
-            }
-            model = new PlayerModel(playerUUID, playerName);
-            StorageManager.getManager().insertPlayerModel(model);
-        }
 
         float value;
 
         try {
-            value = model.getKarma() - Float.parseFloat(args[3]);
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-            CommandManager.errorMessage(sender, e);
+            value = Float.parseFloat(args[5]);
+        } catch (NumberFormatException e) {
+            sender.sendMessage("You must set a number");
             return;
         }
 
-        if (!command.contains("-o")) {
+        if (!CommandManager.doesCommandMatchParameter(command, "o", "override")) {
             value = PlayerDataManager.limitKarma(value);
         } else {
             sender.sendMessage("new karma value is not limited.");
@@ -136,7 +116,7 @@ public class KarmaEditRemoveCommand extends SubCommand {
         model.setKarma(value);
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("Edited offline karma of " + playerName + " :" + value);
+        sender.sendMessage("Edited offline karma of " + model.getUsername() + " :" + value);
         String currentTierName = model.getTierName();
         String futureTierName = TierManager.getTierManager().getTierByKarmaAmount(value).getName();
         if (!Objects.equals(currentTierName, futureTierName)) { //Safe name check

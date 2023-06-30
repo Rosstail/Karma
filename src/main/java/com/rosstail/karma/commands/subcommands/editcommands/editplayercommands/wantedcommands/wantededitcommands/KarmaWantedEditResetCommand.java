@@ -1,4 +1,4 @@
-package com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantededitcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
@@ -60,7 +60,7 @@ public class KarmaWantedEditResetCommand extends SubCommand {
                 changeWantedOnline(sender, player);
             } else {
                 //if not force
-                if (command.contains(" -f")) {
+                if (CommandManager.doesCommandMatchParameter(command, "f", "force")) {
                     String expression;
                     ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
                     expressionList.remove("wanted");
@@ -88,18 +88,36 @@ public class KarmaWantedEditResetCommand extends SubCommand {
     }
 
     private void changeWantedOffline(CommandSender sender, String playerName, String command) {
-        PlayerModel model = StorageManager.getManager().selectPlayerModel(PlayerDataManager.getPlayerUUIDFromName(playerName));
+        String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
+        PlayerModel model = StorageManager.getManager().selectPlayerModel(playerUUID);
 
-        if (model == null && !command.contains("-c")) {
-            System.out.println("Player " + playerName + " does not have data. Create by adding -c at the end of command");
-            return;
+        if (model == null) {
+            if (playerUUID == null) {
+                sender.sendMessage("The player " + playerName + " does not exist.");
+                return;
+            }
+            if (!CommandManager.doesCommandMatchParameter(command, "c", "create")) {
+                sender.sendMessage("Player " + playerName + " does not have data. Create by adding -c at the end of command");
+                return;
+            }
+            model = new PlayerModel(playerUUID, playerName);
+            StorageManager.getManager().insertPlayerModel(model);
         }
 
         model.setWantedTimeStamp(new Timestamp(0));
-        model.setWanted(PlayerDataManager.isWanted(model));
         StorageManager.getManager().updatePlayerModel(model);
 
         sender.sendMessage("KarmaWantedEditResetCommand#changeWantedOffline set wanted time to " + model.getWantedTimeStamp());
+
+        if (model.isWanted()) {
+            if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
+                sender.sendMessage(" He will become INNOCENT upon reconnect");
+            } else {
+                sender.sendMessage("His wanted status will be refreshed upon reconnect");
+            }
+        } else if (model.getWantedTimeStamp().getTime() > System.currentTimeMillis()) {
+            sender.sendMessage("His wanted level will become WANTED upon reconnect");
+        }
     }
 
     @Override

@@ -1,21 +1,19 @@
-package com.rosstail.karma.commands.subcommands.wantedcommands.wantedcheckcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantedcheckcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class KarmaWantedCheckOtherCommand extends SubCommand {
+public class KarmaWantedCheckSelfCommand extends SubCommand {
 
-    public KarmaWantedCheckOtherCommand() {
+    public KarmaWantedCheckSelfCommand() {
         help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_CHECK).replaceAll("%syntax%", getSyntax()), null);
     }
 
@@ -26,17 +24,17 @@ public class KarmaWantedCheckOtherCommand extends SubCommand {
 
     @Override
     public String getDescription() {
-        return "Check Karma status of another player";
+        return "Check your own Karma status";
     }
 
     @Override
     public String getSyntax() {
-        return "karma check <player>";
+        return "karma check";
     }
 
     @Override
     public String getPermission() {
-        return "karma.command.wanted.check.other";
+        return "karma.command.wanted.check.self";
     }
 
     @Override
@@ -45,14 +43,11 @@ public class KarmaWantedCheckOtherCommand extends SubCommand {
             return;
         }
 
-        Player target = Bukkit.getServer().getPlayer(args[2]);
-
-        if (target != null && target.isOnline()) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.WANTED_OTHER_CHECK), PlayerType.PLAYER.getText()));
-        } else {
-            sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[2]));
-            //CommandManager.disconnectedPlayer(sender);
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
+            return;
         }
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt((Player) sender, LangManager.getMessage(LangMessage.WANTED_OWN_CHECK), PlayerType.PLAYER.getText()));
     }
 
     @Override

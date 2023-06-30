@@ -60,7 +60,7 @@ public class SQLStorageRequest implements StorageRequest {
     }
 
     @Override
-    public void insertPayerModel(PlayerModel model) {
+    public boolean insertPayerModel(PlayerModel model) {
         String query = "INSERT INTO " + pluginName + " (uuid, karma, previous_karma, tier, previous_tier)"
                 + " VALUES (?, ?, ?, ?, ?);";
 
@@ -72,8 +72,10 @@ public class SQLStorageRequest implements StorageRequest {
         try {
             boolean success = executeSQLUpdate(query, uuid, karma, previousKarma, tierName, previousTierName) > 0;
             System.out.println("INSERT SUCCESS " + success);
+            return success;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
     }
 
@@ -115,7 +117,7 @@ public class SQLStorageRequest implements StorageRequest {
             boolean success = executeSQLUpdate(query,
                     model.getKarma(), model.getPreviousKarma(),
                     model.getTierName(),model.getPreviousTierName(),
-                    model.getWantedTimeStamp().getTime(),
+                    PlayerDataManager.getWantedTimeLeft(model),
                     model.isWanted(),
                     model.getUuid())
                     > 0;

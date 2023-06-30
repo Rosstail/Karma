@@ -93,24 +93,20 @@ public class StorageManager {
      *
      * @param model
      */
-    public void insertPlayerModel(PlayerModel model) {
+    public boolean insertPlayerModel(PlayerModel model) {
         switch (type) {
             case "sql":
-                sqlStorageRequest.insertPayerModel(model);
-                break;
+                return sqlStorageRequest.insertPayerModel(model);
             case "mariadb":
-                mariaDBStorageRequest.insertPayerModel(model);
-                break;
+                return mariaDBStorageRequest.insertPayerModel(model);
             case "mongodb":
-                mongoDBStorageRequest.insertPayerModel(model);
-                break;
+                return mongoDBStorageRequest.insertPayerModel(model);
             case "litesql":
-                liteSqlDBStorageRequest.insertPayerModel(model);
-                break;
+                return liteSqlDBStorageRequest.insertPayerModel(model);
             default:
                 System.out.println("LocalStorage");
-                break;
         }
+        return false;
     }
 
     /**

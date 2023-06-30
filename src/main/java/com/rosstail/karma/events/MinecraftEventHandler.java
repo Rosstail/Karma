@@ -1,12 +1,10 @@
 package com.rosstail.karma.events;
 
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.events.karmaevents.PlayerOverTimeTriggerEvent;
-import com.rosstail.karma.events.karmaevents.PlayerTierChangeEvent;
+import com.rosstail.karma.events.karmaevents.*;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.storage.StorageManager;
-import com.rosstail.karma.events.karmaevents.PlayerWantedPeriodRefreshEvent;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
@@ -101,9 +99,19 @@ public class MinecraftEventHandler implements Listener {
             /*
             CHECK PLAYER WANTED STATUS
              */
-            if (ConfigData.getConfigData().wantedEnable && model.isWanted()) {
-                PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model, false);
-                Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
+            if (ConfigData.getConfigData().wantedEnable) {
+                if (model.isWanted()) {
+                    if (PlayerDataManager.getWantedTimeLeft(model) > 0L) {
+                        PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model, false);
+                        Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
+                    } else {
+                        PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model);
+                        Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
+                    }
+                } else if (PlayerDataManager.getWantedTimeLeft(model) > 0L) {
+                    PlayerWantedPeriodStartEvent playerWantedPeriodStartEvent = new PlayerWantedPeriodStartEvent(player, model);
+                    Bukkit.getPluginManager().callEvent(playerWantedPeriodStartEvent);
+                }
             }
         }
     }

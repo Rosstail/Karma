@@ -1,13 +1,12 @@
-package com.rosstail.karma.commands.subcommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.WantedCheckCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.WantedEditCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditAddCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditRemoveCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditResetCommand;
-import com.rosstail.karma.commands.subcommands.wantedcommands.wantededitcommands.KarmaWantedEditSetCommand;
+import com.rosstail.karma.commands.subcommands.HelpCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantededitcommands.KarmaWantedEditAddCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantededitcommands.KarmaWantedEditRemoveCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantededitcommands.KarmaWantedEditResetCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.wantededitcommands.KarmaWantedEditSetCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -17,32 +16,34 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WantedCommand extends SubCommand {
+public class WantedEditCommand extends SubCommand {
 
-    public WantedCommand() {
-        subCommands.add(new WantedCheckCommand());
-        subCommands.add(new WantedEditCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED).replaceAll("%syntax%", getSyntax()), null);
+    public WantedEditCommand() {
+        subCommands.add(new KarmaWantedEditSetCommand());
+        subCommands.add(new KarmaWantedEditAddCommand());
+        subCommands.add(new KarmaWantedEditRemoveCommand());
+        subCommands.add(new KarmaWantedEditResetCommand());
+        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_WANTED_EDIT).replaceAll("%syntax%", getSyntax()), null);
     }
 
     @Override
     public String getName() {
-        return "wanted";
+        return "edit";
     }
 
     @Override
     public String getDescription() {
-        return "Wanted commands";
+        return "Edit the player WANTED time";
     }
 
     @Override
     public String getSyntax() {
-        return "karma wanted";
+        return "karma wanted edit <editType> <player>";
     }
 
     @Override
     public String getPermission() {
-        return "karma.command.wanted";
+        return "karma.command.wanted.edit";
     }
 
     @Override
@@ -51,12 +52,12 @@ public class WantedCommand extends SubCommand {
             return;
         }
 
-        if (args.length <= 1) {
+        if (args.length <= 2) {
             HelpCommand help = new HelpCommand(this);
             help.perform(sender, args);
         } else {
             for (int index = 0; index < getSubCommands().size(); index++) {
-                if (args[1].equalsIgnoreCase(getSubCommands().get(index).getName())) {
+                if (args[2].equalsIgnoreCase(getSubCommands().get(index).getName())) {
                     getSubCommands().get(index).perform(sender, args);
                     return;
                 }
@@ -66,7 +67,7 @@ public class WantedCommand extends SubCommand {
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        if (args.length <= 2) {
+        if (args.length <= 3) {
             ArrayList<String> subCommands = new ArrayList<>();
             for (SubCommand subCommand : getSubCommands()) {
                 subCommands.add(subCommand.getName());
@@ -74,7 +75,7 @@ public class WantedCommand extends SubCommand {
             return subCommands;
         } else {
             for (SubCommand subCommand : getSubCommands()) {
-                if (args[1].equalsIgnoreCase(subCommand.getName())) {
+                if (args[2].equalsIgnoreCase(subCommand.getName())) {
                     return subCommand.getSubCommandsArguments(sender, args);
                 }
             }

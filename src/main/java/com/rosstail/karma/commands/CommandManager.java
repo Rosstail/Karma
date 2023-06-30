@@ -1,6 +1,9 @@
 package com.rosstail.karma.commands;
 
 import com.rosstail.karma.commands.subcommands.*;
+import com.rosstail.karma.commands.subcommands.checkcommands.CheckCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.EditCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.WantedCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -15,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Checking what method/class will be used on command, depending of command Sender and number of args.
@@ -22,11 +27,13 @@ import java.util.List;
 public class CommandManager implements CommandExecutor, TabExecutor {
 
     private final ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>();
+    private static final Pattern shortParamPattern = Pattern.compile("-[A-Za-z]*");
+    private static final Pattern longParamPattern = Pattern.compile("--[A-Za-z]*");
 
     public CommandManager() {
         subCommands.add(new CalculateCommand());
         subCommands.add(new CheckCommand());
-        subCommands.add(new KarmaEditCommand());
+        subCommands.add(new EditCommand());
         subCommands.add(new ReloadCommand());
         subCommands.add(new SaveCommand());
         subCommands.add(new ShopCommand());
@@ -98,7 +105,6 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     /*public static void disconnectedPlayer(CommandSender sender) {
         sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.DISCONNECTED), null));
     }*/
-
     public static void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS), null));
@@ -167,5 +173,23 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         } else {
             Bukkit.dispatchCommand(senderOrTarget, command);
         }
+    }
+
+    public static boolean doesCommandMatchParameter(String command, String shortParam, String longParam) {
+        Matcher shortMatcher = shortParamPattern.matcher(command);
+        while (shortMatcher.find()) {
+            if (shortMatcher.group().contains(shortParam)) {
+                return true;
+            }
+        }
+
+        Matcher longMatcher = longParamPattern.matcher(command);
+        while (longMatcher.find()) {
+            if (longMatcher.group().contains(longParam)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
