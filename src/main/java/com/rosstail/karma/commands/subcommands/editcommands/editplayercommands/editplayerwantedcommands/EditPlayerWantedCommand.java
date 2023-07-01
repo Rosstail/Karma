@@ -1,10 +1,10 @@
-package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands;
 
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
-import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaAddCommand;
-import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaRemoveCommand;
-import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaResetCommand;
-import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaSetCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedAddCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedRemoveCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedResetCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedSetCommand;
 import com.rosstail.karma.datas.PlayerModel;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -12,18 +12,18 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
-    public List<EditPlayerKarmaSubCommand> subCommands = new ArrayList<>();
+public class EditPlayerWantedCommand extends EditPlayerSubCommand {
+    public List<EditPlayerWantedSubCommand> subCommands = new ArrayList<>();
 
-    public EditPlayerKarmaCommand() {
-        subCommands.add(new EditPlayerKarmaSetCommand());
-        subCommands.add(new EditPlayerKarmaAddCommand());
-        subCommands.add(new EditPlayerKarmaRemoveCommand());
-        subCommands.add(new EditPlayerKarmaResetCommand());
+    public EditPlayerWantedCommand() {
+        subCommands.add(new EditPlayerWantedSetCommand());
+        subCommands.add(new EditPlayerWantedAddCommand());
+        subCommands.add(new EditPlayerWantedRemoveCommand());
+        subCommands.add(new EditPlayerWantedResetCommand());
     }
     @Override
     public String getName() {
-        return "karma";
+        return "wanted";
     }
 
     @Override
@@ -33,12 +33,12 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit player <player> karma";
+        return "karma edit player <player> wanted";
     }
 
     @Override
     public String getPermission() {
-        return "karma.command.edit.player.karma";
+        return "karma.command.edit.player.wanted";
     }
 
     @Override
@@ -53,7 +53,7 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
     @Override
     public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
         List<String> subCommandsStringList = new ArrayList<>();
-        for (EditPlayerSubCommand subCommand : subCommands) {
+        for (EditPlayerWantedSubCommand subCommand : subCommands) {
             subCommandsStringList.add(subCommand.getName());
         }
 
@@ -81,7 +81,7 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
         }
 
         if (args.length < 5) {
-            StringBuilder message = new StringBuilder("EditPlayerKarmaCommand:");
+            StringBuilder message = new StringBuilder("EditPlayerWantedCommand:");
             for (EditPlayerSubCommand subCommand : subCommands) {
                 message.append("\n - ").append(subCommand.getName());
             }

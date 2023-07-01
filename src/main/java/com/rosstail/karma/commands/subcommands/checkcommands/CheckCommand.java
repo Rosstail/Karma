@@ -41,15 +41,15 @@ public class CheckCommand extends SubCommand {
     }
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
 
         if (args.length > 1) {
-            subCommands.get(1).perform(sender, args);
+            subCommands.get(1).perform(sender, args, arguments);
         } else {
-            subCommands.get(0).perform(sender, args);
+            subCommands.get(0).perform(sender, args, arguments);
         }
     }
 

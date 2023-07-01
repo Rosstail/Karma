@@ -46,7 +46,7 @@ public class Tier {
 
         this.minKarma = (float) section.getDouble("minimum", Float.MIN_VALUE);
         this.maxKarma = (float) section.getDouble("maximum", Float.MAX_VALUE);
-        this.defaultKarma = (float) section.getDouble("default-karma", maxKarma - minKarma);
+        this.defaultKarma = (float) section.getDouble("default-karma", (maxKarma + minKarma) / 2f);
 
         this.punishWanted = section.getBoolean("punish-wanted", false);
 

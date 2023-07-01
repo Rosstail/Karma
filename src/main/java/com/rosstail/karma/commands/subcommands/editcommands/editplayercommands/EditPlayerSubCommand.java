@@ -34,7 +34,7 @@ public abstract class EditPlayerSubCommand extends EditSubCommand {
         return null;
     }
 
-    public abstract void performOnline(CommandSender sender, PlayerModel model, String[] args, Player player);
+    public abstract void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player);
 
-    public abstract void performOffline(CommandSender sender, PlayerModel model, String[] args);
+    public abstract void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments);
 }

@@ -1,4 +1,4 @@
-package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands;
+package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands;
 
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.datas.PlayerModel;
@@ -7,25 +7,25 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public abstract class EditPlayerKarmaSubCommand extends EditPlayerSubCommand {
+public abstract class EditPlayerWantedSubCommand extends EditPlayerSubCommand {
     @Override
     public String getName() {
-        return "player";
+        return "wanted";
     }
 
     @Override
     public String getDescription() {
-        return "Edit player karma subcommands";
+        return "Edit player wanted subcommands";
     }
 
     @Override
     public String getSyntax() {
-        return "edit player <player> karma <value> (params)";
+        return "edit player <player> wanted <type> <value> (params)";
     }
 
     @Override
     public String getPermission() {
-        return "karma.commands.edit.player.karma";
+        return "karma.commands.edit.player.wanted";
     }
 
     @Override

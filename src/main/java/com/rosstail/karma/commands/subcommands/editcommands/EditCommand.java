@@ -18,13 +18,11 @@ public class EditCommand extends EditSubCommand {
     public EditCommand() {
         help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
         subCommands.add(new EditPlayerCommand());
-        //subCommands.add(new EditTierSubCommand());
-        //subCommands.add(new EditWantedSubCommand());
     }
 
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
@@ -39,7 +37,7 @@ public class EditCommand extends EditSubCommand {
         }
         for (EditSubCommand subCommand : subCommands) {
             if (subCommand.getName().equalsIgnoreCase(args[1])) {
-                subCommand.perform(sender, args);
+                subCommand.perform(sender, args, arguments);
             }
         }
     }

@@ -3,7 +3,6 @@ package com.rosstail.karma.commands;
 import com.rosstail.karma.commands.subcommands.*;
 import com.rosstail.karma.commands.subcommands.checkcommands.CheckCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.EditCommand;
-import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.wantedcommands.WantedCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -17,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 public class CommandManager implements CommandExecutor, TabExecutor {
 
     private final ArrayList<SubCommand> subCommands = new ArrayList<SubCommand>();
-    private static final Pattern shortParamPattern = Pattern.compile("-[A-Za-z]*");
-    private static final Pattern longParamPattern = Pattern.compile("--[A-Za-z]*");
+    private static final Pattern shortParamPattern = Pattern.compile("^-[A-Za-z]+"); //
+    private static final Pattern longParamPattern = Pattern.compile("^--[A-Za-z]+");
 
     public CommandManager() {
         subCommands.add(new CalculateCommand());
@@ -37,20 +37,25 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         subCommands.add(new ReloadCommand());
         subCommands.add(new SaveCommand());
         subCommands.add(new ShopCommand());
-        subCommands.add(new WantedCommand());
     }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             HelpCommand help = new HelpCommand(this);
-            help.perform(sender, args);
-        } else {
-            for (int index = 0; index < getSubCommands().size(); index++) {
-                if (args[0].equalsIgnoreCase(getSubCommands().get(index).getName())) {
-                    getSubCommands().get(index).perform(sender, args);
-                    return true;
-                }
+            help.perform(sender, args, null);
+            return true;
+        }
+        String[] arguments = getCommandArguments(args);
+        args = removeFoundArgumentsFromCommand(args, arguments);
+
+        sender.sendMessage("Commande " + Arrays.toString(args));
+        sender.sendMessage("Arguments " + Arrays.toString(arguments));
+
+        for (int index = 0; index < getSubCommands().size(); index++) {
+            if (args[0].equalsIgnoreCase(getSubCommands().get(index).getName())) {
+                getSubCommands().get(index).perform(sender, args, arguments);
+                return true;
             }
         }
 
@@ -175,15 +180,44 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         }
     }
 
-    public static boolean doesCommandMatchParameter(String command, String shortParam, String longParam) {
-        Matcher shortMatcher = shortParamPattern.matcher(command);
+
+    private static String[] getCommandArguments(String[] commandArg) {
+        List<String> foundArguments = new ArrayList<>();
+        for (String s : commandArg) {
+            Matcher shortMatcher = shortParamPattern.matcher(s);
+            Matcher longMatcher = longParamPattern.matcher(s);
+
+            if (shortMatcher.find() || longMatcher.find()) {
+                foundArguments.add(s);
+            }
+        }
+
+        return foundArguments.toArray(new String[0]);
+    }
+
+    private static String[] removeFoundArgumentsFromCommand(String[] command, String[] foundArguments) {
+        List<String> commandList = Arrays.asList(command);
+        List<String> foundArgumentList = Arrays.asList(foundArguments);
+
+        List<String> difference = new ArrayList<>(commandList);
+        difference.removeAll(foundArgumentList);
+
+        return difference.toArray(new String[0]);
+    }
+
+    public static boolean doesCommandMatchParameter(String[] arguments, String shortParam, String longParam) {
+        StringBuilder argumentString = new StringBuilder();
+        for (String argument : arguments) {
+            argumentString.append(argument).append(" ");
+        }
+        Matcher shortMatcher = shortParamPattern.matcher(argumentString);
         while (shortMatcher.find()) {
             if (shortMatcher.group().contains(shortParam)) {
                 return true;
             }
         }
 
-        Matcher longMatcher = longParamPattern.matcher(command);
+        Matcher longMatcher = longParamPattern.matcher(argumentString);
         while (longMatcher.find()) {
             if (longMatcher.group().contains(longParam)) {
                 return true;

@@ -51,7 +51,7 @@ public class HelpCommand extends SubCommand {
     }
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }

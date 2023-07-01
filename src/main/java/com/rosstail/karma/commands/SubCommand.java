@@ -14,7 +14,7 @@ public abstract class SubCommand {
     public abstract String getDescription();
     public abstract String getSyntax();
     public abstract String getPermission();
-    public abstract void perform(CommandSender sender, String args[]);
+    public abstract void perform(CommandSender sender, String args[], String[] arguments);
 
     public List<SubCommand> getSubCommands() {
         return subCommands;

@@ -45,15 +45,15 @@ public class ShopCommand extends SubCommand {
     }
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
         if (args.length >= 3) {
             if (args.length >= 4) {
-                subCommands.get(1).perform(sender, args);
+                subCommands.get(1).perform(sender, args, arguments);
             } else {
-                subCommands.get(0).perform(sender, args);
+                subCommands.get(0).perform(sender, args, arguments);
             }
         } else {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_HEADER), PlayerType.PLAYER.getText()));

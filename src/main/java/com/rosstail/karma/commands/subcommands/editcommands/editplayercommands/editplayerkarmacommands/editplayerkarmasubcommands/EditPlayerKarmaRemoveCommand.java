@@ -44,28 +44,26 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
     }
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
     }
 
     @Override
-    public void performOnline(CommandSender sender, PlayerModel model, String[] args, Player player) {
+    public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-        changeOnlineKarma(sender, model, args, player);
+        changeOnlineKarma(sender, model, args, arguments, player);
     }
 
     @Override
-    public void performOffline(CommandSender sender, PlayerModel model, String[] args) {
+    public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-        changeOfflineKarma(sender, model, args);
+        changeOfflineKarma(sender, model, args, arguments);
     }
 
-    public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, Player player) {
-        String command = Arrays.toString(args);
-
+    public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
         float value;
 
         try {
@@ -75,7 +73,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
             return;
         }
 
-        if (!CommandManager.doesCommandMatchParameter(Arrays.toString(args), "o", "override")) {
+        if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             value = PlayerDataManager.limitKarma(value);
         }
 
@@ -83,7 +81,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         try {
-            if (!CommandManager.doesCommandMatchParameter(Arrays.toString(args), "r", "reset")) {
+            if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
                 ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
                     PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
                 });
@@ -93,7 +91,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
         } catch (Exception ignored) { }
     }
 
-    public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args) {
+    public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] arguments, String[] args) {
         String command = Arrays.toString(args);
 
         float value;
@@ -105,7 +103,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
             return;
         }
 
-        if (!CommandManager.doesCommandMatchParameter(command, "o", "override")) {
+        if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             value = PlayerDataManager.limitKarma(value);
         } else {
             sender.sendMessage("new karma value is not limited.");
