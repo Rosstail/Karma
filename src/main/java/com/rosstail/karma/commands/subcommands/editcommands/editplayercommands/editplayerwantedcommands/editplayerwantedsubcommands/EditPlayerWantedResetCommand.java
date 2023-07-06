@@ -86,16 +86,6 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
-        if (args.length <= 3) {
-            return null;
-        } else if (args.length <= 4) {
-            return Collections.singletonList("0");
-        } else if (args.length <= 5) {
-            List<String> bools = new ArrayList<>();
-            bools.add("true");
-            bools.add("false");
-            return bools;
-        }
         return null;
     }
 }

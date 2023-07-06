@@ -69,8 +69,8 @@ public class PlayerDataManager {
                     }
                 }
 
-                if (ConfigData.getConfigData().wantedEnable && model.isWanted() && !(model.getWantedTimeStamp().getTime() > 0L)) {
-                    PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, null);
+                if (ConfigData.getConfigData().wantedEnable && model.isWanted() && !PlayerDataManager.isWanted(model)) {
+                    PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model);
                     Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
                 }
             }
@@ -154,7 +154,6 @@ public class PlayerDataManager {
     }
 
     private static String extractPlayerNameFromUUID(String response) {
-        // Analyse du JSON manuellement
         int index = response.indexOf("\"name\" : \"");
         if (index != -1) {
             int startIndex = index + "\"name\" : \"".length();

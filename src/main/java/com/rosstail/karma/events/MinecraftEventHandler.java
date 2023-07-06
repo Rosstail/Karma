@@ -102,7 +102,7 @@ public class MinecraftEventHandler implements Listener {
             if (ConfigData.getConfigData().wantedEnable) {
                 if (model.isWanted()) {
                     if (PlayerDataManager.getWantedTimeLeft(model) > 0L) {
-                        PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model, false);
+                        PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model);
                         Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
                     } else {
                         PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model);

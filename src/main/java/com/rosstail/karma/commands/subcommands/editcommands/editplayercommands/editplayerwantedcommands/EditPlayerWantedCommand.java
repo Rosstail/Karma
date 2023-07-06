@@ -48,12 +48,19 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
-        if (args.length <= 4) {
-            for (SubCommand subCommand : getSubCommands()) {
-                return subCommand.getSubCommandsArguments(sender, args, arguments);
+        if (args.length <= 5) {
+            List<String> list = new ArrayList<>();
+            for (SubCommand subCommand : subCommands) {
+                list.add(subCommand.getName());
+            }
+            return list;
+        } else {
+            for (SubCommand subCommand : subCommands) {
+                if (args[4].equalsIgnoreCase(subCommand.getName())) {
+                    return subCommand.getSubCommandsArguments(sender, args, arguments);
+                }
             }
         }
-        System.out.println("wanted > 4");
         return null;
     }
 
@@ -99,7 +106,6 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
 
         if (!subCommandsStringList.contains(subCommandString)) {
             sender.sendMessage("EditPlayerKarmaCommand#performOffline wrong command " + subCommandString);
-            System.out.println(subCommandsStringList);
             return;
         }
         subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOffline(sender, model, args, arguments);

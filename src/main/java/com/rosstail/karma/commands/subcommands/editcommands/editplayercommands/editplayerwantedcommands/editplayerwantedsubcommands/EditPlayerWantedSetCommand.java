@@ -78,10 +78,10 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
             long limiter = AdaptMessage.calculateDuration(wantedTimeLeft, ConfigData.getConfigData().wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
-            sender.sendMessage("Wanetd time is not limited.");
+            sender.sendMessage("Wanted time is not limited.");
         }
 
-        sender.sendMessage("EditPlayerWantedSetCommand#changeWantedOnline set wanted time to " + duration);
+        sender.sendMessage("EditPlayerWantedSetCommand#changeWantedOnline set wanted time to " + new Timestamp(duration));
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(duration));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
     }
@@ -108,7 +108,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         model.setWantedTimeStamp(new Timestamp(duration));
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("EditPlayerWantedSetCommand#changeWantedOffline set wanted time to " + model.getWantedTimeStamp());
+        sender.sendMessage("EditPlayerWantedSetCommand#changeWantedOffline set wanted time to " + new Timestamp(duration));
 
         if (model.isWanted()) {
             if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
@@ -123,16 +123,6 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
-        if (args.length <= 3) {
-            return null;
-        } else if (args.length <= 4) {
-            return Collections.singletonList("0");
-        } else if (args.length <= 5) {
-            List<String> bools = new ArrayList<>();
-            bools.add("true");
-            bools.add("false");
-            return bools;
-        }
-        return null;
+        return Collections.singletonList("xd xh xm xs xms");
     }
 }

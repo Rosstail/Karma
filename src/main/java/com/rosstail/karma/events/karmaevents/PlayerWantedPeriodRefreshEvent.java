@@ -10,12 +10,10 @@ public class PlayerWantedPeriodRefreshEvent extends Event {
 
     private final Player player;
     private final PlayerModel model;
-    private boolean timeExtend;
 
-    public PlayerWantedPeriodRefreshEvent (Player player, PlayerModel model, boolean timeExtend) {
+    public PlayerWantedPeriodRefreshEvent (Player player, PlayerModel model) {
         this.player = player;
         this.model = model;
-        this.timeExtend = timeExtend;
     }
 
     public Player getPlayer() {
@@ -24,14 +22,6 @@ public class PlayerWantedPeriodRefreshEvent extends Event {
 
     public PlayerModel getModel() {
         return model;
-    }
-
-    public boolean isTimeExtend() {
-        return timeExtend;
-    }
-
-    public void setTimeExtend(boolean timeExtend) {
-        this.timeExtend = timeExtend;
     }
 
     private static final HandlerList handlers = new HandlerList();

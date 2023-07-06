@@ -145,38 +145,20 @@ public class KarmaEventHandler implements Listener {
     public void onPlayerWantedChangeEvent(PlayerWantedChangeEvent event) {
         PlayerModel model = event.getModel();
         Timestamp duration = event.getTimestamp();
-        String wantedMaxDurationExp = ConfigData.getConfigData().wantedMaxDurationExpression;
-        Timestamp durationMaxTimeStamp = new Timestamp(AdaptMessage.calculateDuration(PlayerDataManager.getWantedTimeLeft(model), wantedMaxDurationExp));
-        if (duration.compareTo(durationMaxTimeStamp) > 0) {
-            model.setWantedTimeStamp(durationMaxTimeStamp);
-        }
-        // PlayerWantedHasChangedEvent playerWantedHasChangedEvent = new PlayerWantedHasChangedEvent(player, duration, event);
-        //Bukkit.getPluginManager().callEvent(playerWantedHasChangedEvent);
-    }
 
-    /*
-    @EventHandler
-    public void onPlayerWantedHasChangedEvent(PlayerWantedHasChangedEvent event) {
-        Player player = event.getPlayer();
-        PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-        playerData.setWantedTimeStamp(event.getTimestamp());
-        boolean hasWantedToken = playerData.isWantedToken();
-        boolean isWanted = playerData.isWanted();
+        model.setWantedTimeStamp(duration);
 
-        Event newEvent = null;
+        boolean isWanted = model.isWanted();
+        boolean willBeWanted = PlayerDataManager.isWanted(model);
 
-        if (isWanted && !hasWantedToken) {
-            newEvent = new PlayerWantedPeriodStartEvent(player, event);
+        if (!isWanted && willBeWanted) {
+            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodStartEvent(event.getPlayer(), model));
+        } else if (isWanted && willBeWanted) { //stay
+            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodRefreshEvent(event.getPlayer(), model));
         } else if (isWanted) {
-            newEvent = new PlayerWantedPeriodRefreshEvent(player, event, true);
-        } else if (hasWantedToken) {
-            newEvent = new PlayerWantedPeriodEndEvent(player, event);
-        }
-        if (newEvent != null) {
-            Bukkit.getPluginManager().callEvent(newEvent);
+            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodEndEvent(event.getPlayer(), model));
         }
     }
-     */
 
     @EventHandler
     public void onPlayerWantedPeriodStartEvent(PlayerWantedPeriodStartEvent event) {

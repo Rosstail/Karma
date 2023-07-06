@@ -83,7 +83,7 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
             sender.sendMessage("Wanetd time is not limited.");
         }
 
-        sender.sendMessage("EditPlayerWantedAddCommand#changeWantedOnline set wanted time to " + newDuration);
+        sender.sendMessage("EditPlayerWantedAddCommand#changeWantedOnline set wanted time to " + new Timestamp(newDuration));
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(newDuration));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
     }
@@ -112,7 +112,7 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         model.setWantedTimeStamp(new Timestamp(newDuration));
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("EditPlayerWantedAddCommand#changeWantedOffline set wanted time to " + model.getWantedTimeStamp());
+        sender.sendMessage("EditPlayerWantedAddCommand#changeWantedOffline set wanted time to " + new Timestamp(newDuration));
 
         if (model.isWanted()) {
             if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
@@ -127,16 +127,6 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
-        if (args.length <= 3) {
-            return null;
-        } else if (args.length <= 4) {
-            return Collections.singletonList("0");
-        } else if (args.length <= 5) {
-            List<String> bools = new ArrayList<>();
-            bools.add("true");
-            bools.add("false");
-            return bools;
-        }
-        return null;
+        return Collections.singletonList("xd xh xm xs xms");
     }
 }
