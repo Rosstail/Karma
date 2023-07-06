@@ -29,7 +29,7 @@ public abstract class EditPlayerWantedSubCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         return null;
     }
 }

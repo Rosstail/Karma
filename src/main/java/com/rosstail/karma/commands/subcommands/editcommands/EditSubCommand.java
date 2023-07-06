@@ -1,6 +1,9 @@
 package com.rosstail.karma.commands.subcommands.editcommands;
 
 import com.rosstail.karma.commands.SubCommand;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 
 public abstract class EditSubCommand extends SubCommand {
 
@@ -23,4 +26,7 @@ public abstract class EditSubCommand extends SubCommand {
     public String getPermission() {
         return "karma.command.edit";
     }
+
+    @Override
+    public abstract List<String> getSubCommandsArguments(Player sender, String args[], String[] arguments);
 }

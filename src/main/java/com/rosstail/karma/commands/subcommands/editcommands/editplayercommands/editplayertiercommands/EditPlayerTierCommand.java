@@ -1,5 +1,6 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands;
 
+import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands.editplayertiersubcommands.EditPlayerTierSetCommand;
 import com.rosstail.karma.datas.PlayerModel;
@@ -41,7 +42,25 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        System.out.println("LENGTH: " + args.length);
+        if (args.length <= 5) {
+            System.out.println(" < 5 Tier " + args[4]);
+            List<String> list = new ArrayList<>();
+            for (SubCommand subCommand : subCommands) {
+                System.out.println(subCommand.getName());
+                list.add(subCommand.getName());
+            }
+            return list;
+        } else {
+            System.out.println("else Tier " + args[3]);
+            for (SubCommand subCommand : subCommands) {
+                System.out.println(subCommand.getName());
+                if (args[4].equalsIgnoreCase(subCommand.getName())) {
+                    return subCommand.getSubCommandsArguments(sender, args, arguments);
+                }
+            }
+        }
         return null;
     }
 

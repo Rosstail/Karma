@@ -118,17 +118,8 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        if (args.length <= 3) {
-            return null;
-        } else if (args.length <= 4) {
-            return Collections.singletonList("0");
-        } else if (args.length <= 5) {
-            List<String> bools = new ArrayList<>();
-            bools.add("true");
-            bools.add("false");
-            return bools;
-        }
-        return null;
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        System.out.println(TierManager.getTierManager().getTiers().keySet());
+        return new ArrayList<>(TierManager.getTierManager().getTiers().keySet());
     }
 }

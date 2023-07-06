@@ -69,7 +69,7 @@ public class ShopCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         if (args.length <= 2) {
             ArrayList<String> subCommands = new ArrayList<>();
             for (SubCommand subCommand : getSubCommands()) {
@@ -79,7 +79,7 @@ public class ShopCommand extends SubCommand {
         } else {
             for (SubCommand subCommand : getSubCommands()) {
                 if (args[1].equalsIgnoreCase(subCommand.getName())) {
-                    return subCommand.getSubCommandsArguments(sender, args);
+                    return subCommand.getSubCommandsArguments(sender, args, arguments);
                 }
             }
         }

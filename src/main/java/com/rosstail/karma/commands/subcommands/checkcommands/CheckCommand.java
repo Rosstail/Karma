@@ -54,7 +54,7 @@ public class CheckCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         return null;
     }
 }

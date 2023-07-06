@@ -5,8 +5,6 @@ import com.rosstail.karma.datas.PlayerModel;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
 public abstract class EditPlayerSubCommand extends EditSubCommand {
 
     @Override
@@ -27,11 +25,6 @@ public abstract class EditPlayerSubCommand extends EditSubCommand {
     @Override
     public String getSyntax() {
         return "karma edit player <player>";
-    }
-
-    @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        return null;
     }
 
     public abstract void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player);

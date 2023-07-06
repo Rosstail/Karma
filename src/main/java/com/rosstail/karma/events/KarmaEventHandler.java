@@ -37,6 +37,17 @@ public class KarmaEventHandler implements Listener {
         PlayerModel model = event.getModel();
         model.setPreviousKarma(model.getKarma());
         model.setKarma(event.getValue());
+
+        /*
+            CHECK PLAYER TIER
+             */
+        TierManager tierManager = TierManager.getTierManager();
+        Tier currentKarmaTier = tierManager.getTierByKarmaAmount(model.getKarma());
+        Tier modelTier = tierManager.getTierByName(model.getTierName());
+        if (!currentKarmaTier.equals(modelTier)) {
+            PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(event.getPlayer(), model, currentKarmaTier.getName());
+            Bukkit.getPluginManager().callEvent(tierChangeEvent);
+        }
     }
 
     @EventHandler

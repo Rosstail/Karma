@@ -43,11 +43,23 @@ public class EditCommand extends EditSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        for (SubCommand subCommand : subCommands) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        if (args.length <= 2) {
+            System.out.println("EditCommand <= 2");
             List<String> list = new ArrayList<>();
-            list.add(subCommand.getName());
-            return list;
+            for (SubCommand subCommand : subCommands) {
+                list.add(subCommand.getName());
+                System.out.println( " > " + subCommand.getName());
+                return list;
+            }
+        } else {
+            System.out.println("EditCommand Else");
+            for (SubCommand subCommand : subCommands) {
+                System.out.println(" > " + subCommand.getName());
+                if (subCommand.getName().equalsIgnoreCase(args[1])) {
+                    return subCommand.getSubCommandsArguments(sender, args, arguments);
+                }
+            }
         }
         return null;
     }

@@ -1,5 +1,6 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands;
 
+import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedAddCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedRemoveCommand;
@@ -46,7 +47,13 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        if (args.length <= 4) {
+            for (SubCommand subCommand : getSubCommands()) {
+                return subCommand.getSubCommandsArguments(sender, args, arguments);
+            }
+        }
+        System.out.println("wanted > 4");
         return null;
     }
 

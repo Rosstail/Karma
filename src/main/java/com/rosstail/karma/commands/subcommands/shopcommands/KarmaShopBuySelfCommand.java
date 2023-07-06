@@ -67,7 +67,7 @@ public class KarmaShopBuySelfCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         if (args.length <= 3) {
             ArrayList<String> shops = new ArrayList<>();
             ShopManager.getShopManager().getShops().forEach((s, shop) -> {

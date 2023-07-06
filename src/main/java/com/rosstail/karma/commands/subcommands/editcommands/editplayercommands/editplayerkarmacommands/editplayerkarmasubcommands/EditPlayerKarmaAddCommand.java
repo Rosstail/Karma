@@ -57,6 +57,11 @@ public class EditPlayerKarmaAddCommand extends EditPlayerKarmaSetCommand {
     public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
         float value;
 
+        if (args.length < 6) {
+            sender.sendMessage("Set a numerical value");
+            return;
+        }
+
         try {
             value = model.getKarma() + Float.parseFloat(args[5]);
         } catch (NumberFormatException e) {
@@ -82,8 +87,13 @@ public class EditPlayerKarmaAddCommand extends EditPlayerKarmaSetCommand {
         } catch (Exception ignored) { }
     }
 
-    public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] arguments, String[] args) {
+    public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
         float value;
+
+        if (args.length < 6) {
+            sender.sendMessage("Set a numerical value");
+            return;
+        }
 
         try {
             value = model.getKarma() + Float.parseFloat(args[5]);
@@ -111,17 +121,9 @@ public class EditPlayerKarmaAddCommand extends EditPlayerKarmaSetCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        if (args.length <= 3) {
-            return null;
-        } else if (args.length <= 4) {
-            return Collections.singletonList("0");
-        } else if (args.length <= 5) {
-            List<String> bools = new ArrayList<>();
-            bools.add("true");
-            bools.add("false");
-            return bools;
-        }
-        return null;
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        List<String> list = new ArrayList<>();
+        list.add(String.valueOf(0));
+        return list;
     }
 }

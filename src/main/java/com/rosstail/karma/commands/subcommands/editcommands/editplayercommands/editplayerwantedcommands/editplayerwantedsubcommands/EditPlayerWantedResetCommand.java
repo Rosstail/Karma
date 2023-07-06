@@ -85,7 +85,7 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         if (args.length <= 3) {
             return null;
         } else if (args.length <= 4) {

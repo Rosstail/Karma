@@ -65,7 +65,10 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     }
 
     public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        String command = Arrays.toString(args);
+        if (args.length < 6) {
+            sender.sendMessage("Set a numerical value");
+            return;
+        }
 
         float value;
 
@@ -95,7 +98,10 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
-        String command = Arrays.toString(args);
+        if (args.length < 6) {
+            sender.sendMessage("Set a numerical value");
+            return;
+        }
 
         float value;
 
@@ -125,17 +131,11 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
-        if (args.length <= 3) {
-            return null;
-        } else if (args.length <= 4) {
-            return Collections.singletonList("0");
-        } else if (args.length <= 5) {
-            List<String> bools = new ArrayList<>();
-            bools.add("true");
-            bools.add("false");
-            return bools;
-        }
-        return null;
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        List<String> list = new ArrayList<>();
+        list.add(String.valueOf(ConfigData.getConfigData().minKarma));
+        list.add(String.valueOf(ConfigData.getConfigData().defaultKarma));
+        list.add(String.valueOf(ConfigData.getConfigData().maxKarma));
+        return list;
     }
 }

@@ -1,5 +1,6 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands;
 
+import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaAddCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaRemoveCommand;
@@ -46,7 +47,20 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        if (args.length <= 5) {
+            List<String> list = new ArrayList<>();
+            for (SubCommand subCommand : subCommands) {
+                list.add(subCommand.getName());
+            }
+            return list;
+        } else {
+            for (SubCommand subCommand : subCommands) {
+                if (args[4].equalsIgnoreCase(subCommand.getName())) {
+                    return subCommand.getSubCommandsArguments(sender, args, arguments);
+                }
+            }
+        }
         return null;
     }
 
@@ -69,6 +83,7 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
 
         if (!subCommandsStringList.contains(subCommandString)) {
             sender.sendMessage("EditPlayerKarmaCommand#performOnline wrong command " + subCommandString);
+            return;
         }
         subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOnline(sender, model, args, arguments, player);
     }
@@ -92,7 +107,6 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
 
         if (!subCommandsStringList.contains(subCommandString)) {
             sender.sendMessage("EditPlayerKarmaCommand#performOffline wrong command " + subCommandString);
-            System.out.println(subCommandsStringList);
             return;
         }
         subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOffline(sender, model, args, arguments);

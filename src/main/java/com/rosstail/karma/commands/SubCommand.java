@@ -22,5 +22,5 @@ public abstract class SubCommand {
     public String getHelp() {
         return help;
     }
-    public abstract List<String> getSubCommandsArguments(Player sender, String args[]);
+    public abstract List<String> getSubCommandsArguments(Player sender, String args[], String[] arguments);
 }

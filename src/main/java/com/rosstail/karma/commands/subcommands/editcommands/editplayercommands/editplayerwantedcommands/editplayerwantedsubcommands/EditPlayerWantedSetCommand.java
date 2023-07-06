@@ -102,7 +102,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
             long limiter = AdaptMessage.calculateDuration(wantedTimeLeft, ConfigData.getConfigData().wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
-            sender.sendMessage("Wanetd time is not limited.");
+            sender.sendMessage("Wanted time is not limited.");
         }
 
         model.setWantedTimeStamp(new Timestamp(duration));
@@ -122,7 +122,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         if (args.length <= 3) {
             return null;
         } else if (args.length <= 4) {

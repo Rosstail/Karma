@@ -1,6 +1,7 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands;
 
 import com.rosstail.karma.commands.CommandManager;
+import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.EditPlayerKarmaCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands.EditPlayerTierCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedCommand;
@@ -93,6 +94,24 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                 sender.sendMessage("Player " + playerName + " is disconnected. Use -f to override");
             }
         }
+    }
+
+    @Override
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+        if (args.length == 4) {
+            List<String> list = new ArrayList<>();
+            for (SubCommand subCommand : subCommands) {
+                list.add(subCommand.getName());
+            }
+            return list;
+        } else if (args.length >= 5) {
+            for (SubCommand subCommand : subCommands) {
+                if (args[3].equalsIgnoreCase(subCommand.getName())) {
+                    return subCommand.getSubCommandsArguments(sender, args, arguments);
+                }
+            }
+        }
+        return null;
     }
 
     @Override

@@ -33,7 +33,7 @@ public abstract class EditPlayerTierSubCommand extends EditPlayerSubCommand {
     public abstract void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments);
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         return null;
     }
 }

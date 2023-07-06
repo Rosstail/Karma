@@ -67,6 +67,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     public List<String> onTabComplete(final CommandSender sender, final Command cmd, final String label, final String[] args) {
+        String[] arguments = getCommandArguments(args);
+        String[] commandArgs = removeFoundArgumentsFromCommand(args, arguments);
+
         if (args.length <= 1) {
             ArrayList<String> subCommandArguments = new ArrayList<>();
 
@@ -74,11 +77,15 @@ public class CommandManager implements CommandExecutor, TabExecutor {
                 subCommandArguments.add(getSubCommands().get(i).getName());
             }
 
+            System.out.println(" <= 1" + subCommandArguments);
+
             return subCommandArguments;
         } else {
             for (SubCommand subCommand : getSubCommands()) {
                 if (subCommand.getName().equalsIgnoreCase(args[0])) {
-                    return subCommand.getSubCommandsArguments((Player) sender, args);
+
+                    System.out.println(" else " + subCommand.getName());
+                    return subCommand.getSubCommandsArguments((Player) sender, commandArgs, arguments);
                 }
             }
         }

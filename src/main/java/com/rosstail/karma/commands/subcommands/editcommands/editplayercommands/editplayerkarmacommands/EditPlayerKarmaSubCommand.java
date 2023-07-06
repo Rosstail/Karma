@@ -1,8 +1,6 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands;
 
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
-import com.rosstail.karma.datas.PlayerModel;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -29,7 +27,7 @@ public abstract class EditPlayerKarmaSubCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         return null;
     }
 }
