@@ -181,13 +181,13 @@ public class StorageManager {
     public List<PlayerModel> selectPlayerModelListTop(int limit) {
         switch (type) {
             case "sql":
-                return sqlStorageRequest.selectPlayerModelListAsc(limit);
+                return sqlStorageRequest.selectPlayerModelListDesc(limit);
             case "mariadb":
-                return mariaDBStorageRequest.selectPlayerModelListAsc(limit);
+                return mariaDBStorageRequest.selectPlayerModelListDesc(limit);
             case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModelList(null, limit);
+                return mongoDBStorageRequest.selectPlayerModelList("ASC", limit);
             case "litesql":
-                return liteSqlDBStorageRequest.selectPlayerModelList(null, limit);
+                return liteSqlDBStorageRequest.selectPlayerModelList("ASC", limit);
             default:
                 return null;
                 //TODO localStorageRequest.deletePlayerModel(uuid);
@@ -197,13 +197,13 @@ public class StorageManager {
     public List<PlayerModel> selectPlayerModelListBottom(int limit) {
         switch (type) {
             case "sql":
-                return sqlStorageRequest.selectPlayerModelListDesc(limit);
+                return sqlStorageRequest.selectPlayerModelListAsc(limit);
             case "mariadb":
-                return mariaDBStorageRequest.selectPlayerModelListDesc(limit);
+                return mariaDBStorageRequest.selectPlayerModelListAsc(limit);
             case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModelList(null, limit);
+                return mongoDBStorageRequest.selectPlayerModelList("DESC", limit);
             case "litesql":
-                return liteSqlDBStorageRequest.selectPlayerModelList(null, limit);
+                return liteSqlDBStorageRequest.selectPlayerModelList("DESC", limit);
             default:
                 return null;
             //TODO localStorageRequest.deletePlayerModel(uuid);

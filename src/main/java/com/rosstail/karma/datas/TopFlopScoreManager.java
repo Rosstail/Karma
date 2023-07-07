@@ -36,6 +36,7 @@ public class TopFlopScoreManager {
         StorageManager storageManager = StorageManager.getManager();
         List<PlayerModel> topScores = storageManager.selectPlayerModelListTop(limit);
         List<PlayerModel> bottomScores = storageManager.selectPlayerModelListBottom(limit);
+
         int currentLimit = Math.min(topScores.size(), limit);
 
         for (int index = 0; index < currentLimit; index++) {

@@ -53,7 +53,8 @@ public class CheckOtherCommand extends SubCommand {
         PlayerModel model = null;
 
         if (target != null && target.isOnline()) {
-            model = StorageManager.getManager().selectPlayerModel(target.getUniqueId().toString());
+            sender.sendMessage(args[1] + " is online");
+            model = PlayerDataManager.getPlayerModelMap().get(args[1]);
             //sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.PLAYER.getText()));
         } else {
             String uuid = PlayerDataManager.getPlayerUUIDFromName(args[1]);
@@ -62,6 +63,7 @@ public class CheckOtherCommand extends SubCommand {
                 return;
             }
             model = StorageManager.getManager().selectPlayerModel(uuid); //READ
+            sender.sendMessage("The player " + args[1] + "is offline.");
         }
 
         if (model == null) {

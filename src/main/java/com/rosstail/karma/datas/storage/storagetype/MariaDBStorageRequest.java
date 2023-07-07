@@ -140,7 +140,7 @@ public class MariaDBStorageRequest implements StorageRequest {
     }
 
     public List<PlayerModel> selectPlayerModelListAsc(int limit) {
-        String query = "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
+        String query = "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
