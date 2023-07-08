@@ -49,9 +49,6 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         String[] arguments = getCommandArguments(args);
         args = removeFoundArgumentsFromCommand(args, arguments);
 
-        sender.sendMessage("Commande " + Arrays.toString(args));
-        sender.sendMessage("Arguments " + Arrays.toString(arguments));
-
         for (int index = 0; index < getSubCommands().size(); index++) {
             if (args[0].equalsIgnoreCase(getSubCommands().get(index).getName())) {
                 getSubCommands().get(index).perform(sender, args, arguments);

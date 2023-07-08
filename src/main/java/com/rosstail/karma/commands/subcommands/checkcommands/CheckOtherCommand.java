@@ -50,10 +50,9 @@ public class CheckOtherCommand extends SubCommand {
         }
 
         Player target = Bukkit.getServer().getPlayer(args[1]);
-        PlayerModel model = null;
+        PlayerModel model;
 
         if (target != null && target.isOnline()) {
-            sender.sendMessage(args[1] + " is online");
             model = PlayerDataManager.getPlayerModelMap().get(args[1]);
             //sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.PLAYER.getText()));
         } else {

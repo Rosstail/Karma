@@ -255,9 +255,9 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 } else {
                     topFlopList = topFlopScoreManager.getPlayerFlopScoreList();
                 }
-                String indexStr = identifier.replaceAll("[^0-9]", "");
+                String indexStr = identifier.replaceAll("[^0-9]*", "");
                 int index = Math.max(1, Integer.parseInt(indexStr));
-                PlayerModel model = topFlopList.get(index);
+                PlayerModel model = topFlopList.get(index - 1);
                 try {
                     if (identifier.contains("_karma_")) {
                         if (model == null) {

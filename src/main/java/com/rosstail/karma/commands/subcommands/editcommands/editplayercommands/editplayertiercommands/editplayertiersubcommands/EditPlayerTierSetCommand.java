@@ -80,15 +80,13 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
 
         sender.sendMessage("Set player " + player.getName() + " tier to " + tierName);
 
-        try {
-            if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
-                ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
-                    PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
-                });
-                PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
+        if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
+            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+                PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
+                PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, overtimeLoop.name);
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
-            }
-        } catch (Exception ignored) { }
+            });
+        }
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {

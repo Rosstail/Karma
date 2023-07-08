@@ -79,15 +79,13 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
-        try {
-            if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
-                ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
-                    PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
-                });
-                PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
+        if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
+            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+                PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
+                PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, overtimeLoop.name);
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
-            }
-        } catch (Exception ignored) { }
+            });
+        }
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] arguments, String[] args) {
