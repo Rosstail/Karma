@@ -68,8 +68,6 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
     }
 
     public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        String command = Arrays.toString(args);
-
         float value = ConfigData.getConfigData().defaultKarma;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
@@ -89,8 +87,6 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] arguments, String[] args) {
-        String command = Arrays.toString(args);
-
         float value = ConfigData.getConfigData().defaultKarma;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {

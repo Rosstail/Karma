@@ -29,7 +29,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return true or false depending on if the required plugin is installed.
      */
     @Override
-    public boolean canRegister(){
+    public boolean canRegister() {
         return Bukkit.getPluginManager().getPlugin("Karma") != null;
     }
 
@@ -41,15 +41,15 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return true or false depending on if it can register.
      */
 
-    public PAPIExpansion(Karma plugin){
+    public PAPIExpansion(Karma plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean register(){
+    public boolean register() {
 
         // Make sure "SomePlugin" is on the server
-        if(!canRegister()){
+        if (!canRegister()) {
             return false;
         }
         /*
@@ -58,7 +58,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
          */
 
         // if for some reason we can not get our variable, we should return false.
-        if (plugin == null){
+        if (plugin == null) {
             return false;
         }
 
@@ -75,9 +75,10 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The name of the author as a String.
      */
     @Override
-    public @NotNull String getAuthor(){
+    public @NotNull String getAuthor() {
         return "Rosstail";
     }
+
     /**
      * The placeholder identifier should go here.
      * <br>This is what tells PlaceholderAPI to call our onRequest
@@ -88,7 +89,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The identifier in {@code %<identifier>_<value>%} as String.
      */
     @Override
-    public @NotNull String getIdentifier(){
+    public @NotNull String getIdentifier() {
         return plugin.getName().toLowerCase();
     }
 
@@ -104,7 +105,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The name of our dependency.
      */
     @Override
-    public String getRequiredPlugin(){
+    public String getRequiredPlugin() {
         return plugin.getName();
     }
 
@@ -115,10 +116,9 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The version as a String.
      */
     @Override
-    public @NotNull String getVersion(){
+    public @NotNull String getVersion() {
         return plugin.getDescription().getVersion();
     }
-
 
 
     /**
@@ -127,19 +127,16 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * <br>We specify the value identifier in this method.
      * <br>Since version 2.9.1 can you use OfflinePlayers in your requests.
      *
-     * @param  player
-     *         A {@link Player Player}.
-     * @param  identifier
-     *         A String containing the identifier/value.
-     *
+     * @param player     A {@link Player Player}.
+     * @param identifier A String containing the identifier/value.
      * @return possibly-null String of the requested identifier.
      */
     @Override
-    public String onPlaceholderRequest(Player player, String identifier){
+    public String onPlaceholderRequest(Player player, String identifier) {
         if (player != null) {
             PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
             // %karma_value% here
-            if(identifier.startsWith("player_karma")){
+            if (identifier.startsWith("player_karma")) {
                 float karma = model.getKarma();
                 if (identifier.contains("_abs")) {
                     karma = Math.abs(karma);
@@ -149,7 +146,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
                 return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
-            if(identifier.startsWith("player_previous_karma")){
+            if (identifier.startsWith("player_previous_karma")) {
                 float karma = model.getPreviousKarma();
                 if (identifier.contains("_abs")) {
                     karma = Math.abs(karma);
@@ -159,7 +156,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
                 return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
-            if(identifier.startsWith("player_diff")) {
+            if (identifier.startsWith("player_diff")) {
                 float karma = model.getKarma() - model.getPreviousKarma();
                 if (identifier.contains("_abs")) {
                     karma = Math.abs(karma);
@@ -170,7 +167,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
             }
 
-            if(identifier.startsWith("player_tier")) {
+            if (identifier.startsWith("player_tier")) {
                 Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
                 if (identifier.equals("player_tier")) {
                     return tier.getName();
@@ -189,7 +186,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
             }
 
-            if(identifier.startsWith("player_previous_tier")) {
+            if (identifier.startsWith("player_previous_tier")) {
                 Tier tier = TierManager.getTierManager().getTierByName(model.getPreviousTierName());
                 if (identifier.equals("player_previous_tier")) {
                     return tier.getName();
@@ -246,6 +243,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
 
         //%karma_scoreboard_top_name_X% / %karma_scoreboard_bottom_karma_X%
         if (identifier.startsWith("scoreboard_")) {
+
             TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
             List<PlayerModel> topFlopList;
 
@@ -258,10 +256,29 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 String indexStr = identifier.replaceAll("[^0-9]*", "");
                 int index = Math.max(1, Integer.parseInt(indexStr));
                 PlayerModel model = topFlopList.get(index - 1);
+
                 try {
+                    if (identifier.contains("_status")) {
+                        if (identifier.contains("_status_display")) {
+                            if (identifier.contains("_status_display_short")) {
+                                return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED_SHORT : LangMessage.STATUS_INNOCENT_SHORT);
+                            }
+                            return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED : LangMessage.STATUS_INNOCENT);
+                        }
+                    }
                     if (identifier.contains("_karma_")) {
                         if (model == null) {
                             return "-";
+                        }
+                        if (identifier.contains("_tier")) {
+                            Tier tier = TierManager.getTierManager().getTierByKarmaAmount(model.getKarma());
+                            if (identifier.contains("_tier_display")) {
+                                if (identifier.contains("_tier_display_short")) {
+                                    return tier != null ? tier.getShortDisplay() : TierManager.getNoTier().getShortDisplay();
+                                }
+                                return tier != null ? tier.getDisplay() : TierManager.getNoTier().getDisplay();
+                            }
+                            return tier != null ? tier.getName() : TierManager.getNoTier().getName();
                         }
                         if (identifier.contains("_int_")) {
                             int intValue = (int) model.getKarma();
@@ -269,6 +286,16 @@ public class PAPIExpansion extends PlaceholderExpansion {
                         }
                         float value = model.getKarma();
                         return AdaptMessage.getAdaptMessage().decimalFormat(value, '.');
+                    }
+                    if (identifier.contains("_tier_")) {
+                        Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
+                        if (identifier.contains("_tier_display")) {
+                            if (identifier.contains("_tier_display_short")) {
+                                return tier != null ? tier.getShortDisplay() : TierManager.getNoTier().getShortDisplay();
+                            }
+                            return tier != null ? tier.getDisplay() : TierManager.getNoTier().getDisplay();
+                        }
+                        return tier != null ? tier.getName() : TierManager.getNoTier().getName();
                     } else if (identifier.contains("_name_")) {
                         if (model == null) {
                             return "Unknown";

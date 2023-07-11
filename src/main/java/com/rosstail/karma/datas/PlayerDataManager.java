@@ -60,7 +60,7 @@ public class PlayerDataManager {
                         String s = entry.getKey();
                         OvertimeLoop overtimeLoop = entry.getValue();
 
-                        if (model.getOverTimeStampMap().get(overtimeLoop.name).getTime() <= 0L) {
+                        if (model.getOverTimeStampMap().get(overtimeLoop.name).getTime() - System.currentTimeMillis() <= 0L) {
                             PlayerOverTimeTriggerEvent playerOverTimeTriggerEvent = new PlayerOverTimeTriggerEvent(player, s, 1, overtimeLoop.firstTimer);
                             Bukkit.getPluginManager().callEvent(playerOverTimeTriggerEvent);
 
@@ -108,9 +108,9 @@ public class PlayerDataManager {
         float amount = overtimeLoop.amount;
         if (amount != 0F) {
             amount *= multiplier;
-            if (overtimeLoop.hasMaxKarma && currentKarma < overtimeLoop.maxKarma) {
+            if (overtimeLoop.hasMaxKarma) {
                 newKarma = Math.min(currentKarma + amount, overtimeLoop.maxKarma);
-            } else if (overtimeLoop.hasMinKarma && currentKarma > overtimeLoop.minKarma) {
+            } else if (overtimeLoop.hasMinKarma) {
                 newKarma = Math.max(currentKarma + amount, overtimeLoop.minKarma);
             }
 

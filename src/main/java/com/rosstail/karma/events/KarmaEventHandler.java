@@ -126,6 +126,7 @@ public class KarmaEventHandler implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
+        System.out.println("trigger " + event.getPlayer().getName() + " " + event.getOvertimeLoopName());
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         long nextDelay = event.getNextDelay();
@@ -138,7 +139,7 @@ public class KarmaEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         OvertimeLoop loop = ConfigData.getConfigData().overtimeLoopMap.get(event.getOvertimeLoopName());
-        PlayerDataManager.triggerOverTime(player, model, event.getOvertimeLoopName(), (int) loop.firstTimer);
+        PlayerDataManager.setOverTimeStamp(model, event.getOvertimeLoopName(), (int) loop.firstTimer);
     }
 
     @EventHandler
