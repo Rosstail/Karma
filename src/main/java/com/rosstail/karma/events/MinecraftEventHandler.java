@@ -52,7 +52,7 @@ public class MinecraftEventHandler implements Listener {
                 for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
                     String overtimeName = entry.getKey();
                     OvertimeLoop overtimeLoop = entry.getValue();
-                    model.getOverTimeStampMap().put(overtimeName, new Timestamp(overtimeLoop.firstTimer));
+                    PlayerDataManager.setOverTimeStamp(model, overtimeName, overtimeLoop.firstTimer);
                 }
             }
         } else {
@@ -64,24 +64,25 @@ public class MinecraftEventHandler implements Listener {
             if (ConfigData.getConfigData().overtimeActive) {
                 long lastUpdate = model.getLastUpdate();
                 long deltaUpdates = System.currentTimeMillis() - lastUpdate;
+
                 for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
                     String overtimeName = entry.getKey();
                     OvertimeLoop overtimeLoop = entry.getValue();
-                    deltaUpdates -= overtimeLoop.firstTimer;
+                    long loopDelta =  deltaUpdates - overtimeLoop.firstTimer;
 
                     long delay = overtimeLoop.firstTimer; //default online only overtime timer
                     if (overtimeLoop.offline) {
-                        int occurrenceAmount = (int) (Math.floorDiv(deltaUpdates, overtimeLoop.nextTimer) + 1);
-                        delay = deltaUpdates % overtimeLoop.nextTimer;
+                        int occurrenceAmount = (int) (Math.floorDiv(loopDelta, overtimeLoop.nextTimer) + 1);
+                        delay = loopDelta % overtimeLoop.nextTimer;
 
                         if (occurrenceAmount > 0) {
                             Bukkit.getPluginManager().callEvent(new PlayerOverTimeTriggerEvent(player, overtimeName, occurrenceAmount, delay));
                         } else {
-                            delay = -deltaUpdates;
+                            delay = -loopDelta;
                         }
                     }
 
-                    model.getOverTimeStampMap().put(overtimeName, new Timestamp(delay));
+                    PlayerDataManager.setOverTimeStamp(model, overtimeName, delay);
                 }
             }
 
