@@ -3,7 +3,6 @@ package com.rosstail.karma.overtime;
 import com.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OvertimeLoop {
@@ -24,7 +23,7 @@ public class OvertimeLoop {
 
     public OvertimeLoop(ConfigurationSection section) {
         name = section.getName();
-        displayName = AdaptMessage.getAdaptMessage().adapt(null, name, null);
+        displayName = AdaptMessage.getAdaptMessage().adaptMessage(name);
         firstTimer = Math.max(1L, section.getLong("timers.first")) * 1000L;
         nextTimer = section.getString("timers.next") != null ? section.getLong("timers.next") * 1000L : firstTimer;
 

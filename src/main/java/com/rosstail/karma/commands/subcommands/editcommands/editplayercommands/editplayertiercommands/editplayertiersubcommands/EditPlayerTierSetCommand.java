@@ -22,7 +22,7 @@ import java.util.*;
 public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
 
     public EditPlayerTierSetCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

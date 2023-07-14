@@ -5,6 +5,12 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.events.karmaevents.*;
+import com.rosstail.karma.events.testevents.PlayerDamageMobEvent;
+import com.rosstail.karma.events.testevents.PlayerDamagePlayerEvent;
+import com.rosstail.karma.events.testevents.PlayerKillMobEvent;
+import com.rosstail.karma.events.testevents.PlayerKillPlayerEvent;
+import com.rosstail.karma.fight.FightHandler;
+import com.rosstail.karma.fight.teamfighthandlers.TeamFightHandler;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -13,17 +19,11 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 public class KarmaEventHandler implements Listener {
     private final AdaptMessage adaptMessage;
@@ -32,7 +32,7 @@ public class KarmaEventHandler implements Listener {
         this.adaptMessage = AdaptMessage.getAdaptMessage();
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerKarmaChange(PlayerKarmaChangeEvent event) {
         PlayerModel model = event.getModel();
         model.setPreviousKarma(model.getKarma());
@@ -124,9 +124,8 @@ public class KarmaEventHandler implements Listener {
     }
      */
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
-        System.out.println("trigger " + event.getPlayer().getName() + " " + event.getOvertimeLoopName());
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         long nextDelay = event.getNextDelay();
@@ -134,7 +133,7 @@ public class KarmaEventHandler implements Listener {
         PlayerDataManager.setOverTimeStamp(model, event.getOvertimeLoopName(), nextDelay);
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
@@ -170,7 +169,7 @@ public class KarmaEventHandler implements Listener {
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().enterWantedCommands);
         model.setWanted(true);
         if (message != null) {
-            adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
+            adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
         }
     }
 
@@ -182,7 +181,7 @@ public class KarmaEventHandler implements Listener {
         model.setWanted(true);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().refreshWantedCommands);
         if (message != null) {
-            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
+            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
         }
     }
 
@@ -202,82 +201,42 @@ public class KarmaEventHandler implements Listener {
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().leaveWantedCommands);
         if (message != null) {
-            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adapt(player, message, PlayerType.PLAYER.getText()));
+            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
         }
     }
 
     @EventHandler(ignoreCancelled = true)
-    public void OnPlayerPlaceBlock(BlockPlaceEvent event) {
-        Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-        Block placedBlock = event.getBlockPlaced();
-        String blockName = placedBlock.getBlockData().getMaterial().name();
-        ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".place");
-        if (section == null) {
-            return;
-        }
-
-        boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
-        List<Integer> ages = section.getIntegerList("data.age.ages");
-        if (!ages.isEmpty() && placedBlock.getBlockData() instanceof Ageable) {
-            Ageable ageable = (Ageable) placedBlock.getBlockData();
-            if (ageBlackList) {
-                if (ages.contains(ageable.getAge())) {
-                    return;
-                }
-            } else {
-                if (!ages.contains(ageable.getAge())) {
-                    return;
-                }
+    public void onPlayerDamagePlayerEvent(PlayerDamagePlayerEvent event) {
+        event.getAttacker().sendMessage("Eventhandler - you damaged the player " + event.getVictim().getName());
+        event.getVictim().sendMessage("Eventhandler - you have been damaged by the player " + event.getAttacker().getName());
+        for (TeamFightHandler teamFightHandler : FightHandler.getTeamFightHandlerList()) {
+            if (teamFightHandler.doTeamFightCancel(event.getAttacker(), event.getVictim())) {
+                event.setCancelled(true);
+                break;
             }
-        }
-
-        float karma = model.getKarma() + (float) section.getDouble("value");
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, karma);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-
-
-        if (section.getBoolean("reset-overtime", false)) {
-            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
-            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
         }
     }
 
-
     @EventHandler(ignoreCancelled = true)
-    public void OnPlayerBreakBlock(BlockBreakEvent event) {
-        Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-        Block brokenBlock = event.getBlock();
-        String blockName = brokenBlock.getBlockData().getMaterial().name();
-        ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".break");
-        if (section == null) {
-            return;
-        }
+    public void onPlayerKillPlayerEvent(PlayerKillPlayerEvent event) {
+        event.getAttacker().sendMessage("Eventhandler - you killed the player " + event.getVictim().getName());
+        event.getVictim().sendMessage("Eventhandler - you have been killed by the player " + event.getAttacker().getName());
 
-        boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
-        List<Integer> ages = section.getIntegerList("data.age.ages");
-        if (!ages.isEmpty() && brokenBlock.getBlockData() instanceof Ageable) {
-            Ageable ageable = (Ageable) brokenBlock.getBlockData();
-            if (ageBlackList) {
-                if (ages.contains(ageable.getAge())) {
-                    return;
-                }
-            } else {
-                if (!ages.contains(ageable.getAge())) {
-                    return;
-                }
+        for (TeamFightHandler teamFightHandler : FightHandler.getTeamFightHandlerList()) {
+            if (teamFightHandler.doTeamFightCancel(event.getAttacker(), event.getVictim())) {
+                event.setCancelled(true);
+                break;
             }
         }
+    }
 
-        float karma =  model.getKarma() + (float) section.getDouble("value");
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, karma);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerDamageMobEvent(PlayerDamageMobEvent event) {
+        event.getPlayer().sendMessage("Eventhandler - you damaged the mob " + event.getMob().getName());
+    }
 
-        if (section.getBoolean("reset-overtime", false)) {
-            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
-            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
-        }
-
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerKillMobEvent(PlayerKillMobEvent event) {
+        event.getPlayer().sendMessage("Eventhandler - you killed the mob " + event.getMob().getName());
     }
 }

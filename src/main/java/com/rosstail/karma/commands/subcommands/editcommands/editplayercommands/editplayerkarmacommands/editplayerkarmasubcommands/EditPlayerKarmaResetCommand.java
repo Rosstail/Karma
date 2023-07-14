@@ -17,14 +17,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
 
     public EditPlayerKarmaResetCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_RESET).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_RESET).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

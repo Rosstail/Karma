@@ -18,7 +18,7 @@ import java.util.List;
 public class KarmaShopBuySelfCommand extends SubCommand {
 
     public KarmaShopBuySelfCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class KarmaShopBuySelfCommand extends SubCommand {
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.BY_PLAYER_ONLY)));
             return;
         }
 
@@ -59,10 +59,10 @@ public class KarmaShopBuySelfCommand extends SubCommand {
             if (shop.getSendType() != SendType.CONSOLE) {
                 shop.handle(((Player) sender).getPlayer());
             } else {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_FAILURE), null));
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.SHOP_FAILURE)));
             }
         } else {
-            AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_NOT_EXIST), null);
+            AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.SHOP_NOT_EXIST));
         }
     }
 

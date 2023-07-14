@@ -14,7 +14,6 @@ import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class PlayerDataManager {
     public static void changePlayerTierMessage(Player player) {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
-            adaptMessage.sendToPlayer(player, adaptMessage.adapt(player, message, PlayerType.PLAYER.getText()));
+            adaptMessage.sendToPlayer(player, adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
         }
     }
 

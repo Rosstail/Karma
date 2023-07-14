@@ -233,6 +233,11 @@ pvp:
   # You can make your own expression, any error will lead to a result of 0.
   hit-reward-expression: "-1 * (%karma_victim_karma% + 200) / 50"
   kill-reward-expression: "-1 * (%karma_victim_karma% + 200) / 10"
+  team-system-cancel:
+    scoreboard-team: #Default scoreboard team in minecraft
+      enable: true
+      same-team: true
+      other-team: false
   messages-delay:
     hit: 5
     kill: 10
@@ -240,7 +245,8 @@ pvp:
     enable: true
     countdown-on-disconnect: true
     #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
-    duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
+    hit-duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
+    kill-duration: "%player_wanted_time% 15m" #compatible with: d h m s ms
     max-duration: "%now% 8h" #compatible with: d h m s ms
     conditions:
       on-karma-gain: false

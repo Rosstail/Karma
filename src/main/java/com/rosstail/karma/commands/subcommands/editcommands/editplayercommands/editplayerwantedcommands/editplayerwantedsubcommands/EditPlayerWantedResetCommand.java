@@ -2,7 +2,6 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedSubCommand;
-import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
@@ -14,15 +13,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
 
     public EditPlayerWantedResetCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

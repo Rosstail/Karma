@@ -3,8 +3,6 @@ package com.rosstail.karma.commands.subcommands;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -12,12 +10,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Map;
 
 public class SaveCommand extends SubCommand {
 
     public SaveCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SAVE).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_SAVE).replaceAll("%syntax%", getSyntax()));
     }
     @Override
     public String getName() {

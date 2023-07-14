@@ -22,7 +22,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
     List<EditPlayerSubCommand> subCommands = new ArrayList<>();
 
     public EditPlayerCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
         subCommands.add(new EditPlayerKarmaCommand());
         subCommands.add(new EditPlayerTierCommand());
         subCommands.add(new EditPlayerWantedCommand());

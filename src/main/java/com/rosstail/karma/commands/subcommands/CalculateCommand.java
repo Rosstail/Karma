@@ -9,6 +9,7 @@ import com.rosstail.karma.commands.subcommands.shopcommands.KarmaShopBuySelfComm
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,7 +22,7 @@ public class CalculateCommand extends SubCommand {
     public CalculateCommand() {
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CALCULATE).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CALCULATE).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -56,11 +57,11 @@ public class CalculateCommand extends SubCommand {
             Player player = null;
             if (sender instanceof Player) {
                 player = ((Player) sender).getPlayer();
-                expression = AdaptMessage.getAdaptMessage().adapt(player, expression, null);
+                expression = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, expression, PlayerType.PLAYER.getText());
             }
             float result = (float) ExpressionCalculator.eval(expression);
 
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(player,
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(player,
                     LangManager.getMessage(LangMessage.CALCULATION)
                             .replaceAll("%expression%", expression).replaceAll("%result%", String.valueOf(result))
                     , null));

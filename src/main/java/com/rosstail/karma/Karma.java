@@ -8,12 +8,13 @@ import com.rosstail.karma.datas.*;
 import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.events.KarmaEventHandler;
 import com.rosstail.karma.events.MinecraftEventHandler;
-import com.rosstail.karma.events.WorldFights;
+import com.rosstail.karma.fight.FightHandler;
+import com.rosstail.karma.fight.WorldFights;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.shops.ShopManager;
 import com.rosstail.karma.tiers.TierManager;
-import com.rosstail.karma.timemanagement.TimeManager;
+import com.rosstail.karma.timeperiod.TimeManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -57,6 +58,7 @@ public class Karma extends JavaPlugin implements Listener {
         manager.chooseDatabase();
 
         LangManager.initCurrentLang(getCustomConfig().getString("general.lang"));
+        FightHandler.initFightHandler();
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -73,7 +75,6 @@ public class Karma extends JavaPlugin implements Listener {
         TopFlopScoreManager.init();
         this.topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
         topFlopScoreManager.getScores();
-
 
         Bukkit.getPluginManager().registerEvents(new MinecraftEventHandler(), this);
         Bukkit.getPluginManager().registerEvents(new KarmaEventHandler(), this);
@@ -110,7 +111,7 @@ public class Karma extends JavaPlugin implements Listener {
         if (!folder.exists()) {
             String message = this.getCustomConfig().getString("messages.creating-playerdata-folder");
             if (message != null) {
-                message = AdaptMessage.getAdaptMessage().adapt(null, message, null);
+                message = AdaptMessage.getAdaptMessage().adaptMessage(message);
 
                 getServer().getConsoleSender().sendMessage(message);
             }

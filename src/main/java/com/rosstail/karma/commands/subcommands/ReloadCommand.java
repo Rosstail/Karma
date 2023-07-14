@@ -3,8 +3,6 @@ package com.rosstail.karma.commands.subcommands;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.shopcommands.KarmaShopBuyOtherCommand;
-import com.rosstail.karma.commands.subcommands.shopcommands.KarmaShopBuySelfCommand;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -17,7 +15,7 @@ import java.util.List;
 public class ReloadCommand extends SubCommand {
 
     public ReloadCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_RELOAD).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_RELOAD).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -46,7 +44,7 @@ public class ReloadCommand extends SubCommand {
             return;
         }
         Karma.getInstance().loadCustomConfig();
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.CONFIG_RELOAD), null));
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.CONFIG_RELOAD)));
         PlayerDataManager.saveAllPlayerModelToStorage();
         //CHECK CURRENT TIER
     }

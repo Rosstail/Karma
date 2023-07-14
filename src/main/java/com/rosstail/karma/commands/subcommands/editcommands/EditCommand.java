@@ -16,7 +16,7 @@ public class EditCommand extends EditSubCommand {
     public List<EditSubCommand> subCommands = new ArrayList<>();
 
     public EditCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
         subCommands.add(new EditPlayerCommand());
     }
 

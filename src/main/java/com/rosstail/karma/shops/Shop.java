@@ -30,8 +30,8 @@ public class Shop {
     private List<String> commands;
 
     public void init(ConfigurationSection section) {
-        display = AdaptMessage.getAdaptMessage().adapt(null, section.getString("display", name.toUpperCase()), null);
-        description = AdaptMessage.getAdaptMessage().adapt(null, section.getString("description", "&c-&r"), null);
+        display = AdaptMessage.getAdaptMessage().adaptMessage(section.getString("display", name.toUpperCase()));
+        description = AdaptMessage.getAdaptMessage().adaptMessage(section.getString("description", "&c-&r"));
         price = (float) section.getDouble("price", 0f);
         useMinKarma = section.get("min-karma") != null;
         useMaxKarma = section.get("max-karma") != null;
@@ -60,9 +60,9 @@ public class Shop {
             Bukkit.getPluginManager().callEvent(event);
             //after event done
             CommandManager.commandsLauncher(target, commands);
-            target.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.SHOP_SUCCESS), PlayerType.PLAYER.getText()));
+            target.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.SHOP_SUCCESS), PlayerType.PLAYER.getText()));
         } else {
-            target.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.SHOP_FAILURE), PlayerType.PLAYER.getText()));
+            target.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.SHOP_FAILURE), PlayerType.PLAYER.getText()));
         }
     }
 

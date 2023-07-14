@@ -20,7 +20,7 @@ import java.util.*;
 public class EditPlayerKarmaAddCommand extends EditPlayerKarmaSetCommand {
 
     public EditPlayerKarmaAddCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

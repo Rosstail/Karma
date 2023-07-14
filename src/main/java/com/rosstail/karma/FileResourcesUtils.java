@@ -1,6 +1,5 @@
-package com.rosstail.karma.datas;
+package com.rosstail.karma;
 
-import com.rosstail.karma.Karma;
 import com.rosstail.karma.lang.AdaptMessage;
 
 import java.io.*;

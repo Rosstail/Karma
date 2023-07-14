@@ -6,7 +6,6 @@ import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
-import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.shops.Shop;
 import com.rosstail.karma.shops.ShopManager;
 import org.bukkit.Bukkit;
@@ -19,7 +18,7 @@ import java.util.List;
 public class KarmaShopBuyOtherCommand extends SubCommand {
 
     public KarmaShopBuyOtherCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -62,7 +61,7 @@ public class KarmaShopBuyOtherCommand extends SubCommand {
             Shop shop = ShopManager.getShopManager().getShops().get(shopName);
             shop.handle(player);
         } else {
-            AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_NOT_EXIST), null);
+            AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.SHOP_NOT_EXIST));
         }
     }
 

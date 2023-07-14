@@ -223,21 +223,21 @@ public class PAPIExpansion extends PlaceholderExpansion {
             if (identifier.equals("player_wanted_time_delay_display")) {
                 long time = PlayerDataManager.getWantedTimeLeft(model);
                 if (time > 0f) {
-                    return AdaptMessage.getAdaptMessage().countDownFormat(time);
+                    return AdaptMessage.getAdaptMessage().countdownFormatter(time);
                 }
                 return "-";
             }
             if (identifier.equals("player_wanted_status")) {
                 if (model.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED), null);
+                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_WANTED));
                 }
-                return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT), null);
+                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_INNOCENT));
             }
             if (identifier.equals("player_wanted_status_short")) {
                 if (model.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT), null);
+                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT));
                 }
-                return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT), null);
+                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT));
             }
         }
 

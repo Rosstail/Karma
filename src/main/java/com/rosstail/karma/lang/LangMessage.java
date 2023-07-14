@@ -66,7 +66,7 @@ public enum LangMessage {
 
     LangMessage(String text) {
         this.text = text;
-        this.displayText = AdaptMessage.getAdaptMessage().adapt(null, this.text, null);
+        this.displayText = AdaptMessage.getAdaptMessage().adaptMessage(this.text);
     }
 
     String getText() {

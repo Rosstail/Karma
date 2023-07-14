@@ -1,9 +1,8 @@
-package com.rosstail.karma.timemanagement.times;
+package com.rosstail.karma.timeperiod.times;
 
 import org.bukkit.configuration.ConfigurationSection;
 
 public class WorldsTimes {
-
     private final String name;
     private final long startTime;
     private final long endTime;
@@ -12,14 +11,14 @@ public class WorldsTimes {
     public WorldsTimes(ConfigurationSection section, String name) {
         this.name = name;
 
-        this.startTime = formatToLong(section.getString("start-time"));
-        this.endTime = formatToLong(section.getString("end-time"));
+        this.startTime = formatToLong(section.getString("start-time", "00:00"));
+        this.endTime = formatToLong(section.getString("end-time", "00:00"));
         this.rate = (byte) section.getInt("rate");
     }
 
     private long formatToLong(String formattedTime) {
         String[] convMinHourMin = formattedTime.split(":", 2);
-        long hour = (long) (1000L * Integer.parseInt(convMinHourMin[0]) + 16.66 * Integer
+        long hour = (long) (1000L * Integer.parseInt(convMinHourMin[0]) + 16.66F * Integer
                 .parseInt(convMinHourMin[1])) + 18000L;
         if (hour > 24000L) {
             hour -= 24000L;

@@ -21,7 +21,7 @@ public class ShopCommand extends SubCommand {
     public ShopCommand() {
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -56,14 +56,14 @@ public class ShopCommand extends SubCommand {
                 subCommands.get(0).perform(sender, args, arguments);
             }
         } else {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_HEADER), PlayerType.PLAYER.getText()));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.SHOP_HEADER)));
             for (Shop shop : ShopManager.getShopManager().getShops().values()) {
                 String line = LangManager.getMessage(LangMessage.SHOP_LINE);
                 line = line.replaceAll("%karma_shop_name%", shop.getName());
                 line = line.replaceAll("%karma_shop_display%", shop.getDisplay());
                 line = line.replaceAll("%karma_shop_description%", shop.getDescription());
                 line = line.replaceAll("%karma_shop_price%", String.valueOf(shop.getPrice()));
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, line, PlayerType.PLAYER.getText()));
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(line));
             }
         }
     }

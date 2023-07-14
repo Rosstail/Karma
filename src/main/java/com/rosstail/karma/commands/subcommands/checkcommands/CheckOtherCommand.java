@@ -8,7 +8,6 @@ import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
-import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -20,7 +19,7 @@ import java.util.Objects;
 public class CheckOtherCommand extends SubCommand {
 
     public CheckOtherCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

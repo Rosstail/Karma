@@ -1,4 +1,4 @@
-package com.rosstail.karma.events;
+package com.rosstail.karma.fight;
 
 import com.rosstail.karma.Karma;
 import org.bukkit.Bukkit;

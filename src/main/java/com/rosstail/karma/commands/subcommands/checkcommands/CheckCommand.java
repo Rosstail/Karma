@@ -2,8 +2,6 @@ package com.rosstail.karma.commands.subcommands.checkcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.checkcommands.CheckOtherCommand;
-import com.rosstail.karma.commands.subcommands.checkcommands.CheckSelfCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -15,7 +13,7 @@ import java.util.List;
 public class CheckCommand extends SubCommand {
 
     public CheckCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
         subCommands.add(new CheckSelfCommand());
         subCommands.add(new CheckOtherCommand());
     }

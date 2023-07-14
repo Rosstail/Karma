@@ -23,7 +23,7 @@ import java.util.List;
 public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
 
     public EditPlayerWantedSetCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
     }
 
     private void changeWantedOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        long wantedTimeLeft = PlayerDataManager.getWantedTimeLeft(model);
+        long wantedTime = model.getWantedTimeStamp().getTime();
         List<String> expressionList = new ArrayList<>(Arrays.asList(args));
         expressionList.remove("edit");
         expressionList.remove("player");
@@ -72,10 +72,10 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("set");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTimeLeft, "%now% " + expression);
+        long duration = AdaptMessage.calculateDuration(wantedTime, "%now% " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTimeLeft, ConfigData.getConfigData().wantedMaxDurationExpression);
+            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
             sender.sendMessage("Wanted time is not limited.");
@@ -87,7 +87,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
-        long wantedTimeLeft = PlayerDataManager.getWantedTimeLeft(model);
+        long wantedTime = model.getWantedTimeStamp().getTime();
         List<String> expressionList = new ArrayList<>(Arrays.asList(args));
         expressionList.remove("edit");
         expressionList.remove("player");
@@ -96,10 +96,10 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("set");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTimeLeft, "%now% " + expression);
+        long duration = AdaptMessage.calculateDuration(wantedTime, "%now% " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTimeLeft, ConfigData.getConfigData().wantedMaxDurationExpression);
+            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
             sender.sendMessage("Wanted time is not limited.");

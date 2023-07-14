@@ -2,7 +2,6 @@ package com.rosstail.karma.commands.subcommands.checkcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.HelpCommand;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -12,13 +11,12 @@ import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CheckSelfCommand extends SubCommand {
 
     public CheckSelfCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
     }
     @Override
     public String getName() {
@@ -47,7 +45,7 @@ public class CheckSelfCommand extends SubCommand {
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.BY_PLAYER_ONLY)));
             return;
         }
         Player player = (Player) sender;

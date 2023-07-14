@@ -97,7 +97,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     private static void permissionDenied(CommandSender sender, SubCommand command) {
         String message = LangManager.getMessage(LangMessage.PERMISSION_DENIED);
         if (message != null) {
-            message = AdaptMessage.getAdaptMessage().adapt((Player) sender, message, PlayerType.PLAYER.getText());
+            message = AdaptMessage.getAdaptMessage().adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
             message = message.replaceAll("%command%", command.getName());
             message = message.replaceAll("%permission%", command.getPermission());
             sender.sendMessage(message);
@@ -112,10 +112,10 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }*/
     public static void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS), null));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS)));
         }
         if (e instanceof NumberFormatException) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.WRONG_VALUE), null));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WRONG_VALUE)));
             e.printStackTrace();
         }
     }
@@ -137,7 +137,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     private static void placeCommands(Player player, String command) {
-        command = AdaptMessage.getAdaptMessage().adapt(player, command, PlayerType.PLAYER.getText());
+        command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, command, PlayerType.PLAYER.getText());
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 
         String regex = PlayerType.PLAYER.getText();
@@ -157,8 +157,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     private static void placeCommands(Player attacker, Player victim, String command) {
-        command = AdaptMessage.getAdaptMessage().adapt(attacker, command, PlayerType.ATTACKER.getText());
-        command = AdaptMessage.getAdaptMessage().adapt(victim, command, PlayerType.VICTIM.getText());
+        command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(attacker, command, PlayerType.ATTACKER.getText());
+        command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(victim, command, PlayerType.VICTIM.getText());
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
         if (command.startsWith(PlayerType.VICTIM.getText())) {

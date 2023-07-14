@@ -6,13 +6,10 @@ import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.e
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.storage.StorageManager;
-import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
-import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +20,7 @@ import java.util.*;
 public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
 
     public EditPlayerWantedAddCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -63,7 +60,7 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
     }
 
     private void changeWantedOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        long wantedTimeLeft = PlayerDataManager.getWantedTimeLeft(model);
+        long wantedTime = model.getWantedTimeStamp().getTime();
         List<String> expressionList = new ArrayList<>(Arrays.asList(args));
         expressionList.remove("edit");
         expressionList.remove("player");
@@ -72,12 +69,12 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("add");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTimeLeft, expression);
+        long duration = AdaptMessage.calculateDuration(wantedTime, expression);
         long baseDuration = model.getWantedTimeStamp().getTime();
         long newDuration = baseDuration + duration;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTimeLeft, ConfigData.getConfigData().wantedMaxDurationExpression);
+            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
         } else {
             sender.sendMessage("Wanetd time is not limited.");
@@ -97,13 +94,13 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("add");
         String expression = String.join(" ", expressionList).trim();
 
-        long wantedTimeLeft = PlayerDataManager.getWantedTimeLeft(model);
-        long duration = AdaptMessage.calculateDuration(wantedTimeLeft, expression);
+        long wantedTime = model.getWantedTimeStamp().getTime();
+        long duration = AdaptMessage.calculateDuration(wantedTime, expression);
         long baseDuration = model.getWantedTimeStamp().getTime();
         long newDuration = baseDuration + duration;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTimeLeft, ConfigData.getConfigData().wantedMaxDurationExpression);
+            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
         } else {
             sender.sendMessage("Wanetd time is not limited.");

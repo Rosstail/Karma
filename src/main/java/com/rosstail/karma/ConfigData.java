@@ -58,7 +58,8 @@ public class ConfigData {
     private final String countDownFormat;
     public final String pvpHitRewardExpression;
     public final String pvpKillRewardExpression;
-    public final String wantedDurationExpression;
+    public final String wantedHitDurationExpression;
+    public final String wantedKillDurationExpression;
     public final String wantedMaxDurationExpression;
 
     public final ArrayList<String> enterWantedCommands = new ArrayList<>();
@@ -119,7 +120,8 @@ public class ConfigData {
         wantedOnKarmaUnchanged = config.getBoolean("pvp.wanted.conditions.on-karma-unchanged", false);
         wantedOnKarmaLoss = config.getBoolean("pvp.wanted.conditions.on-karma-loss", true);
         wantedRefresh = config.getBoolean("pvp.wanted.conditions.refresh", true);
-        wantedDurationExpression = config.getString("pvp.wanted.duration");
+        wantedHitDurationExpression = config.getString("pvp.wanted.hit-duration");
+        wantedKillDurationExpression = config.getString("pvp.wanted.kill-duration");
         wantedMaxDurationExpression = config.getString("pvp.wanted.max-duration");
 
         dateTimeFormat = config.getString("general.date-time-format");
