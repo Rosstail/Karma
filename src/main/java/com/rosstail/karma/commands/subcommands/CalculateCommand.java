@@ -58,13 +58,14 @@ public class CalculateCommand extends SubCommand {
             if (sender instanceof Player) {
                 player = ((Player) sender).getPlayer();
                 expression = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, expression, PlayerType.PLAYER.getText());
+                expression = AdaptMessage.getAdaptMessage().adaptMessage(expression);
             }
             float result = (float) ExpressionCalculator.eval(expression);
 
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(player,
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(player,
                     LangManager.getMessage(LangMessage.CALCULATION)
                             .replaceAll("%expression%", expression).replaceAll("%result%", String.valueOf(result))
-                    , null));
+                    , null)));
         } else {
             CommandManager.errorMessage(sender, new ArrayIndexOutOfBoundsException());
         }

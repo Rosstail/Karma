@@ -75,6 +75,13 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
         Tier tier = TierManager.getTierManager().getTierByName(tierName);
         float value = tier.getDefaultKarma();
 
+        if (value != PlayerDataManager.limitKarma(value)) {
+            if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
+                sender.sendMessage("This tier is out of karma limits. Use -o or --override to force");
+                return;
+            }
+        }
+
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 

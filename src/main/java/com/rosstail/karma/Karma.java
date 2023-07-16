@@ -15,6 +15,7 @@ import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.shops.ShopManager;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timeperiod.TimeManager;
+import com.rosstail.karma.wanted.WantedManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
@@ -52,8 +53,10 @@ public class Karma extends JavaPlugin implements Listener {
         TimeManager.initTimeManager(this);
         ShopManager.initShopManager(this);
         WorldFights.initWorldFights(this);
+        WantedManager.init(this);
 
         loadCustomConfig();
+
         StorageManager manager = StorageManager.initStorageManage(this);
         manager.chooseDatabase();
 
@@ -166,6 +169,7 @@ public class Karma extends JavaPlugin implements Listener {
         TierManager.getTierManager().setupTiers();
         TimeManager.getTimeManager().setupTimes();
         ShopManager.getShopManager().setupShops();
+        WantedManager.getWantedManager().setup();
     }
 
     public YamlConfiguration getCustomConfig() {

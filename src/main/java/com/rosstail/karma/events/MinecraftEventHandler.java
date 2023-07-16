@@ -15,6 +15,7 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timeperiod.TimeManager;
+import com.rosstail.karma.wanted.WantedManager;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
@@ -188,6 +189,9 @@ public class MinecraftEventHandler implements Listener {
             PlayerKillPlayerEvent pvpKillEvent = new PlayerKillPlayerEvent(killer, victim);
             Bukkit.getPluginManager().callEvent(pvpKillEvent);
 
+            if (ConfigData.getConfigData().wantedEnable) {
+                WantedManager.getWantedManager().punishHandler(pvpKillEvent.getAttacker(), pvpKillEvent.getVictim());
+            }
             if (!pvpKillEvent.isCancelled()) {
                 FightHandler.pvpKill(killer, victim);
             }
@@ -225,11 +229,6 @@ public class MinecraftEventHandler implements Listener {
         }
 
         if (attacker.hasPermission("karma.immune")) {
-            return;
-        }
-
-        if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
-            attacker.sendMessage("not affected because of time period.");
             return;
         }
 

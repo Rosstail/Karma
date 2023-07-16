@@ -72,13 +72,25 @@ public class AdaptMessage {
     }
 
     private void sendActionBar(Player player, String message) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
+                adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()))
+                ));
     }
 
     private void sendTitle(Player player, String title, String subTitle) {
         ConfigData configData = ConfigData.getConfigData();
-        player.sendTitle(adaptMessage.adaptPlayerMessage(player, title, PlayerType.PLAYER.getText()),
-                adaptMessage.adaptPlayerMessage(player, subTitle, PlayerType.PLAYER.getText()), configData.titleFadeIn, configData.titleStay, configData.titleFadeOut);
+        player.sendTitle(adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, title, PlayerType.PLAYER.getText())),
+                adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, subTitle, PlayerType.PLAYER.getText())),
+                configData.titleFadeIn, configData.titleStay, configData.titleFadeOut);
+    }
+
+    public String adaptPvpMessage(Player attacker, Player victim, String message) {
+        message = adaptPlayerMessage(attacker, message, PlayerType.ATTACKER.getText());
+        message = adaptPlayerMessage(victim, message, PlayerType.VICTIM.getText());
+
+        message = setPlaceholderMessage(attacker, message);
+        message = setPlaceholderMessage(victim, message);
+        return ChatColor.translateAlternateColorCodes('&', adaptMessage(message));
     }
 
     public String adaptPlayerMessage(Player player, String message, String playerType) {
@@ -116,7 +128,7 @@ public class AdaptMessage {
             message = message.replaceAll(playerPluginPlaceholder + "previous_karma_int%", String.valueOf((int) playerPreviousKarma));
             message = message.replaceAll(playerPluginPlaceholder + "previous_karma_int_abs%", String.valueOf(Math.abs((int) playerPreviousKarma)));
             message = message.replaceAll(playerPluginPlaceholder + "diff_karma%", decimalFormat(difPlayerDiffKarma, '.'));
-            message = message.replaceAll(playerPluginPlaceholder + "diff_karma%_abs", decimalFormat(Math.abs(difPlayerDiffKarma), '.'));
+            message = message.replaceAll(playerPluginPlaceholder + "diff_karma_abs%", decimalFormat(Math.abs(difPlayerDiffKarma), '.'));
             message = message.replaceAll(playerPluginPlaceholder + "diff_karma_int%", String.valueOf((int) difPlayerDiffKarma));
             message = message.replaceAll(playerPluginPlaceholder + "diff_karma_int_abs%", String.valueOf(Math.abs((int) difPlayerDiffKarma)));
 
@@ -136,8 +148,10 @@ public class AdaptMessage {
         } else {
             message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(player.getMetadata("Karma").get(0).asFloat(), '.'));
         }
-        message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
-        return adaptMessage(message);
+        if (Objects.equals(playerType, PlayerType.PLAYER.getText())) {
+            message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
+        }
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     public String adaptMessage(String message) {
@@ -167,7 +181,7 @@ public class AdaptMessage {
     public String[] listMessage(Player player, List<String> messages) {
         ArrayList<String> newMessages = new ArrayList<>();
         messages.forEach(s -> {
-            newMessages.add(adaptPlayerMessage(player, s, PlayerType.PLAYER.getText()));
+            newMessages.add(adaptMessage(adaptPlayerMessage(player, s, PlayerType.PLAYER.getText())));
         });
         return newMessages.toArray(new String[0]);
     }
@@ -184,8 +198,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptPlayerMessage(attacker, message, PlayerType.ATTACKER.getText());
-        message = adaptPlayerMessage(victim, message, PlayerType.VICTIM.getText());
+        message = adaptPvpMessage(attacker, victim, message);
 
         coolDown.put(attacker, System.currentTimeMillis());
         return message;
@@ -203,8 +216,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptPlayerMessage(attacker, message, PlayerType.ATTACKER.getText());
-        message = adaptPlayerMessage(victim, message, PlayerType.VICTIM.getText());
+        message = adaptPvpMessage(attacker, victim, message);
 
         coolDown.put(attacker, System.currentTimeMillis());
         return message;
@@ -222,7 +234,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptPlayerMessage(player, message, PlayerType.ATTACKER.getText());
+        message = adaptMessage(adaptPlayerMessage(player, message, PlayerType.ATTACKER.getText()));
 
         coolDown.put(player, System.currentTimeMillis());
         sendToPlayer(player, message);
@@ -240,7 +252,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptPlayerMessage(player, message, PlayerType.ATTACKER.getText());
+        message = adaptMessage(adaptPlayerMessage(player, message, PlayerType.ATTACKER.getText()));
 
         coolDown.put(player, System.currentTimeMillis());
         sendToPlayer(player, message);
@@ -289,6 +301,12 @@ public class AdaptMessage {
         return format;
     }
 
+    /**
+     * Apply placeholder of every plugins into the message
+     * @param player
+     * @param message
+     * @return
+     */
     private String setPlaceholderMessage(Player player, String message) {
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             return PlaceholderAPI.setPlaceholders(player, message);

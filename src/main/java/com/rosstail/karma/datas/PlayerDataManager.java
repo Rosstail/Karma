@@ -42,7 +42,7 @@ public class PlayerDataManager {
     public static void changePlayerTierMessage(Player player) {
         String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
         if (message != null) {
-            adaptMessage.sendToPlayer(player, adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
+            adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())));
         }
     }
 
@@ -233,7 +233,6 @@ public class PlayerDataManager {
     }
 
     public static long getOvertime(PlayerModel model, String name) {
-        System.out.println(name);
         return model.getOverTimeStampMap().get(name).getTime() - System.currentTimeMillis();
     }
 

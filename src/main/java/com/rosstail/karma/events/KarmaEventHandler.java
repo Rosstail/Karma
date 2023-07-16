@@ -169,7 +169,9 @@ public class KarmaEventHandler implements Listener {
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().enterWantedCommands);
         model.setWanted(true);
         if (message != null) {
-            adaptMessage.sendToPlayer(player, AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
+            adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
+                    adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
+            ));
         }
     }
 
@@ -181,7 +183,9 @@ public class KarmaEventHandler implements Listener {
         model.setWanted(true);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().refreshWantedCommands);
         if (message != null) {
-            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
+            adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
+                    adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
+            ));
         }
     }
 
@@ -201,7 +205,9 @@ public class KarmaEventHandler implements Listener {
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().leaveWantedCommands);
         if (message != null) {
-            AdaptMessage.getAdaptMessage().sendToPlayer(player, AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()));
+            adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
+                    adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
+                    ));
         }
     }
 

@@ -42,6 +42,9 @@ public class ConfigData {
     public final Map<String, OvertimeLoop> overtimeLoopMap = new HashMap<>();
 
     public final boolean useWorldGuard;
+    public final boolean scoreboardTeamSystemCancel;
+    public final boolean scoreboardTeamSystemCancelSameTeam;
+    public final boolean scoreboardTeamSystemCancelOtherTeam;
     public final boolean wantedEnable;
     public final boolean wantedOnKarmaGain;
     public final boolean wantedOnKarmaUnchanged;
@@ -123,6 +126,10 @@ public class ConfigData {
         wantedHitDurationExpression = config.getString("pvp.wanted.hit-duration");
         wantedKillDurationExpression = config.getString("pvp.wanted.kill-duration");
         wantedMaxDurationExpression = config.getString("pvp.wanted.max-duration");
+
+        scoreboardTeamSystemCancel = config.getBoolean("pvp.team-system-cancel.scoreboard-team.enable", true);
+        scoreboardTeamSystemCancelSameTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.same-team", true);
+        scoreboardTeamSystemCancelOtherTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.other-team", false);
 
         dateTimeFormat = config.getString("general.date-time-format");
         countDownFormat = config.getString("general.countdown-format");

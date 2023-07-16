@@ -8,8 +8,6 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
-import com.rosstail.karma.events.karmaevents.PlayerWantedPunishEvent;
 import com.rosstail.karma.fight.teamfighthandlers.ScoreboardTeamFightHandler;
 import com.rosstail.karma.fight.teamfighthandlers.TeamFightHandler;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -17,12 +15,12 @@ import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timeperiod.TimeManager;
+import com.rosstail.karma.wanted.WantedManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,18 +28,23 @@ public class FightHandler {
     private static final Karma plugin = Karma.getInstance();
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
     private static ConfigData configData = ConfigData.getConfigData();
-    private static final boolean doesWantedTimeRefresh = configData.wantedRefresh;
 
     private static final List<TeamFightHandler> teamFightHandlerList = new ArrayList<>();
 
     public static void initFightHandler() {
-        if (true) {
+        if (ConfigData.getConfigData().scoreboardTeamSystemCancel) {
+            AdaptMessage.print("[Karma] enabled scoreboard team cancel", AdaptMessage.prints.OUT);
             teamFightHandlerList.add(new ScoreboardTeamFightHandler());
         }
     }
 
     public static void pvpHit(Player attacker, Player victim) {
         boolean doesKarmaChange = true;
+
+        if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
+            attacker.sendMessage("not affected because of time period.");
+            return;
+        }
 
         PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
@@ -56,8 +59,7 @@ public class FightHandler {
         Tier attackerTier = TierManager.getTierManager().getTierByName(attackerModel.getTierName());
         Tier victimTier = TierManager.getTierManager().getTierByName(victimModel.getTierName());
 
-        expression = adaptMessage.adaptPlayerMessage(attacker, expression, PlayerType.ATTACKER.getText());
-        expression = adaptMessage.adaptPlayerMessage(victim, expression, PlayerType.VICTIM.getText());
+        expression = adaptMessage.adaptPvpMessage(attacker, victim, expression);
         expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
                 String.valueOf(attackerTier.getTierScore(victimTier)));
 
@@ -67,19 +69,28 @@ public class FightHandler {
             result = result * multi;
         }
 
-        if (!attackerModel.isWanted() && victimModel.isWanted()) {
-            if ((result > 0 && configData.cancelInnocentKarmaGain) || (result < 0 && configData.cancelInnocentKarmaLoss)) {
-                doesKarmaChange = false;
-            }
-        } else if (attackerModel.isWanted()) {
-            if ((result > 0 && configData.cancelWantedKarmaGain) || (result < 0 && configData.cancelWantedKarmaLoss)) {
-                doesKarmaChange = false;
-            }
+        float attackerNewKarma = attackerInitialKarma + result;
+
+        if (ConfigData.getConfigData().wantedEnable) {
+            WantedManager wantedManager = WantedManager.getWantedManager();
+            doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
+            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.wantedHitDurationExpression);
         }
 
-        float attackerNewKarma = attackerInitialKarma + result;
-        if (configData.wantedEnable) {
-            wantedHandler(attacker, attackerNewKarma, victim, configData.wantedHitDurationExpression);
+        if (result == 0F) { //If no change, skip
+            doesKarmaChange = false;
+        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
+            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().maxKarma;
+            }
+        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
+            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().minKarma;
+            }
         }
 
         if (doesKarmaChange) {
@@ -91,6 +102,11 @@ public class FightHandler {
     public static void pvpKill(Player attacker, Player victim) {
         boolean doesKarmaChange = true;
 
+        if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
+            attacker.sendMessage("not affected because of time period.");
+            return;
+        }
+
         PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = attackerModel.getKarma();
@@ -100,8 +116,7 @@ public class FightHandler {
 
         String path = configData.killedByTierPath;
 
-        path = adaptMessage.adaptPlayerMessage(victim, path, PlayerType.VICTIM.getText());
-        path = adaptMessage.adaptPlayerMessage(attacker, path, PlayerType.ATTACKER.getText());
+        path = adaptMessage.adaptPvpMessage(attacker, victim, path);
         CommandManager.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
 
         if (expression == null) {
@@ -112,8 +127,7 @@ public class FightHandler {
         Tier attackerTier = TierManager.getTierManager().getTierByName(attackerModel.getTierName());
         Tier victimTier = TierManager.getTierManager().getTierByName(victimModel.getTierName());
 
-        expression = adaptMessage.adaptPlayerMessage(attacker, expression, PlayerType.ATTACKER.getText());
-        expression = adaptMessage.adaptPlayerMessage(victim, expression, PlayerType.VICTIM.getText());
+        expression = adaptMessage.adaptPvpMessage(attacker, victim, expression);
         expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
                 String.valueOf(attackerTier.getTierScore(victimTier)));
 
@@ -123,19 +137,31 @@ public class FightHandler {
             result = result * multi;
         }
 
-        if (!attackerModel.isWanted() && victimModel.isWanted()) {
-            if ((result > 0 && configData.cancelInnocentKarmaGain) || (result < 0 && configData.cancelInnocentKarmaLoss)) {
-                doesKarmaChange = false;
-            }
-        } else if (attackerModel.isWanted()) {
-            if ((result > 0 && configData.cancelWantedKarmaGain) || (result < 0 && configData.cancelWantedKarmaLoss)) {
-                doesKarmaChange = false;
-            }
+        float attackerNewKarma = attackerInitialKarma + result;
+
+        if (ConfigData.getConfigData().wantedEnable) {
+            WantedManager wantedManager = WantedManager.getWantedManager();
+            doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
+            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.wantedKillDurationExpression);
         }
 
-        float attackerNewKarma = attackerInitialKarma + result;
-        if (configData.wantedEnable) {
-            wantedHandler(attacker, attackerNewKarma, victim, configData.wantedKillDurationExpression);
+        if (result == 0F) { //If no change, skip
+            doesKarmaChange = false;
+            attacker.sendMessage("No change");
+        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
+            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
+                attacker.sendMessage("OOB KILL > MAX");
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().maxKarma;
+            }
+        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
+            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
+                attacker.sendMessage("OOB KILL < MIN");
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().minKarma;
+            }
         }
 
         if (doesKarmaChange) {
@@ -145,39 +171,91 @@ public class FightHandler {
     }
 
     public static void pveHit(Player attacker, Mob victim) {
+        if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
+            attacker.sendMessage("not affected because of time period.");
+            return;
+        }
+
         String entityName = victim.getName();
         YamlConfiguration config = plugin.getCustomConfig();
         float reward = config.getInt("entities.list." + entityName + ".hit-karma-reward");
         CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".hit-commands"));
 
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float attackerKarma = model.getKarma();
+        float attackerInitialKarma = model.getKarma();
 
         if (configData.useWorldGuard) {
             reward = reward * (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerKarma + reward);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        boolean doesKarmaChange = true;
+        float attackerNewKarma = attackerInitialKarma + reward;
+
+        if (reward == 0F) { //If no change, skip
+            doesKarmaChange = false;
+        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
+            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().maxKarma;
+            }
+        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
+            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().minKarma;
+            }
+        }
+
+        if (doesKarmaChange) {
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerNewKarma);
+            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        }
 
         adaptMessage.pveHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker);
     }
 
     public static void pveKill(Player attacker, Mob victim) {
+        if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
+            attacker.sendMessage("not affected because of time period.");
+            return;
+        }
+
         String entityName = victim.getName();
         YamlConfiguration config = plugin.getCustomConfig();
         float reward = config.getInt("entities.list." + entityName + ".kill-karma-reward");
         CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".kill-commands"));
 
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float attackerKarma = model.getKarma();
+        float attackerInitialKarma = model.getKarma();
 
         if (configData.useWorldGuard) {
             reward = reward * (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerKarma + reward);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        boolean doesKarmaChange = true;
+        float attackerNewKarma = attackerInitialKarma + reward;
+
+        if (reward == 0F) { //If no change, skip
+            doesKarmaChange = false;
+        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
+            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().maxKarma;
+            }
+        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
+            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
+                doesKarmaChange = false;
+            } else {
+                attackerNewKarma = ConfigData.getConfigData().minKarma;
+            }
+        }
+
+        if (doesKarmaChange) {
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerNewKarma);
+            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        }
 
         adaptMessage.pveKillMessage(config.getString("entities.list." + entityName + ".kill-message"), attacker);
     }
@@ -188,71 +266,6 @@ public class FightHandler {
 
     public static boolean doesPlayerNPCHaveKarma(Player npc) {
         return npc.hasMetadata("Karma") && npc.getMetadata("Karma").get(0) != null;
-    }
-
-    public static boolean doesAttackerRisksGuilt(float attackerInitialKarma, float attackerNewKarma) {
-        if (attackerNewKarma > attackerInitialKarma) {
-            return configData.wantedOnKarmaGain;
-        } else if (attackerNewKarma == attackerInitialKarma) {
-            return configData.wantedOnKarmaUnchanged;
-        }
-        return configData.wantedOnKarmaLoss;
-    }
-
-    private static void wantedHandler(Player attacker, float newKarma, Player victim, String expression) {
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
-
-        float attackerInitialKarma = attackerModel.getKarma();
-        long attackerLastWanted = attackerModel.getWantedTimeStamp().getTime();
-        long victimLastWanted = victimModel.getWantedTimeStamp().getTime();
-
-        boolean hasAttackerWantedOnce = hasBeenWantedOnce(attackerLastWanted);
-        boolean hasVictimWantedOnce = hasBeenWantedOnce(victimLastWanted);
-
-        boolean isAttackerWanted = isPlayerWanted(attackerLastWanted);
-        boolean isVictimWanted = isPlayerWanted(victimLastWanted);
-
-        boolean doesAttackerRisksGuilt = doesAttackerRisksGuilt(attackerInitialKarma, newKarma);
-        boolean isGuilty = false;
-
-        if (doesAttackerRisksGuilt) {
-            if (!hasAttackerWantedOnce && !hasVictimWantedOnce) { //if none have been wanted in the past
-                //Declare attacker guilty
-                isGuilty = isGuilty(isAttackerWanted);
-            } else if (!hasVictimWantedOnce) { //if the victim never been wanted in the past
-                //Declare attacker guilty
-                isGuilty = isGuilty(isAttackerWanted);
-            } else if (!isVictimWanted || isAttackerWanted) { //If both have been wanted in the past
-                isGuilty = isGuilty(isAttackerWanted);
-            }
-        }
-
-        if (isGuilty) {
-            String calculatedExpression = AdaptMessage.getAdaptMessage().adaptPlayerMessage(attacker, expression, PlayerType.PLAYER.getText());
-            Timestamp timestamp = new Timestamp(AdaptMessage.calculateDuration(attackerModel.getWantedTimeStamp().getTime(), "%player_wanted_time% " + calculatedExpression));
-            PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(attacker, attackerModel, timestamp);
-            Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
-        } else {
-            boolean doPunishWanted = TierManager.getTierManager().getTierByName(attackerModel.getTierName()).doPunishWanted();
-            if (isVictimWanted && doPunishWanted) {
-                PlayerWantedPunishEvent playerWantedPunishEvent = new PlayerWantedPunishEvent(victim, attacker);
-                Bukkit.getPluginManager().callEvent(playerWantedPunishEvent);
-            }
-        }
-
-    }
-
-    private static boolean hasBeenWantedOnce(long wantedTime) {
-        return wantedTime != 0;
-    }
-
-    public static boolean isPlayerWanted(long wantedTime) {
-        return (wantedTime >= System.currentTimeMillis());
-    }
-
-    private static boolean isGuilty(boolean isAttackerWanted) {
-        return !isAttackerWanted || doesWantedTimeRefresh;
     }
 
     public static void setConfigData(ConfigData configData) {

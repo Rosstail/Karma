@@ -98,6 +98,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         String message = LangManager.getMessage(LangMessage.PERMISSION_DENIED);
         if (message != null) {
             message = AdaptMessage.getAdaptMessage().adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
+            message = AdaptMessage.getAdaptMessage().adaptMessage(message);
             message = message.replaceAll("%command%", command.getName());
             message = message.replaceAll("%permission%", command.getPermission());
             sender.sendMessage(message);
@@ -138,6 +139,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
     private static void placeCommands(Player player, String command) {
         command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, command, PlayerType.PLAYER.getText());
+        command = AdaptMessage.getAdaptMessage().adaptMessage(command);
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 
         String regex = PlayerType.PLAYER.getText();
@@ -157,8 +159,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     private static void placeCommands(Player attacker, Player victim, String command) {
-        command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(attacker, command, PlayerType.ATTACKER.getText());
-        command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(victim, command, PlayerType.VICTIM.getText());
+        command = AdaptMessage.getAdaptMessage().adaptPvpMessage(attacker, victim, command);
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
         if (command.startsWith(PlayerType.VICTIM.getText())) {

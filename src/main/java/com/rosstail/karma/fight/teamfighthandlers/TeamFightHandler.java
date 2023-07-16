@@ -8,5 +8,6 @@ public interface TeamFightHandler {
         return false;
     }
 
+    void init();
 }
 
