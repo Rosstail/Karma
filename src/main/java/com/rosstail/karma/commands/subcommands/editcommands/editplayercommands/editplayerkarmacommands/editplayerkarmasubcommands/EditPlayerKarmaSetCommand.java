@@ -87,7 +87,7 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
-            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+            ConfigData.getConfigData().overtime.overtimeLoopMap.forEach((s, overtimeLoop) -> {
                 PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
                 PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, overtimeLoop.name);
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
@@ -131,9 +131,9 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         List<String> list = new ArrayList<>();
-        list.add(String.valueOf(ConfigData.getConfigData().minKarma));
-        list.add(String.valueOf(ConfigData.getConfigData().defaultKarma));
-        list.add(String.valueOf(ConfigData.getConfigData().maxKarma));
+        list.add(String.valueOf(ConfigData.getConfigData().karmaConfig.minKarma));
+        list.add(String.valueOf(ConfigData.getConfigData().karmaConfig.defaultKarma));
+        list.add(String.valueOf(ConfigData.getConfigData().karmaConfig.maxKarma));
         return list;
     }
 }

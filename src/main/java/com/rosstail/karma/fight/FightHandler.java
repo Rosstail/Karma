@@ -8,6 +8,7 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
 import com.rosstail.karma.fight.teamfighthandlers.ScoreboardTeamFightHandler;
 import com.rosstail.karma.fight.teamfighthandlers.TeamFightHandler;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -32,7 +33,7 @@ public class FightHandler {
     private static final List<TeamFightHandler> teamFightHandlerList = new ArrayList<>();
 
     public static void initFightHandler() {
-        if (ConfigData.getConfigData().scoreboardTeamSystemCancel) {
+        if (ConfigData.getConfigData().pvp.scoreboardTeamSystemCancel) {
             AdaptMessage.print("[Karma] enabled scoreboard team cancel", AdaptMessage.prints.OUT);
             teamFightHandlerList.add(new ScoreboardTeamFightHandler());
         }
@@ -49,7 +50,7 @@ public class FightHandler {
         PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = attackerModel.getKarma();
-        String expression = configData.pvpHitRewardExpression;
+        String expression = configData.pvp.pvpHitRewardExpression;
 
         if (expression == null) {
             return;
@@ -64,39 +65,20 @@ public class FightHandler {
                 String.valueOf(attackerTier.getTierScore(victimTier)));
 
         result = (float) ExpressionCalculator.eval(expression);
-        if (configData.useWorldGuard) {
+        if (configData.general.useWorldGuard) {
             float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
             result = result * multi;
         }
 
         float attackerNewKarma = attackerInitialKarma + result;
 
-        if (ConfigData.getConfigData().wantedEnable) {
+        if (ConfigData.getConfigData().wanted.wantedEnable) {
             WantedManager wantedManager = WantedManager.getWantedManager();
             doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
-            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.wantedHitDurationExpression);
+            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
         }
 
-        if (result == 0F) { //If no change, skip
-            doesKarmaChange = false;
-        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
-            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
-                doesKarmaChange = false;
-            } else {
-                attackerNewKarma = ConfigData.getConfigData().maxKarma;
-            }
-        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
-            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
-                doesKarmaChange = false;
-            } else {
-                attackerNewKarma = ConfigData.getConfigData().minKarma;
-            }
-        }
-
-        if (doesKarmaChange) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma);
-            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-        }
+        Toast(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }
 
     public static void pvpKill(Player attacker, Player victim) {
@@ -110,14 +92,10 @@ public class FightHandler {
         PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = attackerModel.getKarma();
-        String expression = configData.pvpKillRewardExpression;
+        String expression = configData.pvp.pvpKillRewardExpression;
 
-        CommandManager.commandsLauncher(attacker, victim, TierManager.getTierManager().getTierByName(victimModel.getTierName()).getKilledCommands());
-
-        String path = configData.killedByTierPath;
-
-        path = adaptMessage.adaptPvpMessage(attacker, victim, path);
-        CommandManager.commandsLauncher(attacker, victim, plugin.getCustomConfig().getStringList(path));
+        //Pvp kill commands when guarantee is FALSE
+        PvpCommandHandler.getPvpCommandHandler().handle(attacker, victim, false);
 
         if (expression == null) {
             return;
@@ -132,35 +110,35 @@ public class FightHandler {
                 String.valueOf(attackerTier.getTierScore(victimTier)));
 
         result = (float) ExpressionCalculator.eval(expression);
-        if (configData.useWorldGuard) {
+        if (configData.general.useWorldGuard) {
             float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
             result = result * multi;
         }
 
         float attackerNewKarma = attackerInitialKarma + result;
 
-        if (ConfigData.getConfigData().wantedEnable) {
+        if (ConfigData.getConfigData().wanted.wantedEnable) {
             WantedManager wantedManager = WantedManager.getWantedManager();
             doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
-            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.wantedKillDurationExpression);
+            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedKillDurationExpression);
         }
 
         if (result == 0F) { //If no change, skip
             doesKarmaChange = false;
             attacker.sendMessage("No change");
-        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
-            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
+        } else if (attackerNewKarma > ConfigData.getConfigData().karmaConfig.maxKarma) { //If new karma > max karma
+            if (attackerInitialKarma > ConfigData.getConfigData().karmaConfig.maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
                 attacker.sendMessage("OOB KILL > MAX");
                 doesKarmaChange = false;
             } else {
-                attackerNewKarma = ConfigData.getConfigData().maxKarma;
+                attackerNewKarma = ConfigData.getConfigData().karmaConfig.maxKarma;
             }
-        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
-            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
+        } else if (attackerNewKarma < ConfigData.getConfigData().karmaConfig.minKarma) { //if new karma < min karma
+            if (attackerInitialKarma < ConfigData.getConfigData().karmaConfig.minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
                 attacker.sendMessage("OOB KILL < MIN");
                 doesKarmaChange = false;
             } else {
-                attackerNewKarma = ConfigData.getConfigData().minKarma;
+                attackerNewKarma = ConfigData.getConfigData().karmaConfig.minKarma;
             }
         }
 
@@ -181,29 +159,39 @@ public class FightHandler {
         float reward = config.getInt("entities.list." + entityName + ".hit-karma-reward");
         CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".hit-commands"));
 
+        Test(attacker, reward);
+
+        adaptMessage.pveHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker);
+    }
+
+    private static void Test(Player attacker, float reward) {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = model.getKarma();
 
-        if (configData.useWorldGuard) {
+        if (configData.general.useWorldGuard) {
             reward = reward * (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
         }
 
         boolean doesKarmaChange = true;
         float attackerNewKarma = attackerInitialKarma + reward;
 
+        Toast(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
+    }
+
+    private static void Toast(Player attacker, float reward, PlayerModel model, float attackerInitialKarma, boolean doesKarmaChange, float attackerNewKarma) {
         if (reward == 0F) { //If no change, skip
             doesKarmaChange = false;
-        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
-            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
+        } else if (attackerNewKarma > ConfigData.getConfigData().karmaConfig.maxKarma) { //If new karma > max karma
+            if (attackerInitialKarma > ConfigData.getConfigData().karmaConfig.maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
                 doesKarmaChange = false;
             } else {
-                attackerNewKarma = ConfigData.getConfigData().maxKarma;
+                attackerNewKarma = ConfigData.getConfigData().karmaConfig.maxKarma;
             }
-        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
-            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
+        } else if (attackerNewKarma < ConfigData.getConfigData().karmaConfig.minKarma) { //if new karma < min karma
+            if (attackerInitialKarma < ConfigData.getConfigData().karmaConfig.minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
                 doesKarmaChange = false;
             } else {
-                attackerNewKarma = ConfigData.getConfigData().minKarma;
+                attackerNewKarma = ConfigData.getConfigData().karmaConfig.minKarma;
             }
         }
 
@@ -211,8 +199,6 @@ public class FightHandler {
             PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerNewKarma);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         }
-
-        adaptMessage.pveHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker);
     }
 
     public static void pveKill(Player attacker, Mob victim) {
@@ -226,36 +212,7 @@ public class FightHandler {
         float reward = config.getInt("entities.list." + entityName + ".kill-karma-reward");
         CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".kill-commands"));
 
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float attackerInitialKarma = model.getKarma();
-
-        if (configData.useWorldGuard) {
-            reward = reward * (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
-        }
-
-        boolean doesKarmaChange = true;
-        float attackerNewKarma = attackerInitialKarma + reward;
-
-        if (reward == 0F) { //If no change, skip
-            doesKarmaChange = false;
-        } else if (attackerNewKarma > ConfigData.getConfigData().maxKarma) { //If new karma > max karma
-            if (attackerInitialKarma > ConfigData.getConfigData().maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
-                doesKarmaChange = false;
-            } else {
-                attackerNewKarma = ConfigData.getConfigData().maxKarma;
-            }
-        } else if (attackerNewKarma < ConfigData.getConfigData().minKarma) { //if new karma < min karma
-            if (attackerInitialKarma < ConfigData.getConfigData().minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
-                doesKarmaChange = false;
-            } else {
-                attackerNewKarma = ConfigData.getConfigData().minKarma;
-            }
-        }
-
-        if (doesKarmaChange) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerNewKarma);
-            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-        }
+        Test(attacker, reward);
 
         adaptMessage.pveKillMessage(config.getString("entities.list." + entityName + ".kill-message"), attacker);
     }

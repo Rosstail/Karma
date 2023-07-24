@@ -20,7 +20,7 @@ public class TopFlopScoreManager {
     }
 
     TopFlopScoreManager() {
-        this.limitSize = ConfigData.getConfigData().topScoreLimit;
+        this.limitSize = ConfigData.getConfigData().general.topScoreLimit;
         presetValuesInList(playerTopScoreList);
         presetValuesInList(playerFlopScoreList);
     }
@@ -32,7 +32,7 @@ public class TopFlopScoreManager {
     }
 
     public void getScores() {
-        int limit = ConfigData.getConfigData().topScoreLimit;
+        int limit = ConfigData.getConfigData().general.topScoreLimit;
         StorageManager storageManager = StorageManager.getManager();
         List<PlayerModel> topScores = storageManager.selectPlayerModelListTop(limit);
         List<PlayerModel> bottomScores = storageManager.selectPlayerModelListBottom(limit);

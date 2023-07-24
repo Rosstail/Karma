@@ -18,11 +18,9 @@ public class Tier {
     private float minKarma;
     private float maxKarma;
     private float defaultKarma;
-    private boolean punishWanted;
     private List<String> joinCommands;
     private List<String> joinOnDownCommands;
     private List<String> joinOnUpCommands;
-    private List<String> killedCommands;
     private Map<Tier, Float> scores = new HashMap<>();
 
 
@@ -48,13 +46,9 @@ public class Tier {
         this.maxKarma = (float) section.getDouble("maximum", Float.MAX_VALUE);
         this.defaultKarma = (float) section.getDouble("default-karma", (maxKarma + minKarma) / 2f);
 
-        this.punishWanted = section.getBoolean("punish-wanted", false);
-
         this.joinCommands = section.getStringList("commands.join-commands");
         this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
         this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
-
-        this.killedCommands = section.getStringList("commands.killed-commands.commands");
     }
 
     /**
@@ -79,7 +73,6 @@ public class Tier {
         this.joinCommands = new ArrayList<>();
         this.joinOnDownCommands = new ArrayList<>();
         this.joinOnUpCommands = new ArrayList<>();
-        this.killedCommands = new ArrayList<>();
     }
 
     public String getName() {
@@ -106,10 +99,6 @@ public class Tier {
         return defaultKarma;
     }
 
-    public boolean doPunishWanted() {
-        return punishWanted;
-    }
-
     public List<String> getJoinCommands() {
         return joinCommands;
     }
@@ -120,10 +109,6 @@ public class Tier {
 
     public List<String> getJoinOnUpCommands() {
         return joinOnUpCommands;
-    }
-
-    public List<String> getKilledCommands() {
-        return killedCommands;
     }
 
     public Map<Tier, Float> getScores() {
@@ -137,7 +122,7 @@ public class Tier {
     public void initScores(TierManager tierManager) {
         YamlConfiguration config = Karma.getInstance().getCustomConfig();
         tierManager.getTiers().forEach((s, tier) -> {
-            scores.put(tier, (float) config.getDouble("tiers.list." + this.getName() + ".score." + tier.getName()));
+            scores.put(tier, (float) config.getDouble("tiers.list." + this.getName() + ".score." + s));
         });
         scores.put(TierManager.getNoTier(), (float) config.getDouble("tiers.list." + this.getName() + ".score.none"));
     }

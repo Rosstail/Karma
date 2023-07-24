@@ -88,7 +88,7 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
         sender.sendMessage("Set player " + player.getName() + " tier to " + tierName);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
-            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+            ConfigData.getConfigData().overtime.overtimeLoopMap.forEach((s, overtimeLoop) -> {
                 PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
                 PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, overtimeLoop.name);
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);

@@ -8,11 +8,13 @@ storage:
   save-delay: 300
 
 general:
-  default-karma:     0
-  minimum-karma: -3000
-  maximum-karma:  1500
   use-worldguard: false #works only for Worldguard 7+
   topscore-limit: 10
+
+karma:
+  default: 0
+  minimum: -3000
+  maximum: 1500
 
 locale:
   lang: "en_EN"
@@ -43,7 +45,7 @@ overtime:
     #      maximum: <float> #ignored if empty
     #    online: <boolean> #true by default
     #    offline: <boolean> #false by default
-    #  amount: <float> #0 by default. If offline is true, applies for every delays reached
+    #  amount: <float> #0 by default. If offline is true, applies for every delay reached
     #  commands: <String[]> #ignored if empty. If offline is true, applies only once on reconnection.
     online-citizen:
       timers:
@@ -228,7 +230,7 @@ pvp:
         commands:
           - "victim %msg% [Karma] You have been killed by someone."
       non-citizen-killed-by-innocent-non-sheriff:
-        conditions:
+        requirements:
           attacker-tier:
             - "!sheriff"
           victim-tier:
@@ -236,8 +238,9 @@ pvp:
           victim-status: "INNOCENT"
         commands:
           - "bc %victim% is not a civilian and have been killed by an innocent who was not a sheriff."
-      wanted-thug-got-killed: #Only triggers if a thug got killed, no matter the attacker tier or victim status
-        conditions:
+      wanted-thug-got-killed-with-only-successful-karma-change: #Only triggers if a thug got killed, no matter the attacker tier or victim status. The event must not be cancelled because of worldguard region or system/world time period
+        requirements:
+          guarantee: false
           victim-tier:
             - "thug"
         commands:
@@ -265,7 +268,7 @@ wanted: #if a player attacks another one, everybody can strike him back without 
   #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
   hit-duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
   kill-duration: "%player_wanted_time% 15m" #compatible with: d h m s ms
-  max-duration: "%now% 8h" #compatible with: d h m s ms
+  maximum-duration: "%now% 8h" #compatible with: d h m s ms
   conditions:
     on-karma-gain: false
     on-karma-unchanged: false
@@ -285,9 +288,6 @@ wanted: #if a player attacks another one, everybody can strike him back without 
       - "bc %player% is STILL WANTED"
     exit:
       - "bc %player% is now INNOCENT"
-    punish:
-      - "bc %victim% has been arrested by %attacker% !"
-      - "bc Jailed now !"
 
 pve:
   messages-delay:
@@ -335,7 +335,7 @@ blocks:
         value: -5
         reset-overtime: true #Don't fuck with the cultures !
     FARMLAND:
-      place: #Using a hoe to transform dirt to farmland
+      place: #Using a hoe tool to transform dirt to farmland
         value: 1
     TNT:
       place:

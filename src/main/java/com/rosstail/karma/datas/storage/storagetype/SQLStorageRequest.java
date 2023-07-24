@@ -93,7 +93,7 @@ public class SQLStorageRequest implements StorageRequest {
                 model.setPreviousTierName(result.getString("previous_tier"));
                 model.setLastUpdate(result.getTimestamp("last_update").getTime());
                 long wantedTime = result.getLong("wanted_time");
-                if (ConfigData.getConfigData().wantedCountdownApplyOnDisconnect) {
+                if (ConfigData.getConfigData().wanted.wantedCountdownApplyOnDisconnect) {
                     model.setWantedTimeStamp(new Timestamp(model.getLastUpdate() + wantedTime));
                 } else {
                     model.setWantedTimeStamp(new Timestamp(System.currentTimeMillis() + wantedTime));

@@ -67,7 +67,7 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
     }
 
     public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        float value = ConfigData.getConfigData().defaultKarma;
+        float value = ConfigData.getConfigData().karmaConfig.defaultKarma;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             value = PlayerDataManager.limitKarma(value);
@@ -77,7 +77,7 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
-            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+            ConfigData.getConfigData().overtime.overtimeLoopMap.forEach((s, overtimeLoop) -> {
                 PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
                 PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, overtimeLoop.name);
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
@@ -86,7 +86,7 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] arguments, String[] args) {
-        float value = ConfigData.getConfigData().defaultKarma;
+        float value = ConfigData.getConfigData().karmaConfig.defaultKarma;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             value = PlayerDataManager.limitKarma(value);

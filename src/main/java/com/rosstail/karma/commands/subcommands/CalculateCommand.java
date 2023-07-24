@@ -74,8 +74,8 @@ public class CalculateCommand extends SubCommand {
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         ArrayList<String> expressions = new ArrayList<>();
-        expressions.add(ConfigData.getConfigData().pvpHitRewardExpression);
-        expressions.add(ConfigData.getConfigData().pvpKillRewardExpression);
+        expressions.add(ConfigData.getConfigData().pvp.pvpHitRewardExpression);
+        expressions.add(ConfigData.getConfigData().pvp.pvpKillRewardExpression);
         return expressions;
     }
 }

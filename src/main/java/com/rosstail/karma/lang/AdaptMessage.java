@@ -81,7 +81,7 @@ public class AdaptMessage {
         ConfigData configData = ConfigData.getConfigData();
         player.sendTitle(adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, title, PlayerType.PLAYER.getText())),
                 adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, subTitle, PlayerType.PLAYER.getText())),
-                configData.titleFadeIn, configData.titleStay, configData.titleFadeOut);
+                configData.locale.titleFadeIn, configData.locale.titleStay, configData.locale.titleFadeOut);
     }
 
     public String adaptPvpMessage(Player attacker, Player victim, String message) {
@@ -140,7 +140,7 @@ public class AdaptMessage {
             message = message.replaceAll(playerPluginPlaceholder + "previous_tier_short_display%", playerPreviousTier.getShortDisplay());
             message = message.replaceAll(playerPluginPlaceholder + "wanted_status%", status);
             message = message.replaceAll(playerPluginPlaceholder + "wanted_status_short%", shortStatus);
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().locale.getDateTimeFormat());
             message = message.replaceAll(playerPluginPlaceholder + "wanted_time%", String.valueOf(wantedTimeStamp.getTime()));
             message = message.replaceAll(playerPluginPlaceholder + "wanted_time_display%", simpleDateFormat.format(wantedTimeStamp.getTime()));
             message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay%", String.valueOf(wantedTime));
@@ -192,7 +192,7 @@ public class AdaptMessage {
             return null;
         }
         if (coolDown.containsKey(attacker)) {
-            float timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + configData.pvpHitMessageDelay * 1000f;
+            float timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + configData.pvp.pvpHitMessageDelay * 1000f;
             if (!(timeLeft <= 0)) {
                 return null;
             }
@@ -210,7 +210,7 @@ public class AdaptMessage {
             return null;
         }
         if (coolDown.containsKey(attacker)) {
-            float timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + configData.pvpKillMessageDelay * 1000f;
+            float timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + configData.pvp.pvpKillMessageDelay * 1000f;
             if (!(timeLeft <= 0)) {
                 return null;
             }
@@ -228,7 +228,7 @@ public class AdaptMessage {
             return;
         }
         if (coolDown.containsKey(player)) {
-            float timeLeft = coolDown.get(player) - System.currentTimeMillis() + configData.pveHitMessageDelay * 1000f;
+            float timeLeft = coolDown.get(player) - System.currentTimeMillis() + configData.pve.pveHitMessageDelay * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
@@ -246,7 +246,7 @@ public class AdaptMessage {
             return;
         }
         if (coolDown.containsKey(player)) {
-            float timeLeft = coolDown.get(player) - System.currentTimeMillis() + configData.pveKillMessageDelay * 1000f;
+            float timeLeft = coolDown.get(player) - System.currentTimeMillis() + configData.pve.pveKillMessageDelay * 1000f;
             if (!(timeLeft <= 0)) {
                 return;
             }
@@ -260,7 +260,7 @@ public class AdaptMessage {
 
     public String decimalFormat(float value, char replacement) {
         ConfigData configData = ConfigData.getConfigData();
-        return String.format("%." + configData.decNumber + "f", value).replaceAll(",", String.valueOf(replacement));
+        return String.format("%." + configData.locale.decNumber + "f", value).replaceAll(",", String.valueOf(replacement));
     }
 
     /**
@@ -269,7 +269,7 @@ public class AdaptMessage {
      * @return
      */
     public String countdownFormatter(long diff) {
-        String format = ConfigData.getConfigData().getCountdownFormat();
+        String format = ConfigData.getConfigData().locale.getCountdownFormat();
         long days = TimeUnit.MILLISECONDS.toDays(diff);
         long hoursInDay =TimeUnit.MILLISECONDS.toHours(diff) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(diff));
         long hours = TimeUnit.MILLISECONDS.toHours(diff);

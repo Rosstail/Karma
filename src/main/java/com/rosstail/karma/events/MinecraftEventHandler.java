@@ -11,6 +11,7 @@ import com.rosstail.karma.events.testevents.PlayerKillMobEvent;
 import com.rosstail.karma.events.testevents.PlayerKillPlayerEvent;
 import com.rosstail.karma.fight.FightHandler;
 import com.rosstail.karma.fight.WorldFights;
+import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
@@ -53,8 +54,8 @@ public class MinecraftEventHandler implements Listener {
             /*
             Overtime setup with initial timer
              */
-            if (ConfigData.getConfigData().overtimeActive) {
-                for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
+            if (ConfigData.getConfigData().overtime.overtimeActive) {
+                for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtime.overtimeLoopMap.entrySet()) {
                     String overtimeName = entry.getKey();
                     OvertimeLoop overtimeLoop = entry.getValue();
                     PlayerDataManager.setOverTimeStamp(model, overtimeName, overtimeLoop.firstTimer);
@@ -66,11 +67,11 @@ public class MinecraftEventHandler implements Listener {
             /*
             Overtime setup WITH/OUT check
              */
-            if (ConfigData.getConfigData().overtimeActive) {
+            if (ConfigData.getConfigData().overtime.overtimeActive) {
                 long lastUpdate = model.getLastUpdate();
                 long deltaUpdates = System.currentTimeMillis() - lastUpdate;
 
-                for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
+                for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtime.overtimeLoopMap.entrySet()) {
                     String overtimeName = entry.getKey();
                     OvertimeLoop overtimeLoop = entry.getValue();
                     long loopDelta = deltaUpdates - overtimeLoop.firstTimer;
@@ -105,7 +106,7 @@ public class MinecraftEventHandler implements Listener {
             /*
             CHECK PLAYER WANTED STATUS
              */
-            if (ConfigData.getConfigData().wantedEnable) {
+            if (ConfigData.getConfigData().wanted.wantedEnable) {
                 if (model.isWanted()) {
                     if (PlayerDataManager.getWantedTimeLeft(model) > 0L) {
                         PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model);
@@ -189,9 +190,9 @@ public class MinecraftEventHandler implements Listener {
             PlayerKillPlayerEvent pvpKillEvent = new PlayerKillPlayerEvent(killer, victim);
             Bukkit.getPluginManager().callEvent(pvpKillEvent);
 
-            if (ConfigData.getConfigData().wantedEnable) {
-                WantedManager.getWantedManager().punishHandler(pvpKillEvent.getAttacker(), pvpKillEvent.getVictim());
-            }
+            //Commands from pvp kill commands where guarantee is TRUE
+            PvpCommandHandler.getPvpCommandHandler().handle(pvpKillEvent.getAttacker(), pvpKillEvent.getVictim(), true);
+
             if (!pvpKillEvent.isCancelled()) {
                 FightHandler.pvpKill(killer, victim);
             }

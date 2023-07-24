@@ -211,7 +211,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
             if (identifier.equals("player_wanted_time_display")) {
                 long time = model.getWantedTimeStamp().getTime();
                 if (time > 0f) {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().locale.getDateTimeFormat());
                     return simpleDateFormat.format(time);
                 }
                 return "N/A";

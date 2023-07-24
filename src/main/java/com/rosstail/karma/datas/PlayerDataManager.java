@@ -54,8 +54,8 @@ public class PlayerDataManager {
 
                 Player player = Bukkit.getPlayer(username);
 
-                if (ConfigData.getConfigData().overtimeActive) {
-                    for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtimeLoopMap.entrySet()) {
+                if (ConfigData.getConfigData().overtime.overtimeActive) {
+                    for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtime.overtimeLoopMap.entrySet()) {
                         String s = entry.getKey();
                         OvertimeLoop overtimeLoop = entry.getValue();
 
@@ -68,7 +68,7 @@ public class PlayerDataManager {
                     }
                 }
 
-                if (ConfigData.getConfigData().wantedEnable && model.isWanted() && !PlayerDataManager.isWanted(model)) {
+                if (ConfigData.getConfigData().wanted.wantedEnable && model.isWanted() && !PlayerDataManager.isWanted(model)) {
                     PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model);
                     Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
                 }
@@ -81,8 +81,8 @@ public class PlayerDataManager {
      * @param value
      */
     public static float limitKarma(float value) {
-        float min = ConfigData.getConfigData().minKarma;
-        float max = ConfigData.getConfigData().maxKarma;
+        float min = ConfigData.getConfigData().karmaConfig.minKarma;
+        float max = ConfigData.getConfigData().karmaConfig.maxKarma;
         if (value < min) {
             value = min;
         } else if (value > max) {
@@ -95,7 +95,7 @@ public class PlayerDataManager {
         float currentKarma = model.getKarma();
         float newKarma = currentKarma;
 
-        OvertimeLoop overtimeLoop = ConfigData.getConfigData().overtimeLoopMap.get(overtimeName);
+        OvertimeLoop overtimeLoop = ConfigData.getConfigData().overtime.overtimeLoopMap.get(overtimeName);
 
         if (overtimeLoop.hasMinKarma && currentKarma <= overtimeLoop.minKarma) {
             return;

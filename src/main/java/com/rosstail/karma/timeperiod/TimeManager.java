@@ -51,7 +51,7 @@ public class TimeManager {
     }
 
     public boolean isPlayerInTime(Player player) {
-        String type = ConfigData.getConfigData().useTimeValue;
+        String type = ConfigData.getConfigData().times.useTimeValue;
         if (type != null && !type.equalsIgnoreCase("NONE")) {
             if (type.equalsIgnoreCase("BOTH")) {
                 return isPlayerInSystemTime() || isPlayerInWorldTime(player);

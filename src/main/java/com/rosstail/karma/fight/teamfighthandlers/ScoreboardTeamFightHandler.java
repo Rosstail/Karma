@@ -19,8 +19,8 @@ public class ScoreboardTeamFightHandler implements TeamFightHandler {
     @Override
     public void init() {
         ConfigData configData = ConfigData.getConfigData();
-        cancelOnSameTeam = configData.scoreboardTeamSystemCancelSameTeam;
-        cancelOnOtherTeam = configData.scoreboardTeamSystemCancelOtherTeam;
+        cancelOnSameTeam = configData.pvp.scoreboardTeamSystemCancelSameTeam;
+        cancelOnOtherTeam = configData.pvp.scoreboardTeamSystemCancelOtherTeam;
     }
 
     @Override

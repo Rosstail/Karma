@@ -75,7 +75,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         long duration = AdaptMessage.calculateDuration(wantedTime, "%now% " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wantedMaxDurationExpression);
+            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
             sender.sendMessage("Wanted time is not limited.");
@@ -99,7 +99,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         long duration = AdaptMessage.calculateDuration(wantedTime, "%now% " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wantedMaxDurationExpression);
+            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
             sender.sendMessage("Wanted time is not limited.");

@@ -11,8 +11,8 @@ public class PlayerModel {
     private String uuid;
     private String username;
 
-    private float karma = ConfigData.getConfigData().defaultKarma;
-    private float previousKarma = ConfigData.getConfigData().defaultKarma;
+    private float karma = ConfigData.getConfigData().karmaConfig.defaultKarma;
+    private float previousKarma = ConfigData.getConfigData().karmaConfig.defaultKarma;
 
     private String tierName;
     private String previousTierName;

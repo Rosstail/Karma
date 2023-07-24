@@ -86,7 +86,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
-            ConfigData.getConfigData().overtimeLoopMap.forEach((s, overtimeLoop) -> {
+            ConfigData.getConfigData().overtime.overtimeLoopMap.forEach((s, overtimeLoop) -> {
                 PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
                 PlayerOverTimeResetEvent overTimeResetEvent = new PlayerOverTimeResetEvent(player, overtimeLoop.name);
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);

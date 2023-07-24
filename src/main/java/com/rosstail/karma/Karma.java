@@ -10,6 +10,7 @@ import com.rosstail.karma.events.KarmaEventHandler;
 import com.rosstail.karma.events.MinecraftEventHandler;
 import com.rosstail.karma.fight.FightHandler;
 import com.rosstail.karma.fight.WorldFights;
+import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.shops.ShopManager;
@@ -54,6 +55,7 @@ public class Karma extends JavaPlugin implements Listener {
         ShopManager.initShopManager(this);
         WorldFights.initWorldFights(this);
         WantedManager.init(this);
+        PvpCommandHandler.init(this);
 
         loadCustomConfig();
 
@@ -85,7 +87,7 @@ public class Karma extends JavaPlugin implements Listener {
 
         this.updateDataTimer = new Timer();
         this.scoreboardTimer = new Timer();
-        int delay = Math.max(1, ConfigData.getConfigData().saveDelay);
+        int delay = Math.max(1, ConfigData.getConfigData().storage.saveDelay);
 
         updateDataTimer.schedule(new TimerTask() {
             @Override
@@ -123,7 +125,7 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
-        if (ConfigData.getConfigData().overtimeActive || ConfigData.getConfigData().wantedEnable) {
+        if (ConfigData.getConfigData().overtime.overtimeActive || ConfigData.getConfigData().wanted.wantedEnable) {
             PlayerDataManager.stopTimer(PlayerDataManager.getScheduler());
         }
         Map<String, PlayerModel> playerModelMap = PlayerDataManager.getPlayerModelMap();
@@ -160,7 +162,7 @@ public class Karma extends JavaPlugin implements Listener {
         ConfigData.init(getCustomConfig());
         initDefaultLocales();
 
-        if (ConfigData.getConfigData().overtimeActive || ConfigData.getConfigData().wantedEnable) {
+        if (ConfigData.getConfigData().overtime.overtimeActive || ConfigData.getConfigData().wanted.wantedEnable) {
             PlayerDataManager.setupScheduler();
         } else {
             PlayerDataManager.stopTimer(PlayerDataManager.getScheduler());
@@ -170,6 +172,7 @@ public class Karma extends JavaPlugin implements Listener {
         TimeManager.getTimeManager().setupTimes();
         ShopManager.getShopManager().setupShops();
         WantedManager.getWantedManager().setup();
+        PvpCommandHandler.getPvpCommandHandler().setup();
     }
 
     public YamlConfiguration getCustomConfig() {

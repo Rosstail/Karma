@@ -34,12 +34,12 @@ public class StorageManager {
     }
 
     public void chooseDatabase() {
-        host = ConfigData.getConfigData().storageHost;
-        database = ConfigData.getConfigData().storageDatabase;
-        port = ConfigData.getConfigData().storagePort;
-        username = ConfigData.getConfigData().storageUser;
-        password = ConfigData.getConfigData().storagePass;
-        type = ConfigData.getConfigData().storageType.toLowerCase();
+        host = ConfigData.getConfigData().storage.storageHost;
+        database = ConfigData.getConfigData().storage.storageDatabase;
+        port = ConfigData.getConfigData().storage.storagePort;
+        username = ConfigData.getConfigData().storage.storageUser;
+        password = ConfigData.getConfigData().storage.storagePass;
+        type = ConfigData.getConfigData().storage.storageType.toLowerCase();
         switch (type) {
             case "sql":
                 System.out.println("choose SQL");

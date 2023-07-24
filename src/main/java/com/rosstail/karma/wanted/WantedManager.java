@@ -5,10 +5,8 @@ import com.rosstail.karma.Karma;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
-import com.rosstail.karma.events.karmaevents.PlayerWantedPunishEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.PlayerType;
-import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -33,7 +31,7 @@ public class WantedManager {
 
     public void setup() {
         configData = ConfigData.getConfigData();
-        this.doesWantedTimeRefresh = ConfigData.getConfigData().wantedRefresh;
+        this.doesWantedTimeRefresh = ConfigData.getConfigData().pvp.wantedRefresh;
     }
 
     public void wantedHandler(Player attacker, float newKarma, Player victim, String expression) {
@@ -74,26 +72,11 @@ public class WantedManager {
         }
     }
 
-    public void punishHandler(Player attacker, Player victim) {
-        attacker.sendMessage("Wanted punish handler");
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
-
-        long victimLastWanted = victimModel.getWantedTimeStamp().getTime();
-        boolean isVictimWanted = isPlayerWanted(victimLastWanted);
-
-        boolean doPunishWanted = TierManager.getTierManager().getTierByName(attackerModel.getTierName()).doPunishWanted();
-        if (isVictimWanted && doPunishWanted) {
-            PlayerWantedPunishEvent playerWantedPunishEvent = new PlayerWantedPunishEvent(victim, attacker);
-            Bukkit.getPluginManager().callEvent(playerWantedPunishEvent);
-        }
-    }
-
     public boolean doKarmaChange(PlayerModel attackerModel, PlayerModel victimModel, float karmaDiff) {
         if (!attackerModel.isWanted() && victimModel.isWanted()) {
-            return (!(karmaDiff > 0F) || !configData.cancelInnocentKarmaGain) && (!(karmaDiff < 0F) || !configData.cancelInnocentKarmaLoss);
+            return (!(karmaDiff > 0F) || !configData.pvp.cancelInnocentKarmaGain) && (!(karmaDiff < 0F) || !configData.pvp.cancelInnocentKarmaLoss);
         } else if (attackerModel.isWanted()) {
-            return (!(karmaDiff > 0F) || !configData.cancelWantedKarmaGain) && (!(karmaDiff < 0F) || !configData.cancelWantedKarmaLoss);
+            return (!(karmaDiff > 0F) || !configData.pvp.cancelWantedKarmaGain) && (!(karmaDiff < 0F) || !configData.pvp.cancelWantedKarmaLoss);
         }
         return true;
     }
@@ -112,11 +95,11 @@ public class WantedManager {
 
     public boolean doesAttackerRisksGuilt(float attackerInitialKarma, float attackerNewKarma) {
         if (attackerNewKarma > attackerInitialKarma) {
-            return configData.wantedOnKarmaGain;
+            return configData.pvp.wantedOnKarmaGain;
         } else if (attackerNewKarma == attackerInitialKarma) {
-            return configData.wantedOnKarmaUnchanged;
+            return configData.pvp.wantedOnKarmaUnchanged;
         }
-        return configData.wantedOnKarmaLoss;
+        return configData.pvp.wantedOnKarmaLoss;
     }
 
     public static WantedManager getWantedManager() {

@@ -137,7 +137,7 @@ public class KarmaEventHandler implements Listener {
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-        OvertimeLoop loop = ConfigData.getConfigData().overtimeLoopMap.get(event.getOvertimeLoopName());
+        OvertimeLoop loop = ConfigData.getConfigData().overtime.overtimeLoopMap.get(event.getOvertimeLoopName());
         PlayerDataManager.setOverTimeStamp(model, event.getOvertimeLoopName(), (int) loop.firstTimer);
     }
 
@@ -166,7 +166,7 @@ public class KarmaEventHandler implements Listener {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_ENTER);
 
-        CommandManager.commandsLauncher(player, ConfigData.getConfigData().enterWantedCommands);
+        CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.enterWantedCommands);
         model.setWanted(true);
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
@@ -181,19 +181,12 @@ public class KarmaEventHandler implements Listener {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
         model.setWanted(true);
-        CommandManager.commandsLauncher(player, ConfigData.getConfigData().refreshWantedCommands);
+        CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.refreshWantedCommands);
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
             ));
         }
-    }
-
-    @EventHandler
-    public void onPlayerWantedPunishEvent(PlayerWantedPunishEvent event) {
-        Player punishedPlayer = event.getPunishedPlayer();
-        Player punisherPlayer = event.getPunisherPlayer();
-        CommandManager.commandsLauncher(punisherPlayer, punishedPlayer, ConfigData.getConfigData().punishWantedCommands);
     }
 
     @EventHandler
@@ -203,7 +196,7 @@ public class KarmaEventHandler implements Listener {
 
         model.setWanted(false);
         String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
-        CommandManager.commandsLauncher(player, ConfigData.getConfigData().leaveWantedCommands);
+        CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.leaveWantedCommands);
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
