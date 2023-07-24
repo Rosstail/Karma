@@ -1,33 +1,38 @@
 package com.rosstail.karma;
 
+import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ConfigData {
+    private final Karma plugin = Karma.getInstance();
     private static ConfigData configData;
-    public ConfigStorage storage;
-    public ConfigGeneral general;
-    public ConfigLocale locale;
-    public ConfigKarma karmaConfig;
-    public ConfigOvertime overtime;
-    public ConfigWanted wanted;
-    public ConfigPvp pvp;
-    public ConfigPve pve;
-    public ConfigTimes times;
+
+    public final ConfigStorage storage;
+    public final ConfigGeneral general;
+    public final ConfigLocale locale;
+    public final ConfigKarma karmaConfig;
+    public final ConfigOvertime overtime;
+    public final ConfigWanted wanted;
+    public final ConfigPvp pvp;
+    public final ConfigPve pve;
+    public final ConfigTimes times;
 
     public class ConfigStorage {
-        public FileConfiguration configFile;
-        public String storageType;
-        public String storageHost;
-        public short storagePort;
-        public String storageDatabase;
-        public String storageUser;
-        public String storagePass;
+        public final FileConfiguration configFile;
+        public final String storageType;
+        public final String storageHost;
+        public final short storagePort;
+        public final String storageDatabase;
+        public final String storageUser;
+        public final String storagePass;
         public final int saveDelay;
 
         ConfigStorage(FileConfiguration config) {
@@ -48,19 +53,20 @@ public class ConfigData {
     }
 
     public class ConfigLocale {
-        public FileConfiguration configFile;
+        public final FileConfiguration configFile;
 
-        public String lang;
-        public int decNumber;
-        public int titleFadeIn;
-        public int titleStay;
-        public int titleFadeOut;
-        public String dateTimeFormat;
-        public String countDownFormat;
+        public final String lang;
+        public final int decNumber;
+        public final int titleFadeIn;
+        public final int titleStay;
+        public final int titleFadeOut;
+        public final String dateTimeFormat;
+        public final String countDownFormat;
 
         ConfigLocale(FileConfiguration config) {
             this.configFile = config;
 
+            lang = config.getString("locale.lang");
             decNumber = config.getInt("locale.decimal-display");
             titleFadeIn = config.getInt("locale.title.fade-in");
             titleStay = config.getInt("locale.title.stay");
@@ -98,10 +104,10 @@ public class ConfigData {
     }
 
     public class ConfigKarma {
-        public FileConfiguration fileConfig;
-        public float defaultKarma;
-        public float minKarma;
-        public float maxKarma;
+        public final FileConfiguration fileConfig;
+        public final float defaultKarma;
+        public final float minKarma;
+        public final float maxKarma;
 
         ConfigKarma(FileConfiguration config) {
             fileConfig = config;
@@ -221,7 +227,7 @@ public class ConfigData {
 
         ConfigTimes(FileConfiguration config) {
             fileConfig = config;
-            useTimeValue = config.getString("times.use-both-system-and-worlds-time");
+            useTimeValue = config.getString("time-periods.use-both-system-and-worlds-time");
         }
     }
 
@@ -230,15 +236,28 @@ public class ConfigData {
     ConfigData(FileConfiguration config) {
         this.config = config;
 
-        this.storage = new ConfigStorage(config);
-        this.locale = new ConfigLocale(config);
-        this.general = new ConfigGeneral(config);
-        this.karmaConfig = new ConfigKarma(config);
-        this.overtime = new ConfigOvertime(config);
-        this.wanted = new ConfigWanted(config);
-        this.pvp = new ConfigPvp(config);
-        this.pve = new ConfigPve(config);
-        this.times = new ConfigTimes(config);
+        this.storage = new ConfigStorage(readConfig(config, "storage"));
+        this.locale = new ConfigLocale(readConfig(config, "locale"));
+        this.general = new ConfigGeneral(readConfig(config, "general"));
+        this.karmaConfig = new ConfigKarma(readConfig(config, "karma"));
+        this.overtime = new ConfigOvertime(readConfig(config, "overtime"));
+        this.wanted = new ConfigWanted(readConfig(config, "wanted"));
+        this.pvp = new ConfigPvp(readConfig(config, "pvp"));
+        this.pve = new ConfigPve(readConfig(config, "entities"));
+        this.times = new ConfigTimes(readConfig(config, "time-periods"));
+    }
+
+    private FileConfiguration readConfig(FileConfiguration baseConfig, String item) {
+        try {
+            File file = new File("plugins/" + plugin.getName() + "/" + config.getString(item) + ".yml");
+            if (!(file.exists())) {
+                return baseConfig;
+            }
+            return YamlConfiguration.loadConfiguration(file);
+        } catch (Exception e) {
+            //If error such a ConfigurationSection instead of String
+            return baseConfig;
+        }
     }
 
     public static void init(FileConfiguration config) {

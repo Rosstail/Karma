@@ -12,7 +12,6 @@ import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
 import com.rosstail.karma.fight.teamfighthandlers.ScoreboardTeamFightHandler;
 import com.rosstail.karma.fight.teamfighthandlers.TeamFightHandler;
 import com.rosstail.karma.lang.AdaptMessage;
-import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timeperiod.TimeManager;
@@ -78,7 +77,7 @@ public class FightHandler {
             wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
         }
 
-        Toast(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
+        karmaChangeChecker(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }
 
     public static void pvpKill(Player attacker, Player victim) {
@@ -159,12 +158,12 @@ public class FightHandler {
         float reward = config.getInt("entities.list." + entityName + ".hit-karma-reward");
         CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".hit-commands"));
 
-        Test(attacker, reward);
+        rewardChecker(attacker, reward);
 
         adaptMessage.pveHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker);
     }
 
-    private static void Test(Player attacker, float reward) {
+    private static void rewardChecker(Player attacker, float reward) {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = model.getKarma();
 
@@ -175,10 +174,10 @@ public class FightHandler {
         boolean doesKarmaChange = true;
         float attackerNewKarma = attackerInitialKarma + reward;
 
-        Toast(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
+        karmaChangeChecker(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }
 
-    private static void Toast(Player attacker, float reward, PlayerModel model, float attackerInitialKarma, boolean doesKarmaChange, float attackerNewKarma) {
+    private static void karmaChangeChecker(Player attacker, float reward, PlayerModel model, float attackerInitialKarma, boolean doesKarmaChange, float attackerNewKarma) {
         if (reward == 0F) { //If no change, skip
             doesKarmaChange = false;
         } else if (attackerNewKarma > ConfigData.getConfigData().karmaConfig.maxKarma) { //If new karma > max karma
@@ -212,7 +211,7 @@ public class FightHandler {
         float reward = config.getInt("entities.list." + entityName + ".kill-karma-reward");
         CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".kill-commands"));
 
-        Test(attacker, reward);
+        rewardChecker(attacker, reward);
 
         adaptMessage.pveKillMessage(config.getString("entities.list." + entityName + ".kill-message"), attacker);
     }
