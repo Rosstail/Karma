@@ -1,6 +1,5 @@
 package com.rosstail.karma;
 
-import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.overtime.OvertimeLoop;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -71,7 +70,7 @@ public class ConfigData {
             titleFadeIn = config.getInt("locale.title.fade-in");
             titleStay = config.getInt("locale.title.stay");
             titleFadeOut = config.getInt("locale.title.fade-out");
-            dateTimeFormat = config.getString("locale.date-time-format");
+            dateTimeFormat = config.getString("locale.datetime-format");
             countDownFormat = config.getString("locale.countdown-format");
         }
 
@@ -249,12 +248,13 @@ public class ConfigData {
 
     private FileConfiguration readConfig(FileConfiguration baseConfig, String item) {
         try {
-            File file = new File("plugins/" + plugin.getName() + "/" + config.getString(item) + ".yml");
+            File file = new File("plugins/" + plugin.getName() + "/" + baseConfig.getString(item) + ".yml");
             if (!(file.exists())) {
                 return baseConfig;
             }
             return YamlConfiguration.loadConfiguration(file);
         } catch (Exception e) {
+            e.printStackTrace();
             //If error such a ConfigurationSection instead of String
             return baseConfig;
         }

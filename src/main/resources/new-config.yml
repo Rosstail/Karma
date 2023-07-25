@@ -224,6 +224,21 @@ pvp:
   messages-delay:
     hit: 5
     kill: 10
+  wanted:
+    hit-duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
+    kill-duration: "%player_wanted_time% 15m" #compatible with: d h m s ms
+    conditions:
+      on-karma-gain: false
+      on-karma-unchanged: false
+      on-karma-loss: true
+      refresh: true
+    cancel-karma-change:
+      wanted:
+        on-karma-gain: true
+        on-karma-loss: false
+      innocent:
+        on-karma-gain: false
+        on-karma-loss: true
   commands:
     kill-commands:
       no-condition-kill-command: #Triggers without condition
@@ -266,21 +281,7 @@ wanted: #if a player attacks another one, everybody can strike him back without 
   enable: true
   countdown-on-disconnect: true
   #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
-  hit-duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
-  kill-duration: "%player_wanted_time% 15m" #compatible with: d h m s ms
   maximum-duration: "%now% 8h" #compatible with: d h m s ms
-  conditions:
-    on-karma-gain: false
-    on-karma-unchanged: false
-    on-karma-loss: true
-    refresh: true
-  cancel-karma-change:
-    wanted:
-      on-karma-gain: true
-      on-karma-loss: false
-    innocent:
-      on-karma-gain: false
-      on-karma-loss: true
   commands:
     enter:
       - "bc %player% is now WANTED"

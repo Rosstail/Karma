@@ -3,9 +3,11 @@ package com.rosstail.karma.datas.storage.storagetype;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
+import org.bukkit.Bukkit;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SQLStorageRequest implements StorageRequest {
@@ -147,16 +149,33 @@ public class SQLStorageRequest implements StorageRequest {
     }
 
     public List<PlayerModel> selectPlayerModelListAsc(int limit) {
-        String query = "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
+        List<String> onlineUUIDList = new ArrayList<>();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            onlineUUIDList.add(player.getUniqueId().toString());
+        });
+        String[] onlineUUIDArray = onlineUUIDList.toArray(new String[0]);
+
+        String query = "SELECT * FROM " + pluginName +
+                //(onlineUUIDArray.length > 0 ? " WHERE " + pluginName + ".uuid NOT IN ?" : "") +
+                " ORDER BY " + pluginName + ".karma ASC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
     public List<PlayerModel> selectPlayerModelListDesc(int limit) {
-        String query = "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
+        List<String> onlineUUIDList = new ArrayList<>();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            onlineUUIDList.add(player.getUniqueId().toString());
+        });
+        String[] onlineUUIDArray = onlineUUIDList.toArray(new String[0]);
+
+        String query = "SELECT * FROM " + pluginName +
+                //" WHERE " + pluginName + ".uuid NOT IN ?
+                " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
     public List<PlayerModel> selectPlayerModelList(String query, int limit) {
+
         List<PlayerModel> modelList = new ArrayList<>();
         try {
             ResultSet result = executeSQLQuery(query, limit);
@@ -207,8 +226,20 @@ public class SQLStorageRequest implements StorageRequest {
         try {
             PreparedStatement statement = sqlConnection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
-                statement.setObject(i + 1, params[i]);
+                if (params[i] instanceof String[]) {
+                    String[] stringArrayParam = (String[]) params[i];
+
+                    System.out.println("JEEJ " + ((String[]) params[i]).length);
+                    for (String s : (String[]) params[i]) {
+                        System.out.println(s);
+                    }
+                    Array arrayParam = sqlConnection.createArrayOf("VARCHAR", stringArrayParam);
+                    statement.setArray(i + 1, arrayParam);
+                } else {
+                    statement.setObject(i + 1, params[i]);
+                }
             }
+            System.out.println(statement.toString());
             return statement.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();

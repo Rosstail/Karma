@@ -62,7 +62,7 @@ public class Karma extends JavaPlugin implements Listener {
         StorageManager manager = StorageManager.initStorageManage(this);
         manager.chooseDatabase();
 
-        LangManager.initCurrentLang(getCustomConfig().getString("general.lang"));
+        LangManager.initCurrentLang(ConfigData.getConfigData().locale.lang);
         FightHandler.initFightHandler();
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
