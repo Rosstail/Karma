@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SQLStorageRequest implements StorageRequest {
@@ -72,9 +71,7 @@ public class SQLStorageRequest implements StorageRequest {
         String tierName = model.getTierName();
         String previousTierName = model.getPreviousTierName();
         try {
-            boolean success = executeSQLUpdate(query, uuid, karma, previousKarma, tierName, previousTierName) > 0;
-            System.out.println("INSERT SUCCESS " + success);
-            return success;
+            return executeSQLUpdate(query, uuid, karma, previousKarma, tierName, previousTierName) > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -87,7 +84,6 @@ public class SQLStorageRequest implements StorageRequest {
         try {
             ResultSet result = executeSQLQuery(query, uuid);
             if (result.next()) {
-                System.out.println("Found.");
                 PlayerModel model = new PlayerModel(uuid, PlayerDataManager.getPlayerNameFromUUID(uuid));
                 model.setKarma(result.getFloat("karma"));
                 model.setPreviousKarma(result.getFloat("previous_karma"));
@@ -102,8 +98,6 @@ public class SQLStorageRequest implements StorageRequest {
                 }
                 model.setWanted(result.getBoolean("is_wanted"));
                 return model;
-            } else {
-                System.out.println("Not found.");
             }
             result.close();
         } catch (SQLException e) {
@@ -123,11 +117,6 @@ public class SQLStorageRequest implements StorageRequest {
                     model.isWanted(),
                     model.getUuid())
                     > 0;
-            if (success) {
-                System.out.println("Updated successfully");
-            } else {
-                System.out.println("Nope");
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -138,11 +127,6 @@ public class SQLStorageRequest implements StorageRequest {
         String query = "DELETE FROM " + pluginName + " WHERE uuid = ?";
         try {
             boolean success = executeSQLUpdate(query, uuid) > 0;
-            if (success) {
-                System.out.println("Deleted successfully");
-            } else {
-                System.out.println("does not exist");
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -150,32 +134,51 @@ public class SQLStorageRequest implements StorageRequest {
 
     public List<PlayerModel> selectPlayerModelListAsc(int limit) {
         List<String> onlineUUIDList = new ArrayList<>();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            onlineUUIDList.add(player.getUniqueId().toString());
+        PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
+            onlineUUIDList.add(playerModel.getUuid());
         });
-        String[] onlineUUIDArray = onlineUUIDList.toArray(new String[0]);
 
-        String query = "SELECT * FROM " + pluginName +
-                //(onlineUUIDArray.length > 0 ? " WHERE " + pluginName + ".uuid NOT IN ?" : "") +
-                " ORDER BY " + pluginName + ".karma ASC LIMIT ?";
+        String query = "SELECT * FROM " + pluginName;
+        if (onlineUUIDList.size() > 0) {
+            StringBuilder replacement = new StringBuilder("(");
+            for (int i = 0; i < onlineUUIDList.size(); i++) {
+                replacement.append("'").append(onlineUUIDList.get(i)).append("'");
+                if (i < onlineUUIDList.size() - 1) {
+                    replacement.append(",");
+                }
+            }
+            replacement.append(")");
+            query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
+        }
+        query += " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
     public List<PlayerModel> selectPlayerModelListDesc(int limit) {
         List<String> onlineUUIDList = new ArrayList<>();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            onlineUUIDList.add(player.getUniqueId().toString());
-        });
-        String[] onlineUUIDArray = onlineUUIDList.toArray(new String[0]);
 
-        String query = "SELECT * FROM " + pluginName +
-                //" WHERE " + pluginName + ".uuid NOT IN ?
-                " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
+        PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
+            onlineUUIDList.add(playerModel.getUuid());
+        });
+
+        String query = "SELECT * FROM " + pluginName;
+
+        if (onlineUUIDList.size() > 0) {
+            StringBuilder replacement = new StringBuilder("(");
+            for (int i = 0; i < onlineUUIDList.size(); i++) {
+                replacement.append("'").append(onlineUUIDList.get(i)).append("'");
+                if (i < onlineUUIDList.size() - 1) {
+                    replacement.append(",");
+                }
+            }
+            replacement.append(")");
+            query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
+        }
+        query += " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
     public List<PlayerModel> selectPlayerModelList(String query, int limit) {
-
         List<PlayerModel> modelList = new ArrayList<>();
         try {
             ResultSet result = executeSQLQuery(query, limit);
@@ -226,20 +229,8 @@ public class SQLStorageRequest implements StorageRequest {
         try {
             PreparedStatement statement = sqlConnection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
-                if (params[i] instanceof String[]) {
-                    String[] stringArrayParam = (String[]) params[i];
-
-                    System.out.println("JEEJ " + ((String[]) params[i]).length);
-                    for (String s : (String[]) params[i]) {
-                        System.out.println(s);
-                    }
-                    Array arrayParam = sqlConnection.createArrayOf("VARCHAR", stringArrayParam);
-                    statement.setArray(i + 1, arrayParam);
-                } else {
-                    statement.setObject(i + 1, params[i]);
-                }
+                statement.setObject(i + 1, params[i]);
             }
-            System.out.println(statement.toString());
             return statement.executeQuery();
         } catch (SQLException e) {
             e.printStackTrace();

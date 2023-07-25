@@ -92,10 +92,14 @@ public class ConfigData {
     public class ConfigGeneral {
         public FileConfiguration configFile;
 
+        public final int configVersion;
         public final int topScoreLimit;
         public final boolean useWorldGuard;
 
         ConfigGeneral(FileConfiguration config) {
+            configFile = config;
+
+            configVersion = config.getInt("general.config-version");
             topScoreLimit = config.getInt("general.topscore-limit", 10);
             useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard", false);
 

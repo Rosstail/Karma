@@ -201,9 +201,9 @@ public class StorageManager {
             case "mariadb":
                 return mariaDBStorageRequest.selectPlayerModelListAsc(limit);
             case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModelList("DESC", limit);
+                //return mongoDBStorageRequest.selectPlayerModelList("DESC", limit);
             case "litesql":
-                return liteSqlDBStorageRequest.selectPlayerModelList("DESC", limit);
+                //return liteSqlDBStorageRequest.selectPlayerModelList("DESC", limit);
             default:
                 return null;
             //TODO localStorageRequest.deletePlayerModel(uuid);

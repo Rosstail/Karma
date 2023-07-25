@@ -3,6 +3,7 @@ package com.rosstail.karma.datas.storage.storagetype;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
+import org.bukkit.Bukkit;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -140,11 +141,35 @@ public class MariaDBStorageRequest implements StorageRequest {
     }
 
     public List<PlayerModel> selectPlayerModelListAsc(int limit) {
+        List<String> onlineUUIDList = new ArrayList<>();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            onlineUUIDList.add(player.getUniqueId().toString());
+        });
+        String[] onlineUuidArray = onlineUUIDList.toArray(new String[0]);
+
+        if (onlineUuidArray.length > 0) {
+            String query = "SELECT * FROM " + pluginName +
+                    " WHERE " + pluginName + ".uuid NOT IN ?" +
+                    " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
+            return selectPlayerModelList(query, limit);
+        }
         String query = "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
     public List<PlayerModel> selectPlayerModelListDesc(int limit) {
+        List<String> onlineUUIDList = new ArrayList<>();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            onlineUUIDList.add(player.getUniqueId().toString());
+        });
+        String[] onlineUuidArray = onlineUUIDList.toArray(new String[0]);
+
+        if (onlineUuidArray.length > 0) {
+            String query = "SELECT * FROM " + pluginName +
+                    " WHERE " + pluginName + ".uuid NOT IN ?" +
+                    " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
+            return selectPlayerModelList(query, limit);
+        }
         String query = "SELECT * FROM " + pluginName + " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
