@@ -1,5 +1,6 @@
 package com.rosstail.karma.tiers;
 
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,19 +26,19 @@ public class TierManager {
     }
 
     public void setupTiers() {
-        FileConfiguration config = plugin.getCustomConfig();
-        Set<String> configTiers = config.getConfigurationSection("tiers.list").getKeys(false);
+        FileConfiguration tiersFileConfiguration = ConfigData.getConfigData().tiers.fileConfig;
+        Set<String> configTiers = tiersFileConfiguration.getConfigurationSection("tiers.list").getKeys(false);
 
         for (Map.Entry<String, Tier> entry : tiers.entrySet()) { //Check and remove tiers that do not exist anymore
             String s = entry.getKey();
-            ConfigurationSection tierConfigSection = config.getConfigurationSection("tiers.list." + s);
+            ConfigurationSection tierConfigSection = tiersFileConfiguration.getConfigurationSection("tiers.list." + s);
             if (tierConfigSection == null) {
                 tiers.remove(s);
             }
         }
 
         configTiers.forEach(tierID -> {
-            ConfigurationSection tierConfigSection = config.getConfigurationSection("tiers.list." + tierID);
+            ConfigurationSection tierConfigSection = tiersFileConfiguration.getConfigurationSection("tiers.list." + tierID);
             if (tierConfigSection != null) {
                 if (tiers.containsKey(tierID)) { //Just update
                     tiers.get(tierID).init(tierConfigSection);
@@ -51,7 +52,7 @@ public class TierManager {
         if (noTier == null) {
             noTier = new Tier();
         }
-        noTier.initNoTier(config.getString("tiers.none-display"), config.getString("tiers.none-short-display"));
+        noTier.initNoTier(tiersFileConfiguration.getString("tiers.none-display"), tiersFileConfiguration.getString("tiers.none-short-display"));
 
         for (Tier tier : tiers.values()) {
             tier.initScores(this);

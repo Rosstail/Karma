@@ -18,6 +18,7 @@ public class ConfigData {
     public final ConfigGeneral general;
     public final ConfigLocale locale;
     public final ConfigKarma karmaConfig;
+    public final ConfigTiers tiers;
     public final ConfigOvertime overtime;
     public final ConfigWanted wanted;
     public final ConfigPvp pvp;
@@ -118,6 +119,14 @@ public class ConfigData {
             defaultKarma = (float) config.getDouble("karma.default");
             minKarma = (float) config.getDouble("karma.minimum", Float.MIN_VALUE);
             maxKarma = (float) config.getDouble("karma.maximum", Float.MAX_VALUE);
+        }
+    }
+
+    public class ConfigTiers {
+        public final FileConfiguration fileConfig;
+
+        ConfigTiers(FileConfiguration config) {
+            this.fileConfig = config;
         }
     }
 
@@ -243,6 +252,7 @@ public class ConfigData {
         this.locale = new ConfigLocale(readConfig(config, "locale"));
         this.general = new ConfigGeneral(readConfig(config, "general"));
         this.karmaConfig = new ConfigKarma(readConfig(config, "karma"));
+        this.tiers = new ConfigTiers(readConfig(config, "tiers"));
         this.overtime = new ConfigOvertime(readConfig(config, "overtime"));
         this.wanted = new ConfigWanted(readConfig(config, "wanted"));
         this.pvp = new ConfigPvp(readConfig(config, "pvp"));

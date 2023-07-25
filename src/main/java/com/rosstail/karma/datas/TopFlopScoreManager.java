@@ -99,50 +99,12 @@ public class TopFlopScoreManager {
             }
         }
 
-        System.out.println("ORDERED ALL PLAYER LIST TOP TO BOTTOM");
-        for (int i = orderedPlayerModelList.size() - 1; i >= 0; i--) {
-            PlayerModel model = orderedPlayerModelList.get(i);
-            System.out.println("  " + i + "." + model.getUuid() + " " + model.getUsername() + " " + model.getKarma());
-        }
-        System.out.println("END OF ALL PLAYER LIST");
+        int currentLimit = Math.min(orderedPlayerModelList.size(), limit);
 
-        int currentLimit = Math.min(reqTopScores.size(), limit);
-
-        /*
-        Add online players karma to the scores if they fit inside.
-         */
-        if (currentLimit > 0) {
-            onlinePlayerModels.forEach(onlinePlayerModel -> {
-                float onlineKarma = onlinePlayerModel.getKarma();
-                if (onlineKarma >= reqTopScores.get(currentLimit - 1).getKarma()) {
-                    int i = currentLimit - 1;
-                    while (onlineKarma >= reqTopScores.get(i).getKarma()) {
-                        if (i == 0) {
-                            break;
-                        }
-                        i--;
-                    }
-                    reqTopScores.add(i, onlinePlayerModel);
-                    reqTopScores.remove(reqTopScores.size() - 1);
-                }
-
-                if (onlineKarma <= reqBottomScores.get(0).getKarma()) {
-                    int i = 0;
-                    while (onlineKarma <= reqBottomScores.get(i).getKarma()) {
-                        if (i == currentLimit - 1) {
-                            break;
-                        }
-                        i++;
-                    }
-                    reqBottomScores.add(i, onlinePlayerModel);
-                    reqBottomScores.remove(currentLimit);
-                }
-            });
-        }
 
         for (int index = 0; index < currentLimit; index++) {
-            playerTopScoreList.set(index, reqTopScores.get(index));
-            playerFlopScoreList.set(index, reqBottomScores.get(index));
+            playerTopScoreList.set(index, orderedPlayerModelList.get(orderedPlayerModelList.size() -1 - index));
+            playerFlopScoreList.set(index, orderedPlayerModelList.get(index));
         }
     }
 
