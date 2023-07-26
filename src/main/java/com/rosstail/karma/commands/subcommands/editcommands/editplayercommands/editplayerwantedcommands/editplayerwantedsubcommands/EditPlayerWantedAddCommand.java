@@ -77,7 +77,7 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
             long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
         } else {
-            sender.sendMessage("Wanetd time is not limited.");
+            sender.sendMessage("Wanted time is not limited.");
         }
 
         sender.sendMessage("EditPlayerWantedAddCommand#changeWantedOnline set wanted time to " + new Timestamp(newDuration));

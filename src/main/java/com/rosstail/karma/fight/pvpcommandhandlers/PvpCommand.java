@@ -9,6 +9,7 @@ import java.util.List;
 
 public class PvpCommand {
 
+    private final String name;
     private final List<String> attackerTierListRequirement = new ArrayList<>();
     private final List<String> victimTierListRequirement = new ArrayList<>();
 
@@ -18,12 +19,17 @@ public class PvpCommand {
     private final boolean guarantee;
 
     PvpCommand(ConfigurationSection section) {
+        name = section.getName();
         attackerTierListRequirement.addAll(section.getStringList("requirements.attacker-tier"));
         victimTierListRequirement.addAll(section.getStringList("requirements.victim-tier"));
         attackerStatusRequirement = section.getString("requirements.attacker-status");
         victimStatusRequirement = section.getString("requirements.victim-status");
         guarantee = section.getBoolean("guarantee", true);
         commands.addAll(section.getStringList("commands"));
+    }
+
+    public String getName() {
+        return name;
     }
 
     public List<String> getAttackerTierListRequirement() {

@@ -263,7 +263,7 @@ pvp:
           - "cmi money give %attacker% 1%[100-500][%victim%]" #Gives up to 1% of the victim money, minimum 100, maximum 500.
           - "cmi money take %victim% 2%[200-1000]" #Removes up to 2% of the victim money, minimum 200, maximum 1000, always superior to the give command.
       honnest-people-arrest-wanted-criminal: #Only triggers when an INNOCENT SHERIFF or a INNONCENT VIGILANTE kills a WANTED CRIMINAL
-        conditions:
+        requirements:
           attacker-tier:
             - "sheriff"
             - "vigilante"

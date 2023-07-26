@@ -5,7 +5,6 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.tiers.TierManager;
-import com.rosstail.karma.wanted.WantedManager;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -56,8 +55,12 @@ public class PvpCommandHandler {
         }
         String attackerTierName = attackerModel.getTierName();
         String victimTierName = victimModel.getTierName();
-        if (checkTierListRequirement(attackerTierName, pvpCommand.getAttackerTierListRequirement())) return false;
-        if (checkTierListRequirement(victimTierName, pvpCommand.getVictimTierListRequirement())) return false;
+        if (doesNotCheckTierListRequirement(attackerTierName, pvpCommand.getAttackerTierListRequirement())) {
+            return false;
+        }
+        if (doesNotCheckTierListRequirement(victimTierName, pvpCommand.getVictimTierListRequirement())) {
+            return false;
+        }
 
         String attackerStatusRequirement = pvpCommand.getAttackerStatusRequirement();
         if (attackerStatusRequirement != null) {
@@ -82,7 +85,7 @@ public class PvpCommandHandler {
         return true;
     }
 
-    private boolean checkTierListRequirement(String victimTierName, List<String> victimTierListRequirement) {
+    private boolean doesNotCheckTierListRequirement(String victimTierName, List<String> victimTierListRequirement) {
         if (!victimTierListRequirement.isEmpty()) {
             if (victimTierListRequirement.get(0).startsWith("!")) {
                 List<String> tierListName = new ArrayList<>(TierManager.getTierManager().getTiers().keySet());
@@ -91,9 +94,7 @@ public class PvpCommandHandler {
                         return true;
                     }
                 }
-            } else if (!victimTierListRequirement.contains(victimTierName)) {
-                return true;
-            }
+            } else return !victimTierListRequirement.contains(victimTierName);
 
         }
         return false;
