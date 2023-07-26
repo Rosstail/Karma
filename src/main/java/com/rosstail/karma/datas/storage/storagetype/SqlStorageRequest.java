@@ -8,45 +8,20 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MariaDbStorageRequest implements StorageRequest {
+public class SqlStorageRequest implements StorageRequest {
     private final String pluginName;
     private Connection connection;
 
-    public MariaDbStorageRequest(String pluginName) {
+    public SqlStorageRequest(String pluginName) {
         this.pluginName = pluginName;
     }
 
     @Override
     public void setupStorage(String host, short port, String database, String username, String password) {
-        try {
-            Class.forName("org.mariadb.jdbc.Driver");
-            String url = "jdbc:mariadb://" + host + ":" + port + "/" + database;
-            connection = DriverManager.getConnection(url, username, password);
-            createKarmaTable();
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Gérer les erreurs de connexion ici
-        }
+        createKarmaTable();
     }
 
-    public void disconnect() {
-        // Ferme les connexions à la base de données si nécessaire
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
-        /*
-        if (mongoClient != null) {
-            mongoClient.close();
-        }
-         */
-    }
-
-    private void createKarmaTable() {
+    public void createKarmaTable() {
         String query = "CREATE TABLE IF NOT EXISTS " + pluginName + " ( uuid varchar(40) PRIMARY KEY UNIQUE NOT NULL," +
                 " karma float NOT NULL DEFAULT 0," +
                 " previous_karma float NOT NULL DEFAULT 0," +
@@ -130,75 +105,6 @@ public class MariaDbStorageRequest implements StorageRequest {
         }
     }
 
-    public List<PlayerModel> selectPlayerModelListAsc(int limit) {
-        List<String> onlineUUIDList = new ArrayList<>();
-        PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
-            onlineUUIDList.add(playerModel.getUuid());
-        });
-
-        String query = "SELECT * FROM " + pluginName;
-        if (onlineUUIDList.size() > 0) {
-            StringBuilder replacement = new StringBuilder("(");
-            for (int i = 0; i < onlineUUIDList.size(); i++) {
-                replacement.append("'").append(onlineUUIDList.get(i)).append("'");
-                if (i < onlineUUIDList.size() - 1) {
-                    replacement.append(",");
-                }
-            }
-            replacement.append(")");
-            query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
-        }
-        query += " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
-        return selectPlayerModelList(query, limit);
-    }
-
-    public List<PlayerModel> selectPlayerModelListDesc(int limit) {
-        List<String> onlineUUIDList = new ArrayList<>();
-
-        PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
-            onlineUUIDList.add(playerModel.getUuid());
-        });
-
-        String query = "SELECT * FROM " + pluginName;
-
-        if (onlineUUIDList.size() > 0) {
-            StringBuilder replacement = new StringBuilder("(");
-            for (int i = 0; i < onlineUUIDList.size(); i++) {
-                replacement.append("'").append(onlineUUIDList.get(i)).append("'");
-                if (i < onlineUUIDList.size() - 1) {
-                    replacement.append(",");
-                }
-            }
-            replacement.append(")");
-            query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
-        }
-        query += " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
-        return selectPlayerModelList(query, limit);
-    }
-
-    public List<PlayerModel> selectPlayerModelList(String query, int limit) {
-        List<PlayerModel> modelList = new ArrayList<>();
-        try {
-            ResultSet result = executeSQLQuery(query, limit);
-            while (result.next()) {
-                String uuid = result.getString("uuid");
-                String username = PlayerDataManager.getPlayerNameFromUUID(uuid);
-                PlayerModel model = new PlayerModel(uuid, username);
-                model.setKarma(result.getFloat("karma"));
-                model.setPreviousKarma(result.getFloat("previous_karma"));
-                model.setTierName(result.getString("tier"));
-                model.setPreviousTierName(result.getString("previous_tier"));
-                model.setLastUpdate(result.getTimestamp("last_update").getTime());
-                model.setWantedTimeStamp(new Timestamp(model.getLastUpdate() + result.getLong("wanted_time"))); //A modifier
-                model.setWanted(model.getWantedTimeStamp().getTime() > System.currentTimeMillis());
-                modelList.add(model);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return modelList;
-    }
-
     /**
      * Executes an SQL request for INSERT, UPDATE and DELETE
      * @param query # The query itself
@@ -251,5 +157,89 @@ public class MariaDbStorageRequest implements StorageRequest {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    public void disconnect() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public List<PlayerModel> selectPlayerModelListAsc(int limit) {
+        List<String> onlineUUIDList = new ArrayList<>();
+        PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
+            onlineUUIDList.add(playerModel.getUuid());
+        });
+
+        String query = "SELECT * FROM " + pluginName;
+        if (onlineUUIDList.size() > 0) {
+            StringBuilder replacement = new StringBuilder("(");
+            for (int i = 0; i < onlineUUIDList.size(); i++) {
+                replacement.append("'").append(onlineUUIDList.get(i)).append("'");
+                if (i < onlineUUIDList.size() - 1) {
+                    replacement.append(",");
+                }
+            }
+            replacement.append(")");
+            query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
+        }
+        query += " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
+        return selectPlayerModelList(query, limit);
+    }
+
+    public List<PlayerModel> selectPlayerModelListDesc(int limit) {
+        List<String> onlineUUIDList = new ArrayList<>();
+
+        PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
+            onlineUUIDList.add(playerModel.getUuid());
+        });
+
+        String query = "SELECT * FROM " + pluginName;
+
+        if (onlineUUIDList.size() > 0) {
+            StringBuilder replacement = new StringBuilder("(");
+            for (int i = 0; i < onlineUUIDList.size(); i++) {
+                replacement.append("'").append(onlineUUIDList.get(i)).append("'");
+                if (i < onlineUUIDList.size() - 1) {
+                    replacement.append(",");
+                }
+            }
+            replacement.append(")");
+            query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
+        }
+        query += " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
+        return selectPlayerModelList(query, limit);
+    }
+
+    @Override
+    public List<PlayerModel> selectPlayerModelList(String query, int limit) {
+        List<PlayerModel> modelList = new ArrayList<>();
+        try {
+            ResultSet result = executeSQLQuery(query, limit);
+            while (result.next()) {
+                String uuid = result.getString("uuid");
+                String username = PlayerDataManager.getPlayerNameFromUUID(uuid);
+                PlayerModel model = new PlayerModel(uuid, username);
+                model.setKarma(result.getFloat("karma"));
+                model.setPreviousKarma(result.getFloat("previous_karma"));
+                model.setTierName(result.getString("tier"));
+                model.setPreviousTierName(result.getString("previous_tier"));
+                model.setLastUpdate(result.getTimestamp("last_update").getTime());
+                model.setWantedTimeStamp(new Timestamp(model.getLastUpdate() + result.getLong("wanted_time"))); //A modifier
+                model.setWanted(model.getWantedTimeStamp().getTime() > System.currentTimeMillis());
+                modelList.add(model);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return modelList;
+    }
+
+    public void setConnection(Connection connection) {
+        this.connection = connection;
     }
 }

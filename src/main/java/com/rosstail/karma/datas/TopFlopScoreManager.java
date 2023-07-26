@@ -64,13 +64,13 @@ public class TopFlopScoreManager {
                     break;
                 }
                 if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, new PlayerModel(playerModel));
+                    orderedPlayerModelList.add(index, playerModel);
                     break;
                 }
                 index++;
             }
             if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(new PlayerModel(playerModel));
+                orderedPlayerModelList.add(playerModel);
             }
         }
 
@@ -82,13 +82,13 @@ public class TopFlopScoreManager {
                     break;
                 }
                 if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, new PlayerModel(playerModel));
+                    orderedPlayerModelList.add(index, playerModel);
                     break;
                 }
                 index++;
             }
             if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(new PlayerModel(playerModel));
+                orderedPlayerModelList.add(playerModel);
             }
         }
 

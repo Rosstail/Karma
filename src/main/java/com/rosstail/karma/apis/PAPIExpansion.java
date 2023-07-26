@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -261,11 +262,18 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
 
                 if (identifier.contains("_status")) {
+                    boolean isWanted;
+                    if (ConfigData.getConfigData().wanted.wantedCountdownApplyOnDisconnect) {
+                        isWanted = (model.getWantedTimeStamp().getTime() - System.currentTimeMillis()) > 0L;
+                    } else {
+                        isWanted = model.getWantedTimeStamp().getTime() > 0L;
+                    }
+
                     if (identifier.contains("_status_display")) {
                         if (identifier.contains("_status_display_short")) {
-                            return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED_SHORT : LangMessage.STATUS_INNOCENT_SHORT);
+                            return LangManager.getMessage(isWanted ? LangMessage.STATUS_WANTED_SHORT : LangMessage.STATUS_INNOCENT_SHORT);
                         }
-                        return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED : LangMessage.STATUS_INNOCENT);
+                        return LangManager.getMessage(isWanted ? LangMessage.STATUS_WANTED : LangMessage.STATUS_INNOCENT);
                     }
                 }
                 if (identifier.contains("_karma_")) {

@@ -3,10 +3,10 @@ package com.rosstail.karma.datas.storage;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.storagetype.LiteSqlStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.MariaDbStorageRequest;
 import com.rosstail.karma.datas.storage.storagetype.MongoDbStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.MySqlStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.sql.LiteSqlStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.sql.MariaDbStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.sql.MySqlStorageRequest;
 
 import java.util.List;
 
