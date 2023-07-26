@@ -241,7 +241,6 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
         }
 
-        //%karma_scoreboard_top_name_X% / %karma_scoreboard_bottom_karma_X%
         if (identifier.startsWith("scoreboard_")) {
 
             TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
@@ -257,38 +256,21 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 int index = Math.max(1, Integer.parseInt(indexStr));
                 PlayerModel model = topFlopList.get(index - 1);
 
-                try {
-                    if (identifier.contains("_status")) {
-                        if (identifier.contains("_status_display")) {
-                            if (identifier.contains("_status_display_short")) {
-                                return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED_SHORT : LangMessage.STATUS_INNOCENT_SHORT);
-                            }
-                            return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED : LangMessage.STATUS_INNOCENT);
+                if (model == null) {
+                    return "-";
+                }
+
+                if (identifier.contains("_status")) {
+                    if (identifier.contains("_status_display")) {
+                        if (identifier.contains("_status_display_short")) {
+                            return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED_SHORT : LangMessage.STATUS_INNOCENT_SHORT);
                         }
+                        return LangManager.getMessage(model.isWanted() ? LangMessage.STATUS_WANTED : LangMessage.STATUS_INNOCENT);
                     }
-                    if (identifier.contains("_karma_")) {
-                        if (model == null) {
-                            return "-";
-                        }
-                        if (identifier.contains("_tier")) {
-                            Tier tier = TierManager.getTierManager().getTierByKarmaAmount(model.getKarma());
-                            if (identifier.contains("_tier_display")) {
-                                if (identifier.contains("_tier_display_short")) {
-                                    return tier != null ? tier.getShortDisplay() : TierManager.getNoTier().getShortDisplay();
-                                }
-                                return tier != null ? tier.getDisplay() : TierManager.getNoTier().getDisplay();
-                            }
-                            return tier != null ? tier.getName() : TierManager.getNoTier().getName();
-                        }
-                        if (identifier.contains("_int_")) {
-                            int intValue = (int) model.getKarma();
-                            return String.valueOf(intValue);
-                        }
-                        float value = model.getKarma();
-                        return AdaptMessage.getAdaptMessage().decimalFormat(value, '.');
-                    }
-                    if (identifier.contains("_tier_")) {
-                        Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
+                }
+                if (identifier.contains("_karma_")) {
+                    if (identifier.contains("_tier")) {
+                        Tier tier = TierManager.getTierManager().getTierByKarmaAmount(model.getKarma());
                         if (identifier.contains("_tier_display")) {
                             if (identifier.contains("_tier_display_short")) {
                                 return tier != null ? tier.getShortDisplay() : TierManager.getNoTier().getShortDisplay();
@@ -296,19 +278,25 @@ public class PAPIExpansion extends PlaceholderExpansion {
                             return tier != null ? tier.getDisplay() : TierManager.getNoTier().getDisplay();
                         }
                         return tier != null ? tier.getName() : TierManager.getNoTier().getName();
-                    } else if (identifier.contains("_name_")) {
-                        if (model == null) {
-                            return "Unknown";
+                    }
+                    if (identifier.contains("_int_")) {
+                        int intValue = (int) model.getKarma();
+                        return String.valueOf(intValue);
+                    }
+                    float value = model.getKarma();
+                    return AdaptMessage.getAdaptMessage().decimalFormat(value, '.');
+                }
+                if (identifier.contains("_tier_")) {
+                    Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
+                    if (identifier.contains("_tier_display")) {
+                        if (identifier.contains("_tier_display_short")) {
+                            return tier != null ? tier.getShortDisplay() : TierManager.getNoTier().getShortDisplay();
                         }
-                        return model.getUsername();
+                        return tier != null ? tier.getDisplay() : TierManager.getNoTier().getDisplay();
                     }
-                } catch (IndexOutOfBoundsException e) {
-                    if (identifier.contains("_karma_")) {
-                        return "-";
-                    }
-                    if (identifier.contains("_name_")) {
-                        return "Unknown";
-                    }
+                    return tier != null ? tier.getName() : TierManager.getNoTier().getName();
+                } else if (identifier.contains("_name_")) {
+                    return model.getUsername();
                 }
             }
         }
