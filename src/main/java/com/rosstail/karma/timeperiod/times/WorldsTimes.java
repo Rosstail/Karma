@@ -11,8 +11,8 @@ public class WorldsTimes {
     public WorldsTimes(ConfigurationSection section, String name) {
         this.name = name;
 
-        this.startTime = formatToLong(section.getString("start-time", "00:00"));
-        this.endTime = formatToLong(section.getString("end-time", "00:00"));
+        this.startTime = formatToLong(section.getString("start", "00:00"));
+        this.endTime = formatToLong(section.getString("end", "00:00"));
         this.rate = (byte) section.getInt("rate");
     }
 

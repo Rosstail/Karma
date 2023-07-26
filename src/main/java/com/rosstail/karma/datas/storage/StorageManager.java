@@ -3,10 +3,10 @@ package com.rosstail.karma.datas.storage;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.storagetype.LiteSQLStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.MariaDBStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.MongoDBStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.SQLStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.LiteSqlStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.MariaDbStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.MongoDbStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.MySqlStorageRequest;
 
 import java.util.List;
 
@@ -17,10 +17,10 @@ public class StorageManager {
     public String host, database, username, password;
     public short port;
 
-    private SQLStorageRequest sqlStorageRequest;
-    private MariaDBStorageRequest mariaDBStorageRequest;
-    private MongoDBStorageRequest mongoDBStorageRequest;
-    private LiteSQLStorageRequest liteSqlDBStorageRequest;
+    private MySqlStorageRequest mySqlStorageRequest;
+    private MariaDbStorageRequest mariaDBStorageRequest;
+    private MongoDbStorageRequest mongoDBStorageRequest;
+    private LiteSqlStorageRequest liteSqlDBStorageRequest;
 
     public static StorageManager initStorageManage(Karma plugin) {
         if (manager == null) {
@@ -41,28 +41,25 @@ public class StorageManager {
         password = ConfigData.getConfigData().storage.storagePass;
         type = ConfigData.getConfigData().storage.storageType.toLowerCase();
         switch (type) {
-            case "sql":
-                System.out.println("choose SQL");
-                sqlStorageRequest = new SQLStorageRequest(pluginName);
-                sqlStorageRequest.setupStorage(host, port, database, username, password);
+            case "mysql":
+                System.out.println("choose MySQL");
+                mySqlStorageRequest = new MySqlStorageRequest(pluginName);
+                mySqlStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             case "mariadb":
                 System.out.println("Choose MariaDB");
-                mariaDBStorageRequest = new MariaDBStorageRequest(pluginName);
+                mariaDBStorageRequest = new MariaDbStorageRequest(pluginName);
                 mariaDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             case "mongodb":
                 System.out.println("Choose MongoDB");
-                mongoDBStorageRequest = new MongoDBStorageRequest(pluginName);
+                mongoDBStorageRequest = new MongoDbStorageRequest(pluginName);
                 mongoDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
-            case "litesql":
-                System.out.println("Choose LiteSQL");
-                liteSqlDBStorageRequest = new LiteSQLStorageRequest(pluginName);
-                liteSqlDBStorageRequest.setupStorage(host, port, database, username, password);
-                break;
             default:
-                System.out.println("Choose LocalStorage");
+                System.out.println("Choose LiteSQL");
+                liteSqlDBStorageRequest = new LiteSqlStorageRequest(pluginName);
+                liteSqlDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
         }
 
@@ -70,8 +67,8 @@ public class StorageManager {
 
     public void disconnect() {
         switch (type) {
-            case "sql":
-                sqlStorageRequest.disconnect();
+            case "mysql":
+                mySqlStorageRequest.disconnect();
                 break;
             case "mariadb":
                 mariaDBStorageRequest.disconnect();
@@ -79,11 +76,8 @@ public class StorageManager {
             case "mongodb":
                 mongoDBStorageRequest.disconnect();
                 break;
-            case "LiteSQL":
-                liteSqlDBStorageRequest.disconnect();
-                break;
             default:
-                System.out.println("LocalStorage");
+                liteSqlDBStorageRequest.disconnect();
                 break;
         }
     }
@@ -95,18 +89,15 @@ public class StorageManager {
      */
     public boolean insertPlayerModel(PlayerModel model) {
         switch (type) {
-            case "sql":
-                return sqlStorageRequest.insertPayerModel(model);
+            case "mysql":
+                return mySqlStorageRequest.insertPayerModel(model);
             case "mariadb":
                 return mariaDBStorageRequest.insertPayerModel(model);
             case "mongodb":
                 return mongoDBStorageRequest.insertPayerModel(model);
-            case "litesql":
-                return liteSqlDBStorageRequest.insertPayerModel(model);
             default:
-                System.out.println("LocalStorage");
+                return liteSqlDBStorageRequest.insertPayerModel(model);
         }
-        return false;
     }
 
     /**
@@ -116,17 +107,14 @@ public class StorageManager {
      */
     public PlayerModel selectPlayerModel(String uuid) {
         switch (type) {
-            case "sql":
-                return sqlStorageRequest.selectPlayerModel(uuid);
+            case "mysql":
+                return mySqlStorageRequest.selectPlayerModel(uuid);
             case "mariadb":
                 return mariaDBStorageRequest.selectPlayerModel(uuid);
             case "mongodb":
                 return mongoDBStorageRequest.selectPlayerModel(uuid);
-            case "litesql":
-                return liteSqlDBStorageRequest.selectPlayerModel(uuid);
             default:
-                //TODO return mariadbStorageRequest.selectPlayerModel(uuid);
-                return null;
+                return liteSqlDBStorageRequest.selectPlayerModel(uuid);
         }
     }
 
@@ -137,8 +125,8 @@ public class StorageManager {
      */
     public void updatePlayerModel(PlayerModel model) {
         switch (type) {
-            case "sql":
-                sqlStorageRequest.updatePlayerModel(model);
+            case "mysql":
+                mySqlStorageRequest.updatePlayerModel(model);
                 break;
             case "mariadb":
                 mariaDBStorageRequest.updatePlayerModel(model);
@@ -146,11 +134,9 @@ public class StorageManager {
             case "mongodb":
                 mongoDBStorageRequest.updatePlayerModel(model);
                 break;
-            case "litesql":
+            default:
                 liteSqlDBStorageRequest.updatePlayerModel(model);
                 break;
-            default:
-                //TODO localStorageRequest.updatePlayerModel(model);
         }
     }
 
@@ -161,8 +147,8 @@ public class StorageManager {
      */
     public void deletePlayerModel(String uuid) {
         switch (type) {
-            case "sql":
-                sqlStorageRequest.deletePlayerModel(uuid);
+            case "mysql":
+                mySqlStorageRequest.deletePlayerModel(uuid);
                 break;
             case "mariadb":
                 mariaDBStorageRequest.deletePlayerModel(uuid);
@@ -170,49 +156,36 @@ public class StorageManager {
             case "mongodb":
                 mongoDBStorageRequest.deletePlayerModel(uuid);
                 break;
-            case "litesql":
+            default:
                 liteSqlDBStorageRequest.deletePlayerModel(uuid);
                 break;
-            default:
-                //TODO localStorageRequest.deletePlayerModel(uuid);
         }
     }
 
     public List<PlayerModel> selectPlayerModelListTop(int limit) {
         switch (type) {
-            case "sql":
-                return sqlStorageRequest.selectPlayerModelListDesc(limit);
+            case "mysql":
+                return mySqlStorageRequest.selectPlayerModelListDesc(limit);
             case "mariadb":
                 return mariaDBStorageRequest.selectPlayerModelListDesc(limit);
             case "mongodb":
                 return mongoDBStorageRequest.selectPlayerModelList("ASC", limit);
-            case "litesql":
-                return liteSqlDBStorageRequest.selectPlayerModelList("ASC", limit);
             default:
-                return null;
-                //TODO localStorageRequest.deletePlayerModel(uuid);
+                return liteSqlDBStorageRequest.selectPlayerModelListDesc(limit);
         }
     }
 
     public List<PlayerModel> selectPlayerModelListBottom(int limit) {
         switch (type) {
-            case "sql":
-                return sqlStorageRequest.selectPlayerModelListAsc(limit);
+            case "mysql":
+                return mySqlStorageRequest.selectPlayerModelListAsc(limit);
             case "mariadb":
                 return mariaDBStorageRequest.selectPlayerModelListAsc(limit);
             case "mongodb":
-                //return mongoDBStorageRequest.selectPlayerModelList("DESC", limit);
-            case "litesql":
-                //return liteSqlDBStorageRequest.selectPlayerModelList("DESC", limit);
+                return mongoDBStorageRequest.selectPlayerModelList("DESC", limit);
             default:
-                return null;
-            //TODO localStorageRequest.deletePlayerModel(uuid);
+                return liteSqlDBStorageRequest.selectPlayerModelListAsc(limit);
         }
-    }
-
-    // Exemple de méthode d'écriture dans la base de données de stockage local
-    public void writeToLocalStorage(String key, Object data) {
-        // Insérez le code d'écriture dans la base de données de stockage local ici
     }
 
     public static StorageManager getManager() {

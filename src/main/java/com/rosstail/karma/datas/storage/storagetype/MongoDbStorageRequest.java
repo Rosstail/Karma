@@ -6,12 +6,12 @@ import com.rosstail.karma.datas.PlayerModel;
 
 import java.util.List;
 
-public class MongoDBStorageRequest implements StorageRequest {
+public class MongoDbStorageRequest implements StorageRequest {
 
     private MongoClient mongoClient;
     private MongoDatabase mongoDatabase;
 
-    public MongoDBStorageRequest(String pluginName) {
+    public MongoDbStorageRequest(String pluginName) {
 
     }
     @Override

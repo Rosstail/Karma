@@ -43,22 +43,15 @@ public class TopFlopScoreManager {
 
             for (PlayerModel model : orderedPlayerModelList) {
                 if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, playerModel);
+                    orderedPlayerModelList.add(index, new PlayerModel(playerModel));
                     break;
                 }
                 index++;
             }
             if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(playerModel);
+                orderedPlayerModelList.add(new PlayerModel(playerModel));
             }
         }
-
-        //System.out.println("ORDERED ONLINE PLAYER LIST TOP TO BOTTOM");
-        for (int i = orderedPlayerModelList.size() - 1; i >= 0; i--) {
-            PlayerModel model = orderedPlayerModelList.get(i);
-            //System.out.println("  " + i + "." + model.getUuid() + " " + model.getUsername() + " " + model.getKarma());
-        }
-        //System.out.println("END OF ONLINE PLAYER LIST");
 
         List<PlayerModel> reqTopScores = storageManager.selectPlayerModelListTop(limit);
         List<PlayerModel> reqBottomScores = storageManager.selectPlayerModelListBottom(limit);
@@ -71,13 +64,13 @@ public class TopFlopScoreManager {
                     break;
                 }
                 if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, playerModel);
+                    orderedPlayerModelList.add(index, new PlayerModel(playerModel));
                     break;
                 }
                 index++;
             }
             if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(playerModel);
+                orderedPlayerModelList.add(new PlayerModel(playerModel));
             }
         }
 
@@ -89,18 +82,17 @@ public class TopFlopScoreManager {
                     break;
                 }
                 if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, playerModel);
+                    orderedPlayerModelList.add(index, new PlayerModel(playerModel));
                     break;
                 }
                 index++;
             }
             if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(playerModel);
+                orderedPlayerModelList.add(new PlayerModel(playerModel));
             }
         }
 
         int currentLimit = Math.min(orderedPlayerModelList.size(), limit);
-
 
         for (int index = 0; index < currentLimit; index++) {
             playerTopScoreList.set(index, orderedPlayerModelList.get(orderedPlayerModelList.size() -1 - index));

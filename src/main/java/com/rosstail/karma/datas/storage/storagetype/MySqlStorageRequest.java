@@ -3,17 +3,16 @@ package com.rosstail.karma.datas.storage.storagetype;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
-import org.bukkit.Bukkit;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SQLStorageRequest implements StorageRequest {
+public class MySqlStorageRequest implements StorageRequest {
     private final String pluginName;
-    private Connection sqlConnection;
+    private Connection connection;
 
-    public SQLStorageRequest(String pluginName) {
+    public MySqlStorageRequest(String pluginName) {
         this.pluginName = pluginName;
     }
 
@@ -23,7 +22,7 @@ public class SQLStorageRequest implements StorageRequest {
             // Connexion à la base de données SQL
             Class.forName("com.mysql.jdbc.Driver");
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
-            sqlConnection = DriverManager.getConnection(url, username, password);
+            connection = DriverManager.getConnection(url, username, password);
             createKarmaTable();
         } catch (Exception e) {
             e.printStackTrace();
@@ -33,9 +32,9 @@ public class SQLStorageRequest implements StorageRequest {
 
     public void disconnect() {
         // Ferme les connexions à la base de données si nécessaire
-        if (sqlConnection != null) {
+        if (connection != null) {
             try {
-                sqlConnection.close();
+                connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -208,7 +207,7 @@ public class SQLStorageRequest implements StorageRequest {
      * @return # Returns the number of rows affected
      */
     private int executeSQLUpdate(String query, Object... params) throws SQLException {
-        try (PreparedStatement statement = sqlConnection.prepareStatement(query)) {
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
@@ -227,7 +226,7 @@ public class SQLStorageRequest implements StorageRequest {
      */
     public ResultSet executeSQLQuery(String query, Object... params) {
         try {
-            PreparedStatement statement = sqlConnection.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
@@ -245,7 +244,7 @@ public class SQLStorageRequest implements StorageRequest {
      */
     public boolean executeSQL(String query, Object... params) {
         try {
-            PreparedStatement statement = sqlConnection.prepareStatement(query);
+            PreparedStatement statement = connection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }

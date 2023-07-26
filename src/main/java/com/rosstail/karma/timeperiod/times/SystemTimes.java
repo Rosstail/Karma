@@ -12,8 +12,8 @@ public class SystemTimes {
     public SystemTimes(ConfigurationSection section, String name) {
         this.name = name;
 
-        this.startTime = section.getString("start-time");
-        this.endTime = section.getString("end-time");
+        this.startTime = section.getString("start");
+        this.endTime = section.getString("end");
         this.rate = (byte) section.getInt("rate");
     }
 

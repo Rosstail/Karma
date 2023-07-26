@@ -44,6 +44,23 @@ public class PlayerModel {
     }
 
     /**
+     * Creates a copy of an existing PlayerModel. Should only be used to read players data, not
+     * @param playerModel
+     */
+    public PlayerModel(PlayerModel playerModel) {
+        this.uuid = playerModel.getUuid();
+        this.username = playerModel.getUsername();
+        this.karma = playerModel.getKarma();
+        this.tierName = playerModel.getTierName();
+        this.previousKarma = playerModel.getPreviousKarma();
+        this.previousTierName = playerModel.getPreviousTierName();
+        this.lastUpdate = playerModel.getLastUpdate();
+        this.wanted = playerModel.isWanted();
+        this.wantedTimeStamp = playerModel.getWantedTimeStamp();
+        this.overTimeStampMap = playerModel.getOverTimeStampMap();
+    }
+
+    /**
      * Will check if the player already has data in localstorage or database.
      * @return the success of the check
      */

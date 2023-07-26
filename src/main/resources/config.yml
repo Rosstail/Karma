@@ -1,5 +1,5 @@
 storage:
-  type: LOCALSTORAGE # LocalStorage, SQL, MariaDB, MongoDB, LiteSQL
+  type: LiteSQL # LiteSQL (local storage), MySQL, MariaDB, MongoDB
   host: "localhost"
   port: 3306
   database: "database_name"
@@ -186,31 +186,31 @@ tiers:
 
 time-periods:
   #NONE Doesn't check any time period
-  #WORLDS Use attacker world time periods
+  #WORLD Use attacker world time periods
   #SYSTEM Use server time period
   #BOTH use both and cumulate.
-  use-system: "NONE"
+  type: "NONE"
   world:
     day:
-      start-time: "09:00" #format hh:mm 24h
-      end-time: "20:00"
+      start: "09:00" #format hh:mm 24h
+      end: "20:00"
       rate: 100 # chances of karma change. between 0 and 100
     dusk:
-      start-time: "20:00"
-      end-time: "22:00"
+      start: "20:00"
+      end: "22:00"
       rate: 66
     night:
-      start-time: "22:00"
-      end-time: "01:00"
+      start: "22:00"
+      end: "01:00"
       rate: 30
   system:
     morning:
-      start-time: "08:00" #format hh:mm 24h
-      end-time: "12:59"
+      start: "08:00" #format hh:mm 24h
+      end: "12:59"
       rate: 100
     afternoon:
-      start-time: "13:00"
-      end-time: "21:00"
+      start: "13:00"
+      end: "21:00"
       rate: 30
 
 pvp:

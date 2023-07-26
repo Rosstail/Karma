@@ -239,7 +239,7 @@ public class ConfigData {
 
         ConfigTimes(FileConfiguration config) {
             fileConfig = config;
-            useTimeValue = config.getString("time-periods.use-both-system-and-worlds-time");
+            useTimeValue = config.getString("time-periods.type");
         }
     }
 

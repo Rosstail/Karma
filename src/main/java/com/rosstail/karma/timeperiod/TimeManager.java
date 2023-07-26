@@ -35,15 +35,15 @@ public class TimeManager {
         systemTimes.clear();
         worldTimes.clear();
         FileConfiguration config = plugin.getCustomConfig();
-        for (String timeName : config.getConfigurationSection("times.system-times").getKeys(false)) {
-            ConfigurationSection tierConfigSection = config.getConfigurationSection("times.system-times." + timeName);
+        for (String timeName : config.getConfigurationSection("time-periods.system").getKeys(false)) {
+            ConfigurationSection tierConfigSection = config.getConfigurationSection("time-periods.system." + timeName);
             if (tierConfigSection != null) {
                 systemTimes.add(new SystemTimes(tierConfigSection, timeName));
             }
         }
 
-        for (String timeName : config.getConfigurationSection("times.worlds-times").getKeys(false)) {
-            ConfigurationSection tierConfigSection = config.getConfigurationSection("times.worlds-times." + timeName);
+        for (String timeName : config.getConfigurationSection("time-periods.world").getKeys(false)) {
+            ConfigurationSection tierConfigSection = config.getConfigurationSection("time-periods.world." + timeName);
             if (tierConfigSection != null) {
                 worldTimes.add(new WorldsTimes(tierConfigSection, timeName));
             }
