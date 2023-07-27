@@ -23,7 +23,10 @@ import java.util.Objects;
 public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
 
     public EditPlayerKarmaResetCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_RESET).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_RESET_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

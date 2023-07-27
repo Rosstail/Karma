@@ -16,7 +16,10 @@ import java.util.List;
 public class CheckSelfCommand extends SubCommand {
 
     public CheckSelfCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
     }
     @Override
     public String getName() {
@@ -45,7 +48,7 @@ public class CheckSelfCommand extends SubCommand {
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.BY_PLAYER_ONLY)));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_BY_PLAYER_ONLY)));
             return;
         }
         Player player = (Player) sender;

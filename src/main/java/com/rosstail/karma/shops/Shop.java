@@ -60,9 +60,9 @@ public class Shop {
             Bukkit.getPluginManager().callEvent(event);
             //after event done
             CommandManager.commandsLauncher(target, commands);
-            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.SHOP_SUCCESS), PlayerType.PLAYER.getText())));
+            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_SUCCESS), PlayerType.PLAYER.getText())));
         } else {
-            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.SHOP_FAILURE), PlayerType.PLAYER.getText())));
+            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_FAILURE), PlayerType.PLAYER.getText())));
         }
     }
 

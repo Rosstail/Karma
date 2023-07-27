@@ -3,10 +3,13 @@ package com.rosstail.karma.datas.storage;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.storagetype.MongoDbStorageRequest;
+import com.rosstail.karma.datas.storage.storagetype.sql.MongoDbStorageRequest;
 import com.rosstail.karma.datas.storage.storagetype.sql.LiteSqlStorageRequest;
 import com.rosstail.karma.datas.storage.storagetype.sql.MariaDbStorageRequest;
 import com.rosstail.karma.datas.storage.storagetype.sql.MySqlStorageRequest;
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 
 import java.util.List;
 
@@ -42,22 +45,22 @@ public class StorageManager {
         type = ConfigData.getConfigData().storage.storageType.toLowerCase();
         switch (type) {
             case "mysql":
-                System.out.println("choose MySQL");
+                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "MySQL"), AdaptMessage.prints.OUT);
                 mySqlStorageRequest = new MySqlStorageRequest(pluginName);
                 mySqlStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             case "mariadb":
-                System.out.println("Choose MariaDB");
+                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "mariaDB"), AdaptMessage.prints.OUT);
                 mariaDBStorageRequest = new MariaDbStorageRequest(pluginName);
                 mariaDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             case "mongodb":
-                System.out.println("Choose MongoDB");
+                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "MongoDB"), AdaptMessage.prints.OUT);
                 mongoDBStorageRequest = new MongoDbStorageRequest(pluginName);
                 mongoDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             default:
-                System.out.println("Choose LiteSQL");
+                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "LiteSQL"), AdaptMessage.prints.OUT);
                 liteSqlDBStorageRequest = new LiteSqlStorageRequest(pluginName);
                 liteSqlDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
@@ -169,7 +172,7 @@ public class StorageManager {
             case "mariadb":
                 return mariaDBStorageRequest.selectPlayerModelListDesc(limit);
             case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModelList("ASC", limit);
+                return mongoDBStorageRequest.selectPlayerModelListDesc(limit);
             default:
                 return liteSqlDBStorageRequest.selectPlayerModelListDesc(limit);
         }
@@ -182,7 +185,7 @@ public class StorageManager {
             case "mariadb":
                 return mariaDBStorageRequest.selectPlayerModelListAsc(limit);
             case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModelList("DESC", limit);
+                return mongoDBStorageRequest.selectPlayerModelListAsc(limit);
             default:
                 return liteSqlDBStorageRequest.selectPlayerModelListAsc(limit);
         }

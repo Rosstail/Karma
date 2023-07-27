@@ -2,6 +2,7 @@ package com.rosstail.karma.commands.subcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.EditCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -15,15 +16,19 @@ public class HelpCommand extends SubCommand {
     public HelpCommand(final CommandManager manager) {
         subCommands = manager.getSubCommands();
         help = AdaptMessage.getAdaptMessage().adaptMessage(
-                LangManager.getMessage(LangMessage.HELP_HEADER)
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_HEADER)
                         .replaceAll("%syntax%", getSyntax())
                         .replaceAll("%permission%", getPermission()));
     }
 
     public HelpCommand(final SubCommand subCommand) {
-        subCommands = subCommand.getSubCommands();
+        System.out.println("BBBB " + subCommand.subCommands.size());
+        if (subCommand instanceof EditCommand) {
+            System.out.println("CCC " + ((EditCommand) subCommand).subCommands.size());
+        }
+        subCommands = subCommand.subCommands;
         help = AdaptMessage.getAdaptMessage().adaptMessage(
-                LangManager.getMessage(LangMessage.HELP_HEADER)
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_HEADER)
                         .replaceAll("%syntax%", getSyntax())
                         .replaceAll("%permission%", getPermission()));
     }
@@ -56,7 +61,9 @@ public class HelpCommand extends SubCommand {
 
         StringBuilder helpCommand = new StringBuilder(getHelp());
         for (SubCommand subCommand : subCommands) {
+            sender.sendMessage("subcommand " + subCommand);
             if (subCommand.getHelp() != null) {
+                sender.sendMessage("subcommandhelp " + subCommand.getHelp());
                 helpCommand.append("\n").append(subCommand.getHelp());
             }
         }

@@ -20,7 +20,10 @@ import java.util.*;
 public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
 
     public EditPlayerKarmaRemoveCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_REMOVE_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

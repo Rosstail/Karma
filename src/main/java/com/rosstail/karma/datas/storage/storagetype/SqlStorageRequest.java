@@ -170,17 +170,17 @@ public class SqlStorageRequest implements StorageRequest {
     }
 
     public List<PlayerModel> selectPlayerModelListAsc(int limit) {
-        List<String> onlineUUIDList = new ArrayList<>();
+        List<String> onlineUuidList = new ArrayList<>();
         PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
-            onlineUUIDList.add(playerModel.getUuid());
+            onlineUuidList.add(playerModel.getUuid());
         });
 
         String query = "SELECT * FROM " + pluginName;
-        if (onlineUUIDList.size() > 0) {
+        if (onlineUuidList.size() > 0) {
             StringBuilder replacement = new StringBuilder("(");
-            for (int i = 0; i < onlineUUIDList.size(); i++) {
-                replacement.append("'").append(onlineUUIDList.get(i)).append("'");
-                if (i < onlineUUIDList.size() - 1) {
+            for (int i = 0; i < onlineUuidList.size(); i++) {
+                replacement.append("'").append(onlineUuidList.get(i)).append("'");
+                if (i < onlineUuidList.size() - 1) {
                     replacement.append(",");
                 }
             }

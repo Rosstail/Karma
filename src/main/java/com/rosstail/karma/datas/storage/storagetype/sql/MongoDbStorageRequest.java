@@ -1,28 +1,26 @@
-package com.rosstail.karma.datas.storage.storagetype;
+package com.rosstail.karma.datas.storage.storagetype.sql;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.datas.storage.storagetype.SqlStorageRequest;
 
+import java.sql.DriverManager;
 import java.util.List;
 
-public class MongoDbStorageRequest implements StorageRequest {
-
-    private MongoClient mongoClient;
-    private MongoDatabase mongoDatabase;
+public class MongoDbStorageRequest extends SqlStorageRequest {
 
     public MongoDbStorageRequest(String pluginName) {
-
+        super(pluginName);
     }
+
     @Override
     public void setupStorage(String host, short port, String database, String username, String password) {
         try {
-            // Connexion à la base de données MongoDB
-            //mongoClient = new MongoClient(host, port);
-            //mongoDatabase = mongoClient.getDatabase(database);
+            Class.forName("mongodb.jdbc.MongoDriver");
+            String url = "jdbc:mongodb://" + host + ":" + port + "/" + database;
+            setConnection(DriverManager.getConnection(url, username, password));
+            super.setupStorage(host, port, database, username, password);
         } catch (Exception e) {
             e.printStackTrace();
-            // Gérer les erreurs de connexion ici
         }
     }
 

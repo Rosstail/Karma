@@ -18,7 +18,10 @@ import java.util.List;
 public class KarmaShopBuyOtherCommand extends SubCommand {
 
     public KarmaShopBuyOtherCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -61,7 +64,7 @@ public class KarmaShopBuyOtherCommand extends SubCommand {
             Shop shop = ShopManager.getShopManager().getShops().get(shopName);
             shop.handle(player);
         } else {
-            AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.SHOP_NOT_EXIST));
+            AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_NOT_EXIST));
         }
     }
 

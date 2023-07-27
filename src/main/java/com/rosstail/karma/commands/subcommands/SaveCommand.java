@@ -14,7 +14,10 @@ import java.util.List;
 public class SaveCommand extends SubCommand {
 
     public SaveCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_SAVE).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SAVE_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
     }
     @Override
     public String getName() {

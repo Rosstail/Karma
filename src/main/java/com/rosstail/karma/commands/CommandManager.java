@@ -95,7 +95,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     private static void permissionDenied(CommandSender sender, SubCommand command) {
-        String message = LangManager.getMessage(LangMessage.PERMISSION_DENIED);
+        String message = LangManager.getMessage(LangMessage.COMMANDS_PERMISSION_DENIED);
         if (message != null) {
             message = AdaptMessage.getAdaptMessage().adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
             message = AdaptMessage.getAdaptMessage().adaptMessage(message);
@@ -113,10 +113,10 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }*/
     public static void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.TOO_FEW_ARGUMENTS)));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_VALUE)));
         }
         if (e instanceof NumberFormatException) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WRONG_VALUE)));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_VALUE)));
             e.printStackTrace();
         }
     }

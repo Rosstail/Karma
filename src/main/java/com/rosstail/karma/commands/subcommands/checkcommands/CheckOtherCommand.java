@@ -19,7 +19,10 @@ import java.util.Objects;
 public class CheckOtherCommand extends SubCommand {
 
     public CheckOtherCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

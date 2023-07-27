@@ -112,11 +112,11 @@ public class AdaptMessage {
             String shortStatus;
 
             if (model.isWanted()) {
-                status = LangManager.getMessage(LangMessage.STATUS_WANTED);
-                shortStatus = LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT);
+                status = LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED);
+                shortStatus = LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED_SHORT);
             } else {
-                status = LangManager.getMessage(LangMessage.STATUS_INNOCENT);
-                shortStatus = LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT);
+                status = LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT);
+                shortStatus = LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT_SHORT);
             }
 
             message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(playerKarma, '.'));

@@ -20,9 +20,12 @@ import java.util.List;
 public class CalculateCommand extends SubCommand {
 
     public CalculateCommand() {
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_CALCULATE_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CALCULATE).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -54,7 +57,7 @@ public class CalculateCommand extends SubCommand {
             ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
             expressionList.remove("calculate");
             String expression = String.join(" ", expressionList);
-            Player player = null;
+            Player player;
             if (sender instanceof Player) {
                 player = ((Player) sender).getPlayer();
                 expression = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, expression, PlayerType.PLAYER.getText());
@@ -62,10 +65,10 @@ public class CalculateCommand extends SubCommand {
             }
             float result = (float) ExpressionCalculator.eval(expression);
 
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(player,
-                    LangManager.getMessage(LangMessage.CALCULATION)
-                            .replaceAll("%expression%", expression).replaceAll("%result%", String.valueOf(result))
-                    , null)));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(
+                    LangManager.getMessage(LangMessage.COMMANDS_CALCULATE_RESULT)
+                            .replaceAll("%expression%", expression).replaceAll("%result%", String.valueOf(result)))
+            );
         } else {
             CommandManager.errorMessage(sender, new ArrayIndexOutOfBoundsException());
         }

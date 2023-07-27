@@ -40,7 +40,7 @@ public class PlayerDataManager {
     }
 
     public static void changePlayerTierMessage(Player player) {
-        String message = LangManager.getMessage(LangMessage.TIER_CHANGE);
+        String message = LangManager.getMessage(LangMessage.TIER_ON_CHANGE);
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())));
         }

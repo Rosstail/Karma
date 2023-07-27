@@ -2,6 +2,7 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
+import com.rosstail.karma.commands.subcommands.HelpCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.EditPlayerKarmaCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands.EditPlayerTierCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedCommand;
@@ -22,7 +23,10 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
     List<EditPlayerSubCommand> subCommands = new ArrayList<>();
 
     public EditPlayerCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
         subCommands.add(new EditPlayerKarmaCommand());
         subCommands.add(new EditPlayerTierCommand());
         subCommands.add(new EditPlayerWantedCommand());
@@ -42,11 +46,8 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                 return;
             }
 
-            StringBuilder message = new StringBuilder("EditPlayerCommand:");
-            for (EditPlayerSubCommand subCommand : subCommands) {
-                message.append("\n - ").append(subCommand.getName());
-            }
-            sender.sendMessage(message.toString());
+            HelpCommand help = new HelpCommand(this);
+            help.perform(sender, args, null);
             return;
         }
 

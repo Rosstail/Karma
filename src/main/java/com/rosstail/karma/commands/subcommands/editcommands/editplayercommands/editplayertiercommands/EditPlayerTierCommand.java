@@ -1,9 +1,13 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands;
 
 import com.rosstail.karma.commands.SubCommand;
+import com.rosstail.karma.commands.subcommands.HelpCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands.editplayertiersubcommands.EditPlayerTierSetCommand;
 import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,6 +18,10 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
     public List<EditPlayerTierSubCommand> subCommands = new ArrayList<>();
 
     public EditPlayerTierCommand() {
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_TIER_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
         subCommands.add(new EditPlayerTierSetCommand());
     }
 
@@ -67,11 +75,8 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
         }
 
         if (args.length < 5) {
-            StringBuilder message = new StringBuilder("EditPlayerTierCommand:");
-            for (EditPlayerSubCommand subCommand : subCommands) {
-                message.append("\n - ").append(subCommand.getName());
-            }
-            sender.sendMessage(message.toString());
+            HelpCommand help = new HelpCommand(this);
+            help.perform(sender, args, null);
             return;
         }
         String subCommandString = args[4];
@@ -90,11 +95,8 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
         }
 
         if (args.length < 5) {
-            StringBuilder message = new StringBuilder("EditPlayerTierCommand:");
-            for (EditPlayerSubCommand subCommand : subCommands) {
-                message.append("\n - ").append(subCommand.getName());
-            }
-            sender.sendMessage(message.toString());
+            HelpCommand help = new HelpCommand(this);
+            help.perform(sender, args, null);
             return;
         }
         String subCommandString = args[4];

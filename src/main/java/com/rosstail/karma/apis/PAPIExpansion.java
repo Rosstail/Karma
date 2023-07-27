@@ -230,15 +230,15 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
             if (identifier.equals("player_wanted_status")) {
                 if (model.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_WANTED));
+                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED));
                 }
-                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_INNOCENT));
+                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT));
             }
             if (identifier.equals("player_wanted_status_short")) {
                 if (model.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT));
+                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED_SHORT));
                 }
-                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT));
+                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT_SHORT));
             }
         }
 
@@ -271,9 +271,9 @@ public class PAPIExpansion extends PlaceholderExpansion {
 
                     if (identifier.contains("_status_display")) {
                         if (identifier.contains("_status_display_short")) {
-                            return LangManager.getMessage(isWanted ? LangMessage.STATUS_WANTED_SHORT : LangMessage.STATUS_INNOCENT_SHORT);
+                            return LangManager.getMessage(isWanted ? LangMessage.WANTED_STATUS_WANTED_SHORT : LangMessage.WANTED_STATUS_INNOCENT_SHORT);
                         }
-                        return LangManager.getMessage(isWanted ? LangMessage.STATUS_WANTED : LangMessage.STATUS_INNOCENT);
+                        return LangManager.getMessage(isWanted ? LangMessage.WANTED_STATUS_WANTED : LangMessage.WANTED_STATUS_INNOCENT);
                     }
                 }
                 if (identifier.contains("_karma_")) {

@@ -18,7 +18,10 @@ import java.util.List;
 public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
 
     public EditPlayerWantedResetCommand() {
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_EDIT_SET).replaceAll("%syntax%", getSyntax()));
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
     }
 
     @Override

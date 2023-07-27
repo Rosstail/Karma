@@ -164,7 +164,7 @@ public class KarmaEventHandler implements Listener {
     public void onPlayerWantedPeriodStartEvent(PlayerWantedPeriodStartEvent event) {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-        String message = LangManager.getMessage(LangMessage.WANTED_ENTER);
+        String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_ENTER);
 
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.enterWantedCommands);
         model.setWanted(true);
@@ -179,7 +179,7 @@ public class KarmaEventHandler implements Listener {
     public void onPlayerWantedPeriodRefreshEvent(PlayerWantedPeriodRefreshEvent event) {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-        String message = LangManager.getMessage(LangMessage.WANTED_REFRESH);
+        String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_REFRESH);
         model.setWanted(true);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.refreshWantedCommands);
         if (message != null) {
@@ -195,7 +195,7 @@ public class KarmaEventHandler implements Listener {
         PlayerModel model= event.getModel();
 
         model.setWanted(false);
-        String message = LangManager.getMessage(LangMessage.WANTED_EXIT);
+        String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_EXIT);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.leaveWantedCommands);
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(

@@ -7,6 +7,9 @@ import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.e
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaResetCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.editplayerkarmasubcommands.EditPlayerKarmaSetCommand;
 import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,6 +20,10 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
     public List<EditPlayerKarmaSubCommand> subCommands = new ArrayList<>();
 
     public EditPlayerKarmaCommand() {
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_DESC))
+                        .replaceAll("%syntax%", getSyntax()));
         subCommands.add(new EditPlayerKarmaSetCommand());
         subCommands.add(new EditPlayerKarmaAddCommand());
         subCommands.add(new EditPlayerKarmaRemoveCommand());

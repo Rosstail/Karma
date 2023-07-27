@@ -7,7 +7,6 @@ import com.rosstail.karma.commands.subcommands.shopcommands.KarmaShopBuySelfComm
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
-import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.shops.Shop;
 import com.rosstail.karma.shops.ShopManager;
 import org.bukkit.command.CommandSender;
@@ -19,9 +18,11 @@ import java.util.List;
 public class ShopCommand extends SubCommand {
 
     public ShopCommand() {
+        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SHOP_LINE))
+                .replaceAll("%syntax%", getSyntax()));
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
-        help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()));
     }
 
     @Override
@@ -56,9 +57,9 @@ public class ShopCommand extends SubCommand {
                 subCommands.get(0).perform(sender, args, arguments);
             }
         } else {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.SHOP_HEADER)));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_HEADER)));
             for (Shop shop : ShopManager.getShopManager().getShops().values()) {
-                String line = LangManager.getMessage(LangMessage.SHOP_LINE);
+                String line = LangManager.getMessage(LangMessage.COMMANDS_SHOP_LINE);
                 line = line.replaceAll("%karma_shop_name%", shop.getName());
                 line = line.replaceAll("%karma_shop_display%", shop.getDisplay());
                 line = line.replaceAll("%karma_shop_description%", shop.getDescription());
