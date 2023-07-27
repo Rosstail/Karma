@@ -1,5 +1,8 @@
 package com.rosstail.karma.commands;
 
+import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,5 +25,10 @@ public abstract class SubCommand {
     public String getHelp() {
         return help;
     }
+
+    public String getSubCommandHelp() {
+        return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_HELP_HEADER));
+    }
+
     public abstract List<String> getSubCommandsArguments(Player sender, String args[], String[] arguments);
 }

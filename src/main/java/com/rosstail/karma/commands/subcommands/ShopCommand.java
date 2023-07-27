@@ -19,7 +19,7 @@ public class ShopCommand extends SubCommand {
 
     public ShopCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SHOP_LINE))
+                .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_DESC))
                 .replaceAll("%syntax%", getSyntax()));
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());

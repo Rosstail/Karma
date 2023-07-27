@@ -75,14 +75,14 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
         }
 
         if (args.length < 5) {
-            HelpCommand help = new HelpCommand(this);
-            help.perform(sender, args, null);
+            sender.sendMessage(getSubCommandHelp());
             return;
         }
         String subCommandString = args[4];
 
         if (!subCommandsStringList.contains(subCommandString)) {
-            sender.sendMessage("EditPlayerTierCommand#performOnline wrong command " + subCommandString);
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
+            return;
         }
         subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOnline(sender, model, args, arguments, player);
     }
@@ -95,16 +95,26 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
         }
 
         if (args.length < 5) {
-            HelpCommand help = new HelpCommand(this);
-            help.perform(sender, args, null);
+            sender.sendMessage(getSubCommandHelp());
             return;
         }
         String subCommandString = args[4];
 
         if (!subCommandsStringList.contains(subCommandString)) {
-            sender.sendMessage("EditPlayerTierCommand#performOffline wrong command " + subCommandString);
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
             return;
         }
         subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOffline(sender, model, args, arguments);
+    }
+
+    @Override
+    public String getSubCommandHelp() {
+        StringBuilder subCommandHelp = new StringBuilder(super.getSubCommandHelp());
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.getHelp() != null) {
+                subCommandHelp.append("\n").append(subCommand.getHelp());
+            }
+        }
+        return subCommandHelp.toString();
     }
 }

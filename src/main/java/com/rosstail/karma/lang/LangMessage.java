@@ -6,6 +6,7 @@ public enum LangMessage {
     COMMANDS_BY_PLAYER_ONLY("commands.by-player-only"),
     COMMANDS_PERMISSION_DENIED("commands.permission-denied"),
     COMMANDS_WRONG_VALUE("commands.wrong-value"),
+    COMMANDS_WRONG_COMMAND("commands.wrong-command"),
     COMMANDS_PLAYER_DOES_NOT_EXIST("commands.player-does-not-exist"),
     COMMANDS_PLAYER_NO_DATA("commands.player-no-data"),
 
@@ -21,6 +22,8 @@ public enum LangMessage {
     COMMANDS_EDIT_DESC("commands.edit.desc"),
 
     COMMANDS_EDIT_PLAYER_DESC("commands.edit.player.desc"),
+    COMMANDS_EDIT_PLAYER_DISCONNECTED("commands.edit.player.disconnected-player"),
+
     COMMANDS_EDIT_PLAYER_KARMA_DESC("commands.edit.player.karma.desc"),
     COMMANDS_EDIT_PLAYER_KARMA_SET_DESC("commands.edit.player.karma.set.desc"),
     COMMANDS_EDIT_PLAYER_KARMA_SET_RESULT("commands.edit.player.karma.set.result"),

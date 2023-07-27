@@ -103,11 +103,7 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
         }
 
         if (args.length < 5) {
-            StringBuilder message = new StringBuilder("EditPlayerKarmaCommand:");
-            for (EditPlayerSubCommand subCommand : subCommands) {
-                message.append("\n - ").append(subCommand.getName());
-            }
-            sender.sendMessage(message.toString());
+            sender.sendMessage(getSubCommandHelp());
             return;
         }
         String subCommandString = args[4];
@@ -117,5 +113,16 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
             return;
         }
         subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOffline(sender, model, args, arguments);
+    }
+
+    @Override
+    public String getSubCommandHelp() {
+        StringBuilder subCommandHelp = new StringBuilder(super.getSubCommandHelp());
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.getHelp() != null) {
+                subCommandHelp.append("\n").append(subCommand.getHelp());
+            }
+        }
+        return subCommandHelp.toString();
     }
 }

@@ -45,11 +45,8 @@ public class SaveCommand extends SubCommand {
             return;
         }
         PlayerDataManager.saveAllPlayerModelToStorage();
-        sender.sendMessage("SaveCommand#perform: saved" + PlayerDataManager.getPlayerModelMap().size() + " player models to storage");
-        /*sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SAVED_DATA)
-                .replaceAll("%number%", String.valueOf(playerModelMap.size())), null));
-
-         */
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SAVE_RESULT)
+                .replaceAll("%amount%", String.valueOf(PlayerDataManager.getPlayerModelMap().size()))));
     }
 
     @Override

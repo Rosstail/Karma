@@ -53,14 +53,7 @@ public class CheckSelfCommand extends SubCommand {
         }
         Player player = (Player) sender;
 
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-        sender.sendMessage("CheckSelfCommand#perform : "
-                        + "\n" + model.getUuid() + " | " + model.getUsername()
-                        + "\n" + model.getKarma() + " | " + model.getPreviousKarma()
-                        + "\n" + model.getTierName() + " | " + model.getPreviousTierName()
-                        + "\n" + model.getWantedTimeStamp().getTime() + " | " + model.isWanted()
-                        + "\n" + model.getLastUpdate());
-        //sender.sendMessage(AdaptMessage.getAdaptMessage().adapt((Player) sender, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.PLAYER.getText()));
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_RESULT), PlayerType.PLAYER.getText()));
     }
 
     @Override

@@ -59,4 +59,15 @@ public class CheckCommand extends SubCommand {
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         return null;
     }
+
+    @Override
+    public String getSubCommandHelp() {
+        StringBuilder subCommandHelp = new StringBuilder(super.getSubCommandHelp());
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.getHelp() != null) {
+                subCommandHelp.append("\n").append(subCommand.getHelp());
+            }
+        }
+        return subCommandHelp.toString();
+    }
 }

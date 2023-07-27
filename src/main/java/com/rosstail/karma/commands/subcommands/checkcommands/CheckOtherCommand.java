@@ -8,6 +8,7 @@ import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -56,24 +57,24 @@ public class CheckOtherCommand extends SubCommand {
 
         if (target != null && target.isOnline()) {
             model = PlayerDataManager.getPlayerModelMap().get(args[1]);
-            //sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.CHECK_OTHER_KARMA), PlayerType.PLAYER.getText()));
         } else {
             String uuid = PlayerDataManager.getPlayerUUIDFromName(args[1]);
             if (uuid == null) {
-                sender.sendMessage("The player " + args[1] + "does not exist.");
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("%player%", args[1])));
                 return;
             }
-            model = StorageManager.getManager().selectPlayerModel(uuid); //READ
-            sender.sendMessage("The player " + args[1] + "is offline.");
+            model = StorageManager.getManager().selectPlayerModel(uuid);
         }
 
         if (model == null) {
-            sender.sendMessage("CheckOtherCommand#perform :" +
-                    "\nThis player " + args[1] + " does not have karma datas.");
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA)));
             return;
         }
 
-        sender.sendMessage("CheckOtherCommand#perform : "
+        if (target != null) {
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_RESULT), PlayerType.PLAYER.getText()));
+        }
+        sender.sendMessage("CheckOtherCommand#perform (TO CHANGE) : "
                 + "\nUUID AND NAME: " + model.getUuid() + " | " + model.getUsername()
                 + "\nSTATUS: " + (target != null && target.isOnline() ? " Connected" : "Disconnected")
                 + "\nCURRENT KARMA and PREVIOUS: " + model.getKarma() + " | " + model.getPreviousKarma()

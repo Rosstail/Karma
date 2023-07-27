@@ -31,9 +31,7 @@ public class EditCommand extends EditSubCommand {
             return;
         }
         if (args.length < 2) {
-            HelpCommand help = new HelpCommand(this);
-            sender.sendMessage("sub " + this.subCommands.size());
-            help.perform(sender, args, null);
+            sender.sendMessage(getSubCommandHelp());
             return;
         }
 
@@ -60,5 +58,16 @@ public class EditCommand extends EditSubCommand {
             }
         }
         return null;
+    }
+
+    @Override
+    public String getSubCommandHelp() {
+        StringBuilder subCommandHelp = new StringBuilder(super.getSubCommandHelp());
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.getHelp() != null) {
+                subCommandHelp.append("\n").append(subCommand.getHelp());
+            }
+        }
+        return subCommandHelp.toString();
     }
 }

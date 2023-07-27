@@ -43,24 +43,25 @@ public class StorageManager {
         username = ConfigData.getConfigData().storage.storageUser;
         password = ConfigData.getConfigData().storage.storagePass;
         type = ConfigData.getConfigData().storage.storageType.toLowerCase();
+        String typeToPrint = LangManager.getMessage(LangMessage.STORAGE_TYPE);
         switch (type) {
             case "mysql":
-                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "MySQL"), AdaptMessage.prints.OUT);
+                AdaptMessage.print(typeToPrint.replaceAll("%type%", "MySQL"), AdaptMessage.prints.OUT);
                 mySqlStorageRequest = new MySqlStorageRequest(pluginName);
                 mySqlStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             case "mariadb":
-                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "mariaDB"), AdaptMessage.prints.OUT);
+                AdaptMessage.print(typeToPrint.replaceAll("%type%", "mariaDB"), AdaptMessage.prints.OUT);
                 mariaDBStorageRequest = new MariaDbStorageRequest(pluginName);
                 mariaDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             case "mongodb":
-                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "MongoDB"), AdaptMessage.prints.OUT);
+                AdaptMessage.print(typeToPrint.replaceAll("%type%", "MongoDB"), AdaptMessage.prints.OUT);
                 mongoDBStorageRequest = new MongoDbStorageRequest(pluginName);
                 mongoDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;
             default:
-                AdaptMessage.print(LangManager.getMessage(LangMessage.STORAGE_TYPE).replaceAll("%type%", "LiteSQL"), AdaptMessage.prints.OUT);
+                AdaptMessage.print(typeToPrint.replaceAll("%type%", "LiteSQL"), AdaptMessage.prints.OUT);
                 liteSqlDBStorageRequest = new LiteSqlStorageRequest(pluginName);
                 liteSqlDBStorageRequest.setupStorage(host, port, database, username, password);
                 break;

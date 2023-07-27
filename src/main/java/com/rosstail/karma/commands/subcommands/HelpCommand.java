@@ -61,9 +61,7 @@ public class HelpCommand extends SubCommand {
 
         StringBuilder helpCommand = new StringBuilder(getHelp());
         for (SubCommand subCommand : subCommands) {
-            sender.sendMessage("subcommand " + subCommand);
             if (subCommand.getHelp() != null) {
-                sender.sendMessage("subcommandhelp " + subCommand.getHelp());
                 helpCommand.append("\n").append(subCommand.getHelp());
             }
         }

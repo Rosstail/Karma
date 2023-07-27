@@ -117,4 +117,15 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
         }
         subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOffline(sender, model, args, arguments);
     }
+
+    @Override
+    public String getSubCommandHelp() {
+        StringBuilder subCommandHelp = new StringBuilder(super.getSubCommandHelp());
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.getHelp() != null) {
+                subCommandHelp.append("\n").append(subCommand.getHelp());
+            }
+        }
+        return subCommandHelp.toString();
+    }
 }

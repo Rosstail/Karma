@@ -46,8 +46,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                 return;
             }
 
-            HelpCommand help = new HelpCommand(this);
-            help.perform(sender, args, null);
+            sender.sendMessage(getSubCommandHelp());
             return;
         }
 
@@ -55,7 +54,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
         String subCommandString = args[3];
 
         if (!subCommandsStringList.contains(subCommandString)) {
-            sender.sendMessage("EditPlayerCommand#perform wrong command.");
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
             return;
         }
 
@@ -71,7 +70,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
             String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
 
             if (playerUUID == null) {
-                sender.sendMessage("The player " + playerName + " does not exist");
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST)));
                 return;
             }
 
@@ -89,10 +88,10 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                     }
                     subCommand.performOffline(sender, model, args, arguments);
                 } else {
-                    sender.sendMessage("Player does not exist in karma database. Add -c to create player datas");
+                    sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA)));
                 }
             } else {
-                sender.sendMessage("Player " + playerName + " is disconnected. Use -f to override");
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DISCONNECTED)));
             }
         }
     }
@@ -123,5 +122,16 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
     @Override
     public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
 
+    }
+
+    @Override
+    public String getSubCommandHelp() {
+        StringBuilder subCommandHelp = new StringBuilder(super.getSubCommandHelp());
+        for (SubCommand subCommand : subCommands) {
+            if (subCommand.getHelp() != null) {
+                subCommandHelp.append("\n").append(subCommand.getHelp());
+            }
+        }
+        return subCommandHelp.toString();
     }
 }

@@ -2,6 +2,7 @@ prefix: "&f[&aKarma&f]&r "
 commands:
   by-player-only: "%prefix%Command must be sent by player."
   permission-denied: "%prefix%You don't have permission for command %command_name% : %command_permission%."
+  wrong-command: "%prefix%Wrong command."
   wrong-value: "%prefix%Wrong value."
   player-does-not-exist: "%prefix%%player% does not exist."
   player-no-data: "%prefix%No karma data for %player%."
@@ -77,7 +78,7 @@ commands:
     result: "%prefix%Reloaded config."
   save:
     desc: "Save instantly all online players data to storage."
-    result: "%prefix%Manually saved data of %number% players."
+    result: "%prefix%Manually saved data of %amount% players."
   calculate:
     desc: "Calculate a mathematical expression."
     result: "%prefix%Expression: %expression% = %result%"
