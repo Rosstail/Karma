@@ -19,6 +19,7 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -74,55 +75,6 @@ public class KarmaEventHandler implements Listener {
             }
         }
     }
-
-    /*
-    @EventHandler
-    public void onPlayerKarmaHasChanged(PlayerKarmaHasChangedEvent event) {
-        Player player = event.getPlayer();
-        PlayerModel model = event.getModel();
-
-        if (cause instanceof EntityDamageByEntityEvent || cause instanceof PlayerDeathEvent) {
-            if (((EntityEvent) cause).getEntity() instanceof Player) {
-                double newKarma = event.getValue();
-                double previousKarma = playerData.getPreviousKarma();
-
-                String message;
-                if (newKarma > previousKarma) {
-                    if (cause instanceof EntityDamageByEntityEvent) {
-                        message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_INCREASE);
-                    } else {
-                        message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_INCREASE);
-                    }
-                } else if (newKarma < previousKarma) {
-                    if (cause instanceof EntityDamageByEntityEvent) {
-                        message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_DECREASE);
-                    } else {
-                        message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_DECREASE);
-                    }
-                } else {
-                    if (cause instanceof EntityDamageByEntityEvent) {
-                        message = LangManager.getMessage(LangMessage.PVP_HIT_KARMA_UNCHANGED);
-                    } else {
-                        message = LangManager.getMessage(LangMessage.PVP_KILL_KARMA_UNCHANGED);
-                    }
-                }
-                if (message != null) {
-                    Player victim;
-                    if (cause instanceof EntityDamageByEntityEvent) {
-                        victim = (Player) ((EntityDamageByEntityEvent) cause).getEntity();
-                    } else {
-                        victim = ((PlayerDeathEvent) cause).getEntity();
-                    }
-
-                    message = adaptMessage.playerHitAdapt(message, player, victim, cause);
-                    adaptMessage.sendToPlayer(player, message);
-                }
-            }
-        }
-
-        playerData.checkTier();
-    }
-     */
 
     @EventHandler
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
@@ -206,20 +158,32 @@ public class KarmaEventHandler implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDamagePlayerEvent(PlayerDamagePlayerEvent event) {
-        event.getAttacker().sendMessage("Eventhandler - you damaged the player " + event.getVictim().getName());
-        event.getVictim().sendMessage("Eventhandler - you have been damaged by the player " + event.getAttacker().getName());
         for (TeamFightHandler teamFightHandler : FightHandler.getTeamFightHandlerList()) {
             if (teamFightHandler.doTeamFightCancel(event.getAttacker(), event.getVictim())) {
                 event.setCancelled(true);
                 break;
             }
         }
+
+        Player attacker = event.getAttacker();
+        Player victim = event.getVictim();
+        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        float newKarma = attackerModel.getKarma();
+        float previousKarma = attackerModel.getPreviousKarma();
+
+        String message;
+        if (newKarma > previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_GAIN);
+        } else if (newKarma < previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_UNCHANGED);
+        } else {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_LOSS);
+        }
+        attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKillPlayerEvent(PlayerKillPlayerEvent event) {
-        event.getAttacker().sendMessage("Eventhandler - you killed the player " + event.getVictim().getName());
-        event.getVictim().sendMessage("Eventhandler - you have been killed by the player " + event.getAttacker().getName());
 
         for (TeamFightHandler teamFightHandler : FightHandler.getTeamFightHandlerList()) {
             if (teamFightHandler.doTeamFightCancel(event.getAttacker(), event.getVictim())) {
@@ -227,15 +191,57 @@ public class KarmaEventHandler implements Listener {
                 break;
             }
         }
+
+        Player attacker = event.getAttacker();
+        Player victim = event.getVictim();
+        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        float newKarma = attackerModel.getKarma();
+        float previousKarma = attackerModel.getPreviousKarma();
+
+        String message;
+        if (newKarma > previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_GAIN);
+        } else if (newKarma < previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_UNCHANGED);
+        } else {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_LOSS);
+        }
+        AdaptMessage.getAdaptMessage().pvpKillMessage(message, attacker, victim);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDamageMobEvent(PlayerDamageMobEvent event) {
-        event.getPlayer().sendMessage("Eventhandler - you damaged the mob " + event.getMob().getName());
+        Player attacker = event.getPlayer();
+        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        float newKarma = attackerModel.getKarma();
+        float previousKarma = attackerModel.getPreviousKarma();
+
+        String message;
+        if (newKarma > previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_GAIN);
+        } else if (newKarma < previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_UNCHANGED);
+        } else {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_LOSS);
+        }
+        AdaptMessage.getAdaptMessage().pveHitMessage(message, attacker);
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKillMobEvent(PlayerKillMobEvent event) {
-        event.getPlayer().sendMessage("Eventhandler - you killed the mob " + event.getMob().getName());
+        Player attacker = event.getPlayer();
+        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        float newKarma = attackerModel.getKarma();
+        float previousKarma = attackerModel.getPreviousKarma();
+
+        String message;
+        if (newKarma > previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_GAIN);
+        } else if (newKarma < previousKarma) {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_UNCHANGED);
+        } else {
+            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_LOSS);
+        }
+        AdaptMessage.getAdaptMessage().pveKillMessage(message, attacker);
     }
 }
