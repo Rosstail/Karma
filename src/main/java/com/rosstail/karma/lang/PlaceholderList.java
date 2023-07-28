@@ -1,22 +1,16 @@
 package com.rosstail.karma.lang;
 
 public enum PlaceholderList {
-    PLAYER_KARMA("%player_karma%", "%karma_player_karma%"),
-    PLAYER_PREVIOUS_KARMA("%player_previous_karma%", "%karma_player_previous_karma%");
+    PLAYER_KARMA("player_karma"),
+    PLAYER_PREVIOUS_KARMA("player_previous_karma");
 
-    private final String local;
-    private final String papi;
+    private final String value;
 
-    PlaceholderList(String local, String papi) {
-        this.local = local;
-        this.papi = papi;
+    PlaceholderList(String value) {
+        this.value = value;
     }
 
-    public String getLocal() {
-        return local;
-    }
-
-    public String getPapi() {
-        return papi;
+    public String getValue() {
+        return value;
     }
 }

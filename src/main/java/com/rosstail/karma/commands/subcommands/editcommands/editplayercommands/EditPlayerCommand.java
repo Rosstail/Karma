@@ -91,7 +91,9 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                     sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA)));
                 }
             } else {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DISCONNECTED)));
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(
+                        LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DISCONNECTED).replaceAll("%player%", playerName)
+                ));
             }
         }
     }

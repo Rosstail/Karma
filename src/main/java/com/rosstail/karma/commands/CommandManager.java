@@ -96,13 +96,11 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
     private static void permissionDenied(CommandSender sender, SubCommand command) {
         String message = LangManager.getMessage(LangMessage.COMMANDS_PERMISSION_DENIED);
-        if (message != null) {
-            message = AdaptMessage.getAdaptMessage().adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
-            message = AdaptMessage.getAdaptMessage().adaptMessage(message);
-            message = message.replaceAll("%command%", command.getName());
-            message = message.replaceAll("%permission%", command.getPermission());
-            sender.sendMessage(message);
-        }
+        message = AdaptMessage.getAdaptMessage().adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
+        message = AdaptMessage.getAdaptMessage().adaptMessage(message);
+        message = message.replaceAll("%command%", command.getName());
+        message = message.replaceAll("%permission%", command.getPermission());
+        sender.sendMessage(message);
     }
 
     /**

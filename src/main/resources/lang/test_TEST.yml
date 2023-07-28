@@ -8,24 +8,24 @@ commands:
   player-no-data: "%prefix%No karma data for %player%."
   help:
     header: "&b====== &6KARMA HELP &b======"
-    line: "&a► &6/%syntax% &8: &r%description%"
+    line: "&a► &6/%syntax% &8: &r%desc%"
   check:
     desc: "Check player data"
     self:
       desc: "Check your own data"
       result: "%prefix%Your data:
-    \nTier %karma_player_tier_display% | Karma: %karma_player_karma%
-    \nPrevious tier %karma_player_previous_tier_display% | previous karma: %karma_player_previous_karma%
-    \nStatus %karma_player_wanted_status% for: %karma_player_wanted_time%
+    \nTier %karma_player_tier_display% &r| Karma: %karma_player_karma%
+    \nPrevious tier %karma_player_previous_tier_display% &r| Previous karma: %karma_player_previous_karma%
+    \nStatus %karma_player_wanted_status% for: %karma_player_wanted_time_delay_display%
     \nLast update on %karma_player_last_update%."
     other:
       desc: "Check data of selected player"
       result: "%prefix%%player% data:
-    \n%status%
-    \nTier %karma_player_tier_display% | Karma: %karma_player_karma%
-    \nPrevious tier %karma_player_previous_tier_display% | previous karma: %karma_player_previous_karma%
-    \nStatus %karma_player_wanted_status% for: %karma_player_wanted_time%
-    \nLast update on %karma_player_last_update%."
+    \nCurrently %player_status%
+    \nTier %karma_player_tier_display% &r| Karma: %karma_player_karma%
+    \nPrevious tier %karma_player_previous_tier_display% &r| previous karma: %karma_player_previous_karma%
+    \nStatus %karma_player_wanted_status% &rfor: %karma_player_wanted_time_delay_display%
+    \nLast update on %karma_player_last_update%&r."
   edit:
     desc: "Edit command."
     player:
@@ -37,32 +37,32 @@ commands:
         desc: "Edit karma of player"
         set:
           desc: "Set karma value to selected player."
-          result: "%prefix%Set karma to %karma% for %player%."
+          result: "%prefix%Set karma to %karma_player_karma% for %player%."
         add:
           desc: "Add value to current player karma."
-          result: "%prefix%Added %value% karma for %player%. Final %karma%."
+          result: "%prefix%Added %karma_player_diff_karma% karma for %player%. Final %karma%."
         remove:
           desc: "Remove value to current player karma."
-          result: "%prefix%Removed %value% karma for %player%. Final %karma%."
+          result: "%prefix%Removed %karma_player_diff_karma% karma for %player%. Final %karma%."
         reset:
           desc: "Reset karma of player to default."
-          result: "%prefix%Reset karma for %player%. Final %karma%."
+          result: "%prefix%Reset karma for %player%. Final %karma_player_karma%."
       tier:
         desc: "Edit tier of player"
         set:
           desc: "Set tier with default karma to selected player"
-          result: "%prefix%Set tier %tier% for %player%."
+          result: "%prefix%Set tier %karma_player_tier_display% for %player%."
       wanted:
         desc: "Edit wanted time of player"
         set:
           desc: "Set current wanted time to player."
-          result: "%prefix%Set wanted time of %player% to %wanted_time%. Status: %wanted%."
+          result: "%prefix%Set wanted time of %player% to %karma_player_wanted_time_delay_display%. Status: %karma_player_wanted_status%."
         add:
           desc: "Add time to current wanted time of player."
-          result: "%prefix%added %value% wanted time of %player% to %wanted_time%. Status: %wanted%."
+          result: "%prefix%added %value% wanted time of %player% to %karma_player_wanted_time_delay_display%. Status: %karma_player_wanted_status%."
         remove:
           desc: "Remove time from current wanted time of player."
-          result: "%prefix%Removed %value% %wanted time of %player% to %wanted_time%. Status: %wanted%."
+          result: "%prefix%Removed %value% %wanted time of %player% to %karma_player_wanted_time_delay_display%. Status: %karma_player_wanted_status%."
         reset:
           desc: "Reset wanted of player."
           result: "%prefix%Reset wanted time and status of %player%."
@@ -87,6 +87,10 @@ commands:
 storage:
   type: "%prefix%Use %type% storage type."
 
+player:
+  online: "&aONLINE"
+  offline: "&8OFFLINE"
+
 karma:
   on-change: "%prefix%Your karma is now: %karma%."
 
@@ -96,7 +100,7 @@ tier:
 fight:
   pvp:
     on-defend: "%prefix%You are defending yourself against %victim%."
-    on-assault: "Y%prefix%ou are assaulting %victim%."
+    on-assault: "%prefix%You are assaulting %victim%."
     hit:
       on-karma-gain: "%prefix%You won %karma_diff% karma by hitting %victim%."
       on-karma-unchanged: "%prefix%You hit %victim% without karma change."

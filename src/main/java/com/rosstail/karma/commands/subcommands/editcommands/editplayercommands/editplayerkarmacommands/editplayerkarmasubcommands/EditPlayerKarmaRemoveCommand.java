@@ -10,6 +10,7 @@ import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -95,6 +96,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
             });
         }
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_REMOVE_RESULT), PlayerType.PLAYER.getText()));
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -122,12 +124,10 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
         model.setKarma(value);
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("Edited offline karma of " + model.getUsername() + " :" + value);
         String currentTierName = model.getTierName();
         String futureTierName = TierManager.getTierManager().getTierByKarmaAmount(value).getName();
-        if (!Objects.equals(currentTierName, futureTierName)) { //Safe name check
-            sender.sendMessage("His tier will change from " + currentTierName + " to " + futureTierName);
-        }
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_REMOVE_RESULT), PlayerType.PLAYER.getText()));
     }
 
     @Override

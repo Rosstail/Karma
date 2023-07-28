@@ -35,12 +35,10 @@ public enum LangMessage {
     COMMANDS_EDIT_PLAYER_KARMA_RESET_RESULT("commands.edit.player.karma.reset.result"),
 
     COMMANDS_EDIT_PLAYER_TIER_DESC("commands.edit.player.tier.desc"),
-    COMMANDS_EDIT_PLAYER_TIER_RESULT("commands.edit.player.tier.result"),
     COMMANDS_EDIT_PLAYER_TIER_SET_DESC("commands.edit.player.tier.set.desc"),
     COMMANDS_EDIT_PLAYER_TIER_SET_RESULT("commands.edit.player.tier.set.result"),
 
     COMMANDS_EDIT_PLAYER_WANTED_DESC("commands.edit.player.wanted.desc"),
-    COMMANDS_EDIT_PLAYER_WANTED_RESULT("commands.edit.player.wanted.result"),
     COMMANDS_EDIT_PLAYER_WANTED_SET_DESC("commands.edit.player.wanted.set.desc"),
     COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT("commands.edit.player.wanted.set.result"),
     COMMANDS_EDIT_PLAYER_WANTED_ADD_DESC("commands.edit.player.wanted.add.desc"),
@@ -68,6 +66,8 @@ public enum LangMessage {
     COMMANDS_CALCULATE_DESC("commands.calculate.desc"),
     COMMANDS_CALCULATE_RESULT("commands.calculate.result"),
 
+    PLAYER_ONLINE("player.online"),
+    PLAYER_OFFLINE("player.offline"),
 
     STORAGE_TYPE("storage.type"),
     KARMA_ON_CHANGE("karma.on-change"),

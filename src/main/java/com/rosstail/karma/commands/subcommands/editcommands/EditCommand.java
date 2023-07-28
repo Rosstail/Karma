@@ -19,7 +19,7 @@ public class EditCommand extends EditSubCommand {
     public EditCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_DESC))
+                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_DESC))
                         .replaceAll("%syntax%", getSyntax()));
         subCommands.add(new EditPlayerCommand());
     }

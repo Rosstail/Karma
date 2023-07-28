@@ -163,6 +163,11 @@ public class AdaptMessage {
         message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay%", String.valueOf(wantedTime));
         message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay_display%", countdownFormatter(wantedTime));
 
+        Player player = Bukkit.getPlayer(playerModel.getUsername());
+
+        message = message.replaceAll("%player_status%",
+                LangManager.getMessage((player != null && player.isOnline()) ? LangMessage.PLAYER_ONLINE : LangMessage.PLAYER_OFFLINE));
+
         return adaptMessage(message);
     }
 
