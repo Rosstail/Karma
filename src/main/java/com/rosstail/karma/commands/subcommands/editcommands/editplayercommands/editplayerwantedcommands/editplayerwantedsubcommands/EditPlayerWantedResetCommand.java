@@ -8,6 +8,7 @@ import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -61,16 +62,16 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
     }
 
     private void changeWantedOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        sender.sendMessage("EditPlayerWantedResetCommand#changeWantedOnline set wanted time to " + new Timestamp(0));
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(0));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
+
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText()));
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
         model.setWantedTimeStamp(new Timestamp(0));
         StorageManager.getManager().updatePlayerModel(model);
-
-        sender.sendMessage("EditPlayerWantedResetCommand#changeWantedOffline set wanted time to " + model.getWantedTimeStamp());
 
         if (model.isWanted()) {
             if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
@@ -81,6 +82,9 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
         } else if (model.getWantedTimeStamp().getTime() > System.currentTimeMillis()) {
             sender.sendMessage("His wanted level will become WANTED upon reconnect");
         }
+
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText()));
     }
 
     @Override

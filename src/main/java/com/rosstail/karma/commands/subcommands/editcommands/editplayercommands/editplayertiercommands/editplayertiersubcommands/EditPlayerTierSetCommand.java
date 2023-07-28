@@ -89,8 +89,6 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
         PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
-        sender.sendMessage("Set player " + player.getName() + " tier to " + tierName);
-
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
             ConfigData.getConfigData().overtime.overtimeLoopMap.forEach((s, overtimeLoop) -> {
                 PlayerDataManager.setOverTimeStamp(model, s, overtimeLoop.firstTimer);
@@ -120,7 +118,6 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
         model.setKarma(value);
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("Edited offline tier of " + model.getUsername() + " :" + tierName);
         String currentTierName = model.getTierName();
         if (!Objects.equals(currentTierName, tierName)) { //Safe name check
             sender.sendMessage("His tier will change from " + currentTierName + " to " + tierName);

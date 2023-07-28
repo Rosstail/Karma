@@ -10,6 +10,7 @@ import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -80,12 +81,14 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
             long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
         } else {
-            sender.sendMessage("Wanetd time is not limited.");
+            sender.sendMessage("Wanted time is not limited.");
         }
 
-        sender.sendMessage("EditPlayerWantedRemoveCommand#changeWantedOnline set wanted time to " + new Timestamp(newDuration));
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(newDuration));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
+
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_RESULT), PlayerType.PLAYER.getText()));
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -112,7 +115,8 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
         model.setWantedTimeStamp(new Timestamp(newDuration));
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("EditPlayerWantedRemoveCommand#changeWantedOffline set wanted time to " + new Timestamp(duration));
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_RESULT), PlayerType.PLAYER.getText()));
 
         if (model.isWanted()) {
             if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {

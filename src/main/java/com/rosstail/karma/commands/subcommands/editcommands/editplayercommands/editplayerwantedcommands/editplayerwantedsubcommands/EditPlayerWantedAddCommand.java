@@ -10,6 +10,7 @@ import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -83,9 +84,10 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
             sender.sendMessage("Wanted time is not limited.");
         }
 
-        sender.sendMessage("EditPlayerWantedAddCommand#changeWantedOnline set wanted time to " + new Timestamp(newDuration));
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(newDuration));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_ADD_RESULT), PlayerType.PLAYER.getText()));
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -112,7 +114,8 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         model.setWantedTimeStamp(new Timestamp(newDuration));
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("EditPlayerWantedAddCommand#changeWantedOffline set wanted time to " + new Timestamp(newDuration));
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_ADD_RESULT), PlayerType.PLAYER.getText()));
 
         if (model.isWanted()) {
             if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {

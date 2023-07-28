@@ -93,9 +93,10 @@ public enum LangMessage {
     WANTED_STATUS_INNOCENT_SHORT("wanted.status.innocent.short"),
     WANTED_STATUS_WANTED("wanted.status.wanted.display"),
     WANTED_STATUS_WANTED_SHORT("wanted.status.wanted.short"),
-    WANTED_EVENT_ON_ENTER("wanted.event.wanted.on-enter"),
-    WANTED_EVENT_ON_REFRESH("wanted.event.wanted.on-refresh"),
-    WANTED_EVENT_ON_EXIT("wanted.event.wanted.on-exit"),
+
+    WANTED_EVENT_ON_ENTER("wanted.event.on-enter"),
+    WANTED_EVENT_ON_REFRESH("wanted.event.on-refresh"),
+    WANTED_EVENT_ON_EXIT("wanted.event.on-exit"),
     ;
 
     private final String text;

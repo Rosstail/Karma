@@ -10,6 +10,7 @@ import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -84,9 +85,10 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
             sender.sendMessage("Wanted time is not limited.");
         }
 
-        sender.sendMessage("EditPlayerWantedSetCommand#changeWantedOnline set wanted time to " + new Timestamp(duration));
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(duration));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT), PlayerType.PLAYER.getText()));
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -111,8 +113,6 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         model.setWantedTimeStamp(new Timestamp(duration));
         StorageManager.getManager().updatePlayerModel(model);
 
-        sender.sendMessage("EditPlayerWantedSetCommand#changeWantedOffline set wanted time to " + new Timestamp(duration));
-
         if (model.isWanted()) {
             if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
                 sender.sendMessage(" He will become INNOCENT upon reconnect");
@@ -122,6 +122,8 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         } else if (model.getWantedTimeStamp().getTime() > System.currentTimeMillis()) {
             sender.sendMessage("His wanted level will become WANTED upon reconnect");
         }
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT), PlayerType.PLAYER.getText()));
     }
 
     @Override
