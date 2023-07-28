@@ -14,17 +14,18 @@ commands:
     self:
       desc: "Check your own data"
       result: "%prefix%Your data:
-    \nTier %tier% | Karma: %karma%
-    \nPrevious tier %previous_tier% | previous karma: %previous_karma%
-    \nStatus %wanted% for: %wanted_time%."
+    \nTier %karma_player_tier_display% | Karma: %karma_player_karma%
+    \nPrevious tier %karma_player_previous_tier_display% | previous karma: %karma_player_previous_karma%
+    \nStatus %karma_player_wanted_status% for: %karma_player_wanted_time%
+    \nLast update on %karma_player_last_update%."
     other:
       desc: "Check data of selected player"
       result: "%prefix%%player% data:
     \n%status%
-    \nTier %tier% | Karma: %karma%
-    \nPrevious tier %previous_tier% | previous karma: %previous_karma%
-    \nStatus %wanted% for: %wanted_time%
-    \nLast update on %last_update%."
+    \nTier %karma_player_tier_display% | Karma: %karma_player_karma%
+    \nPrevious tier %karma_player_previous_tier_display% | previous karma: %karma_player_previous_karma%
+    \nStatus %karma_player_wanted_status% for: %karma_player_wanted_time%
+    \nLast update on %karma_player_last_update%."
   edit:
     desc: "Edit command."
     player:

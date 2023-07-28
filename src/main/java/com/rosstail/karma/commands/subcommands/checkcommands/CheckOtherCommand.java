@@ -73,17 +73,9 @@ public class CheckOtherCommand extends SubCommand {
 
         if (target != null) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_RESULT), PlayerType.PLAYER.getText()));
+        } else {
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_RESULT), PlayerType.PLAYER.getText()));
         }
-        sender.sendMessage("CheckOtherCommand#perform (TO CHANGE) : "
-                + "\nUUID AND NAME: " + model.getUuid() + " | " + model.getUsername()
-                + "\nSTATUS: " + (target != null && target.isOnline() ? " Connected" : "Disconnected")
-                + "\nCURRENT KARMA and PREVIOUS: " + model.getKarma() + " | " + model.getPreviousKarma()
-                + "\nCURRENT TIER and PREVIOUS: " + model.getTierName() + " | " + model.getPreviousTierName()
-                + (!Objects.equals(TierManager.getTierManager().getTierByKarmaAmount(model.getKarma()).getName(), model.getTierName())
-                ? " (Will become " + TierManager.getTierManager().getTierByKarmaAmount(model.getKarma()).getName() + " on next connection)" : "")
-                + "\nWANTED TIME and IS WANTED: " + model.getWantedTimeStamp().getTime() + " | " + model.isWanted()
-                + "\nLAST UPDATE: " + model.getLastUpdate()
-        );
     }
 
     @Override

@@ -21,18 +21,6 @@ public class HelpCommand extends SubCommand {
                         .replaceAll("%permission%", getPermission()));
     }
 
-    public HelpCommand(final SubCommand subCommand) {
-        System.out.println("BBBB " + subCommand.subCommands.size());
-        if (subCommand instanceof EditCommand) {
-            System.out.println("CCC " + ((EditCommand) subCommand).subCommands.size());
-        }
-        subCommands = subCommand.subCommands;
-        help = AdaptMessage.getAdaptMessage().adaptMessage(
-                LangManager.getMessage(LangMessage.COMMANDS_HELP_HEADER)
-                        .replaceAll("%syntax%", getSyntax())
-                        .replaceAll("%permission%", getPermission()));
-    }
-
     @Override
     public String getName() {
         return "help";

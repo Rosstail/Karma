@@ -89,9 +89,9 @@ public enum LangMessage {
     FIGHT_PVE_KILL_ON_KARMA_UNCHANGED("fight.pve.kill.on-karma-unchanged"),
     FIGHT_PVE_KILL_ON_KARMA_LOSS("fight.pve.kill.on-karma-loss"),
 
-    WANTED_STATUS_INNOCENT("wanted.status.innocent"),
+    WANTED_STATUS_INNOCENT("wanted.status.innocent.display"),
     WANTED_STATUS_INNOCENT_SHORT("wanted.status.innocent.short"),
-    WANTED_STATUS_WANTED("wanted.status.wanted"),
+    WANTED_STATUS_WANTED("wanted.status.wanted.display"),
     WANTED_STATUS_WANTED_SHORT("wanted.status.wanted.short"),
     WANTED_EVENT_ON_ENTER("wanted.event.wanted.on-enter"),
     WANTED_EVENT_ON_REFRESH("wanted.event.wanted.on-refresh"),
