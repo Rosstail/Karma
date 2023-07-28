@@ -40,10 +40,10 @@ commands:
           result: "%prefix%Set karma to %karma_player_karma% for %player%."
         add:
           desc: "Add value to current player karma."
-          result: "%prefix%Added %karma_player_diff_karma% karma for %player%. Final %karma%."
+          result: "%prefix%Added %karma_player_diff_karma% karma for %player%. Final %karma_player_karma%."
         remove:
           desc: "Remove value to current player karma."
-          result: "%prefix%Removed %karma_player_diff_karma% karma for %player%. Final %karma%."
+          result: "%prefix%Removed %karma_player_diff_karma% karma for %player%. Final %karma_player_karma%."
         reset:
           desc: "Reset karma of player to default."
           result: "%prefix%Reset karma for %player%. Final %karma_player_karma%."
@@ -92,32 +92,32 @@ player:
   offline: "&8OFFLINE"
 
 karma:
-  on-change: "%prefix%Your karma is now: %karma%."
+  on-change: "%prefix%Your karma is now: %karma_player_karma%."
 
 tier:
-  on-change: "%prefix%Your tier has been set to %tier%."
+  on-change: "%prefix%Your tier has been set to %karma_player_tier_display%."
 
 fight:
   pvp:
     on-defend: "%prefix%You are defending yourself against %victim%."
     on-assault: "%prefix%You are assaulting %victim%."
     hit:
-      on-karma-gain: "%prefix%You won %karma_diff% karma by hitting %victim%."
+      on-karma-gain: "%prefix%You won %karma_player_karma_diff% karma by hitting %victim%."
       on-karma-unchanged: "%prefix%You hit %victim% without karma change."
-      on-karma-loss: "%prefix%You lose %karma_diff% karma by hitting %victim%."
+      on-karma-loss: "%prefix%You lose %karma_player_karma_diff% karma by hitting %victim%."
     kill:
-      on-karma-gain: "%prefix%You won %karma_diff% karma by killing %victim%."
+      on-karma-gain: "%prefix%You won %karma_player_karma_diff% karma by killing %victim%."
       on-karma-unchanged: "%prefix%You have killed %victim% without karma change."
-      on-karma-loss: "%prefix%You lose %karma_diff% karma by killing %victim%."
+      on-karma-loss: "%prefix%You lose %karma_player_karma_diff% karma by killing %victim%."
   pve:
     hit:
       on-karma-gain: "%prefix%You won %victim% karma by hitting %victim%."
       on-karma-unchanged: "%prefix%You hit %victim% without karma change."
       on-karma-loss: "%prefix%You lose %victim% karma by hitting %victim%."
     kill:
-      on-karma-gain: "%prefix%You won %karma_diff% karma by killing %victim%."
+      on-karma-gain: "%prefix%You won %karma_player_karma_diff% karma by killing %victim%."
       on-karma-unchanged: "%prefix%You have killed %victim% without karma change."
-      on-karma-loss: "%prefix%You lose %karma_diff% karma by killing %victim%."
+      on-karma-loss: "%prefix%You lose %karma_player_karma_diff% karma by killing %victim%."
 
 wanted:
   status:
