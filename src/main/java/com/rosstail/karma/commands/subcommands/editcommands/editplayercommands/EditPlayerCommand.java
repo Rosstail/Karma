@@ -76,11 +76,11 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
 
             PlayerModel model = StorageManager.getManager().selectPlayerModel(playerUUID);
             //if not, force
-            if (CommandManager.doesCommandMatchParameter(arguments, "f", "force")) {
+            if (CommandManager.doesCommandMatchParameter(arguments, "d", "disconnect")) {
 
                 if (model != null) {
                     subCommand.performOffline(sender, model, args, arguments);
-                } else if (CommandManager.doesCommandMatchParameter(arguments, "c", "create")){
+                } else if (CommandManager.doesCommandMatchParameter(arguments, "g", "generate")){
                     model = new PlayerModel(playerUUID, playerName);
                     if (!StorageManager.getManager().insertPlayerModel(model)) {
                         AdaptMessage.print("Problem with the storage.", AdaptMessage.prints.WARNING);

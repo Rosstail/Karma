@@ -2,7 +2,7 @@ package com.rosstail.karma.datas.storage.storagetype.sql;
 
 import com.rosstail.karma.datas.storage.storagetype.SqlStorageRequest;
 
-import java.sql.DriverManager;
+import java.sql.Connection;
 
 public class LiteSqlStorageRequest extends SqlStorageRequest {
 
@@ -12,10 +12,11 @@ public class LiteSqlStorageRequest extends SqlStorageRequest {
 
     @Override
     public void setupStorage(String host, short port, String database, String username, String password) {
+        this.url = "jdbc:sqlite:base.db";
         try {
-            String url = "jdbc:sqlite:base.db";
-            setConnection(DriverManager.getConnection(url));
-            super.setupStorage(host, port, database, username, password);
+            Connection connection = openConnection();
+            super.createKarmaTable();
+            closeConnection(connection);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -24,6 +24,8 @@ public enum LangMessage {
 
     COMMANDS_EDIT_PLAYER_DESC("commands.edit.player.desc"),
     COMMANDS_EDIT_PLAYER_DISCONNECTED("commands.edit.player.disconnected-player"),
+    COMMANDS_EDIT_PLAYER_NO_DATA("commands.edit.player.player-no-data"),
+    COMMANDS_EDIT_PLAYER_OUT_OF_BOUNDS("commands.edit.player.out-of-bounds"),
 
     COMMANDS_EDIT_PLAYER_KARMA_DESC("commands.edit.player.karma.desc"),
     COMMANDS_EDIT_PLAYER_KARMA_SET_DESC("commands.edit.player.karma.set.desc"),

@@ -17,7 +17,7 @@ commands:
       result: "%prefix%Your data:
     \n&rTier %player_tier_display% &r| Karma: %player_karma%
     \n&rPrevious tier %player_previous_tier_display% &r| Previous karma: %player_previous_karma%
-    \n&rStatus %player_wanted_status% for: %player_wanted_time_delay_display%
+    \n&rStatus %player_wanted_status% &rfor: %player_wanted_status_short%%player_wanted_time_delay_display%
     \n&rLast update on %player_last_update%."
     other:
       desc: "Check data of selected player"
@@ -25,14 +25,14 @@ commands:
     \n&rCurrently %player_status%
     \n&rTier %player_tier_display% &r| Karma: %player_karma%
     \n&rPrevious tier %player_previous_tier_display% &r| previous karma: %player_previous_karma%
-    \n&rStatus %player_wanted_status% &rfor: %player_wanted_time_delay_display%
+    \n&rStatus %player_wanted_status% &rfor: %player_wanted_status_short%%player_wanted_time_delay_display%
     \n&rLast update on %player_last_update%&r."
   edit:
     desc: "Edit command."
     player:
       desc: "Edit data of player"
-      disconnected-player: "%prefix%%player% is disconnected. Use -f or --force to force update."
-      player-no-data: "%prefix%No karma data for %player%. Use -c or --create to generate data of player."
+      disconnected-player: "%prefix%%player% is disconnected. Use -d or --disconnect to force update."
+      player-no-data: "%prefix%No karma data for %player%. Use -g or --generate to generate data of player."
       out-of-bounds: "%prefix%Value is out of bounds. Use -o or --override to ignore these limits."
       karma:
         desc: "Edit karma of player"

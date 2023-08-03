@@ -10,7 +10,11 @@ import java.util.List;
 
 public class SqlStorageRequest implements StorageRequest {
     private final String pluginName;
-    private Connection connection;
+    protected String driver;
+    protected String url;
+    protected String username;
+    protected String password;
+    private final List<Connection> connectionList = new ArrayList<>();
 
     public SqlStorageRequest(String pluginName) {
         this.pluginName = pluginName;
@@ -54,8 +58,9 @@ public class SqlStorageRequest implements StorageRequest {
     @Override
     public PlayerModel selectPlayerModel(String uuid) {
         String query = "SELECT * FROM " + pluginName + " WHERE uuid = ?";
+        Connection connection = openConnection();
         try {
-            ResultSet result = executeSQLQuery(query, uuid);
+            ResultSet result = executeSQLQuery(connection, query, uuid);
             if (result.next()) {
                 PlayerModel model = new PlayerModel(uuid, PlayerDataManager.getPlayerNameFromUUID(uuid));
                 model.setKarma(result.getFloat("karma"));
@@ -76,6 +81,7 @@ public class SqlStorageRequest implements StorageRequest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        closeConnection(connection);
         return null;
     }
 
@@ -112,15 +118,18 @@ public class SqlStorageRequest implements StorageRequest {
      * @return # Returns the number of rows affected
      */
     private int executeSQLUpdate(String query, Object... params) throws SQLException {
+        int result = 0;
+        Connection connection = openConnection();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
-            return statement.executeUpdate();
+            result = statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            return 0;
         }
+        closeConnection(connection);
+        return result;
     }
 
     /**
@@ -129,7 +138,7 @@ public class SqlStorageRequest implements StorageRequest {
      * @param params #The values to put as WHERE
      * @return # Returns the ResultSet of the request
      */
-    public ResultSet executeSQLQuery(String query, Object... params) {
+    public ResultSet executeSQLQuery(Connection connection, String query, Object... params) {
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
@@ -148,24 +157,51 @@ public class SqlStorageRequest implements StorageRequest {
      * @return # Returns if the request succeeded
      */
     public boolean executeSQL(String query, Object... params) {
+        boolean execute = false;
+        Connection connection = openConnection();
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
             }
-            return statement.execute();
+            execute = statement.execute();
         } catch (SQLException e) {
-            return false;
+            e.printStackTrace();
         }
+        return execute;
     }
 
-    public void disconnect() {
+    public Connection openConnection() {
+        Connection connection;
+        try {
+            if (driver != null) {
+                Class.forName(driver);
+            }
+            if (username != null) {
+                connection = DriverManager.getConnection(url, username, password);
+            } else {
+                connection = DriverManager.getConnection(url);
+            }
+            connectionList.add(connection);
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return connection;
+    }
+    public void closeConnection(Connection connection) {
         if (connection != null) {
             try {
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
+        }
+        connectionList.remove(connection);
+    }
+
+    public void closeAllConnection() {
+        for (Connection connection : connectionList) {
+            closeConnection(connection);
         }
     }
 
@@ -218,8 +254,9 @@ public class SqlStorageRequest implements StorageRequest {
     @Override
     public List<PlayerModel> selectPlayerModelList(String query, int limit) {
         List<PlayerModel> modelList = new ArrayList<>();
+        Connection connection = openConnection();
         try {
-            ResultSet result = executeSQLQuery(query, limit);
+            ResultSet result = executeSQLQuery(connection, query, limit);
             while (result.next()) {
                 String uuid = result.getString("uuid");
                 String username = PlayerDataManager.getPlayerNameFromUUID(uuid);
@@ -236,10 +273,8 @@ public class SqlStorageRequest implements StorageRequest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        closeConnection(connection);
         return modelList;
     }
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
 }

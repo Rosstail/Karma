@@ -2,6 +2,7 @@ package com.rosstail.karma.datas.storage.storagetype.sql;
 
 import com.rosstail.karma.datas.storage.storagetype.SqlStorageRequest;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class MySqlStorageRequest extends SqlStorageRequest {
@@ -12,13 +13,18 @@ public class MySqlStorageRequest extends SqlStorageRequest {
 
     @Override
     public void setupStorage(String host, short port, String database, String username, String password) {
+        this.driver = "com.mysql.jdbc.Driver";
+        this.url = "jdbc:mysql://" + host + ":" + port + "/" + database;
+        this.username = username;
+        this.password = password;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
-            String url = "jdbc:mysql://" + host + ":" + port + "/" + database;
-            setConnection(DriverManager.getConnection(url, username, password));
-            super.setupStorage(host, port, database, username, password);
+            Connection connection = openConnection();
+            super.createKarmaTable();
+            closeConnection(connection);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 }

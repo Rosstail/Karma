@@ -39,7 +39,7 @@ public class EditPlayerKarmaAddCommand extends EditPlayerKarmaSetCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit player <player> karma add <value> (-f -o -c)";
+        return "karma edit player <player> karma add <value> (-d -o -g)";
     }
 
     @Override

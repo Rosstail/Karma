@@ -41,7 +41,7 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit player <player> tier set <tiername> (-f -o -c)";
+        return "karma edit player <player> tier set <tiername> (-d -o -g)";
     }
 
     @Override
@@ -81,7 +81,7 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
 
         if (value != PlayerDataManager.limitKarma(value)) {
             if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-                sender.sendMessage("This tier is out of karma limits. Use -o or --override to force");
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_OUT_OF_BOUNDS)));
                 return;
             }
         }

@@ -72,16 +72,16 @@ public class StorageManager {
     public void disconnect() {
         switch (type) {
             case "mysql":
-                mySqlStorageRequest.disconnect();
+                mySqlStorageRequest.closeAllConnection();
                 break;
             case "mariadb":
-                mariaDBStorageRequest.disconnect();
+                mariaDBStorageRequest.closeAllConnection();
                 break;
             case "mongodb":
-                mongoDBStorageRequest.disconnect();
+                mongoDBStorageRequest.closeAllConnection();
                 break;
             default:
-                liteSqlDBStorageRequest.disconnect();
+                liteSqlDBStorageRequest.closeAllConnection();
                 break;
         }
     }

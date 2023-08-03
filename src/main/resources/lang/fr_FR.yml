@@ -17,7 +17,7 @@ commands:
       result: "%prefix%Vos données :
     \n&rTier %player_tier_display% &r| Karma: %player_karma%
     \n&rTier précédent %player_previous_tier_display% &r| Karma précédent: %player_previous_karma%
-    \n&rStatut %player_wanted_status% for: %player_wanted_time_delay_display%
+    \n&rStatut %player_wanted_status% &rpour: %player_wanted_status_short%player_wanted_time_delay_display%
     \n&rDernière maj : %player_last_update%."
     other:
       desc: "Observer les données du joueur ciblé"
@@ -25,14 +25,14 @@ commands:
     \n&rActuellement %player_status%
     \n&rTier %player_tier_display% &r| Karma : %player_karma%
     \n&rTier précédent : %player_previous_tier_display% &r| Karma précédent : %player_previous_karma%
-    \n&rStatut %player_wanted_status% &rfor: %player_wanted_time_delay_display%
+    \n&rStatut %player_wanted_status% &rpour: %player_wanted_status_short%player_wanted_time_delay_display%
     \n&rDernière maj : %player_last_update%&r."
   edit:
     desc: "Commande d'édition."
     player:
       desc: "Éditer les données d'un joueur"
-      disconnected-player: "%prefix%%player% est déconnecté. Utilisez -f ou --force pour forcer l'édition."
-      player-no-data: "%prefix%Aucune donnée pour %player%. Utilisez -c ou --create pour les générer."
+      disconnected-player: "%prefix%%player% est déconnecté. Utilisez -d ou --disconnected pour forcer l'édition."
+      player-no-data: "%prefix%Aucune donnée pour %player%. Utilisez -g ou --generate pour les générer."
       out-of-bounds: "%prefix%Valeur hors-limite. Utilisez -o ou --override pour l'outrepasser."
       karma:
         desc: "Éditer le karma d'un joueur."

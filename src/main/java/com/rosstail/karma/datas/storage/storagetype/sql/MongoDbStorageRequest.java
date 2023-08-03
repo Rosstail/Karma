@@ -3,6 +3,7 @@ package com.rosstail.karma.datas.storage.storagetype.sql;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.storage.storagetype.SqlStorageRequest;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
 
@@ -14,11 +15,14 @@ public class MongoDbStorageRequest extends SqlStorageRequest {
 
     @Override
     public void setupStorage(String host, short port, String database, String username, String password) {
+        this.url = "jdbc:mongodb://" + host + ":" + port + "/" + database;
+        this.driver = "mongodb.jdbc.MongoDriver";
+        this.username = username;
+        this.password = password;
         try {
-            Class.forName("mongodb.jdbc.MongoDriver");
-            String url = "jdbc:mongodb://" + host + ":" + port + "/" + database;
-            setConnection(DriverManager.getConnection(url, username, password));
-            super.setupStorage(host, port, database, username, password);
+            Connection connection = openConnection();
+            super.createKarmaTable();
+            closeConnection(connection);
         } catch (Exception e) {
             e.printStackTrace();
         }
