@@ -5,6 +5,7 @@ public enum LangMessage {
 
     COMMANDS_BY_PLAYER_ONLY("commands.by-player-only"),
     COMMANDS_PERMISSION_DENIED("commands.permission-denied"),
+    COMMANDS_INSERT_PLAYER_NAME("commands.insert-player-name"),
     COMMANDS_WRONG_VALUE("commands.wrong-value"),
     COMMANDS_WRONG_COMMAND("commands.wrong-command"),
     COMMANDS_PLAYER_DOES_NOT_EXIST("commands.player-does-not-exist"),
@@ -72,6 +73,8 @@ public enum LangMessage {
     STORAGE_TYPE("storage.type"),
     KARMA_ON_CHANGE("karma.on-change"),
     TIER_ON_CHANGE("tier.on-change"),
+    TIER_NONE_DISPLAY("tier.none.display"),
+    TIER_NONE_SHORT_DISPLAY("tier.none.short-display"),
 
     FIGHT_PVP_ON_ASSAULT("fight.pvp.on-assault"),
     FIGHT_PVP_ON_DEFEND("fight.pvp.on-defend"),

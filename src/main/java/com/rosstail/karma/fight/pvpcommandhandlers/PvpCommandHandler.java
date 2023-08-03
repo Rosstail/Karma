@@ -62,6 +62,23 @@ public class PvpCommandHandler {
             return false;
         }
 
+        if (pvpCommand.isAttackerMinimumKarmaRequirement()
+                && attackerModel.getKarma() < pvpCommand.getAttackerMinimumKarma()) {
+            return false;
+        }
+        if (pvpCommand.isAttackerMaximumKarmaRequirement()
+                && attackerModel.getKarma() > pvpCommand.getAttackerMaximumKarma()) {
+            return false;
+        }
+        if (pvpCommand.isVictimMinimumKarmaRequirement()
+                && victimModel.getKarma() < pvpCommand.getVictimMinimumKarma()) {
+            return false;
+        }
+        if (pvpCommand.isVictimMaximumKarmaRequirement()
+                && victimModel.getKarma() > pvpCommand.getVictimMaximumKarma()) {
+            return false;
+        }
+
         String attackerStatusRequirement = pvpCommand.getAttackerStatusRequirement();
         if (attackerStatusRequirement != null) {
             if (attackerModel.isWanted() && attackerStatusRequirement.equalsIgnoreCase("INNOCENT")) {

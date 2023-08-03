@@ -1,80 +1,138 @@
-by-player-only: "[Karma] Cette commande doit être lancée par un joueur."
-creating-playerdata-folder: "[Karma] Le dossier &9playerdata/ &rn'existe pas. &aCréation&7..."
-creating-player: "[Karma] &9Création du fichier de joueur pour &a%player%&9."
-disconnected: "[Karma] &cLe joueur est déconnecté ou n'existe pas."
-check:
-    own: "[Karma] Votre karma est de &a%karma_player_karma% &ret votre alignement est &6%karma_player_tier_display%&r."
-    other: "[Karma] Le karma de &6%player% &rest &6%karma_player_karma% &ret son alignement est &6%karma_player_tier_display%&r."
-edit:
-    set-karma: "[Karma] Le karma de &9%player% &rest désormais de &9%karma_player_karma% &ret son alignement est &9%karma_player_tier_display%&r."
-    add-karma: "[Karma] &aAjout de &6%karma_player_diff_karma% &rde karma à &6%player% &rpour un total de &6%karma_player_karma% &rpoints et l'alignement %karma_player_tier_display%."
-    remove-karma: "[Karma] &cDiminution de &6%karma_player_diff_karma% &rkarma pour &6%player% &rpour un total de &6%karma_player_karma% &rpoints et l'alignement %karma_player_tier_display%."
-    reset-karma: "[Karma] Le karma du joueur &6%player% &rest réinitialisé. Karma : &6%karma_player_karma% &ret Alignement : &6%karma_player_tier_display%&r."
-tier-change: "[Karma] Vous êtes désormais un(e) &6%karma_player_tier_display% &r!"
-self-defending-off: "[Karma] Vous êtes en train de vous défendre ! Karma inchangé."
-self-defending-on: "[Karma] Vous vous défendez mais votre Karma change tout de même."
-calculation: "[Karma] &a%expression% &r= &b%result%"
-reload: "[Karma] Configuration rechargée."
-permission-denied: "[Karma] &cVous n'avez pas la permission %permission% !"
-wrong-value: "&c[Karma] Vous devez renseigner un nombre. Exemple : &f\"/karma add Notch 15\"&c."
-too-few-arguments: "&c[Karma] Trop peu d'arguments"
-saved-data: "[Karma] {#00DDCD}Les données de %number% ont été sauvegardées"
-shop:
-    list:
-        header: "&b====== &6 BOUTIQUE KARMA &b======"
-        line: " &6> &9%karma_shop_display% &8: &f%karma_shop_description% &8| &e%karma_shop_price%"
-    success: "&aTransaction effectuée"
-    failure: "&cTransaction échouée"
-    not-exist: "&cCe shop n'existe pas"
-
-help:
+prefix: "&f[&aKarma&f]&r "
+commands:
+  by-player-only: "%prefix%Cette commande doit être envoyée par un joueur."
+  permission-denied: "%prefix%Vous n'avez pas la permission pour la commande %command_name% : %command_permission%."
+  insert-player-name: "%prefix%Insérez le nom du joueur cible."
+  wrong-command: "%prefix%Mauvaise commande."
+  wrong-value: "%prefix%Mauvaise valeur."
+  player-does-not-exist: "%prefix%%player% n'existe pas."
+  player-no-data: "%prefix%Aucune donnée pour %player%."
+  help:
     header: "&b====== &6AIDE KARMA &b======"
-    list:
-        calculate: "&a► &6/%syntax% &8: &rCalcule une expression donnée."
-        check: "&a► &6/%syntax% &8: &rAffiche votre karma et votre alignement ou ceux du joueur ciblé."
-        edit:
-            default: "&a► &6/%syntax% &8: &rÉdite le karma du joueur ciblé"
-            set: "&a► &6/%syntax% &8: &rApplique la valeur spécifiée au karma du joueur ciblé"
-            add: "&a► &6/%syntax% &8: &rAjoute la valeur spécifiée au karma du joueur ciblé"
-            remove: "&a► &6/%syntax% &8: &rSoustrait la valeur indiquée du karma du joueur ciblé"
-            reset: "&a► &6/%syntax% &8: &rRéinitialise le karma du joueur ciblé."
-        wanted:
-            default: "&a► &6/%syntax% &8: &rAfficher les commandes de statut de recherche."
-            check: "&a► &6/%syntax% &8: &rAffiche vos informations de statut de recherche ou celles du joueur ciblé."
-            edit:
-                default: "&a► &6/%syntax% &8: &rÉdite le statut de recherche du joueur ciblé."
-                set: "&a► &6/%syntax% &8: &rApplique la valeur spécifiée au statut de recherche du joueur ciblé"
-                add: "&a► &6/%syntax% &8: &rAjoute la valeur spécifiée au statut de recherche du joueur ciblé"
-                remove: "&a► &6/%syntax% &8: &rRetire la valeur spécifiée au statut de recherche du joueur ciblé"
-                reset: "&a► &6/%syntax% &8: &rRéinitialise le statut de recherche du joueur ciblé."
-        reload: "&a► &6/%syntax% &8: &rRecharge le fichier de configuration."
-        save: "&a► &6/%syntax% &8: &rForce la sauvegarde des données des joueurs connectés."
-        shop: "&a► &6/%syntax% &8: &rAchetez des services avec du Karma."
+    line: "&a► &6/%syntax% &8: &r%desc%"
+  check:
+    desc: "Observe les données d'un joueur"
+    self:
+      desc: "Observer vos propres données"
+      result: "%prefix%Vos données :
+    \n&rTier %player_tier_display% &r| Karma: %player_karma%
+    \n&rTier précédent %player_previous_tier_display% &r| Karma précédent: %player_previous_karma%
+    \n&rStatut %player_wanted_status% for: %player_wanted_time_delay_display%
+    \n&rDernière maj : %player_last_update%."
+    other:
+      desc: "Observer les données du joueur ciblé"
+      result: "%prefix%Données de %player% :
+    \n&rActuellement %player_status%
+    \n&rTier %player_tier_display% &r| Karma : %player_karma%
+    \n&rTier précédent : %player_previous_tier_display% &r| Karma précédent : %player_previous_karma%
+    \n&rStatut %player_wanted_status% &rfor: %player_wanted_time_delay_display%
+    \n&rDernière maj : %player_last_update%&r."
+  edit:
+    desc: "Commande d'édition."
+    player:
+      desc: "Éditer les données d'un joueur"
+      disconnected-player: "%prefix%%player% est déconnecté. Utilisez -f ou --force pour forcer l'édition."
+      player-no-data: "%prefix%Aucune donnée pour %player%. Utilisez -c ou --create pour les générer."
+      out-of-bounds: "%prefix%Valeur hors-limite. Utilisez -o ou --override pour l'outrepasser."
+      karma:
+        desc: "Éditer le karma d'un joueur."
+        set:
+          desc: "Attribuer la valeur au karma du joueur."
+          result: "%prefix%Karma mis à %player_karma% pour %player%."
+        add:
+          desc: "Ajouter la valeur au karma actuel du joueur."
+          result: "%prefix%Ajout de %player_diff_karma% karma pour %player%. Final %player_karma%."
+        remove:
+          desc: "Retirer la valeur au karmaactuel du joueur."
+          result: "%prefix%Retrait de %player_diff_karma% karma pour %player%. Final %player_karma%."
+        reset:
+          desc: "Réinitialiser le karma du joueur."
+          result: "%prefix%Réinitialisation du karma pour %player%. Final %player_karma%."
+      tier:
+        desc: "Éditer le tier du joueur."
+        set:
+          desc: "Attribuer le karma par défaut du tier au joueur"
+          result: "%prefix%Tier %player_tier_display% attribué à %player%."
+      wanted:
+        desc: "Éditer le temps de recherche du joueur."
+        set:
+          desc: "Attribuer le temps actuel de recherche au joueur."
+          result: "%prefix%Temps de recherche de %player% mis à %player_wanted_time_delay_display%. Statut: %player_wanted_status%."
+        add:
+          desc: "Ajouter du temps au temps de recherche actuel du joueur."
+          result: "%prefix%Ajout de %value% au temps de recherche de %player%. Final %player_wanted_time_delay_display%. Statut: %player_wanted_status%."
+        remove:
+          desc: "Retirer du temps au temps de recherche actuel du joueur."
+          result: "%prefix%Retrait de %value% au temps de recherche de %player%. Final %player_wanted_time_delay_display%. Statut: %player_wanted_status%."
+        reset:
+          desc: "Réinitalier le temps recherche du joueur."
+          result: "%prefix%Temps de recherche réinitilisé pour %player%."
+  shop:
+    header: "&b====== &6 BOUTIQUE KARMA &b======"
+    line: " &6> &9%shop_display% &8: &f%shop_description% &8| &e%shop_price%"
+    not-exist: "%prefix%&cCet article n'existe pas."
+    buy:
+      desc: "Acheter un article du magasin."
+      success: "%prefix%&aTransaction effectuée."
+      failure: "%prefix%&cTransaction échouée."
+  reload:
+    desc: "Recharge la configuration."
+    result: "%prefix%Configuration rechargée."
+  save:
+    desc: "Sauvegarde instantanément les données des joueurs."
+    result: "%prefix%Sauvegarde manuelle de %amount% joueurs."
+  calculate:
+    desc: "Calculer une expression mathématique."
+    result: "%prefix%Expression: %expression% = %result%"
 
-pvp:
-    hit-karma-increase: "&aCe salaud ne s'en sortira pas !"
-    hit-karma-unchanged: "&fVous combattez sans conséquence."
-    hit-karma-decrease: "&c%attacker%, Vous attaquez une personne hônnete !"
-    kill-karma-increase: "&b%victim% a payé !"
-    kill-karma-unchanged: "{#666666}ce meurtre n'a aucune conséquence."
-    kill-karma-decrease: "{#DD0000}&lVous avez assassiné un innocent !"
+storage:
+  type: "%prefix%Utilisation du stockage %type%."
+
+player:
+  online: "&aEN LIGNE"
+  offline: "&8HORS-LIGNE"
+
+karma:
+  on-change: "%prefix%Votre karma est désormais de : %player_karma%."
+
+tier:
+  on-change: "%prefix%Vous êtes désormais au tier %player_tier_display%."
+  none:
+    display: "&f[&7Aucun&f]&r"
+    short-display: "&7"
+
+fight:
+  pvp:
+    on-defend: "%prefix%Vous vous défendez face à %victim%."
+    on-assault: "%prefix%Vous agressez %victim%."
+    hit:
+      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en frappant %victim%."
+      on-karma-unchanged: "%prefix%Frappe de %victim% sans changement de karma."
+      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en frappant %victim%."
+    kill:
+      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en tuant %victim%."
+      on-karma-unchanged: "%prefix%Mort de %victim% sans changement de karma."
+      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en tuant %victim%."
+  pve:
+    hit:
+      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en frappant %victim%."
+      on-karma-unchanged: "%prefix%Frappe de %victim% sans changement de karma."
+      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en frappant %victim%."
+    kill:
+      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en abattant %victim%."
+      on-karma-unchanged: "%prefix%Mort de %victim% sans changement de karma."
+      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en abattant %victim%."
+
 wanted:
-    enter: "%msg-title%{#FF0000}WANTED
-    %msg-subtitle%Vous êtes activement recherché."
-    refresh: "%msg-actionbar%&cVotre statut de recherche est raffraichit."
-    connect-refresh: "%msg-title%{#DD0000}&lWANTED.
-    %msg-subtitle% &r&cRestez prudent."
-    exit: "&aVous n'êtes plus activement recherché."
-    status:
-        innocent: "&fInnocent"
-        innocent-short: "&f"
-        wanted: "&4&lRECHERCHÉ"
-        wanted-short: "&4"
-    check:
-        own: "[Karma] Vous êtes actuellement %karma_player_wanted_status% &rau %karma_player_wanted_time_display%"
-        other: "[Karma] Le statut de %player% est de %karma_player_wanted_status% &rau %karma_player_wanted_time_display%"
-    edit:
-        set-wanted: "[Karma] Temps de recherche de &9%player% &rmis à %karma_player_wanted_time_display%. Il est désormais %karma_player_wanted_status%"
-        add-wanted: "[Karma] &aAjout de temps de recherche à &9%player%&r pour %karma_player_wanted_time_display% et est désormais %karma_player_wanted_status%"
-        remove-wanted: "[Karma] &cDiminution du temps de recherche pour &9%player% &rà %karma_player_wanted_time_display% et est désormais %karma_player_wanted_status%"
-        reset-wanted: "[Karma] &9%player% est désormais totalement %karma_player_wanted_status% (et l'a toujours été !)."
+  status:
+    innocent:
+      display: "&fInnocent"
+      short: "&f"
+    wanted:
+      display: "&4&lRECHERCHÉ"
+      short: "&4⚠"
+  event:
+    on-enter: "%msg-title%{#FF0000}WANTED
+    %msg-subtitle%Vous êtes actuellement recherché."
+    on-refresh: "%msg-actionbar%%prefix%&cVotre temps de recherche est raffraichit."
+    on-exit: "%prefix%&aVous n'êtes plus recherché."

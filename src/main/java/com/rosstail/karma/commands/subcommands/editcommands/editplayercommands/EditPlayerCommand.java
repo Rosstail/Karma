@@ -42,7 +42,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
 
         if (args.length < 4) {
             if (args.length < 3) {
-                sender.sendMessage("EditPlayerCommand: Please insert a player name.");
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_INSERT_PLAYER_NAME)));
                 return;
             }
 
@@ -83,7 +83,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                 } else if (CommandManager.doesCommandMatchParameter(arguments, "c", "create")){
                     model = new PlayerModel(playerUUID, playerName);
                     if (!StorageManager.getManager().insertPlayerModel(model)) {
-                        System.out.println("problem with the storage.");
+                        AdaptMessage.print("Problem with the storage.", AdaptMessage.prints.WARNING);
                         return;
                     }
                     subCommand.performOffline(sender, model, args, arguments);
@@ -91,9 +91,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                     sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA)));
                 }
             } else {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(
-                        LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DISCONNECTED).replaceAll("%player%", playerName)
-                ));
+                CommandManager.disconnectedPlayer(sender, playerName);
             }
         }
     }

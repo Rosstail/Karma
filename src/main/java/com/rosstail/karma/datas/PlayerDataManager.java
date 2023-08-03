@@ -189,12 +189,12 @@ public class PlayerDataManager {
                             uuid.substring(16, 20) + "-" +
                             uuid.substring(20);
                 } else {
-                    System.out.println("Impossible de récupérer l'UUID du joueur " + username);
+                    AdaptMessage.print("Impossible to get UUID of " + username, AdaptMessage.prints.WARNING);
                 }
             } else if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) {
-                System.out.println("Le joueur " + username + " n'a pas été trouvé.");
+                AdaptMessage.print(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("%player", username), AdaptMessage.prints.WARNING);
             } else {
-                System.out.println("Erreur lors de la requête HTTP : " + responseCode);
+                AdaptMessage.print("HTTP request error in PlayerDataManager#getPlayerUUIDFromName\n" + responseCode, AdaptMessage.prints.WARNING);
             }
 
             connection.disconnect();

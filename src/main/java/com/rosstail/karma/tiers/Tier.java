@@ -1,9 +1,8 @@
 package com.rosstail.karma.tiers;
 
-import com.rosstail.karma.Karma;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +20,7 @@ public class Tier {
     private List<String> joinCommands;
     private List<String> joinOnDownCommands;
     private List<String> joinOnUpCommands;
-    private Map<Tier, Float> scores = new HashMap<>();
+    private final Map<String, Float> tierScoreMap = new HashMap<>();
 
 
     Tier(String name) {
@@ -49,13 +48,20 @@ public class Tier {
         this.joinCommands = section.getStringList("commands.join-commands");
         this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
         this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
+
+        if (section.getConfigurationSection("score") != null) {
+            for (String subTier : section.getConfigurationSection("score").getKeys(false)) {
+                tierScoreMap.put(subTier, (float) section.getDouble("score." + subTier, 0F));
+            }
+        }
+        tierScoreMap.put(TierManager.getNoTier().getName(), (float) ConfigData.getConfigData().tiers.fileConfig.getDouble("tiers.list." + this.getName() + ".score.none"));
     }
 
     /**
      * NULL TIER
      */
     Tier() {
-        this.name = null;
+        this.name = "none";
     }
 
     public void initNoTier(String display, String shortDisplay) {
@@ -111,19 +117,11 @@ public class Tier {
         return joinOnUpCommands;
     }
 
-    public Map<Tier, Float> getScores() {
-        return scores;
+    public Map<String, Float> getTierScoreMap() {
+        return tierScoreMap;
     }
 
-    public float getTierScore(Tier tier) {
-        return scores.get(tier);
-    }
-
-    public void initScores(TierManager tierManager) {
-        YamlConfiguration config = Karma.getInstance().getCustomConfig();
-        tierManager.getTiers().forEach((s, tier) -> {
-            scores.put(tier, (float) config.getDouble("tiers.list." + this.getName() + ".score." + s));
-        });
-        scores.put(TierManager.getNoTier(), (float) config.getDouble("tiers.list." + this.getName() + ".score.none"));
+    public float getTierScore(String tierName) {
+        return tierScoreMap.get(tierName);
     }
 }

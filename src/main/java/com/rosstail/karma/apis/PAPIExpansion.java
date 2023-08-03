@@ -8,6 +8,7 @@ import com.rosstail.karma.datas.TopFlopScoreManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
@@ -121,7 +122,6 @@ public class PAPIExpansion extends PlaceholderExpansion {
         return plugin.getDescription().getVersion();
     }
 
-
     /**
      * This is the method called when a placeholder with our identifier
      * is found and needs a value.
@@ -134,114 +134,6 @@ public class PAPIExpansion extends PlaceholderExpansion {
      */
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
-        if (player != null) {
-            PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-            // %karma_value% here
-            if (identifier.startsWith("player_karma")) {
-                float karma = model.getKarma();
-                if (identifier.contains("_abs")) {
-                    karma = Math.abs(karma);
-                }
-                if (identifier.contains("_int")) {
-                    return String.valueOf(((int) karma));
-                }
-                return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
-            }
-            if (identifier.startsWith("player_previous_karma")) {
-                float karma = model.getPreviousKarma();
-                if (identifier.contains("_abs")) {
-                    karma = Math.abs(karma);
-                }
-                if (identifier.contains("_int")) {
-                    return String.valueOf(((int) karma));
-                }
-                return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
-            }
-            if (identifier.startsWith("player_diff")) {
-                float karma = model.getKarma() - model.getPreviousKarma();
-                if (identifier.contains("_abs")) {
-                    karma = Math.abs(karma);
-                }
-                if (identifier.contains("_int")) {
-                    return String.valueOf(((int) karma));
-                }
-                return AdaptMessage.getAdaptMessage().decimalFormat(karma, '.');
-            }
-
-            if (identifier.startsWith("player_tier")) {
-                Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
-                if (identifier.equals("player_tier")) {
-                    return tier.getName();
-                }
-                if (identifier.equals("player_tier_display")) {
-                    return tier.getDisplay();
-                }
-                if (identifier.equals("player_tier_short_display")) {
-                    return tier.getShortDisplay();
-                }
-                if (identifier.equals("player_tier_minimum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMinKarma(), '.');
-                }
-                if (identifier.equals("player_tier_maximum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMaxKarma(), '.');
-                }
-            }
-
-            if (identifier.startsWith("player_previous_tier")) {
-                Tier tier = TierManager.getTierManager().getTierByName(model.getPreviousTierName());
-                if (identifier.equals("player_previous_tier")) {
-                    return tier.getName();
-                }
-                if (identifier.equals("player_previous_tier_display")) {
-                    return tier.getDisplay();
-                }
-                if (identifier.equals("player_previous_tier_short_display")) {
-                    return tier.getShortDisplay();
-                }
-                if (identifier.equals("player_previous_tier_minimum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMinKarma(), '.');
-                }
-                if (identifier.equals("player_previous_tier_maximum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMaxKarma(), '.');
-                }
-            }
-
-            if (identifier.equals("player_wanted_time")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(model.getWantedTimeStamp().getTime(), '.');
-            }
-            if (identifier.equals("player_wanted_time_display")) {
-                long time = model.getWantedTimeStamp().getTime();
-                if (time > 0f) {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().locale.getDateTimeFormat());
-                    return simpleDateFormat.format(time);
-                }
-                return "N/A";
-            }
-
-            if (identifier.equals("player_wanted_time_delay")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(model.getWantedTimeStamp().getTime() - System.currentTimeMillis(), '.');
-            }
-            if (identifier.equals("player_wanted_time_delay_display")) {
-                long time = PlayerDataManager.getWantedTimeLeft(model);
-                if (time > 0f) {
-                    return AdaptMessage.getAdaptMessage().countdownFormatter(time);
-                }
-                return "-";
-            }
-            if (identifier.equals("player_wanted_status")) {
-                if (model.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED));
-                }
-                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT));
-            }
-            if (identifier.equals("player_wanted_status_short")) {
-                if (model.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED_SHORT));
-                }
-                return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT_SHORT));
-            }
-        }
-
         if (identifier.startsWith("scoreboard_")) {
 
             TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
@@ -309,8 +201,12 @@ public class PAPIExpansion extends PlaceholderExpansion {
             }
         }
 
+        if (player != null) {
+            return AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, "%" + identifier + "%", PlayerType.PLAYER.getText());
+        }
+
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
         // was provided
-        return null;
+        return AdaptMessage.getAdaptMessage().adaptMessage("%" + identifier + "%");
     }
 }

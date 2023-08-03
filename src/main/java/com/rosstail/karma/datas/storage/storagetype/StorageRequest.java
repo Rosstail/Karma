@@ -25,14 +25,14 @@ public interface StorageRequest {
 
     /**
      * UPDATE
-     * update player model to storage
+     * Edit player model to storage
      * @param model The model to update
      */
     void updatePlayerModel(PlayerModel model);
 
     /**
      * DELETE
-     * destroyes player model from storage
+     * destroys player model from storage
      * @param uuid The target uuid
      */
     void deletePlayerModel(String uuid);

@@ -80,8 +80,6 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
-        } else {
-            sender.sendMessage("Wanted time is not limited.");
         }
 
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(newDuration));
@@ -107,8 +105,6 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
-        } else {
-            sender.sendMessage("Wanetd time is not limited.");
         }
 
         model.setWantedTimeStamp(new Timestamp(newDuration));

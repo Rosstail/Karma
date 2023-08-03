@@ -92,8 +92,6 @@ overtime:
         - "%msg% Added %karma_player_diff_karma% karma (offline only, daily)."
 
 tiers:
-  none-display: "&f[&8None&f]&r"
-  none-short-display: "&f"
   list:
     criminal:
       display: "&4Criminal"
@@ -245,6 +243,12 @@ pvp:
       no-condition-kill-command: #Triggers without condition
         commands:
           - "victim %msg% [Karma] You have been killed by someone."
+      someone-killed-by-someone-with-karma-between-100-and-150:
+        requirements:
+          attacker-minimum-karma: 100
+          attacker-maximum-karma: 150
+        commands:
+          - "bc %victim% has been killed by someone between 100 and 150 karma."
       non-citizen-killed-by-innocent-non-sheriff:
         requirements:
           attacker-tier:
@@ -310,8 +314,8 @@ pve:
       hit-karma-reward:    -11
       kill-karma-reward:  -356
     Wolf:
-      hit-message: "Hunt a wolf doesn't change your karma : &d%karma_attacker_karma%"
-      kill-message: "You successfully hunt the wolf : &5%karma_attacker_karma%"
+      hit-message: "Hunt a wolf doesn't change your karma : &d%attacker_karma%"
+      kill-message: "You successfully hunt the wolf : &5%attacker_karma%"
     Zombie:
       hit-karma-reward:      5
       hit-message: "Aim his head !"

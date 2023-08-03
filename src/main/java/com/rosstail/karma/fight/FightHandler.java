@@ -60,13 +60,14 @@ public class FightHandler {
         Tier victimTier = TierManager.getTierManager().getTierByName(victimModel.getTierName());
 
         expression = adaptMessage.adaptPvpMessage(attacker, victim, expression);
-        expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
-                String.valueOf(attackerTier.getTierScore(victimTier)));
+        expression = expression.replaceAll("%attacker_victim_tier_score%",
+                String.valueOf(attackerTier.getTierScore(victimTier.getName())));
 
         result = (float) ExpressionCalculator.eval(expression);
+
         if (configData.general.useWorldGuard) {
             float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
-            result = result * multi;
+            result *= multi;
         }
 
         float attackerNewKarma = attackerInitialKarma + result;
@@ -105,8 +106,9 @@ public class FightHandler {
         Tier victimTier = TierManager.getTierManager().getTierByName(victimModel.getTierName());
 
         expression = adaptMessage.adaptPvpMessage(attacker, victim, expression);
-        expression = expression.replaceAll("%karma_attacker_victim_tier_score%",
-                String.valueOf(attackerTier.getTierScore(victimTier)));
+
+        expression = expression.replaceAll("%attacker_victim_tier_score%",
+                String.valueOf(attackerTier.getTierScore(victimTier.getName())));
 
         result = (float) ExpressionCalculator.eval(expression);
         if (configData.general.useWorldGuard) {
@@ -148,10 +150,6 @@ public class FightHandler {
     }
 
     public static void pveHit(Player attacker, Mob victim) {
-        if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
-            attacker.sendMessage("not affected because of time period.");
-            return;
-        }
 
         String entityName = victim.getName();
         YamlConfiguration config = plugin.getCustomConfig();
@@ -160,7 +158,7 @@ public class FightHandler {
 
         rewardChecker(attacker, reward);
 
-        adaptMessage.pveHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker);
+        adaptMessage.pveHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker, victim);
     }
 
     private static void rewardChecker(Player attacker, float reward) {
@@ -168,7 +166,7 @@ public class FightHandler {
         float attackerInitialKarma = model.getKarma();
 
         if (configData.general.useWorldGuard) {
-            reward = reward * (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
+            reward *= (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
         }
 
         boolean doesKarmaChange = true;
@@ -201,10 +199,6 @@ public class FightHandler {
     }
 
     public static void pveKill(Player attacker, Mob victim) {
-        if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
-            attacker.sendMessage("not affected because of time period.");
-            return;
-        }
 
         String entityName = victim.getName();
         YamlConfiguration config = plugin.getCustomConfig();
@@ -213,7 +207,7 @@ public class FightHandler {
 
         rewardChecker(attacker, reward);
 
-        adaptMessage.pveKillMessage(config.getString("entities.list." + entityName + ".kill-message"), attacker);
+        adaptMessage.pveKillMessage(config.getString("entities.list." + entityName + ".kill-message"), attacker, victim);
     }
 
     public static boolean isFakePlayer(Player player) {

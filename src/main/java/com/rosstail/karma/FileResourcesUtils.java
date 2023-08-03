@@ -33,7 +33,6 @@ public class FileResourcesUtils {
             // get paths from src/main/resources/json
             List<Path> result = app.getPathsFromResourceJAR(folder);
             for (Path path : result) {
-                //System.out.println("Path : " + path);
 
                 String filePathInJAR = path.toString();
                 // Windows will returns /json/file1.json, cut the first /
@@ -84,7 +83,6 @@ public class FileResourcesUtils {
                 .getLocation()
                 .toURI()
                 .getPath().replaceAll(" ", "%20");
-        //System.out.println("JAR Path :" + jarPath);
 
         // file walks JAR
         URI uri = new URI("jar", "file:" + jarPath, null);

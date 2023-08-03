@@ -106,9 +106,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     /**
      * @param sender
      */
-    /*public static void disconnectedPlayer(CommandSender sender) {
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.DISCONNECTED), null));
-    }*/
+    public static void disconnectedPlayer(CommandSender sender, String playerName) {
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DISCONNECTED).replaceAll("%player%", playerName)));
+    }
     public static void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_VALUE)));
@@ -137,7 +137,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
     private static void placeCommands(Player player, String command) {
         command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, command, PlayerType.PLAYER.getText());
-        command = AdaptMessage.getAdaptMessage().adaptMessage(command);
+
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 
         String regex = PlayerType.PLAYER.getText();

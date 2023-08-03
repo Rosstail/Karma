@@ -2,6 +2,8 @@ package com.rosstail.karma.tiers;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -29,6 +31,10 @@ public class TierManager {
         FileConfiguration tiersFileConfiguration = ConfigData.getConfigData().tiers.fileConfig;
         Set<String> configTiers = tiersFileConfiguration.getConfigurationSection("tiers.list").getKeys(false);
 
+        if (noTier == null) {
+            noTier = new Tier();
+        }
+
         for (Map.Entry<String, Tier> entry : tiers.entrySet()) { //Check and remove tiers that do not exist anymore
             String s = entry.getKey();
             ConfigurationSection tierConfigSection = tiersFileConfiguration.getConfigurationSection("tiers.list." + s);
@@ -49,14 +55,7 @@ public class TierManager {
                 }
             }
         });
-        if (noTier == null) {
-            noTier = new Tier();
-        }
-        noTier.initNoTier(tiersFileConfiguration.getString("tiers.none-display"), tiersFileConfiguration.getString("tiers.none-short-display"));
-
-        for (Tier tier : tiers.values()) {
-            tier.initScores(this);
-        }
+        noTier.initNoTier(LangManager.getMessage(LangMessage.TIER_NONE_DISPLAY), LangManager.getMessage(LangMessage.TIER_NONE_SHORT_DISPLAY));
     }
 
     public static TierManager getTierManager() {

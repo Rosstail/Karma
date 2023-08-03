@@ -206,7 +206,7 @@ public class KarmaEventHandler implements Listener {
         } else {
             message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_LOSS);
         }
-        AdaptMessage.getAdaptMessage().pvpKillMessage(message, attacker, victim);
+        attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpKillMessage(message, attacker, victim));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -224,7 +224,7 @@ public class KarmaEventHandler implements Listener {
         } else {
             message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_LOSS);
         }
-        AdaptMessage.getAdaptMessage().pveHitMessage(message, attacker);
+        AdaptMessage.getAdaptMessage().pveHitMessage(message, attacker, event.getMob());
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -242,6 +242,6 @@ public class KarmaEventHandler implements Listener {
         } else {
             message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_LOSS);
         }
-        AdaptMessage.getAdaptMessage().pveKillMessage(message, attacker);
+        AdaptMessage.getAdaptMessage().pveKillMessage(message, attacker, event.getMob());
     }
 }

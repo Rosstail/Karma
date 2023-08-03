@@ -11,6 +11,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 
 import java.sql.Timestamp;
@@ -74,7 +75,7 @@ public class AdaptMessage {
     private void sendActionBar(Player player, String message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
                 adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()))
-                ));
+        ));
     }
 
     private void sendTitle(Player player, String title, String subTitle) {
@@ -94,79 +95,101 @@ public class AdaptMessage {
     }
 
     public String adaptPlayerMessage(Player player, String message, String playerType) {
-        String pluginName = plugin.getName().toLowerCase();
         message = message.replaceAll("%" + playerType + "%", player.getName());
-        String playerPluginPlaceholder = "%" + pluginName + "_" + playerType + "_";
         if (!player.hasMetadata("NPC")) {
             PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
             message = adaptMessageToModel(playerModel, message, playerType);
         } else {
-            message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(player.getMetadata("Karma").get(0).asFloat(), '.'));
+            message = message.replaceAll("%karma%", decimalFormat(player.getMetadata("Karma").get(0).asFloat(), '.'));
         }
         if (Objects.equals(playerType, PlayerType.PLAYER.getText())) {
             message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
         }
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return adaptMessage(message);
     }
 
     public String adaptMessageToModel(PlayerModel playerModel, String message, String playerType) {
+        Player player = Bukkit.getPlayer(playerModel.getUsername());
+        boolean isPlayerOnline = player != null && player.isOnline();
+
         float playerKarma = playerModel.getKarma();
         float playerPreviousKarma = playerModel.getPreviousKarma();
         float difPlayerDiffKarma = playerKarma - playerPreviousKarma;
 
-        Tier playerTier = TierManager.getTierManager().getTierByName(playerModel.getTierName());
+        Tier playerTier;
         Tier playerPreviousTier = TierManager.getTierManager().getTierByName(playerModel.getPreviousTierName());
+
+        boolean isWanted;
+        long time = PlayerDataManager.getWantedTimeLeft(playerModel);
+
+        if (isPlayerOnline) {
+            playerTier = TierManager.getTierManager().getTierByName(playerModel.getTierName());
+            isWanted = playerModel.isWanted();
+        } else {
+            playerTier = TierManager.getTierManager().getTierByKarmaAmount(playerKarma);
+            isWanted = time > 0L;
+        }
+
         long wantedTime = PlayerDataManager.getWantedTimeLeft(playerModel);
         Timestamp wantedTimeStamp = playerModel.getWantedTimeStamp();
 
         String status;
         String shortStatus;
 
-        if (playerModel.isWanted()) {
+        if (isWanted) {
             status = LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED);
             shortStatus = LangManager.getMessage(LangMessage.WANTED_STATUS_WANTED_SHORT);
         } else {
             status = LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT);
             shortStatus = LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT_SHORT);
         }
+        String starter = "%" + playerType;
 
-        String pluginName = plugin.getName().toLowerCase();
-        String playerPluginPlaceholder = "%" + pluginName + "_" + playerType + "_";
+        message = message.replaceAll(starter + "%", playerModel.getUsername());
+        message = message.replaceAll(starter + "_uuid%", playerModel.getUuid());
 
-        message = message.replaceAll("%player%", playerModel.getUsername());
-        message = message.replaceAll("%uuid%", playerModel.getUuid());
+        message = message.replaceAll(starter + "_karma%", decimalFormat(playerKarma, '.'));
+        message = message.replaceAll(starter + "_karma_abs%", decimalFormat(Math.abs(playerKarma), '.'));
+        message = message.replaceAll(starter + "_karma_int%", String.valueOf((int) playerKarma));
+        message = message.replaceAll(starter + "_karma_int_abs%", String.valueOf(Math.abs((int) playerKarma)));
 
-        message = message.replaceAll(playerPluginPlaceholder + "karma%", decimalFormat(playerKarma, '.'));
-        message = message.replaceAll(playerPluginPlaceholder + "karma_abs%", decimalFormat(Math.abs(playerKarma), '.'));
-        message = message.replaceAll(playerPluginPlaceholder + "karma_int%", String.valueOf((int) playerKarma));
-        message = message.replaceAll(playerPluginPlaceholder + "karma_int_abs%", String.valueOf(Math.abs((int) playerKarma)));
-        message = message.replaceAll(playerPluginPlaceholder + "previous_karma%", decimalFormat(playerPreviousKarma, '.'));
-        message = message.replaceAll(playerPluginPlaceholder + "previous_karma_abs%", decimalFormat(Math.abs(playerPreviousKarma), '.'));
-        message = message.replaceAll(playerPluginPlaceholder + "previous_karma_int%", String.valueOf((int) playerPreviousKarma));
-        message = message.replaceAll(playerPluginPlaceholder + "previous_karma_int_abs%", String.valueOf(Math.abs((int) playerPreviousKarma)));
-        message = message.replaceAll(playerPluginPlaceholder + "diff_karma%", decimalFormat(difPlayerDiffKarma, '.'));
-        message = message.replaceAll(playerPluginPlaceholder + "diff_karma_abs%", decimalFormat(Math.abs(difPlayerDiffKarma), '.'));
-        message = message.replaceAll(playerPluginPlaceholder + "diff_karma_int%", String.valueOf((int) difPlayerDiffKarma));
-        message = message.replaceAll(playerPluginPlaceholder + "diff_karma_int_abs%", String.valueOf(Math.abs((int) difPlayerDiffKarma)));
+        message = message.replaceAll(starter + "_previous_karma%", decimalFormat(playerPreviousKarma, '.'));
+        message = message.replaceAll(starter + "_previous_karma_abs%", decimalFormat(Math.abs(playerPreviousKarma), '.'));
+        message = message.replaceAll(starter + "_previous_karma_int%", String.valueOf((int) playerPreviousKarma));
+        message = message.replaceAll(starter + "_previous_karma_int_abs%", String.valueOf(Math.abs((int) playerPreviousKarma)));
 
-        message = message.replaceAll(playerPluginPlaceholder + "tier%", playerTier.getName());
-        message = message.replaceAll(playerPluginPlaceholder + "previous_tier%", playerPreviousTier.getName());
-        message = message.replaceAll(playerPluginPlaceholder + "tier_display%", playerTier.getDisplay());
-        message = message.replaceAll(playerPluginPlaceholder + "tier_short_display%", playerTier.getShortDisplay());
-        message = message.replaceAll(playerPluginPlaceholder + "previous_tier_display%", playerPreviousTier.getDisplay());
-        message = message.replaceAll(playerPluginPlaceholder + "previous_tier_short_display%", playerPreviousTier.getShortDisplay());
-        message = message.replaceAll(playerPluginPlaceholder + "wanted_status%", status);
-        message = message.replaceAll(playerPluginPlaceholder + "wanted_status_short%", shortStatus);
+        message = message.replaceAll(starter + "_diff_karma%", decimalFormat(difPlayerDiffKarma, '.'));
+        message = message.replaceAll(starter + "_diff_karma_abs%", decimalFormat(Math.abs(difPlayerDiffKarma), '.'));
+        message = message.replaceAll(starter + "_diff_karma_int%", String.valueOf((int) difPlayerDiffKarma));
+        message = message.replaceAll(starter + "_diff_karma_int_abs%", String.valueOf(Math.abs((int) difPlayerDiffKarma)));
+
+        message = message.replaceAll(starter + "_tier%", playerTier.getName());
+        message = message.replaceAll(starter + "_tier_display%", playerTier.getDisplay());
+        message = message.replaceAll(starter + "_tier_short%", playerTier.getShortDisplay());
+        message = message.replaceAll(starter + "_tier_minimum_karma%", decimalFormat(playerTier.getMinKarma(), '.'));
+        message = message.replaceAll(starter + "_tier_maximum_karma%", decimalFormat(playerTier.getMaxKarma(), '.'));
+
+        message = message.replaceAll(starter + "_previous_tier%", playerPreviousTier.getName());
+        message = message.replaceAll(starter + "_previous_tier_display%", playerPreviousTier.getDisplay());
+        message = message.replaceAll(starter + "_previous_tier_short%", playerPreviousTier.getShortDisplay());
+        message = message.replaceAll(starter + "_previous_tier_minimum_karma%", decimalFormat(playerPreviousTier.getMinKarma(), '.'));
+        message = message.replaceAll(starter + "_previous_tier_maximum_karma%", decimalFormat(playerPreviousTier.getMaxKarma(), '.'));
+
+        message = message.replaceAll(starter + "_wanted_status%", status);
+        message = message.replaceAll(starter + "_wanted_status_short%", shortStatus);
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().locale.getDateTimeFormat());
-        message = message.replaceAll(playerPluginPlaceholder + "wanted_time%", String.valueOf(wantedTimeStamp.getTime()));
-        message = message.replaceAll(playerPluginPlaceholder + "wanted_time_display%", simpleDateFormat.format(wantedTimeStamp.getTime()));
-        message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay%", String.valueOf(wantedTime));
-        message = message.replaceAll(playerPluginPlaceholder + "wanted_time_delay_display%", countdownFormatter(wantedTime));
+        message = message.replaceAll(starter + "_wanted_time%", decimalFormat(wantedTimeStamp.getTime(), '.'));
+        message = message.replaceAll(starter + "_wanted_time_display%", simpleDateFormat.format(wantedTimeStamp.getTime()));
+        message = message.replaceAll(starter + "_wanted_time_delay%", decimalFormat(wantedTime, '.'));
+        message = message.replaceAll(starter + "_wanted_time_delay_display%",
+                isWanted ? AdaptMessage.getAdaptMessage().countdownFormatter(time)
+                        : "-");
 
-        Player player = Bukkit.getPlayer(playerModel.getUsername());
+        message = message.replaceAll(starter + "_status%",
+                LangManager.getMessage(isPlayerOnline ? LangMessage.PLAYER_ONLINE : LangMessage.PLAYER_OFFLINE));
 
-        message = message.replaceAll("%player_status%",
-                LangManager.getMessage((player != null && player.isOnline()) ? LangMessage.PLAYER_ONLINE : LangMessage.PLAYER_OFFLINE));
+        message = message.replaceAll(starter + "_last_update%", simpleDateFormat.format(playerModel.getLastUpdate()));
 
         return adaptMessage(message);
     }
@@ -181,11 +204,11 @@ public class AdaptMessage {
 
         message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(null, message));
         if (Integer.parseInt(Bukkit.getVersion().split("\\.")[1].replaceAll("\\)", "")) >= 16) {
-            Matcher matcher = hexPattern.matcher(message);
-            while (matcher.find()) {
+            Matcher hexMatcher = hexPattern.matcher(message);
+            while (hexMatcher.find()) {
                 try {
-                    String matched = matcher.group(0);
-                    String color = matcher.group(1);
+                    String matched = hexMatcher.group(0);
+                    String color = hexMatcher.group(1);
                     message = message.replace(matched, String.valueOf(ChatColor.of(color)));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -239,7 +262,7 @@ public class AdaptMessage {
         return message;
     }
 
-    public void pveHitMessage(String message, Player player) {
+    public void pveHitMessage(String message, Player player, Mob victim) {
         ConfigData configData = ConfigData.getConfigData();
         if (message == null) {
             return;
@@ -251,13 +274,13 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptMessage(adaptPlayerMessage(player, message, PlayerType.ATTACKER.getText()));
+        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("%victim%", victim.getName()), PlayerType.ATTACKER.getText()));
 
         coolDown.put(player, System.currentTimeMillis());
         sendToPlayer(player, message);
     }
 
-    public void pveKillMessage(String message, Player player) {
+    public void pveKillMessage(String message, Player player, Mob victim) {
         ConfigData configData = ConfigData.getConfigData();
         if (message == null) {
             return;
@@ -269,7 +292,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptMessage(adaptPlayerMessage(player, message, PlayerType.ATTACKER.getText()));
+        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("%victim%", victim.getName()), PlayerType.ATTACKER.getText()));
 
         coolDown.put(player, System.currentTimeMillis());
         sendToPlayer(player, message);
@@ -281,14 +304,15 @@ public class AdaptMessage {
     }
 
     /**
-     * Format the given value to a formatted String depending of the config.
+     * Format the given value to a formatted String depending on the config.
+     *
      * @param diff
      * @return
      */
     public String countdownFormatter(long diff) {
         String format = ConfigData.getConfigData().locale.getCountdownFormat();
         long days = TimeUnit.MILLISECONDS.toDays(diff);
-        long hoursInDay =TimeUnit.MILLISECONDS.toHours(diff) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(diff));
+        long hoursInDay = TimeUnit.MILLISECONDS.toHours(diff) - TimeUnit.DAYS.toHours(TimeUnit.MILLISECONDS.toDays(diff));
         long hours = TimeUnit.MILLISECONDS.toHours(diff);
         long minutesInHour = TimeUnit.MILLISECONDS.toMinutes(diff)
                 - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(diff));
@@ -319,7 +343,8 @@ public class AdaptMessage {
     }
 
     /**
-     * Apply placeholder of every plugins into the message
+     * Apply placeholder of every plugin into the message
+     *
      * @param player
      * @param message
      * @return
@@ -333,8 +358,9 @@ public class AdaptMessage {
 
     /**
      * A simple print command
+     *
      * @param string The string to print
-     * @param print The format
+     * @param print  The format
      */
     public static void print(String string, prints print) {
         if (print.equals(prints.ERROR)) {
@@ -348,8 +374,9 @@ public class AdaptMessage {
 
     /**
      * Calculate from an expression and optional current wanted time of a player
+     *
      * @param currentWantedTime Long, Current wanted time of player.
-     * @param expression String, add time with parameters suchs as Xh for x hours (ms, s, m, h, d)
+     * @param expression        String, add time with parameters suchs as Xh for x hours (ms, s, m, h, d)
      * @return the calculated duration in ms (Long)
      */
     public static long calculateDuration(Long currentWantedTime, String expression) {
