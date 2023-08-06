@@ -1,127 +1,127 @@
 prefix: "&f[&aKarma&f]&r "
 commands:
-  by-player-only: "%prefix%Cette commande doit être envoyée par un joueur."
-  permission-denied: "%prefix%Vous n'avez pas la permission pour la commande %command_name% : %command_permission%."
-  insert-player-name: "%prefix%Insérez le nom du joueur cible."
-  wrong-command: "%prefix%Mauvaise commande."
-  wrong-value: "%prefix%Mauvaise valeur."
-  player-does-not-exist: "%prefix%%player% n'existe pas."
-  player-no-data: "%prefix%Aucune donnée pour %player%."
+  by-player-only: "[prefix]Cette commande doit être envoyée par un joueur."
+  permission-denied: "[prefix]Vous n'avez pas la permission pour la commande [command_name] : [command_permission]."
+  insert-player-name: "[prefix]Insérez le nom du joueur cible."
+  wrong-command: "[prefix]Mauvaise commande."
+  wrong-value: "[prefix]Mauvaise valeur."
+  player-does-not-exist: "[prefix][player] n'existe pas."
+  player-no-data: "[prefix]Aucune donnée pour [player]."
   help:
     header: "&b====== &6AIDE KARMA &b======"
-    line: "&a► &6/%syntax% &8: &r%desc%"
+    line: "&a► &6/[syntax] &8: &r[desc]"
   check:
     desc: "Observe les données d'un joueur"
     self:
       desc: "Observer vos propres données"
-      result: "%prefix%Vos données :
-    \n&rTier %player_tier_display% &r| Karma: %player_karma%
-    \n&rTier précédent %player_previous_tier_display% &r| Karma précédent: %player_previous_karma%
-    \n&rStatut %player_wanted_status% &rpour: %player_wanted_status_short%player_wanted_time_delay_display%
-    \n&rDernière maj : %player_last_update%."
+      result: "[prefix]Vos données :
+    \n&rTier [player_tier_display] &r| Karma: [player_karma]
+    \n&rTier précédent [player_previous_tier_display] &r| Karma précédent: [player_previous_karma]
+    \n&rStatut [player_wanted_status] &rpour: [player_wanted_status_short][player_wanted_time_delay_display]
+    \n&rDernière maj : [player_last_update]."
     other:
       desc: "Observer les données du joueur ciblé"
-      result: "%prefix%Données de %player% :
-    \n&rActuellement %player_status%
-    \n&rTier %player_tier_display% &r| Karma : %player_karma%
-    \n&rTier précédent : %player_previous_tier_display% &r| Karma précédent : %player_previous_karma%
-    \n&rStatut %player_wanted_status% &rpour: %player_wanted_status_short%player_wanted_time_delay_display%
-    \n&rDernière maj : %player_last_update%&r."
+      result: "[prefix]Données de [player] :
+    \n&rActuellement [player_status]
+    \n&rTier [player_tier_display] &r| Karma : [player_karma]
+    \n&rTier précédent : [player_previous_tier_display] &r| Karma précédent : [player_previous_karma]
+    \n&rStatut [player_wanted_status] &rpour: [player_wanted_status_short[player_wanted_time_delay_display]
+    \n&rDernière maj : [player_last_update]&r."
   edit:
     desc: "Commande d'édition."
     player:
       desc: "Éditer les données d'un joueur"
-      disconnected-player: "%prefix%%player% est déconnecté. Utilisez -d ou --disconnected pour forcer l'édition."
-      player-no-data: "%prefix%Aucune donnée pour %player%. Utilisez -g ou --generate pour les générer."
-      out-of-bounds: "%prefix%Valeur hors-limite. Utilisez -o ou --override pour l'outrepasser."
+      disconnected-player: "[prefix][player] est déconnecté. Utilisez -d ou --disconnected pour forcer l'édition."
+      player-no-data: "[prefix]Aucune donnée pour [player]. Utilisez -g ou --generate pour les générer."
+      out-of-bounds: "[prefix]Valeur hors-limite. Utilisez -o ou --override pour l'outrepasser."
       karma:
         desc: "Éditer le karma d'un joueur."
         set:
           desc: "Attribuer la valeur au karma du joueur."
-          result: "%prefix%Karma mis à %player_karma% pour %player%."
+          result: "[prefix]Karma mis à [player_karma] pour [player]."
         add:
           desc: "Ajouter la valeur au karma actuel du joueur."
-          result: "%prefix%Ajout de %player_diff_karma% karma pour %player%. Final %player_karma%."
+          result: "[prefix]Ajout de [player_diff_karma] karma pour [player]. Final [player_karma]."
         remove:
           desc: "Retirer la valeur au karmaactuel du joueur."
-          result: "%prefix%Retrait de %player_diff_karma% karma pour %player%. Final %player_karma%."
+          result: "[prefix]Retrait de [player_diff_karma] karma pour [player]. Final [player_karma]."
         reset:
           desc: "Réinitialiser le karma du joueur."
-          result: "%prefix%Réinitialisation du karma pour %player%. Final %player_karma%."
+          result: "[prefix]Réinitialisation du karma pour [player]. Final [player_karma]."
       tier:
         desc: "Éditer le tier du joueur."
         set:
           desc: "Attribuer le karma par défaut du tier au joueur"
-          result: "%prefix%Tier %player_tier_display% attribué à %player%."
+          result: "[prefix]Tier [player_tier_display] attribué à [player]."
       wanted:
         desc: "Éditer le temps de recherche du joueur."
         set:
           desc: "Attribuer le temps actuel de recherche au joueur."
-          result: "%prefix%Temps de recherche de %player% mis à %player_wanted_time_delay_display%. Statut: %player_wanted_status%."
+          result: "[prefix]Temps de recherche de [player] mis à [player_wanted_time_delay_display]. Statut: [player_wanted_status]."
         add:
           desc: "Ajouter du temps au temps de recherche actuel du joueur."
-          result: "%prefix%Ajout de %value% au temps de recherche de %player%. Final %player_wanted_time_delay_display%. Statut: %player_wanted_status%."
+          result: "[prefix]Ajout de [value] au temps de recherche de [player]. Final [player_wanted_time_delay_display]. Statut: [player_wanted_status]."
         remove:
           desc: "Retirer du temps au temps de recherche actuel du joueur."
-          result: "%prefix%Retrait de %value% au temps de recherche de %player%. Final %player_wanted_time_delay_display%. Statut: %player_wanted_status%."
+          result: "[prefix]Retrait de [value] au temps de recherche de [player]. Final [player_wanted_time_delay_display]. Statut: [player_wanted_status]."
         reset:
           desc: "Réinitalier le temps recherche du joueur."
-          result: "%prefix%Temps de recherche réinitilisé pour %player%."
+          result: "[prefix]Temps de recherche réinitilisé pour [player]."
   shop:
     header: "&b====== &6BOUTIQUE KARMA &b======"
-    line: " &6> &9%shop_display% &8: &f%shop_description% &8| &e%shop_price%"
-    not-exist: "%prefix%&cCet article n'existe pas."
+    line: " &6> &9[shop_display] &8: &f[shop_description] &8| &e[shop_price]"
+    not-exist: "[prefix]&cCet article n'existe pas."
     buy:
       desc: "Acheter un article du magasin."
-      success: "%prefix%&aTransaction effectuée."
-      failure: "%prefix%&cTransaction échouée."
+      success: "[prefix]&aTransaction effectuée."
+      failure: "[prefix]&cTransaction échouée."
   reload:
     desc: "Recharge la configuration."
-    result: "%prefix%Configuration rechargée."
+    result: "[prefix]Configuration rechargée."
   save:
     desc: "Sauvegarde instantanément les données des joueurs."
-    result: "%prefix%Sauvegarde manuelle de %amount% joueurs."
+    result: "[prefix]Sauvegarde manuelle de [amount] joueurs."
   calculate:
     desc: "Calculer une expression mathématique."
-    result: "%prefix%Expression: %expression% = %result%"
+    result: "[prefix]Expression: [expression] = [result]"
 
 storage:
-  type: "%prefix%Utilisation du stockage %type%."
+  type: "[prefix]Utilisation du stockage [type]."
 
 player:
   online: "&aEN LIGNE"
   offline: "&8HORS-LIGNE"
 
 karma:
-  on-change: "%prefix%Votre karma est désormais de : %player_karma%."
+  on-change: "[prefix]Votre karma est désormais de : [player_karma]."
 
 tier:
-  on-change: "%prefix%Vous êtes désormais au tier %player_tier_display%."
+  on-change: "[prefix]Vous êtes désormais au tier [player_tier_display]."
   none:
     display: "&f[&7Aucun&f]&r"
     short-display: "&7"
 
 fight:
   pvp:
-    on-defend: "%prefix%Vous vous défendez face à %victim%."
-    on-assault: "%prefix%Vous agressez %victim%."
+    on-defend: "[prefix]Vous vous défendez face à [victim]."
+    on-assault: "[prefix]Vous agressez [victim]."
     hit:
-      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en frappant %victim%."
-      on-karma-unchanged: "%prefix%Frappe de %victim% sans changement de karma."
-      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en frappant %victim%."
+      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en frappant [victim]."
+      on-karma-unchanged: "[prefix]Frappe de [victim] sans changement de karma."
+      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en frappant [victim]."
     kill:
-      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en tuant %victim%."
-      on-karma-unchanged: "%prefix%Mort de %victim% sans changement de karma."
-      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en tuant %victim%."
+      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en tuant [victim]."
+      on-karma-unchanged: "[prefix]Mort de [victim] sans changement de karma."
+      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en tuant [victim]."
   pve:
     hit:
-      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en frappant %victim%."
-      on-karma-unchanged: "%prefix%Frappe de %victim% sans changement de karma."
-      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en frappant %victim%."
+      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en frappant [victim]."
+      on-karma-unchanged: "[prefix]Frappe de [victim] sans changement de karma."
+      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en frappant [victim]."
     kill:
-      on-karma-gain: "%prefix%Gain de %player_karma_diff% karma en abattant %victim%."
-      on-karma-unchanged: "%prefix%Mort de %victim% sans changement de karma."
-      on-karma-loss: "%prefix%Perte de %player_karma_diff% karma en abattant %victim%."
+      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en abattant [victim]."
+      on-karma-unchanged: "[prefix]Mort de [victim] sans changement de karma."
+      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en abattant [victim]."
 
 wanted:
   status:
@@ -132,7 +132,7 @@ wanted:
       display: "&4&lRECHERCHÉ"
       short: "&4⚠"
   event:
-    on-enter: "%msg-title%{#FF0000}WANTED
-    %msg-subtitle%Vous êtes actuellement recherché."
-    on-refresh: "%msg-actionbar%%prefix%&cVotre temps de recherche est raffraichit."
-    on-exit: "%prefix%&aVous n'êtes plus recherché."
+    on-enter: "[msg-title]{#FF0000}WANTED
+    [msg-subtitle]Vous êtes actuellement recherché."
+    on-refresh: "[msg-actionbar][prefix]&cVotre temps de recherche est raffraichit."
+    on-exit: "[prefix]&aVous n'êtes plus recherché."

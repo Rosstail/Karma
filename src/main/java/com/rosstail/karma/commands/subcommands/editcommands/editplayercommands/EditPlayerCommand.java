@@ -25,8 +25,8 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
     public EditPlayerCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
         subCommands.add(new EditPlayerKarmaCommand());
         subCommands.add(new EditPlayerTierCommand());
         subCommands.add(new EditPlayerWantedCommand());
@@ -70,7 +70,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
             String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
 
             if (playerUUID == null) {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("%player%", playerName)));
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("\\[player]", playerName)));
                 return;
             }
 
@@ -88,7 +88,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                     }
                     subCommand.performOffline(sender, model, args, arguments);
                 } else {
-                    sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_NO_DATA).replaceAll("%player%", playerName)));
+                    sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_NO_DATA).replaceAll("\\[player]", playerName)));
                 }
             } else {
                 CommandManager.disconnectedPlayer(sender, playerName);

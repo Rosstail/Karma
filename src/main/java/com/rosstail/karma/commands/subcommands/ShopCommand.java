@@ -19,8 +19,8 @@ public class ShopCommand extends SubCommand {
 
     public ShopCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_DESC))
-                .replaceAll("%syntax%", getSyntax()));
+                .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_DESC))
+                .replaceAll("\\[syntax]", getSyntax()));
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
     }
@@ -60,10 +60,10 @@ public class ShopCommand extends SubCommand {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_HEADER)));
             for (Shop shop : ShopManager.getShopManager().getShops().values()) {
                 String line = LangManager.getMessage(LangMessage.COMMANDS_SHOP_LINE);
-                line = line.replaceAll("%karma_shop_name%", shop.getName());
-                line = line.replaceAll("%karma_shop_display%", shop.getDisplay());
-                line = line.replaceAll("%karma_shop_description%", shop.getDescription());
-                line = line.replaceAll("%karma_shop_price%", String.valueOf(shop.getPrice()));
+                line = line.replaceAll("\\[karma_shop_name]", shop.getName());
+                line = line.replaceAll("\\[karma_shop_display]", shop.getDisplay());
+                line = line.replaceAll("\\[karma_shop_description]", shop.getDescription());
+                line = line.replaceAll("\\[karma_shop_price]", String.valueOf(shop.getPrice()));
                 sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(line));
             }
         }

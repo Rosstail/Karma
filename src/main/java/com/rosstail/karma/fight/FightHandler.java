@@ -57,8 +57,8 @@ public class FightHandler {
             float attackerInitialKarma = attackerModel.getKarma();
             attackerKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, attackerKarmaChangeExpression);
             attackerKarmaChangeExpression = attackerKarmaChangeExpression
-                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
-                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
+                    .replaceAll("\\[attacker_victim_tier_score]", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("\\[victim_attacker_tier_score]", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
 
             result = (float) ExpressionCalculator.eval(attackerKarmaChangeExpression);
 
@@ -83,8 +83,8 @@ public class FightHandler {
             float victimInitialKarma = victimModel.getKarma();
             victimKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, victimKarmaChangeExpression);
             victimKarmaChangeExpression = victimKarmaChangeExpression
-                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
-                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
+                    .replaceAll("\\[attacker_victim_tier_score]", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("\\[victim_attacker_tier_score]", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
 
             result = (float) ExpressionCalculator.eval(victimKarmaChangeExpression);
 
@@ -124,8 +124,8 @@ public class FightHandler {
             attackerKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, attackerKarmaChangeExpression);
 
             attackerKarmaChangeExpression = attackerKarmaChangeExpression
-                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
-                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
+                    .replaceAll("\\[attacker_victim_tier_score]", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("\\[victim_attacker_tier_score]", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
 
             result = (float) ExpressionCalculator.eval(attackerKarmaChangeExpression);
             if (configData.general.useWorldGuard) {
@@ -170,8 +170,8 @@ public class FightHandler {
             victimKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, victimKarmaChangeExpression);
 
             victimKarmaChangeExpression = victimKarmaChangeExpression
-                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
-                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
+                    .replaceAll("\\[attacker_victim_tier_score]", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("\\[victim_attacker_tier_score]", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
 
             result = (float) ExpressionCalculator.eval(victimKarmaChangeExpression);
             if (configData.general.useWorldGuard) {

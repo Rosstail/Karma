@@ -59,8 +59,8 @@ public class Lang {
     }
 
     public static void initLang(String langId) {
-        if (lang == null) {
+        //if (lang == null) {
             lang = new Lang(langId);
-        }
+        //}
     }
 }

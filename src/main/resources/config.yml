@@ -37,8 +37,8 @@ tiers:
       # no score.
       commands:
         on-join:
-          - "%msg-title% %player_tier_display_short%You are now doomed."
-          - "karma edit player %player% wanted add 99h -o" #-o to override the limit
+          - "[msg-title] [player_tier_display_short]You are now doomed."
+          - "karma edit player [player] wanted add 99h -o" #-o to override the limit
     criminal:
       display: "&4Criminal"
       short-display: "&4"
@@ -53,11 +53,11 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "broadcast &f%player% is now a notorious %player_tier_display% &r."
+          - "broadcast &f[player] is now a notorious [player_tier_display] &r."
         on-join-down:
-          - "karma edit player %player% wanted add 2h -o" #-o to override the limit
+          - "karma edit player [player] wanted add 2h -o" #-o to override the limit
         on-join-up:
-          - "%msg% The god admin gave you one more chance. Do not waste it this time."
+          - "[msg] The god admin gave you one more chance. Do not waste it this time."
     thug:
       display: "&5Thug"
       short-display: "&5"
@@ -71,12 +71,12 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "%msg% &fYou are now a filthy %karma_player_tier% &r."
+          - "[msg] &fYou are now a filthy [karma_player_tier] &r."
         on-join-down:
-          - "karma edit player %player% wanted add 30m -o" #-o to override the limit
-          - "%msg% &bThe police is now hunting you."
+          - "karma edit player [player] wanted add 30m -o" #-o to override the limit
+          - "[msg] &bThe police is now hunting you."
         on-join-up:
-          - "%msg% &aKeep a low profile."
+          - "[msg] &aKeep a low profile."
     citizen:
       display: "&fCitizen"
       short-display: "&f"
@@ -90,8 +90,9 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "%msg% &fYou are a %player_tier_display% &r."
-          - "%msg-actionbar% &fYour previous Tier was %player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
+          - "[msg] &fYou are a [player_tier_display] &r."
+          - "bc [evalformat_[player_karma]+10] karma +10 formatted"
+          - "[msg-actionbar] &fYour previous Tier was [player_previous_tier_display] and the previous karma was [karma_player_previous_karma]"
     vigilante:
       display: "&aVigilante"
       short-display: "&a"
@@ -106,11 +107,12 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "%msg% &fYour are a %karma_player_tier_display% &r."
+          - "[msg] &fYour are a [karma_player_tier_display] &r."
+          - "bc [calculate_[player_karma]*50] karma * 50 Double"
         on-join-up:
-          - "%msg% &bYou can help the police now."
+          - "[msg] &bYou can help the police now."
         on-join-down:
-          - "%msg% &bYou have been demoted from the police forces."
+          - "[msg] &bYou have been demoted from the police forces."
     sheriff:
       display: "&6Sheriff"
       short-display: "&6"
@@ -125,9 +127,10 @@ tiers:
         sheriff: -200
       commands:
         on-join:
-          - "%msg% &fYour wanted level is now %karma_player_tier_display% &r."
+          - "[msg] &fYour wanted level is now [karma_player_tier_display] &r."
+          - "bc [evalfloat_[player_karma]/2] karma /2 float"
         on-join-up:
-          - "%msg% &bYou are got promoted from %karma_player_previous_tier_display%."
+          - "[msg] &bYou are got promoted from [karma_player_previous_tier_display] &r."
     paragon:
       display: "&l&bParagon"
       short-display: "&l&b⚖"
@@ -135,25 +138,25 @@ tiers:
       maximum: 50000
       commands:
         on-join:
-          - "%title% %karma_player_tier_display%"
-          - "%msg% &fYou are so good that you are not limited by the law"
+          - "[title] [karma_player_tier_display]"
+          - "[msg] &fYou are so good that you are not limited by the law"
 
 wanted:
   #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is wanted too)
   enable: true
   countdown-on-disconnect: true
-  #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
-  maximum-duration: "%now% 8h" #compatible with: d h m s
+  #[player_wanted_time] use the highest amount between the player's wanted time and the actual timestamp.
+  maximum-duration: "[now] 8h" #compatible with: d h m s
   commands:
     enter:
-      - "bc %player% is now %player_wanted_status_short%WANTED"
-      - "%msg% You are now %player_wanted_status% for %player_wanted_time_delay_display%"
+      - "bc [player] is now [player_wanted_status_short]WANTED"
+      - "[msg] You are now [player_wanted_status] for [player_wanted_time_delay_display]"
     refresh:
-      - "bc %player% is STILL %player_wanted_status_short%WANTED"
-      - "%msg% You still %player_wanted_status% for %player_wanted_time_delay_display%"
+      - "bc [player] is STILL [player_wanted_status_short]WANTED"
+      - "[msg] You still [player_wanted_status] for [player_wanted_time_delay_display]"
     exit:
-      - "bc %player% is now INNOCENT"
-      - "%msg% You are now %player_wanted_status%"
+      - "bc [player] is now INNOCENT"
+      - "[msg] You are now [player_wanted_status]"
 
 worlds:
   enable: false #if enabled, only the worls listed below will be used
@@ -163,10 +166,10 @@ worlds:
 
 pvp:
   # You can make your own expression, any error will lead to a result of 0.
-  hit-attacker-change-expression: "(%victim_karma_abs% + 200) * %attacker_victim_tier_score% / 50"
-  kill-attacker-change-expression: "(%victim_karma_abs% + 200) * %attacker_victim_tier_score% / 10"
-  hit-victim-change-expression: "(%attacker_karma_abs% + 100) * %victim_attacker_tier_score% / 100"
-  kill-victim-change-expression: "(%attacker_karma_abs% + 100) * %victim_attacker_tier_score% / 20"
+  hit-attacker-change-expression: "([victim_karma_abs] + 200) * [attacker_victim_tier_score] / 50"
+  kill-attacker-change-expression: "([victim_karma_abs] + 200) * [attacker_victim_tier_score] / 10"
+  hit-victim-change-expression: "([attacker_karma_abs] + 100) * [victim_attacker_tier_score] / 100" #does not trigger wanted
+  kill-victim-change-expression: "([attacker_karma_abs] + 100) * [victim_attacker_tier_score] / 20" #does not trigger wanted
   team-system-cancel:
     scoreboard-team: #Default scoreboard team in minecraft
       enable: true
@@ -176,8 +179,8 @@ pvp:
     hit: 5
     kill: 10
   wanted:
-    hit-duration: "%player_wanted_time% 5m 15s" #compatible with: d h m s
-    kill-duration: "%player_wanted_time% 1h 30m" #compatible with: d h m s
+    hit-duration: "[player_wanted_time] 5m 15s" #compatible with: d h m s
+    kill-duration: "[player_wanted_time] 1h 30m" #compatible with: d h m s
     conditions:
       on-karma-gain: false
       on-karma-unchanged: false
@@ -213,8 +216,8 @@ pvp:
             - "criminal"
             - "thug"
         commands:
-          - "cmi money give %attacker% 1%[100-500][%victim%]" #Gives up to 1% of the victim money, minimum 100, maximum 500.
-          - "cmi money take %victim% 2%[200-1000]" #Removes up to 2% of the victim money, minimum 200, maximum 1000, always superior to the give command.
+          - "cmi money give [attacker] 1%[100-500][[victim]]" #Gives up to 1] of the victim money, minimum 100, maximum 500.
+          - "cmi money take [victim] 2%[200-1000]" #Removes up to 2] of the victim money, minimum 200, maximum 1000, always superior to the give command.
       police-arrest-wanted-criminal: #Only triggers when an INNOCENT SHERIFF or a INNONCENT VIGILANTE kills a WANTED CRIMINAL
         requirements:
           attacker-tier:
@@ -225,8 +228,9 @@ pvp:
             - "criminal"
           victim-status: "WANTED"
         commands:
-          - "jail %victim% jail %karma_victim_karma_abs%s"
-          - "broadcast %victim% &ahas been arrested for %karma_victim_karma_abs% seconds by %attacker% !"
+          - "jail [victim] jail [evalint_[victim_karma_abs]/1000]m"
+          - "bc [evalint_[victim_karma_abs]/1000]m karma_abs /1000 int"
+          - "broadcast [victim] &ahas been arrested for [evalint_[victim_karma_abs]/1000] minutes by [attacker] !"
 
 pve:
   messages-delay:
@@ -237,7 +241,7 @@ pve:
     Ender Dragon:
       kill-karma-reward: 10000
       kill-commands:
-        - "bc %player% &aKILLED THE ENDERDRAGON, GG !!!"
+        - "bc [player] &aKILLED THE ENDERDRAGON, GG !!!"
     Cat:
       hit-karma-reward:    -10
       hit-message: "&cYou DARE put a hand on your Master ?!!"
@@ -247,8 +251,8 @@ pve:
       hit-karma-reward:    -11
       kill-karma-reward:  -356
     Wolf:
-      hit-message: "Hunt a wolf doesn't change your karma : &d%attacker_karma%"
-      kill-message: "You successfully hunt the wolf : &5%attacker_karma%"
+      hit-message: "Hunt a wolf doesn't change your karma : &d[attacker_karma]"
+      kill-message: "You successfully hunt the wolf : &5[attacker_karma]"
     Zombie:
       hit-karma-reward:      5
       hit-message: "Aim his head !"
@@ -317,7 +321,7 @@ overtime:
           minimum: 500
       amount: -50
       commands:
-        - "%msg% Removed 50 karma, hourly."
+        - "[msg] Removed 50 karma, hourly."
     offline-citizen:
       timers:
         first: 43200
@@ -328,7 +332,7 @@ overtime:
           minimum: 500
       amount: -250
       commands:
-        - "%msg% Removed %karma_player_diff_karma% karma, offline only and daily."
+        - "[msg] Removed [karma_player_diff_karma] karma, offline only and daily."
     online-criminal:
       timers:
         first: 3600
@@ -338,7 +342,7 @@ overtime:
           maximum: -1500
       amount: 25
       commands:
-        - "%msg% Added 25 karma. Online only, hourly then mid-hourly."
+        - "[msg] Added 25 karma. Online only, hourly then mid-hourly."
     offline-criminal:
       timers:
         first: 43200
@@ -349,7 +353,7 @@ overtime:
           maximum: -1500
       amount: 125
       commands:
-        - "%msg% Added %karma_player_diff_karma% karma (offline only, daily)."
+        - "[msg] Added [karma_player_diff_karma] karma (offline only, daily)."
 
 blocks:
   list:
@@ -390,7 +394,7 @@ shops:
       min-karma: 1000
       send-by: PLAYER #PLAYER / CONSOLE / BOTH
       commands:
-        - "bc %player% bought the first item from karma shop !"
+        - "bc [player] bought the first item from karma shop !"
     second:
       display: "&9First"
       description: "&fSecond Shop. Not usable by player"
@@ -399,4 +403,4 @@ shops:
       max-karma: -500
       send-by: CONSOLE #PLAYER / CONSOLE / BOTH
       commands:
-        - "bc %player% bought the second item from karma shop !"
+        - "bc [player] bought the second item from karma shop !"

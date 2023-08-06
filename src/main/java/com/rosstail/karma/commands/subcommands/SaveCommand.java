@@ -16,8 +16,8 @@ public class SaveCommand extends SubCommand {
     public SaveCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SAVE_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_SAVE_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
     @Override
     public String getName() {
@@ -46,7 +46,7 @@ public class SaveCommand extends SubCommand {
         }
         PlayerDataManager.saveAllPlayerModelToStorage();
         sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SAVE_RESULT)
-                .replaceAll("%amount%", String.valueOf(PlayerDataManager.getPlayerModelMap().size()))));
+                .replaceAll("\\[amount]", String.valueOf(PlayerDataManager.getPlayerModelMap().size()))));
     }
 
     @Override

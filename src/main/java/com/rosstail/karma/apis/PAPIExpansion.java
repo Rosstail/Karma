@@ -202,11 +202,11 @@ public class PAPIExpansion extends PlaceholderExpansion {
         }
 
         if (player != null) {
-            return AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, "%" + identifier + "%", PlayerType.PLAYER.getText());
+            return AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, "[" + identifier + "]", PlayerType.PLAYER.getText());
         }
 
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
         // was provided
-        return AdaptMessage.getAdaptMessage().adaptMessage("%" + identifier + "%");
+        return AdaptMessage.getAdaptMessage().adaptMessage("[" + identifier + "]");
     }
 }

@@ -25,8 +25,8 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
     public EditPlayerTierSetCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_TIER_SET_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_TIER_SET_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
 
     @Override

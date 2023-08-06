@@ -18,8 +18,8 @@ public class CheckSelfCommand extends SubCommand {
     public CheckSelfCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
     @Override
     public String getName() {

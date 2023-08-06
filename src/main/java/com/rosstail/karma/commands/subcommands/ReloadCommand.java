@@ -17,8 +17,8 @@ public class ReloadCommand extends SubCommand {
     public ReloadCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_RELOAD_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_RELOAD_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
 
     @Override

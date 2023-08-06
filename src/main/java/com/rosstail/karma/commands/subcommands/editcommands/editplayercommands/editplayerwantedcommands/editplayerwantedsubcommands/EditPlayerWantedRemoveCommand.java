@@ -23,8 +23,8 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
     public EditPlayerWantedRemoveCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
 
     @Override

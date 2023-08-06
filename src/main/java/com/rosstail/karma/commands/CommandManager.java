@@ -98,8 +98,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         String message = LangManager.getMessage(LangMessage.COMMANDS_PERMISSION_DENIED);
         message = AdaptMessage.getAdaptMessage().adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
         message = AdaptMessage.getAdaptMessage().adaptMessage(message);
-        message = message.replaceAll("%command%", command.getName());
-        message = message.replaceAll("%permission%", command.getPermission());
+        message = message.replaceAll("\\[command]", command.getName());
+        message = message.replaceAll("\\[permission]", command.getPermission());
         sender.sendMessage(message);
     }
 
@@ -107,7 +107,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
      * @param sender
      */
     public static void disconnectedPlayer(CommandSender sender, String playerName) {
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DISCONNECTED).replaceAll("%player%", playerName)));
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_DISCONNECTED).replaceAll("\\[player]", playerName)));
     }
     public static void errorMessage(CommandSender sender, Exception e) {
         if (e instanceof ArrayIndexOutOfBoundsException) {
@@ -145,7 +145,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
             command = command.replaceFirst(regex, "").trim();
             senderOrTarget = player;
         }
-        if (command.startsWith("%msg")) {
+        if (command.startsWith("[msg")) {
             if (senderOrTarget instanceof Player) {
                 AdaptMessage.getAdaptMessage().sendToPlayer(player, command);
             } else {
@@ -168,7 +168,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
             senderOrTarget = attacker;
         }
 
-        if (command.startsWith("%msg")) {
+        if (command.startsWith("[msg")) {
             if (senderOrTarget instanceof Player) {
                 AdaptMessage.getAdaptMessage().sendToPlayer((Player) senderOrTarget, command);
             } else {

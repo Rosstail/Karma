@@ -17,8 +17,8 @@ public class HelpCommand extends SubCommand {
         subCommands = manager.getSubCommands();
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_HEADER)
-                        .replaceAll("%syntax%", getSyntax())
-                        .replaceAll("%permission%", getPermission()));
+                        .replaceAll("\\[syntax]", getSyntax())
+                        .replaceAll("\\[permission]", getPermission()));
     }
 
     @Override

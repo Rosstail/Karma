@@ -22,8 +22,8 @@ public class EditPlayerKarmaCommand extends EditPlayerSubCommand {
     public EditPlayerKarmaCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
         subCommands.add(new EditPlayerKarmaSetCommand());
         subCommands.add(new EditPlayerKarmaAddCommand());
         subCommands.add(new EditPlayerKarmaRemoveCommand());

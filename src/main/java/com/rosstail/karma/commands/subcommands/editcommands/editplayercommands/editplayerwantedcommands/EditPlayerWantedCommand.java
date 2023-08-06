@@ -22,8 +22,8 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
     public EditPlayerWantedCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
         subCommands.add(new EditPlayerWantedSetCommand());
         subCommands.add(new EditPlayerWantedAddCommand());
         subCommands.add(new EditPlayerWantedRemoveCommand());

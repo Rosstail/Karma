@@ -16,8 +16,8 @@ public class CheckCommand extends SubCommand {
     public CheckCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_CHECK_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_CHECK_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
         subCommands.add(new CheckSelfCommand());
         subCommands.add(new CheckOtherCommand());
     }

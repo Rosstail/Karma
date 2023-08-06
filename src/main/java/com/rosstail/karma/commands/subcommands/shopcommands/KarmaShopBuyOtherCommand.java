@@ -20,8 +20,8 @@ public class KarmaShopBuyOtherCommand extends SubCommand {
     public KarmaShopBuyOtherCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
 
     @Override

@@ -22,8 +22,8 @@ public class CheckOtherCommand extends SubCommand {
     public CheckOtherCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
 
     @Override
@@ -60,14 +60,14 @@ public class CheckOtherCommand extends SubCommand {
         } else {
             String uuid = PlayerDataManager.getPlayerUUIDFromName(username);
             if (uuid == null) {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("%player%", username)));
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("\\[player]", username)));
                 return;
             }
             model = StorageManager.getManager().selectPlayerModel(uuid);
         }
 
         if (model == null) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA).replaceAll("%player%", username)));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA).replaceAll("\\[player]", username)));
             return;
         }
 

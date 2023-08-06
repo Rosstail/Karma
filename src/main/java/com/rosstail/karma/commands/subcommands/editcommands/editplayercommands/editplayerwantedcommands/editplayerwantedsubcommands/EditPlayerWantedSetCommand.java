@@ -26,8 +26,8 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
     public EditPlayerWantedSetCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
 
     @Override
@@ -76,7 +76,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("set");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTime, "%now% " + expression);
+        long duration = AdaptMessage.calculateDuration(wantedTime, "[now] " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
@@ -101,7 +101,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("set");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTime, "%now% " + expression);
+        long duration = AdaptMessage.calculateDuration(wantedTime, "[now] " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);

@@ -5,7 +5,6 @@ import com.rosstail.karma.lang.AdaptMessage;
 public class ExpressionCalculator {
 
     public static double eval(final String expression) {
-
         try {
             return new Object() { //To avoid async problems ?
                 int pos = -1;
@@ -117,7 +116,7 @@ public class ExpressionCalculator {
             }.parse(); //parse Object to double before returning it
 
         } catch (Exception e) {
-            AdaptMessage.print("An exception as occurred during the calculation : " + expression, AdaptMessage.prints.ERROR);
+            //AdaptMessage.print("An exception as occurred during the calculation : " + expression, AdaptMessage.prints.ERROR);
         }
         return 0D;
     }

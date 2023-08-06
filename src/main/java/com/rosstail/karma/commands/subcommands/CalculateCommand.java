@@ -22,8 +22,8 @@ public class CalculateCommand extends SubCommand {
     public CalculateCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("%desc%", LangManager.getMessage(LangMessage.COMMANDS_CALCULATE_DESC))
-                        .replaceAll("%syntax%", getSyntax()));
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_CALCULATE_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
     }
@@ -67,7 +67,7 @@ public class CalculateCommand extends SubCommand {
 
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(
                     LangManager.getMessage(LangMessage.COMMANDS_CALCULATE_RESULT)
-                            .replaceAll("%expression%", expression).replaceAll("%result%", String.valueOf(result)))
+                            .replaceAll("\\[expression]", expression).replaceAll("\\[result]", String.valueOf(result)))
             );
         } else {
             CommandManager.errorMessage(sender, new ArrayIndexOutOfBoundsException());

@@ -60,12 +60,10 @@ public class Karma extends JavaPlugin implements Listener {
 
         loadCustomConfig();
 
-
         this.createPlayerDataFolder();
         StorageManager manager = StorageManager.initStorageManage(this);
         manager.chooseDatabase();
 
-        LangManager.initCurrentLang(ConfigData.getConfigData().locale.lang);
         FightHandler.initFightHandler();
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
@@ -166,6 +164,8 @@ public class Karma extends JavaPlugin implements Listener {
 
         ConfigData.init(getCustomConfig());
         initDefaultLocales();
+
+        LangManager.initCurrentLang(ConfigData.getConfigData().locale.lang);
 
         if (ConfigData.getConfigData().overtime.overtimeActive || ConfigData.getConfigData().wanted.wantedEnable) {
             PlayerDataManager.setupScheduler();

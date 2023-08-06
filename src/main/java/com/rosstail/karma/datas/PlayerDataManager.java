@@ -202,7 +202,7 @@ public class PlayerDataManager {
                     AdaptMessage.print("Impossible to get UUID of " + username, AdaptMessage.prints.WARNING);
                 }
             } else if (responseCode == HttpURLConnection.HTTP_NOT_FOUND) {
-                AdaptMessage.print(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("%player", username), AdaptMessage.prints.WARNING);
+                AdaptMessage.print(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("\\[player]", username), AdaptMessage.prints.WARNING);
             } else {
                 AdaptMessage.print("HTTP request error in PlayerDataManager#getPlayerUUIDFromName\n" + responseCode, AdaptMessage.prints.WARNING);
             }
