@@ -8,30 +8,290 @@ storage:
   save-delay: 300
 
 general:
-  config-version: 1
+  config-version: 2
   use-worldguard: false #works only for Worldguard 7+
   topscore-limit: 10
 
-karma:
-  default: 0
-  minimum: -3000
-  maximum: 1500
-
 locale:
   lang: "en_EN"
-  datetime-format: "yyyy-MM-dd HH:mm:ss" # => locale file
-  countdown-format: "{dd} {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s between {} without cap. => locale file
+  datetime-format: "yyyy-MM-dd HH:mm:ss"
+  countdown-format: "{dd}d {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s between {} without cap. => locale file
   decimal-display: 2 #The number of digits behind Karma amounts on display (does not affect storage or calculations) # => locale file
   title: #Duration of the title in ticks (20ticks = 1 second)
     fade-in: 1
     stay: 20
     fade-out: 1
 
+karma:
+  default: 0
+  minimum: -30000
+  maximum:  15000
+
+tiers:
+  list:
+    devil: #an out of bound tier useful for perma-criminal players
+      display: "&l{#FF0000}DEVIL"
+      short-display: "&l{#FF0000}⛧"
+      minimum: -500000 #Out of bounds
+      maximum: -30000.01 #2 digits accuracy
+      # no score.
+      commands:
+        on-join:
+          - "%msg-title% %player_tier_display_short%You are now doomed."
+          - "karma edit player %player% wanted add 99h -o" #-o to override the limit
+    criminal:
+      display: "&4Criminal"
+      short-display: "&4"
+      minimum: -30000
+      maximum: -15000
+      score:
+        devil: 40
+        criminal: 25
+        thug: 5
+        citizen: -20
+        vigilante: -70
+        sheriff: -150
+      commands:
+        on-join:
+          - "broadcast &f%player% is now a notorious %player_tier_display% &r."
+        on-join-down:
+          - "karma edit player %player% wanted add 2h -o" #-o to override the limit
+        on-join-up:
+          - "%msg% The god admin gave you one more chance. Do not waste it this time."
+    thug:
+      display: "&5Thug"
+      short-display: "&5"
+      minimum: -14999.99
+      maximum: -500
+      score:
+        devil: 45
+        criminal: 35
+        citizen: -10
+        vigilante: -40
+        sheriff: -150
+      commands:
+        on-join:
+          - "%msg% &fYou are now a filthy %karma_player_tier% &r."
+        on-join-down:
+          - "karma edit player %player% wanted add 30m -o" #-o to override the limit
+          - "%msg% &bThe police is now hunting you."
+        on-join-up:
+          - "%msg% &aKeep a low profile."
+    citizen:
+      display: "&fCitizen"
+      short-display: "&f"
+      minimum: -149.99
+      maximum: 9999.99
+      score:
+        devil: 50
+        criminal: 25
+        citizen: -20
+        vigilante: -40
+        sheriff: -150
+      commands:
+        on-join:
+          - "%msg% &fYou are a %player_tier_display% &r."
+          - "%msg-actionbar% &fYour previous Tier was %player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
+    vigilante:
+      display: "&aVigilante"
+      short-display: "&a"
+      minimum: 10000
+      maximum: 13999.99
+      score:
+        devil: 55
+        criminal: 30
+        thug: 8
+        citizen: -25
+        vigilante: -60
+        sheriff: -150
+      commands:
+        on-join:
+          - "%msg% &fYour are a %karma_player_tier_display% &r."
+        on-join-up:
+          - "%msg% &bYou can help the police now."
+        on-join-down:
+          - "%msg% &bYou have been demoted from the police forces."
+    sheriff:
+      display: "&6Sheriff"
+      short-display: "&6"
+      minimum: 14000
+      maximum: 15000
+      score:
+        devil: 60
+        criminal: 20
+        thug: 5
+        citizen: -50
+        vigilante: -70
+        sheriff: -200
+      commands:
+        on-join:
+          - "%msg% &fYour wanted level is now %karma_player_tier_display% &r."
+        on-join-up:
+          - "%msg% &bYou are got promoted from %karma_player_previous_tier_display%."
+    paragon:
+      display: "&l&bParagon"
+      short-display: "&l&b⚖"
+      minimum: 15000.01
+      maximum: 50000
+      commands:
+        on-join:
+          - "%title% %karma_player_tier_display%"
+          - "%msg% &fYou are so good that you are not limited by the law"
+
+wanted:
+  #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is wanted too)
+  enable: true
+  countdown-on-disconnect: true
+  #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
+  maximum-duration: "%now% 8h" #compatible with: d h m s
+  commands:
+    enter:
+      - "bc %player% is now %player_wanted_status_short%WANTED"
+      - "%msg% You are now %player_wanted_status% for %player_wanted_time_delay_display%"
+    refresh:
+      - "bc %player% is STILL %player_wanted_status_short%WANTED"
+      - "%msg% You still %player_wanted_status% for %player_wanted_time_delay_display%"
+    exit:
+      - "bc %player% is now INNOCENT"
+      - "%msg% You are now %player_wanted_status%"
+
 worlds:
   enable: false #if enabled, only the worls listed below will be used
   black-list: false #if true, the worlds on the list will not be used
   worlds:
     - world
+
+pvp:
+  # You can make your own expression, any error will lead to a result of 0.
+  hit-attacker-change-expression: "(%victim_karma_abs% + 200) * %attacker_victim_tier_score% / 50"
+  kill-attacker-change-expression: "(%victim_karma_abs% + 200) * %attacker_victim_tier_score% / 10"
+  hit-victim-change-expression: "(%attacker_karma_abs% + 100) * %victim_attacker_tier_score% / 100"
+  kill-victim-change-expression: "(%attacker_karma_abs% + 100) * %victim_attacker_tier_score% / 20"
+  team-system-cancel:
+    scoreboard-team: #Default scoreboard team in minecraft
+      enable: true
+      same-team: true #cancel if players in the same scoreboard team
+      other-team: false
+  messages-delay: #seconds
+    hit: 5
+    kill: 10
+  wanted:
+    hit-duration: "%player_wanted_time% 5m 15s" #compatible with: d h m s
+    kill-duration: "%player_wanted_time% 1h 30m" #compatible with: d h m s
+    conditions:
+      on-karma-gain: false
+      on-karma-unchanged: false
+      on-karma-loss: true
+      refresh: true
+    cancel-karma-change:
+      wanted:
+        on-karma-gain: true
+        on-karma-loss: false
+      innocent:
+        on-karma-gain: false
+        on-karma-loss: true
+  commands:
+    kill-commands:
+      #command-name:
+      #  requirements: # any requirement is ignored if empty
+      #    guarantee: <boolean> # default true. If true, commands are sent before checking time periods and worldguard regions. Else, triggers if time periods and worldguard region check are good.
+      #    attacker-tier :
+      #      - "tierName" #first lines with "!tierName" to use all tiers BUT.
+      #    victim-tier:
+      #      - "etc"
+      #    attacker-status: <String> #WANTED / INNOCENT
+      #    victim-status: <String> #WANTED / INNOCENT
+      #    attacker-minimum-karma: <float>
+      #    attacker-maximum-karma: <float>
+      #  commands:
+      #    - ""
+      #    -  "etc..."
+      bad-boy-kills-someone: #Only triggers if a thug got killed, no matter the attacker tier or victim status. The event must not be cancelled because of worldguard region or system/world time period
+        requirements:
+          guarantee: false
+          attacker-tier:
+            - "criminal"
+            - "thug"
+        commands:
+          - "cmi money give %attacker% 1%[100-500][%victim%]" #Gives up to 1% of the victim money, minimum 100, maximum 500.
+          - "cmi money take %victim% 2%[200-1000]" #Removes up to 2% of the victim money, minimum 200, maximum 1000, always superior to the give command.
+      police-arrest-wanted-criminal: #Only triggers when an INNOCENT SHERIFF or a INNONCENT VIGILANTE kills a WANTED CRIMINAL
+        requirements:
+          attacker-tier:
+            - "sheriff"
+            - "vigilante"
+          attacker-status: "INNOCENT"
+          victim-tier:
+            - "criminal"
+          victim-status: "WANTED"
+        commands:
+          - "jail %victim% jail %karma_victim_karma_abs%s"
+          - "broadcast %victim% &ahas been arrested for %karma_victim_karma_abs% seconds by %attacker% !"
+
+pve:
+  messages-delay:
+    hit: 5
+    kill: 10
+  list:
+    #default entities names
+    Ender Dragon:
+      kill-karma-reward: 10000
+      kill-commands:
+        - "bc %player% &aKILLED THE ENDERDRAGON, GG !!!"
+    Cat:
+      hit-karma-reward:    -10
+      hit-message: "&cYou DARE put a hand on your Master ?!!"
+      kill-karma-reward:   -76
+      kill-message: "&4&lWILFRIIIIIIIED !!!"
+    Trader Llama:
+      hit-karma-reward:    -11
+      kill-karma-reward:  -356
+    Wolf:
+      hit-message: "Hunt a wolf doesn't change your karma : &d%attacker_karma%"
+      kill-message: "You successfully hunt the wolf : &5%attacker_karma%"
+    Zombie:
+      hit-karma-reward:      5
+      hit-message: "Aim his head !"
+      kill-karma-reward:    58
+      kill-message: "Burn the corpse."
+    #renamed entities
+    Galsia:
+      hit-karma-reward: 3
+      hit-message: "HIT !"
+      kill-karma-reward: 8
+
+time-periods:
+  #NONE Doesn't check any time period
+  #WORLD Use attacker world time periods
+  #SYSTEM Use server time period
+  #BOTH use both and cumulate.
+  type: "NONE"
+  world:
+    dawn:
+      start: "05:00" #format hh:mm 24h
+      end: "08:59"
+      rate: 100 # chances of karma change. between 0 and 100
+    day:
+      start: "09:00"
+      end: "19:59"
+      rate: 100
+    dusk:
+      start: "20:00"
+      end: "21:59"
+      rate: 66
+    night:
+      start: "22:00"
+      end: "04:59"
+      rate: 30
+  system:
+    morning:
+      start: "08:00" #format hh:mm 24h
+      end: "12:59"
+      rate: 100
+    afternoon:
+      start: "13:00"
+      end: "21:00"
+      rate: 30
 
 overtime:
   enable: true
@@ -91,242 +351,6 @@ overtime:
       commands:
         - "%msg% Added %karma_player_diff_karma% karma (offline only, daily)."
 
-tiers:
-  list:
-    criminal:
-      display: "&4Criminal"
-      short-display: "&4"
-      minimum: -3000
-      maximum: -1500
-      punish-wanted: true
-      score:
-        criminal: 50
-        thug: 5
-        citizen: -20
-        vigilante: -70
-        sheriff: -150
-      commands:
-        join-commands:
-          - "broadcast &f%player% is now the most wanted %karma_player_tier_display% &r."
-        join-on-down-commands:
-          - "%msg-title% {#FF0000}&lWANTED
-            %msg-subtitle%&cEverybody is now trying to kill you."
-    thug:
-      display: "&5Thug"
-      short-display: "&5"
-      minimum: -1499
-      maximum: -50
-      punish-wanted: false
-      score:
-        criminal: 35
-        citizen: -10
-        vigilante: -40
-        sheriff: -150
-      commands:
-        join-commands:
-          - "%msg% &fYou are now a filthy %karma_player_tier% &r."
-          - "%msg% me &5is now in the dark side of the law."
-        join-on-down-commands:
-          - "%msg% &bThe police is now hunting you."
-        join-on-up-commands:
-          - "%msg% &aKeep a low profile."
-    citizen:
-      display: "&fCitizen"
-      short-display: "&f"
-      minimum: -49
-      maximum: 500
-      punish-wanted: false
-      score:
-        criminal: 40
-        citizen: -20
-        vigilante: -40
-        sheriff: -150
-      commands:
-        join-commands:
-          - "%msg% &fYou are a %karma_player_tier_display% &r."
-          - "%msg-actionbar% &fYour previous Tier was %karma_player_previous_tier_display% and the previous karma was %karma_player_previous_karma%"
-    vigilante:
-      display: "&aVigilante"
-      short-display: "&a"
-      minimum: 501
-      maximum: 1250
-      punish-wanted: false
-      score:
-        criminal: 30
-        thug: 8
-        citizen: -25
-        vigilante: -60
-        sheriff: -150
-      commands:
-        join-commands:
-          - "%msg% &fYour are a %karma_player_tier_display% &r."
-        join-on-up-commands:
-          - "%msg% &bYou can help the police now."
-        join-on-down-commands:
-          - "%msg% &bYou have been demoted from the police forces."
-    sheriff:
-      display: "&6Sheriff"
-      short-display: "&6"
-      minimum: 1251
-      maximum: 1500
-      punish-wanted: true
-      score:
-        criminal: 20
-        thug: 5
-        citizen: -50
-        vigilante: -70
-        sheriff: -200
-      commands:
-        join-commands:
-          - "%msg% &fYour wanted level is now %karma_player_tier_display% &r."
-        join-on-up-commands:
-          - "%msg% &bYou are got promoted from %karma_player_previous_tier_display%."
-
-time-periods:
-  #NONE Doesn't check any time period
-  #WORLD Use attacker world time periods
-  #SYSTEM Use server time period
-  #BOTH use both and cumulate.
-  type: "NONE"
-  world:
-    day:
-      start: "09:00" #format hh:mm 24h
-      end: "20:00"
-      rate: 100 # chances of karma change. between 0 and 100
-    dusk:
-      start: "20:00"
-      end: "22:00"
-      rate: 66
-    night:
-      start: "22:00"
-      end: "01:00"
-      rate: 30
-  system:
-    morning:
-      start: "08:00" #format hh:mm 24h
-      end: "12:59"
-      rate: 100
-    afternoon:
-      start: "13:00"
-      end: "21:00"
-      rate: 30
-
-pvp:
-  # You can make your own expression, any error will lead to a result of 0.
-  hit-reward-expression: "-1 * (%karma_victim_karma% + 200) / 50"
-  kill-reward-expression: "-1 * (%karma_victim_karma% + 200) / 10"
-  team-system-cancel:
-    scoreboard-team: #Default scoreboard team in minecraft
-      enable: true
-      same-team: true
-      other-team: false
-  messages-delay:
-    hit: 5
-    kill: 10
-  wanted:
-    hit-duration: "%player_wanted_time% 5m" #compatible with: d h m s ms
-    kill-duration: "%player_wanted_time% 15m" #compatible with: d h m s ms
-    conditions:
-      on-karma-gain: false
-      on-karma-unchanged: false
-      on-karma-loss: true
-      refresh: true
-    cancel-karma-change:
-      wanted:
-        on-karma-gain: true
-        on-karma-loss: false
-      innocent:
-        on-karma-gain: false
-        on-karma-loss: true
-  commands:
-    kill-commands:
-      no-condition-kill-command: #Triggers without condition
-        commands:
-          - "victim %msg% [Karma] You have been killed by someone."
-      someone-killed-by-someone-with-karma-between-100-and-150:
-        requirements:
-          attacker-minimum-karma: 100
-          attacker-maximum-karma: 150
-        commands:
-          - "bc %victim% has been killed by someone between 100 and 150 karma."
-      non-citizen-killed-by-innocent-non-sheriff:
-        requirements:
-          attacker-tier:
-            - "!sheriff"
-          victim-tier:
-            - "!citizen"
-          victim-status: "INNOCENT"
-        commands:
-          - "bc %victim% is not a civilian and have been killed by an innocent who was not a sheriff."
-      wanted-thug-got-killed-with-only-successful-karma-change: #Only triggers if a thug got killed, no matter the attacker tier or victim status. The event must not be cancelled because of worldguard region or system/world time period
-        requirements:
-          guarantee: false
-          victim-tier:
-            - "thug"
-        commands:
-          - "cmi money give %attacker% 1%[100-500][%victim%]" #Gives up to 1% of the victim money, minimum 100, maximum 500.
-          - "cmi money take %victim% 2%[200-1000]" #Removes up to 2% of the victim money, minimum 200, maximum 1000, always superior to the give command.
-      honnest-people-arrest-wanted-criminal: #Only triggers when an INNOCENT SHERIFF or a INNONCENT VIGILANTE kills a WANTED CRIMINAL
-        requirements:
-          attacker-tier:
-            - "sheriff"
-            - "vigilante"
-          attacker-status: "INNOCENT"
-          victim-tier:
-            - "criminal"
-          victim-status: "WANTED"
-        commands:
-          - "jail %victim% jail %karma_victim_karma_abs%"
-          - "karma edit player %victim% wanted set 0"
-          - "karma edit player %victim% set -3000"
-          - "broadcast %victim% &ahas been arrested for %karma_victim_previous_karma% minutes by %attacker% !"
-
-
-wanted: #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is wanted too)
-  enable: true
-  countdown-on-disconnect: true
-  #%player_wanted_time% use the highest amount between the player's wanted time and the actual timestamp.
-  maximum-duration: "%now% 8h" #compatible with: d h m s ms
-  commands:
-    enter:
-      - "bc %player% is now WANTED"
-    refresh:
-      - "bc %player% is STILL WANTED"
-    exit:
-      - "bc %player% is now INNOCENT"
-
-pve:
-  messages-delay:
-    hit: 5
-    kill: 10
-  list:
-    #default entities names
-    Ender Dragon:
-      kill-karma-reward: 10000
-      kill-commands:
-        - "bc %player% &aKILLED THE ENDERDRAGON, GG !!!"
-    Cat:
-      hit-karma-reward:    -10
-      hit-message: "&cYou DARE put a hand on your Master ?!!"
-      kill-karma-reward:   -76
-      kill-message: "&4&lWILFRIIIIIIIED !!!"
-    Trader Llama:
-      hit-karma-reward:    -11
-      kill-karma-reward:  -356
-    Wolf:
-      hit-message: "Hunt a wolf doesn't change your karma : &d%attacker_karma%"
-      kill-message: "You successfully hunt the wolf : &5%attacker_karma%"
-    Zombie:
-      hit-karma-reward:      5
-      hit-message: "Aim his head !"
-      kill-karma-reward:    58
-      kill-message: "Burn the corpse."
-    #renamed entities
-    Galsia:
-      hit-karma-reward: 3
-      hit-message: "HIT !"
-      kill-karma-reward: 8
-
 blocks:
   list:
     # https://minecraft-ids.grahamedgecombe.com/
@@ -334,12 +358,12 @@ blocks:
     WHEAT:
       break:
         data:
-          age:
+          age: #useful on crops
             blacklist: true
             ages:
               - 7
         value: -5
-        reset-overtime: true #Don't fuck with the cultures !
+        reset-overtime: true #Don't mess with the cultures !
     FARMLAND:
       place: #Using a hoe tool to transform dirt to farmland
         value: 1
@@ -355,7 +379,6 @@ blocks:
         reset-overtime: true #Reset all the player overtimes timers. Default to false
       break: #Hit fire
         value: 2
-
 
 shops:
   list:

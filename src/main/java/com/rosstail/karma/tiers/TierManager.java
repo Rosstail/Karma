@@ -82,7 +82,7 @@ public class TierManager {
                 return tier;
             }
         }
-        return null;
+        return noTier;
     }
 
     public static Tier getNoTier() {

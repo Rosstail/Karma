@@ -45,9 +45,9 @@ public class Tier {
         this.maxKarma = (float) section.getDouble("maximum", Float.MAX_VALUE);
         this.defaultKarma = (float) section.getDouble("default-karma", (maxKarma + minKarma) / 2f);
 
-        this.joinCommands = section.getStringList("commands.join-commands");
-        this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
-        this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
+        this.joinCommands = section.getStringList("commands.on-join");
+        this.joinOnDownCommands = section.getStringList("commands.on-join-down");
+        this.joinOnUpCommands = section.getStringList("commands.on-join-up");
 
         if (section.getConfigurationSection("score") != null) {
             for (String subTier : section.getConfigurationSection("score").getKeys(false)) {
@@ -122,6 +122,9 @@ public class Tier {
     }
 
     public float getTierScore(String tierName) {
-        return tierScoreMap.get(tierName);
+        if (tierScoreMap.containsKey(tierName)) {
+            return tierScoreMap.get(tierName);
+        }
+        return 0f;
     }
 }

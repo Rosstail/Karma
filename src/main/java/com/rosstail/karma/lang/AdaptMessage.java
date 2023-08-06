@@ -52,6 +52,7 @@ public class AdaptMessage {
 
     public void sendToPlayer(Player player, String message) {
         if (message != null) {
+            System.out.println(message);
             if (message.startsWith("%msg-title%")) {
                 message = message.replace("%msg-title%", "").trim();
                 String title;
@@ -73,6 +74,7 @@ public class AdaptMessage {
     }
 
     private void sendActionBar(Player player, String message) {
+        System.out.println("sendActionBar " + message);
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
                 adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()))
         ));
@@ -376,12 +378,12 @@ public class AdaptMessage {
      * Calculate from an expression and optional current wanted time of a player
      *
      * @param currentWantedTime Long, Current wanted time of player.
-     * @param expression        String, add time with parameters suchs as Xh for x hours (ms, s, m, h, d)
+     * @param expression        String, add time with parameters suchs as Xh for x hours (s, m, h, d)
      * @return the calculated duration in ms (Long)
      */
     public static long calculateDuration(Long currentWantedTime, String expression) {
-        List<String> matches = Arrays.asList("(\\d+)ms", "(\\d+)s", "(\\d+)m", "(\\d+)h", "(\\d+)d");
-        List<Integer> ints = Arrays.asList(1, 1000, 60, 60, 24);
+        List<String> matches = Arrays.asList("(\\d+)s", "(\\d+)m", "(\\d+)h", "(\\d+)d");
+        List<Integer> ints = Arrays.asList(1000, 60, 60, 24);
 
         int multiplier = 1;
         long totalTimeMs = 0;

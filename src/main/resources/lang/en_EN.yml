@@ -1,4 +1,5 @@
 prefix: "&f[&aKarma&f]&r "
+
 commands:
   by-player-only: "%prefix%Command must be sent by player."
   permission-denied: "%prefix%You don't have permission for command %command_name% : %command_permission%."
@@ -68,7 +69,7 @@ commands:
           desc: "Reset wanted of player."
           result: "%prefix%Reset wanted time and status of %player%."
   shop:
-    header: "&b====== &6 KARMA SHOP &b======"
+    header: "&b====== &6KARMA SHOP &b======"
     line: " &6> &9%shop_display% &8: &f%shop_description% &8| &e%shop_price%"
     not-exist: "%prefix%&cThis shop does not exist."
     buy:

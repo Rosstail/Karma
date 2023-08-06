@@ -51,23 +51,23 @@ public class CheckOtherCommand extends SubCommand {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-
-        Player target = Bukkit.getServer().getPlayer(args[1]);
+        String username = args[1];
+        Player target = Bukkit.getServer().getPlayer(username);
         PlayerModel model;
 
         if (target != null && target.isOnline()) {
-            model = PlayerDataManager.getPlayerModelMap().get(args[1]);
+            model = PlayerDataManager.getPlayerModelMap().get(username);
         } else {
-            String uuid = PlayerDataManager.getPlayerUUIDFromName(args[1]);
+            String uuid = PlayerDataManager.getPlayerUUIDFromName(username);
             if (uuid == null) {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("%player%", args[1])));
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("%player%", username)));
                 return;
             }
             model = StorageManager.getManager().selectPlayerModel(uuid);
         }
 
         if (model == null) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA)));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_NO_DATA).replaceAll("%player%", username)));
             return;
         }
 

@@ -72,16 +72,16 @@ public class StorageManager {
     public void disconnect() {
         switch (type) {
             case "mysql":
-                mySqlStorageRequest.closeAllConnection();
+                mySqlStorageRequest.closeConnection();
                 break;
             case "mariadb":
-                mariaDBStorageRequest.closeAllConnection();
+                mariaDBStorageRequest.closeConnection();
                 break;
             case "mongodb":
-                mongoDBStorageRequest.closeAllConnection();
+                mongoDBStorageRequest.closeConnection();
                 break;
             default:
-                liteSqlDBStorageRequest.closeAllConnection();
+                liteSqlDBStorageRequest.closeConnection();
                 break;
         }
     }
@@ -127,19 +127,35 @@ public class StorageManager {
      *
      * @param model
      */
-    public void updatePlayerModel(PlayerModel model) {
+    public void updatePlayerModel(PlayerModel model, boolean async) {
         switch (type) {
             case "mysql":
-                mySqlStorageRequest.updatePlayerModel(model);
+                if (async) {
+                    mySqlStorageRequest.updatePlayerModelAsync(model);
+                } else {
+                    mySqlStorageRequest.updatePlayerModel(model);
+                }
                 break;
             case "mariadb":
-                mariaDBStorageRequest.updatePlayerModel(model);
+                if (async) {
+                    mariaDBStorageRequest.updatePlayerModelAsync(model);
+                } else {
+                    mariaDBStorageRequest.updatePlayerModel(model);
+                }
                 break;
             case "mongodb":
-                mongoDBStorageRequest.updatePlayerModel(model);
+                if (async) {
+                    mongoDBStorageRequest.updatePlayerModelAsync(model);
+                } else {
+                    mongoDBStorageRequest.updatePlayerModel(model);
+                }
                 break;
             default:
-                liteSqlDBStorageRequest.updatePlayerModel(model);
+                if (async) {
+                    liteSqlDBStorageRequest.updatePlayerModelAsync(model);
+                } else {
+                    liteSqlDBStorageRequest.updatePlayerModel(model);
+                }
                 break;
         }
     }

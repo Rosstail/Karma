@@ -116,7 +116,7 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
 
         model.setPreviousKarma(model.getKarma());
         model.setKarma(value);
-        StorageManager.getManager().updatePlayerModel(model);
+        StorageManager.getManager().updatePlayerModel(model, true);
 
         String currentTierName = model.getTierName();
         if (!Objects.equals(currentTierName, tierName)) { //Safe name check

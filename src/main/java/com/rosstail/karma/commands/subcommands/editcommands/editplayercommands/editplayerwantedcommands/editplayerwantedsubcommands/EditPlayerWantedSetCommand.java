@@ -111,23 +111,13 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         }
 
         model.setWantedTimeStamp(new Timestamp(duration));
-        StorageManager.getManager().updatePlayerModel(model);
-
-        if (model.isWanted()) {
-            if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
-                sender.sendMessage(" He will become INNOCENT upon reconnect");
-            } else {
-                sender.sendMessage("His wanted status will be refreshed upon reconnect");
-            }
-        } else if (model.getWantedTimeStamp().getTime() > System.currentTimeMillis()) {
-            sender.sendMessage("His wanted level will become WANTED upon reconnect");
-        }
+        StorageManager.getManager().updatePlayerModel(model, true);
 
         sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT), PlayerType.PLAYER.getText()));
     }
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
-        return Collections.singletonList("xd xh xm xs xms");
+        return Collections.singletonList("xd xh xm xs");
     }
 }

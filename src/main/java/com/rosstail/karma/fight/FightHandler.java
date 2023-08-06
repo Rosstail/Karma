@@ -33,7 +33,6 @@ public class FightHandler {
 
     public static void initFightHandler() {
         if (ConfigData.getConfigData().pvp.scoreboardTeamSystemCancel) {
-            AdaptMessage.print("[Karma] enabled scoreboard team cancel", AdaptMessage.prints.OUT);
             teamFightHandlerList.add(new ScoreboardTeamFightHandler());
         }
     }
@@ -42,110 +41,166 @@ public class FightHandler {
         boolean doesKarmaChange = true;
 
         if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
-            attacker.sendMessage("not affected because of time period.");
             return;
         }
 
         PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float attackerInitialKarma = attackerModel.getKarma();
-        String expression = configData.pvp.pvpHitRewardExpression;
+        String attackerKarmaChangeExpression = configData.pvp.pvpHitAttackerChangeExpression;
+        String victimKarmaChangeExpression = configData.pvp.pvpHitVictimChangeExpression;
 
-        if (expression == null) {
-            return;
-        }
-
-        float result;
         Tier attackerTier = TierManager.getTierManager().getTierByName(attackerModel.getTierName());
         Tier victimTier = TierManager.getTierManager().getTierByName(victimModel.getTierName());
 
-        expression = adaptMessage.adaptPvpMessage(attacker, victim, expression);
-        expression = expression.replaceAll("%attacker_victim_tier_score%",
-                String.valueOf(attackerTier.getTierScore(victimTier.getName())));
+        if (attackerKarmaChangeExpression != null) {
+            float result;
+            float attackerInitialKarma = attackerModel.getKarma();
+            attackerKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, attackerKarmaChangeExpression);
+            attackerKarmaChangeExpression = attackerKarmaChangeExpression
+                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
 
-        result = (float) ExpressionCalculator.eval(expression);
+            result = (float) ExpressionCalculator.eval(attackerKarmaChangeExpression);
 
-        if (configData.general.useWorldGuard) {
-            float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
-            result *= multi;
+            if (configData.general.useWorldGuard) {
+                float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
+                result *= multi;
+            }
+
+            float attackerNewKarma = attackerInitialKarma + result;
+
+            if (ConfigData.getConfigData().wanted.wantedEnable) {
+                WantedManager wantedManager = WantedManager.getWantedManager();
+                doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
+                wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
+            }
+
+            karmaChangeChecker(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
         }
 
-        float attackerNewKarma = attackerInitialKarma + result;
+        if (victimKarmaChangeExpression != null) {
+            float result;
+            float victimInitialKarma = victimModel.getKarma();
+            victimKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, victimKarmaChangeExpression);
+            victimKarmaChangeExpression = victimKarmaChangeExpression
+                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
 
-        if (ConfigData.getConfigData().wanted.wantedEnable) {
-            WantedManager wantedManager = WantedManager.getWantedManager();
-            doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
-            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
+            result = (float) ExpressionCalculator.eval(victimKarmaChangeExpression);
+
+            if (configData.general.useWorldGuard) {
+                float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(victim);
+                result *= multi;
+            }
+
+            float victimNewKarma = victimInitialKarma + result;
+
+            karmaChangeChecker(victim, result, victimModel, victimInitialKarma, doesKarmaChange, victimNewKarma);
         }
 
-        karmaChangeChecker(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }
 
     public static void pvpKill(Player attacker, Player victim) {
         boolean doesKarmaChange = true;
 
         if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
-            attacker.sendMessage("not affected because of time period.");
             return;
         }
 
         PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float attackerInitialKarma = attackerModel.getKarma();
-        String expression = configData.pvp.pvpKillRewardExpression;
+        String attackerKarmaChangeExpression = configData.pvp.pvpKillAttackerChangeExpression;
+        String victimKarmaChangeExpression = configData.pvp.pvpKillVictimChangeExpression;
+        Tier attackerTier = TierManager.getTierManager().getTierByName(attackerModel.getTierName());
+        Tier victimTier = TierManager.getTierManager().getTierByName(victimModel.getTierName());
 
         //Pvp kill commands when guarantee is FALSE
         PvpCommandHandler.getPvpCommandHandler().handle(attacker, victim, false);
 
-        if (expression == null) {
-            return;
-        }
+        if (attackerKarmaChangeExpression != null) {
+            float attackerInitialKarma = attackerModel.getKarma();
+            float result;
 
-        float result;
-        Tier attackerTier = TierManager.getTierManager().getTierByName(attackerModel.getTierName());
-        Tier victimTier = TierManager.getTierManager().getTierByName(victimModel.getTierName());
+            attackerKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, attackerKarmaChangeExpression);
 
-        expression = adaptMessage.adaptPvpMessage(attacker, victim, expression);
+            attackerKarmaChangeExpression = attackerKarmaChangeExpression
+                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
 
-        expression = expression.replaceAll("%attacker_victim_tier_score%",
-                String.valueOf(attackerTier.getTierScore(victimTier.getName())));
-
-        result = (float) ExpressionCalculator.eval(expression);
-        if (configData.general.useWorldGuard) {
-            float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
-            result = result * multi;
-        }
-
-        float attackerNewKarma = attackerInitialKarma + result;
-
-        if (ConfigData.getConfigData().wanted.wantedEnable) {
-            WantedManager wantedManager = WantedManager.getWantedManager();
-            doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
-            wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedKillDurationExpression);
-        }
-
-        if (result == 0F) { //If no change, skip
-            doesKarmaChange = false;
-            attacker.sendMessage("No change");
-        } else if (attackerNewKarma > ConfigData.getConfigData().karmaConfig.maxKarma) { //If new karma > max karma
-            if (attackerInitialKarma > ConfigData.getConfigData().karmaConfig.maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
-                attacker.sendMessage("OOB KILL > MAX");
-                doesKarmaChange = false;
-            } else {
-                attackerNewKarma = ConfigData.getConfigData().karmaConfig.maxKarma;
+            result = (float) ExpressionCalculator.eval(attackerKarmaChangeExpression);
+            if (configData.general.useWorldGuard) {
+                float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
+                result = result * multi;
             }
-        } else if (attackerNewKarma < ConfigData.getConfigData().karmaConfig.minKarma) { //if new karma < min karma
-            if (attackerInitialKarma < ConfigData.getConfigData().karmaConfig.minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
-                attacker.sendMessage("OOB KILL < MIN");
+
+            float attackerNewKarma = attackerInitialKarma + result;
+
+            if (ConfigData.getConfigData().wanted.wantedEnable) {
+                WantedManager wantedManager = WantedManager.getWantedManager();
+                doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
+                wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedKillDurationExpression);
+            }
+
+            if (result == 0F) { //If no change, skip
                 doesKarmaChange = false;
-            } else {
-                attackerNewKarma = ConfigData.getConfigData().karmaConfig.minKarma;
+            } else if (attackerNewKarma > ConfigData.getConfigData().karmaConfig.maxKarma) { //If new karma > max karma
+                if (attackerInitialKarma > ConfigData.getConfigData().karmaConfig.maxKarma && attackerNewKarma >= attackerInitialKarma) { //Avoid changes if OOB driving away
+                    doesKarmaChange = false;
+                } else {
+                    attackerNewKarma = ConfigData.getConfigData().karmaConfig.maxKarma;
+                }
+            } else if (attackerNewKarma < ConfigData.getConfigData().karmaConfig.minKarma) { //if new karma < min karma
+                if (attackerInitialKarma < ConfigData.getConfigData().karmaConfig.minKarma && attackerNewKarma <= attackerInitialKarma) { //Avoid changes if OOB driving away
+                    doesKarmaChange = false;
+                } else {
+                    attackerNewKarma = ConfigData.getConfigData().karmaConfig.minKarma;
+                }
+            }
+
+            if (doesKarmaChange) {
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma);
+                Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
             }
         }
 
-        if (doesKarmaChange) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma);
-            Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+        if (victimKarmaChangeExpression != null) {
+            float victimInitialKarma = victimModel.getKarma();
+            float result;
+
+            victimKarmaChangeExpression = adaptMessage.adaptPvpMessage(attacker, victim, victimKarmaChangeExpression);
+
+            victimKarmaChangeExpression = victimKarmaChangeExpression
+                    .replaceAll("%attacker_victim_tier_score%", String.valueOf(attackerTier.getTierScore(victimTier.getName())))
+                    .replaceAll("%victim_attacker_tier_score%", String.valueOf(victimTier.getTierScore(attackerTier.getName())));
+
+            result = (float) ExpressionCalculator.eval(victimKarmaChangeExpression);
+            if (configData.general.useWorldGuard) {
+                float multi = (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(victim);
+                result = result * multi;
+            }
+
+            float victimNewKarma = victimInitialKarma + result;
+
+            if (result == 0F) { //If no change, skip
+                doesKarmaChange = false;
+            } else if (victimNewKarma > ConfigData.getConfigData().karmaConfig.maxKarma) { //If new karma > max karma
+                if (victimInitialKarma > ConfigData.getConfigData().karmaConfig.maxKarma && victimNewKarma >= victimInitialKarma) { //Avoid changes if OOB driving away
+                    doesKarmaChange = false;
+                } else {
+                    victimNewKarma = ConfigData.getConfigData().karmaConfig.maxKarma;
+                }
+            } else if (victimNewKarma < ConfigData.getConfigData().karmaConfig.minKarma) { //if new karma < min karma
+                if (victimInitialKarma < ConfigData.getConfigData().karmaConfig.minKarma && victimNewKarma <= victimInitialKarma) { //Avoid changes if OOB driving away
+                    doesKarmaChange = false;
+                } else {
+                    victimNewKarma = ConfigData.getConfigData().karmaConfig.minKarma;
+                }
+            }
+
+            if (doesKarmaChange) {
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(victim, victimModel, victimNewKarma);
+                Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
+            }
         }
     }
 

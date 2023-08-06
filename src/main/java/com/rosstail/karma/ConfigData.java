@@ -93,14 +93,14 @@ public class ConfigData {
     public class ConfigGeneral {
         public FileConfiguration configFile;
 
-        public final int configVersion;
+        public final float configVersion;
         public final int topScoreLimit;
         public final boolean useWorldGuard;
 
         ConfigGeneral(FileConfiguration config) {
             configFile = config;
 
-            configVersion = config.getInt("general.config-version");
+            configVersion = (float) config.getDouble("general.config-version", 1.0F);
             topScoreLimit = config.getInt("general.topscore-limit", 10);
             useWorldGuard = Bukkit.getServer().getPluginManager().isPluginEnabled("WorldGuard") && config.getBoolean("general.use-worldguard", false);
 
@@ -181,8 +181,10 @@ public class ConfigData {
 
         public final int pvpHitMessageDelay;
         public final int pvpKillMessageDelay;
-        public final String pvpHitRewardExpression;
-        public final String pvpKillRewardExpression;
+        public final String pvpHitAttackerChangeExpression;
+        public final String pvpKillAttackerChangeExpression;
+        public final String pvpHitVictimChangeExpression;
+        public final String pvpKillVictimChangeExpression;
         public final String wantedHitDurationExpression;
         public final String wantedKillDurationExpression;
 
@@ -197,8 +199,10 @@ public class ConfigData {
         ConfigPvp(FileConfiguration config) {
             fileConfig = config;
 
-            pvpHitRewardExpression = config.getString("pvp.hit-reward-expression");
-            pvpKillRewardExpression = config.getString("pvp.kill-reward-expression");
+            pvpHitAttackerChangeExpression = config.getString("pvp.hit-attacker-change-expression");
+            pvpKillAttackerChangeExpression = config.getString("pvp.kill-attacker-change-expression");
+            pvpHitVictimChangeExpression = config.getString("pvp.hit-victim-change-expression");
+            pvpKillVictimChangeExpression = config.getString("pvp.kill-victim-change-expression");
             pvpHitMessageDelay = config.getInt("pvp.messages-delay.hit");
             pvpKillMessageDelay = config.getInt("pvp.messages-delay.kill");
             wantedHitDurationExpression = config.getString("pvp.wanted.hit-duration");

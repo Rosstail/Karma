@@ -152,6 +152,11 @@ public class PlayerDataManager {
         return playerName;
     }
 
+    /**
+     * Get player name using UUID from Mojang API
+     * @param response
+     * @return
+     */
     private static String extractPlayerNameFromUUID(String response) {
         int index = response.indexOf("\"name\" : \"");
         if (index != -1) {
@@ -164,6 +169,11 @@ public class PlayerDataManager {
         return null;
     }
 
+    /**
+     * Get player name using username from Mojang API
+     * @param username the name of targeted player
+     * @return
+     */
     public static String getPlayerUUIDFromName(String username) {
         try {
             URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + username);
@@ -255,7 +265,7 @@ public class PlayerDataManager {
 
     public static void saveAllPlayerModelToStorage() {
         getPlayerModelMap().forEach((s, model) -> {
-            StorageManager.getManager().updatePlayerModel(model);
+            StorageManager.getManager().updatePlayerModel(model, true);
         });
     }
 }

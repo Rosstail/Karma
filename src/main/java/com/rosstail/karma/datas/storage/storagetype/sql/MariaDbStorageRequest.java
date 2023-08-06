@@ -2,8 +2,6 @@ package com.rosstail.karma.datas.storage.storagetype.sql;
 
 import com.rosstail.karma.datas.storage.storagetype.SqlStorageRequest;
 
-import java.sql.*;
-
 public class MariaDbStorageRequest extends SqlStorageRequest {
 
     public MariaDbStorageRequest(String pluginName) {
@@ -17,12 +15,6 @@ public class MariaDbStorageRequest extends SqlStorageRequest {
         this.username = username;
         this.password = password;
 
-        try {
-            Connection connection = openConnection();
-            super.createKarmaTable();
-            closeConnection(connection);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        super.createKarmaTable();
     }
 }

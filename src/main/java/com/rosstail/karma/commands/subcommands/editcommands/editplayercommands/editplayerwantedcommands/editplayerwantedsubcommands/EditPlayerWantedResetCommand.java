@@ -71,18 +71,7 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
         model.setWantedTimeStamp(new Timestamp(0));
-        StorageManager.getManager().updatePlayerModel(model);
-
-        if (model.isWanted()) {
-            if (model.getWantedTimeStamp().getTime() <= System.currentTimeMillis()) {
-                sender.sendMessage(" He will become INNOCENT upon reconnect");
-            } else {
-                sender.sendMessage("His wanted status will be refreshed upon reconnect");
-            }
-        } else if (model.getWantedTimeStamp().getTime() > System.currentTimeMillis()) {
-            sender.sendMessage("His wanted level will become WANTED upon reconnect");
-        }
-
+        StorageManager.getManager().updatePlayerModel(model, true);
 
         sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText()));
     }

@@ -1,20 +1,23 @@
 package com.rosstail.karma.datas.storage.storagetype;
 
 import com.rosstail.karma.ConfigData;
+import com.rosstail.karma.Karma;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
+import org.bukkit.Bukkit;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SqlStorageRequest implements StorageRequest {
+    private final Karma plugin = Karma.getInstance();
     private final String pluginName;
     protected String driver;
     protected String url;
     protected String username;
     protected String password;
-    private final List<Connection> connectionList = new ArrayList<>();
+    private Connection connection;
 
     public SqlStorageRequest(String pluginName) {
         this.pluginName = pluginName;
@@ -58,7 +61,6 @@ public class SqlStorageRequest implements StorageRequest {
     @Override
     public PlayerModel selectPlayerModel(String uuid) {
         String query = "SELECT * FROM " + pluginName + " WHERE uuid = ?";
-        Connection connection = openConnection();
         try {
             ResultSet result = executeSQLQuery(connection, query, uuid);
             if (result.next()) {
@@ -81,10 +83,17 @@ public class SqlStorageRequest implements StorageRequest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        closeConnection(connection);
         return null;
     }
 
+    public void updatePlayerModelAsync(PlayerModel model) {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run() {
+                updatePlayerModel(model);
+            }
+        });
+    }
     @Override
     public void updatePlayerModel(PlayerModel model) {
         String query = "UPDATE " + pluginName + " SET karma = ?, previous_karma = ?, tier = ?, previous_tier = ?, wanted_time = ?, is_wanted = ?, last_update = CURRENT_TIMESTAMP WHERE uuid = ?";
@@ -119,7 +128,7 @@ public class SqlStorageRequest implements StorageRequest {
      */
     private int executeSQLUpdate(String query, Object... params) throws SQLException {
         int result = 0;
-        Connection connection = openConnection();
+        openConnection();
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
@@ -128,7 +137,6 @@ public class SqlStorageRequest implements StorageRequest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        closeConnection(connection);
         return result;
     }
 
@@ -140,6 +148,7 @@ public class SqlStorageRequest implements StorageRequest {
      */
     public ResultSet executeSQLQuery(Connection connection, String query, Object... params) {
         try {
+            openConnection();
             PreparedStatement statement = connection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
@@ -158,8 +167,8 @@ public class SqlStorageRequest implements StorageRequest {
      */
     public boolean executeSQL(String query, Object... params) {
         boolean execute = false;
-        Connection connection = openConnection();
         try {
+            openConnection();
             PreparedStatement statement = connection.prepareStatement(query);
             for (int i = 0; i < params.length; i++) {
                 statement.setObject(i + 1, params[i]);
@@ -172,7 +181,14 @@ public class SqlStorageRequest implements StorageRequest {
     }
 
     public Connection openConnection() {
-        Connection connection;
+        try {
+            if (connection != null && !connection.isClosed()) {
+                return connection;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
         try {
             if (driver != null) {
                 Class.forName(driver);
@@ -182,26 +198,20 @@ public class SqlStorageRequest implements StorageRequest {
             } else {
                 connection = DriverManager.getConnection(url);
             }
-            connectionList.add(connection);
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return connection;
     }
-    public void closeConnection(Connection connection) {
+    public void closeConnection() {
         if (connection != null) {
             try {
-                connection.close();
+                if (!connection.isClosed()) {
+                    connection.close();
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        }
-        connectionList.remove(connection);
-    }
-
-    public void closeAllConnection() {
-        for (Connection connection : connectionList) {
-            closeConnection(connection);
         }
     }
 
@@ -254,7 +264,6 @@ public class SqlStorageRequest implements StorageRequest {
     @Override
     public List<PlayerModel> selectPlayerModelList(String query, int limit) {
         List<PlayerModel> modelList = new ArrayList<>();
-        Connection connection = openConnection();
         try {
             ResultSet result = executeSQLQuery(connection, query, limit);
             while (result.next()) {
@@ -273,7 +282,6 @@ public class SqlStorageRequest implements StorageRequest {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        closeConnection(connection);
         return modelList;
     }
 

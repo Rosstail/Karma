@@ -38,6 +38,8 @@ import java.util.Map;
 
 public class MinecraftEventHandler implements Listener {
 
+    private boolean isClosing = false;
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
@@ -127,8 +129,10 @@ public class MinecraftEventHandler implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
-        StorageManager.getManager().updatePlayerModel(model);
-        PlayerDataManager.removePlayerModelFromMap(player);
+        if (!isClosing) {
+            StorageManager.getManager().updatePlayerModel(model, true);
+            PlayerDataManager.removePlayerModelFromMap(player);
+        }
     }
 
     /**
@@ -335,5 +339,13 @@ public class MinecraftEventHandler implements Listener {
             Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
         }
 
+    }
+
+    public boolean isClosing() {
+        return isClosing;
+    }
+
+    public void setClosing(boolean closing) {
+        isClosing = closing;
     }
 }

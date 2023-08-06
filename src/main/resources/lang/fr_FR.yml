@@ -68,7 +68,7 @@ commands:
           desc: "Réinitalier le temps recherche du joueur."
           result: "%prefix%Temps de recherche réinitilisé pour %player%."
   shop:
-    header: "&b====== &6 BOUTIQUE KARMA &b======"
+    header: "&b====== &6BOUTIQUE KARMA &b======"
     line: " &6> &9%shop_display% &8: &f%shop_description% &8| &e%shop_price%"
     not-exist: "%prefix%&cCet article n'existe pas."
     buy:

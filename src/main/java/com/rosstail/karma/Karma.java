@@ -37,6 +37,7 @@ public class Karma extends JavaPlugin implements Listener {
     private Timer updateDataTimer;
     private Timer scoreboardTimer;
     private TopFlopScoreManager topFlopScoreManager;
+    private MinecraftEventHandler minecraftEventHandler;
 
     @Override
     public void onLoad() {
@@ -59,6 +60,8 @@ public class Karma extends JavaPlugin implements Listener {
 
         loadCustomConfig();
 
+
+        this.createPlayerDataFolder();
         StorageManager manager = StorageManager.initStorageManage(this);
         manager.chooseDatabase();
 
@@ -75,13 +78,12 @@ public class Karma extends JavaPlugin implements Listener {
             }
         }
 
-        this.createPlayerDataFolder();
-
         TopFlopScoreManager.init();
         this.topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
         topFlopScoreManager.getScores();
 
-        Bukkit.getPluginManager().registerEvents(new MinecraftEventHandler(), this);
+        minecraftEventHandler = new MinecraftEventHandler();
+        Bukkit.getPluginManager().registerEvents(minecraftEventHandler, this);
         Bukkit.getPluginManager().registerEvents(new KarmaEventHandler(), this);
         this.getCommand(getName().toLowerCase()).setExecutor(new CommandManager());
 
@@ -92,7 +94,9 @@ public class Karma extends JavaPlugin implements Listener {
         updateDataTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                PlayerDataManager.saveAllPlayerModelToStorage();
+                if (!minecraftEventHandler.isClosing()) {
+                    PlayerDataManager.saveAllPlayerModelToStorage();
+                }
             }
         }, delay, delay);
 
@@ -125,6 +129,7 @@ public class Karma extends JavaPlugin implements Listener {
     }
 
     public void onDisable() {
+        minecraftEventHandler.setClosing(true);
         if (ConfigData.getConfigData().overtime.overtimeActive || ConfigData.getConfigData().wanted.wantedEnable) {
             PlayerDataManager.stopTimer(PlayerDataManager.getScheduler());
         }
@@ -132,7 +137,7 @@ public class Karma extends JavaPlugin implements Listener {
         for (Map.Entry<String, PlayerModel> entry : playerModelMap.entrySet()) {
             String s = entry.getKey();
             PlayerModel model = entry.getValue();
-            StorageManager.getManager().updatePlayerModel(model);
+            StorageManager.getManager().updatePlayerModel(model, false);
         }
         StorageManager.getManager().disconnect();
         updateDataTimer.cancel();

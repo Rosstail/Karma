@@ -124,10 +124,7 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
 
         model.setPreviousKarma(model.getKarma());
         model.setKarma(value);
-        StorageManager.getManager().updatePlayerModel(model);
-
-        String currentTierName = model.getTierName();
-        String futureTierName = TierManager.getTierManager().getTierByKarmaAmount(value).getName();
+        StorageManager.getManager().updatePlayerModel(model, true);
 
         sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_SET_RESULT), PlayerType.PLAYER.getText()));
     }
