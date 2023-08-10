@@ -35,7 +35,8 @@ public class TierManager {
             noTier = new Tier();
         }
 
-        for (Map.Entry<String, Tier> entry : tiers.entrySet()) { //Check and remove tiers that do not exist anymore
+        Map<String, Tier> tierMap = new HashMap<>(tiers);
+        for (Map.Entry<String, Tier> entry : tierMap.entrySet()) { //Check and remove tiers that do not exist anymore
             String s = entry.getKey();
             ConfigurationSection tierConfigSection = tiersFileConfiguration.getConfigurationSection("tiers.list." + s);
             if (tierConfigSection == null) {

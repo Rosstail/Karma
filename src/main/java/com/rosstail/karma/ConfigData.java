@@ -60,8 +60,8 @@ public class ConfigData {
         public final int titleFadeIn;
         public final int titleStay;
         public final int titleFadeOut;
-        public final String dateTimeFormat;
-        public final String countDownFormat;
+        //public final String dateTimeFormat;
+        //public final String countDownFormat;
 
         ConfigLocale(FileConfiguration config) {
             this.configFile = config;
@@ -71,11 +71,11 @@ public class ConfigData {
             titleFadeIn = config.getInt("locale.title.fade-in");
             titleStay = config.getInt("locale.title.stay");
             titleFadeOut = config.getInt("locale.title.fade-out");
-            dateTimeFormat = config.getString("locale.datetime-format");
-            countDownFormat = config.getString("locale.countdown-format");
+            //dateTimeFormat = config.getString("locale.datetime-format");
+            //countDownFormat = config.getString("locale.countdown-format");
         }
 
-        public String getDateTimeFormat() {
+        /*public String getDateTimeFormat() {
             if (dateTimeFormat == null) {
                 return "yyyy-MM-dd HH:mm:ss";
             }
@@ -87,7 +87,7 @@ public class ConfigData {
                 return "{dd} {HH}:{mm}:{ss}";
             }
             return countDownFormat;
-        }
+        }*/
     }
 
     public class ConfigGeneral {
@@ -223,7 +223,7 @@ public class ConfigData {
     }
 
     public class ConfigPve {
-        FileConfiguration fileConfig;
+        public final FileConfiguration fileConfig;
 
         public final int pveHitMessageDelay;
         public final int pveKillMessageDelay;
@@ -231,8 +231,8 @@ public class ConfigData {
         ConfigPve(FileConfiguration config) {
             fileConfig = config;
 
-            pveHitMessageDelay = config.getInt("entities.messages-delay.hit");
-            pveKillMessageDelay = config.getInt("entities.messages-delay.kill");
+            pveHitMessageDelay = config.getInt("pve.messages-delay.hit");
+            pveKillMessageDelay = config.getInt("pve.messages-delay.kill");
         }
     }
 
@@ -260,7 +260,7 @@ public class ConfigData {
         this.overtime = new ConfigOvertime(readConfig(config, "overtime"));
         this.wanted = new ConfigWanted(readConfig(config, "wanted"));
         this.pvp = new ConfigPvp(readConfig(config, "pvp"));
-        this.pve = new ConfigPve(readConfig(config, "entities"));
+        this.pve = new ConfigPve(readConfig(config, "pve"));
         this.times = new ConfigTimes(readConfig(config, "time-periods"));
     }
 

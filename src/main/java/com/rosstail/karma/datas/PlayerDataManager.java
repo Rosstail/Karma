@@ -39,6 +39,13 @@ public class PlayerDataManager {
         return playerModelMap.remove(player.getName());
     }
 
+    public static void changePlayerKarmaMessage(Player player) {
+        String message = LangManager.getMessage(LangMessage.KARMA_ON_CHANGE);
+        if (message != null) {
+            adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())));
+        }
+    }
+
     public static void changePlayerTierMessage(Player player) {
         String message = LangManager.getMessage(LangMessage.TIER_ON_CHANGE);
         if (message != null) {

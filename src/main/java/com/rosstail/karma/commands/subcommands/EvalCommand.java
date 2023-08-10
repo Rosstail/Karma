@@ -17,12 +17,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CalculateCommand extends SubCommand {
+public class EvalCommand extends SubCommand {
 
-    public CalculateCommand() {
+    public EvalCommand() {
         help = AdaptMessage.getAdaptMessage().adaptMessage(
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
-                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_CALCULATE_DESC))
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EVAL_DESC))
                         .replaceAll("\\[syntax]", getSyntax()));
         subCommands.add(new KarmaShopBuySelfCommand());
         subCommands.add(new KarmaShopBuyOtherCommand());
@@ -30,7 +30,7 @@ public class CalculateCommand extends SubCommand {
 
     @Override
     public String getName() {
-        return "calculate";
+        return "eval";
     }
 
     @Override
@@ -40,12 +40,12 @@ public class CalculateCommand extends SubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma calculate <expression>";
+        return "karma eval <expression>";
     }
 
     @Override
     public String getPermission() {
-        return "karma.command.calculate";
+        return "karma.command.eval";
     }
 
     @Override
@@ -55,7 +55,7 @@ public class CalculateCommand extends SubCommand {
         }
         if (args.length > 1) {
             ArrayList<String> expressionList = new ArrayList<>(Arrays.asList(args));
-            expressionList.remove("calculate");
+            expressionList.remove("eval");
             String expression = String.join(" ", expressionList);
             Player player;
             if (sender instanceof Player) {
@@ -66,7 +66,7 @@ public class CalculateCommand extends SubCommand {
             float result = (float) ExpressionCalculator.eval(expression);
 
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(
-                    LangManager.getMessage(LangMessage.COMMANDS_CALCULATE_RESULT)
+                    LangManager.getMessage(LangMessage.COMMANDS_EVAL_RESULT)
                             .replaceAll("\\[expression]", expression).replaceAll("\\[result]", String.valueOf(result)))
             );
         } else {
@@ -79,6 +79,8 @@ public class CalculateCommand extends SubCommand {
         ArrayList<String> expressions = new ArrayList<>();
         expressions.add(ConfigData.getConfigData().pvp.pvpHitAttackerChangeExpression);
         expressions.add(ConfigData.getConfigData().pvp.pvpKillAttackerChangeExpression);
+        expressions.add(ConfigData.getConfigData().pvp.pvpHitVictimChangeExpression);
+        expressions.add(ConfigData.getConfigData().pvp.pvpKillVictimChangeExpression);
         return expressions;
     }
 }

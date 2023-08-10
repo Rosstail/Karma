@@ -1,4 +1,10 @@
 prefix: "&f[&aKarma&f]&r "
+
+format:
+  datetime: "dd-MM-yyyy HH:mm:ss"
+  datetime-never: "&7Jamais"
+  countdown: "{dd}j {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s
+
 commands:
   by-player-only: "[prefix]Cette commande doit être envoyée par un joueur."
   permission-denied: "[prefix]Vous n'avez pas la permission pour la commande [command_name] : [command_permission]."
@@ -81,7 +87,7 @@ commands:
   save:
     desc: "Sauvegarde instantanément les données des joueurs."
     result: "[prefix]Sauvegarde manuelle de [amount] joueurs."
-  calculate:
+  eval:
     desc: "Calculer une expression mathématique."
     result: "[prefix]Expression: [expression] = [result]"
 
@@ -98,30 +104,28 @@ karma:
 tier:
   on-change: "[prefix]Vous êtes désormais au tier [player_tier_display]."
   none:
-    display: "&f[&7Aucun&f]&r"
+    display: "&7Aucun"
     short-display: "&7"
 
 fight:
   pvp:
-    on-defend: "[prefix]Vous vous défendez face à [victim]."
-    on-assault: "[prefix]Vous agressez [victim]."
     hit:
-      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en frappant [victim]."
+      on-karma-gain: "[prefix]Gain de [attacker_karma_diff] karma en frappant [victim]."
       on-karma-unchanged: "[prefix]Frappe de [victim] sans changement de karma."
-      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en frappant [victim]."
+      on-karma-loss: "[prefix]Perte de [attacker_karma_diff] karma en frappant [victim]."
     kill:
-      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en tuant [victim]."
+      on-karma-gain: "[prefix]Gain de [attacker_karma_diff] karma en tuant [victim]."
       on-karma-unchanged: "[prefix]Mort de [victim] sans changement de karma."
-      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en tuant [victim]."
+      on-karma-loss: "[prefix]Perte de [attacker_karma_diff] karma en tuant [victim]."
   pve:
     hit:
-      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en frappant [victim]."
+      on-karma-gain: "[prefix]Gain de [reward] karma en frappant [victim]."
       on-karma-unchanged: "[prefix]Frappe de [victim] sans changement de karma."
-      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en frappant [victim]."
+      on-karma-loss: "[prefix]Perte de [reward] karma en frappant [victim]."
     kill:
-      on-karma-gain: "[prefix]Gain de [player_karma_diff] karma en abattant [victim]."
+      on-karma-gain: "[prefix]Gain de [reward] karma en abattant [victim]."
       on-karma-unchanged: "[prefix]Mort de [victim] sans changement de karma."
-      on-karma-loss: "[prefix]Perte de [player_karma_diff] karma en abattant [victim]."
+      on-karma-loss: "[prefix]Perte de [reward] karma en abattant [victim]."
 
 wanted:
   status:

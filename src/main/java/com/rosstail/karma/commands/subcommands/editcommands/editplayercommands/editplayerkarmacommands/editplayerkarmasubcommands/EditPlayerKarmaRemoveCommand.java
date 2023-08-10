@@ -11,12 +11,12 @@ import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
-import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
 

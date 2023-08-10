@@ -12,6 +12,7 @@ public enum LangMessage {
     COMMANDS_PLAYER_NO_DATA("commands.player-no-data"),
 
     COMMANDS_HELP_HEADER("commands.help.header"),
+
     COMMANDS_HELP_LINE("commands.help.line"),
 
     COMMANDS_CHECK_DESC("commands.check.desc"),
@@ -66,8 +67,8 @@ public enum LangMessage {
     COMMANDS_SAVE_DESC("commands.save.desc"),
     COMMANDS_SAVE_RESULT("commands.save.result"),
 
-    COMMANDS_CALCULATE_DESC("commands.calculate.desc"),
-    COMMANDS_CALCULATE_RESULT("commands.calculate.result"),
+    COMMANDS_EVAL_DESC("commands.eval.desc"),
+    COMMANDS_EVAL_RESULT("commands.eval.result"),
 
     PLAYER_ONLINE("player.online"),
     PLAYER_OFFLINE("player.offline"),
@@ -78,8 +79,7 @@ public enum LangMessage {
     TIER_NONE_DISPLAY("tier.none.display"),
     TIER_NONE_SHORT_DISPLAY("tier.none.short-display"),
 
-    FIGHT_PVP_ON_ASSAULT("fight.pvp.on-assault"),
-    FIGHT_PVP_ON_DEFEND("fight.pvp.on-defend"),
+
     FIGHT_PVP_HIT_ON_KARMA_GAIN("fight.pvp.hit.on-karma-gain"),
     FIGHT_PVP_HIT_ON_KARMA_UNCHANGED("fight.pvp.hit.on-karma-unchanged"),
     FIGHT_PVP_HIT_ON_KARMA_LOSS("fight.pvp.hit.on-karma-loss"),
@@ -102,6 +102,9 @@ public enum LangMessage {
     WANTED_EVENT_ON_ENTER("wanted.event.on-enter"),
     WANTED_EVENT_ON_REFRESH("wanted.event.on-refresh"),
     WANTED_EVENT_ON_EXIT("wanted.event.on-exit"),
+    FORMAT_DATETIME("format.datetime"),
+    FORMAT_DATETIME_NEVER("format.datetime-never"),
+    FORMAT_COUNTDOWN("format.countdown"),
     ;
 
     private final String text;

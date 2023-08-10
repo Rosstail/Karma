@@ -1,7 +1,5 @@
 package com.rosstail.karma.apis;
 
-import com.rosstail.karma.lang.AdaptMessage;
-
 public class ExpressionCalculator {
 
     public static double eval(final String expression) {

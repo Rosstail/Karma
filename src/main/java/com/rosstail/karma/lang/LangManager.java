@@ -34,8 +34,11 @@ public class LangManager {
      * @return the string message in {@see LangManager.currentLang} language
      */
     public static String getMessage(LangMessage message) {
-        return getMessage(currentLang, message)
-                .replaceAll("\\[prefix]", getMessage(currentLang, LangMessage.PLUGIN_PREFIX));
+        String value = getMessage(currentLang, message);
+        if (value != null) {
+            return value.replaceAll("\\[prefix]", getMessage(currentLang, LangMessage.PLUGIN_PREFIX));
+        }
+        return null;
     }
 
     public static List<String> getListMessage(LangMessage message) {

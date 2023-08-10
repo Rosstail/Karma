@@ -31,7 +31,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     private static final Pattern longParamPattern = Pattern.compile("^--[A-Za-z]+");
 
     public CommandManager() {
-        subCommands.add(new CalculateCommand());
+        subCommands.add(new EvalCommand());
         subCommands.add(new CheckCommand());
         subCommands.add(new EditCommand());
         subCommands.add(new ReloadCommand());
@@ -149,7 +149,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
             if (senderOrTarget instanceof Player) {
                 AdaptMessage.getAdaptMessage().sendToPlayer(player, command);
             } else {
-                senderOrTarget.sendMessage(command);
+                senderOrTarget.sendMessage(command.replaceAll("\\[msg(.+)?]", "").trim());
             }
         } else {
             Bukkit.dispatchCommand(senderOrTarget, command);

@@ -4,6 +4,7 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.HelpCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -35,11 +36,22 @@ public class EditCommand extends EditSubCommand {
             return;
         }
 
+        List<String> subCommandsStringList = new ArrayList<>();
+        for (EditSubCommand subCommand : subCommands) {
+            subCommandsStringList.add(subCommand.getName());
+        }
+
+        if (!subCommandsStringList.contains(args[1])) {
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
+            return;
+        }
+
         for (EditSubCommand subCommand : subCommands) {
             if (subCommand.getName().equalsIgnoreCase(args[1])) {
                 subCommand.perform(sender, args, arguments);
             }
         }
+
     }
 
     @Override

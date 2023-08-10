@@ -34,13 +34,10 @@ public class ScoreboardTeamFightHandler implements TeamFightHandler {
             for (Team team : cloneAttackerTeamList) {
                 Matcher matcher = pattern.matcher(team.getName());
                 if (matcher.find()) {
-                    attacker.sendMessage("Your karma is unchanged because " + victim.getName() + " is on the same team as you.");
-                    attacker.sendMessage(" > " + team.getName() + " " + team.getDisplayName() + " " + team.getPrefix() + " / " + team.getSuffix());
                     return true;
                 }
             }
         } else if (cancelOnOtherTeam && cloneAttackerTeamList.size() == 0) {
-            attacker.sendMessage("Your karma is unchanged because " + victim.getName() + " is on a different team as you.");
             return true;
         }
 

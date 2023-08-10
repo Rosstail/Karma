@@ -1,5 +1,10 @@
 prefix: "&f[&aKarma&f]&r "
 
+format:
+  datetime: "yyyy-MM-dd HH:mm:ss"
+  datetime-never: "&7Never"
+  countdown: "{dd}d {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s
+
 commands:
   by-player-only: "[prefix]Command must be sent by player."
   permission-denied: "[prefix]You don't have permission for command [command_name] : [command_permission]."
@@ -19,7 +24,7 @@ commands:
     \n&rTier [player_tier_display] &r| Karma: [player_karma]
     \n&rPrevious tier [player_previous_tier_display] &r| Previous karma: [player_previous_karma]
     \n&rStatus [player_wanted_status] &rfor: [player_wanted_status_short][player_wanted_time_delay_display]
-    \n&rLast update on [player_last_update]."
+    \n&rLast update on [player_last_update]&r."
     other:
       desc: "Check data of selected player"
       result: "[prefix][player] data:
@@ -82,7 +87,7 @@ commands:
   save:
     desc: "Save instantly all online players data to storage."
     result: "[prefix]Manually saved data of [amount] players."
-  calculate:
+  eval:
     desc: "Calculate a mathematical expression."
     result: "[prefix]Expression: [expression] = [result]"
 
@@ -99,30 +104,28 @@ karma:
 tier:
   on-change: "[prefix]Your tier has been set to [player_tier_display]."
   none:
-    display: "&f[&7None&f]&r"
-    short-display: "&f"
+    display: "&7None"
+    short-display: "&7"
 
 fight:
   pvp:
-    on-defend: "[prefix]You are defending yourself against [victim]."
-    on-assault: "[prefix]You are assaulting [victim]."
     hit:
-      on-karma-gain: "[prefix]You won [player_karma_diff] karma by hitting [victim]."
+      on-karma-gain: "[prefix]You won [attacker_karma_diff] karma by hitting [victim]."
       on-karma-unchanged: "[prefix]You hit [victim] without karma change."
-      on-karma-loss: "[prefix]You lose [player_karma_diff] karma by hitting [victim]."
+      on-karma-loss: "[prefix]You lose [attacker_karma_diff] karma by hitting [victim]."
     kill:
-      on-karma-gain: "[prefix]You won [player_karma_diff] karma by killing [victim]."
+      on-karma-gain: "[prefix]You won [attacker_karma_diff] karma by killing [victim]."
       on-karma-unchanged: "[prefix]You have killed [victim] without karma change."
-      on-karma-loss: "[prefix]You lose [player_karma_diff] karma by killing [victim]."
+      on-karma-loss: "[prefix]You lose [attacker_karma_diff] karma by killing [victim]."
   pve:
     hit:
-      on-karma-gain: "[prefix]You won [victim] karma by hitting [victim]."
+      on-karma-gain: "[prefix]You won [reward] karma by hitting [victim]."
       on-karma-unchanged: "[prefix]You hit [victim] without karma change."
-      on-karma-loss: "[prefix]You lose [victim] karma by hitting [victim]."
+      on-karma-loss: "[prefix]You lose [reward] karma by hitting [victim]."
     kill:
-      on-karma-gain: "[prefix]You won [player_karma_diff] karma by killing [victim]."
+      on-karma-gain: "[prefix]You won [reward] karma by killing [victim]."
       on-karma-unchanged: "[prefix]You have killed [victim] without karma change."
-      on-karma-loss: "[prefix]You lose [player_karma_diff] karma by killing [victim]."
+      on-karma-loss: "[prefix]You lose [reward] karma by killing [victim]."
 
 wanted:
   status:

@@ -1,4 +1,4 @@
-package com.rosstail.karma.events.testevents;
+package com.rosstail.karma.events.karmaevents.karmafightevents;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -6,7 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 
-public class PlayerDamagePlayerEvent extends Event implements Cancellable {
+public class PlayerKillPlayerEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
 
     @Override
@@ -22,7 +22,7 @@ public class PlayerDamagePlayerEvent extends Event implements Cancellable {
     private final Player victim;
     private boolean cancelled;
 
-    public PlayerDamagePlayerEvent(Player attacker, Player victim) {
+    public PlayerKillPlayerEvent(Player attacker, Player victim) {
         this.attacker = attacker;
         this.victim = victim;
     }

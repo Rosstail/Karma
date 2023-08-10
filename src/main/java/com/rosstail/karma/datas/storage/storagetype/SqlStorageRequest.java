@@ -105,6 +105,10 @@ public class SqlStorageRequest implements StorageRequest {
                     model.isWanted(),
                     model.getUuid())
                     > 0;
+
+            if (success) {
+                model.setLastUpdate(System.currentTimeMillis());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

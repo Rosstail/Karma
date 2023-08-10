@@ -4,9 +4,13 @@ import com.rosstail.karma.Karma;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.events.karmaevents.PlayerTierChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.tiers.Tier;
+import com.rosstail.karma.tiers.TierManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -46,10 +50,23 @@ public class ReloadCommand extends SubCommand {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
-        Karma.getInstance().loadCustomConfig();
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_RELOAD_RESULT)));
         PlayerDataManager.saveAllPlayerModelToStorage();
-        //CHECK CURRENT TIER
+        Karma.getInstance().loadCustomConfig();
+
+        /*
+            CHECK ALL PLAYER TIER
+         */
+        TierManager tierManager = TierManager.getTierManager();
+        PlayerDataManager.getPlayerModelMap().forEach((s, playerModel) -> {
+            Player player = Bukkit.getPlayer(playerModel.getUsername());
+            Tier currentKarmaTier = tierManager.getTierByKarmaAmount(playerModel.getKarma());
+            Tier modelTier = tierManager.getTierByName(playerModel.getTierName());
+            if (!currentKarmaTier.equals(modelTier)) {
+                PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(player, playerModel, currentKarmaTier.getName());
+                Bukkit.getPluginManager().callEvent(tierChangeEvent);
+            }
+        });
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_RELOAD_RESULT)));
     }
 
     @Override

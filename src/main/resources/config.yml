@@ -14,9 +14,7 @@ general:
 
 locale:
   lang: "en_EN"
-  datetime-format: "yyyy-MM-dd HH:mm:ss"
-  countdown-format: "{dd}d {HH}:{mm}:{ss}" #use dd, d, hh, h, mm, m, ss, s between {} without cap. => locale file
-  decimal-display: 2 #The number of digits behind Karma amounts on display (does not affect storage or calculations) # => locale file
+  decimal-display: 2 #The number of digits behind Karma amounts on display (does not affect storage or calculations)
   title: #Duration of the title in ticks (20ticks = 1 second)
     fade-in: 1
     stay: 20
@@ -37,7 +35,7 @@ tiers:
       # no score.
       commands:
         on-join:
-          - "[msg-title] [player_tier_display_short]You are now doomed."
+          - "player[msg-title] [player_tier_display_short]You are now doomed."
           - "karma edit player [player] wanted add 99h -o" #-o to override the limit
     criminal:
       display: "&4Criminal"
@@ -53,11 +51,11 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "broadcast &f[player] is now a notorious [player_tier_display] &r."
+          - "broadcast &f[player] is now a notorious [player_tier_display]&r."
         on-join-down:
           - "karma edit player [player] wanted add 2h -o" #-o to override the limit
         on-join-up:
-          - "[msg] The god admin gave you one more chance. Do not waste it this time."
+          - "player[msg] The god admin gave you one more chance. Do not waste it this time."
     thug:
       display: "&5Thug"
       short-display: "&5"
@@ -71,12 +69,12 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "[msg] &fYou are now a filthy [karma_player_tier] &r."
+          - "player[msg] &fYou are now a filthy [player_tier_display]&r."
         on-join-down:
           - "karma edit player [player] wanted add 30m -o" #-o to override the limit
-          - "[msg] &bThe police is now hunting you."
+          - "player[msg] &bThe police is now hunting you."
         on-join-up:
-          - "[msg] &aKeep a low profile."
+          - "player[msg] &aKeep a low profile."
     citizen:
       display: "&fCitizen"
       short-display: "&f"
@@ -90,9 +88,9 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "[msg] &fYou are a [player_tier_display] &r."
+          - "player[msg] &fYou are a [player_tier_display]&r."
           - "bc [evalformat_[player_karma]+10] karma +10 formatted"
-          - "[msg-actionbar] &fYour previous Tier was [player_previous_tier_display] and the previous karma was [karma_player_previous_karma]"
+          - "player[msg-actionbar] &fYour previous Tier was [player_previous_tier_display] and the previous karma was [player_previous_karma]"
     vigilante:
       display: "&aVigilante"
       short-display: "&a"
@@ -107,12 +105,12 @@ tiers:
         sheriff: -150
       commands:
         on-join:
-          - "[msg] &fYour are a [karma_player_tier_display] &r."
-          - "bc [calculate_[player_karma]*50] karma * 50 Double"
+          - "player[msg] &fYour are a [player_tier_display]&r."
+          - "bc [eval_[player_karma]*50] karma * 50 Double"
         on-join-up:
-          - "[msg] &bYou can help the police now."
+          - "player[msg] &bYou can help the police now."
         on-join-down:
-          - "[msg] &bYou have been demoted from the police forces."
+          - "player[msg] &bYou have been demoted from the police forces."
     sheriff:
       display: "&6Sheriff"
       short-display: "&6"
@@ -127,10 +125,10 @@ tiers:
         sheriff: -200
       commands:
         on-join:
-          - "[msg] &fYour wanted level is now [karma_player_tier_display] &r."
+          - "player[msg] &fYour wanted level is now [player_tier_display]&r."
           - "bc [evalfloat_[player_karma]/2] karma /2 float"
         on-join-up:
-          - "[msg] &bYou are got promoted from [karma_player_previous_tier_display] &r."
+          - "player[msg] &bYou are got promoted from [player_previous_tier_display] &r."
     paragon:
       display: "&l&bParagon"
       short-display: "&l&b⚖"
@@ -138,8 +136,8 @@ tiers:
       maximum: 50000
       commands:
         on-join:
-          - "[title] [karma_player_tier_display]"
-          - "[msg] &fYou are so good that you are not limited by the law"
+          - "[title] [player_tier_display]"
+          - "player[msg] &fYou are so good that you are not limited by the law"
 
 wanted:
   #if a player attacks another one, everybody can strike him back without karma changes (unless if the defender is wanted too)
@@ -150,13 +148,13 @@ wanted:
   commands:
     enter:
       - "bc [player] is now [player_wanted_status_short]WANTED"
-      - "[msg] You are now [player_wanted_status] for [player_wanted_time_delay_display]"
+      - "player[msg] You are now [player_wanted_status] for [player_wanted_time_delay_display]"
     refresh:
       - "bc [player] is STILL [player_wanted_status_short]WANTED"
-      - "[msg] You still [player_wanted_status] for [player_wanted_time_delay_display]"
+      - "player[msg] You still [player_wanted_status] for [player_wanted_time_delay_display]"
     exit:
       - "bc [player] is now INNOCENT"
-      - "[msg] You are now [player_wanted_status]"
+      - "player[msg] You are now [player_wanted_status]"
 
 worlds:
   enable: false #if enabled, only the worls listed below will be used
@@ -229,7 +227,7 @@ pvp:
           victim-status: "WANTED"
         commands:
           - "jail [victim] jail [evalint_[victim_karma_abs]/1000]m"
-          - "bc [evalint_[victim_karma_abs]/1000]m karma_abs /1000 int"
+          - "bc [evalint_[victim_karma_abs]/1000]m karma_abs/1000 int"
           - "broadcast [victim] &ahas been arrested for [evalint_[victim_karma_abs]/1000] minutes by [attacker] !"
 
 pve:
@@ -312,48 +310,37 @@ overtime:
     #    offline: <boolean> #false by default
     #  amount: <float> #0 by default. If offline is true, applies for every delay reached
     #  commands: <String[]> #ignored if empty. If offline is true, applies only once on reconnection.
-    online-citizen:
+    online-positive-1min-then-10sec:
+      timers:
+        first: 60
+        next: 10
+      requirements:
+        karma:
+          minimum: 0.01
+          maximum: 15000
+      amount: -5
+      commands:
+        - "player[msg] Removed 5 karma, 1 minute then 10 seconds."
+    15min:
+      timers:
+        first: 900
+      requirements:
+        karma:
+          maximum: 0
+        offline: true
+      commands:
+        - "player[msg] Trigger every 15 minutes connected or not, only once if reconnect after long time."
+    offline-only-negative-hourly:
       timers:
         first: 3600
-        next: 1800
       requirements:
         karma:
-          minimum: 500
-      amount: -50
-      commands:
-        - "[msg] Removed 50 karma, hourly."
-    offline-citizen:
-      timers:
-        first: 43200
-      requirements:
+          maximum: 0
         online: false
         offline: true
-        karma:
-          minimum: 500
-      amount: -250
+      amount: 50
       commands:
-        - "[msg] Removed [karma_player_diff_karma] karma, offline only and daily."
-    online-criminal:
-      timers:
-        first: 3600
-        next: 1800
-      requirements:
-        karma:
-          maximum: -1500
-      amount: 25
-      commands:
-        - "[msg] Added 25 karma. Online only, hourly then mid-hourly."
-    offline-criminal:
-      timers:
-        first: 43200
-      requirements:
-        online: false
-        offline: true
-        karma:
-          maximum: -1500
-      amount: 125
-      commands:
-        - "[msg] Added [karma_player_diff_karma] karma (offline only, daily)."
+        - "player[msg] Added [player_karma_diff] karma, hourly until you reach 0 karma if disconnected only."
 
 blocks:
   list:

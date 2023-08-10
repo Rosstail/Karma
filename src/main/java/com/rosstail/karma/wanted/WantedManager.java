@@ -37,7 +37,6 @@ public class WantedManager {
     public void wantedHandler(Player attacker, float newKarma, Player victim, String expression) {
         PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
-        attacker.sendMessage("wanted handler");
         float attackerInitialKarma = attackerModel.getKarma();
         long attackerLastWanted = attackerModel.getWantedTimeStamp().getTime();
         long victimLastWanted = victimModel.getWantedTimeStamp().getTime();
@@ -66,7 +65,7 @@ public class WantedManager {
         if (isGuilty) {
             String calculatedExpression = AdaptMessage.getAdaptMessage().adaptPlayerMessage(attacker, expression, PlayerType.PLAYER.getText());
             calculatedExpression = AdaptMessage.getAdaptMessage().adaptMessage(calculatedExpression);
-            Timestamp timestamp = new Timestamp(AdaptMessage.calculateDuration(attackerModel.getWantedTimeStamp().getTime(), "[player_wanted_time] " + calculatedExpression));
+            Timestamp timestamp = new Timestamp(AdaptMessage.evalDuration(attackerModel.getWantedTimeStamp().getTime(), "[player_wanted_time] " + calculatedExpression));
             PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(attacker, attackerModel, timestamp);
             Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
         }

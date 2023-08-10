@@ -3,7 +3,6 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedSubCommand;
-import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
@@ -76,10 +75,10 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("set");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTime, "[now] " + expression);
+        long duration = AdaptMessage.evalDuration(wantedTime, "[now] " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
+            long limiter = AdaptMessage.evalDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
             sender.sendMessage("Wanted time is not limited.");
@@ -101,10 +100,10 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("set");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTime, "[now] " + expression);
+        long duration = AdaptMessage.evalDuration(wantedTime, "[now] " + expression);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
+            long limiter = AdaptMessage.evalDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             duration = Math.min(duration, limiter);
         } else {
             sender.sendMessage("Wanted time is not limited.");

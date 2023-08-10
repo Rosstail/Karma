@@ -5,10 +5,10 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.events.karmaevents.*;
-import com.rosstail.karma.events.testevents.PlayerDamageMobEvent;
-import com.rosstail.karma.events.testevents.PlayerDamagePlayerEvent;
-import com.rosstail.karma.events.testevents.PlayerKillMobEvent;
-import com.rosstail.karma.events.testevents.PlayerKillPlayerEvent;
+import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamageMobEvent;
+import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamagePlayerEvent;
+import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerKillMobEvent;
+import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerKillPlayerEvent;
 import com.rosstail.karma.fight.FightHandler;
 import com.rosstail.karma.fight.teamfighthandlers.TeamFightHandler;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -19,7 +19,6 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,13 +34,15 @@ public class KarmaEventHandler implements Listener {
 
     @EventHandler
     public void onPlayerKarmaChange(PlayerKarmaChangeEvent event) {
+        Player player = event.getPlayer();
         PlayerModel model = event.getModel();
         model.setPreviousKarma(model.getKarma());
         model.setKarma(event.getValue());
 
+        PlayerDataManager.changePlayerKarmaMessage(player);
         /*
-            CHECK PLAYER TIER
-             */
+        CHECK PLAYER TIER
+         */
         TierManager tierManager = TierManager.getTierManager();
         Tier currentKarmaTier = tierManager.getTierByKarmaAmount(model.getKarma());
         Tier modelTier = tierManager.getTierByName(model.getTierName());
@@ -144,7 +145,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodEndEvent(PlayerWantedPeriodEndEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model= event.getModel();
+        PlayerModel model = event.getModel();
 
         model.setWanted(false);
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_EXIT);
@@ -152,96 +153,33 @@ public class KarmaEventHandler implements Listener {
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
-                    ));
+            ));
         }
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerDamagePlayerEvent(PlayerDamagePlayerEvent event) {
+        Player attacker = event.attacker;
+        Player victim = event.victim;
+
         for (TeamFightHandler teamFightHandler : FightHandler.getTeamFightHandlerList()) {
-            if (teamFightHandler.doTeamFightCancel(event.getAttacker(), event.getVictim())) {
+            if (teamFightHandler.doTeamFightCancel(attacker, victim)) {
                 event.setCancelled(true);
-                break;
+                return;
             }
         }
-
-        Player attacker = event.getAttacker();
-        Player victim = event.getVictim();
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float newKarma = attackerModel.getKarma();
-        float previousKarma = attackerModel.getPreviousKarma();
-
-        String message;
-        if (newKarma > previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_GAIN);
-        } else if (newKarma < previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_UNCHANGED);
-        } else {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_LOSS);
-        }
-        attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerKillPlayerEvent(PlayerKillPlayerEvent event) {
-
-        for (TeamFightHandler teamFightHandler : FightHandler.getTeamFightHandlerList()) {
-            if (teamFightHandler.doTeamFightCancel(event.getAttacker(), event.getVictim())) {
-                event.setCancelled(true);
-                break;
-            }
-        }
-
         Player attacker = event.getAttacker();
         Player victim = event.getVictim();
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float newKarma = attackerModel.getKarma();
-        float previousKarma = attackerModel.getPreviousKarma();
 
-        String message;
-        if (newKarma > previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_GAIN);
-        } else if (newKarma < previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_UNCHANGED);
-        } else {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_LOSS);
+        for (TeamFightHandler teamFightHandler : FightHandler.getTeamFightHandlerList()) {
+            if (teamFightHandler.doTeamFightCancel(attacker, victim)) {
+                event.setCancelled(true);
+                return;
+            }
         }
-        attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpKillMessage(message, attacker, victim));
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerDamageMobEvent(PlayerDamageMobEvent event) {
-        Player attacker = event.getPlayer();
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float newKarma = attackerModel.getKarma();
-        float previousKarma = attackerModel.getPreviousKarma();
-
-        String message;
-        if (newKarma > previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_GAIN);
-        } else if (newKarma < previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_UNCHANGED);
-        } else {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_LOSS);
-        }
-        AdaptMessage.getAdaptMessage().pveHitMessage(message, attacker, event.getMob());
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPlayerKillMobEvent(PlayerKillMobEvent event) {
-        Player attacker = event.getPlayer();
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        float newKarma = attackerModel.getKarma();
-        float previousKarma = attackerModel.getPreviousKarma();
-
-        String message;
-        if (newKarma > previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_GAIN);
-        } else if (newKarma < previousKarma) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_UNCHANGED);
-        } else {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_LOSS);
-        }
-        AdaptMessage.getAdaptMessage().pveKillMessage(message, attacker, event.getMob());
     }
 }

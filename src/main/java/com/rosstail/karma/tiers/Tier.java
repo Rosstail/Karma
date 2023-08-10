@@ -65,7 +65,6 @@ public class Tier {
     }
 
     public void initNoTier(String display, String shortDisplay) {
-        System.out.println("NO TIER " + display + " " + shortDisplay);
         if (display == null) {
             display = "&7";
         }
@@ -75,7 +74,6 @@ public class Tier {
             shortDisplay = "&7";
         }
         this.shortDisplay = AdaptMessage.getAdaptMessage().adaptMessage(shortDisplay);
-        System.out.println("JAAJ " + this.display + " " + this.shortDisplay);
         this.minKarma = 0;
         this.maxKarma = 0;
         this.joinCommands = new ArrayList<>();

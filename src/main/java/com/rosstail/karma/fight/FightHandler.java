@@ -8,10 +8,13 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
+import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
 import com.rosstail.karma.fight.teamfighthandlers.ScoreboardTeamFightHandler;
 import com.rosstail.karma.fight.teamfighthandlers.TeamFightHandler;
 import com.rosstail.karma.lang.AdaptMessage;
+import com.rosstail.karma.lang.LangManager;
+import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timeperiod.TimeManager;
@@ -75,7 +78,20 @@ public class FightHandler {
                 wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
             }
 
+            String message;
+            if (result > 0f) {
+                message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_GAIN);
+            } else if (result < 0f) {
+                message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_LOSS);
+            } else {
+                message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_UNCHANGED);
+            }
+            attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
+
             karmaChangeChecker(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
+
+            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, "all");
+            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
         }
 
         if (victimKarmaChangeExpression != null) {
@@ -96,6 +112,9 @@ public class FightHandler {
             float victimNewKarma = victimInitialKarma + result;
 
             karmaChangeChecker(victim, result, victimModel, victimInitialKarma, doesKarmaChange, victimNewKarma);
+
+            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, "all");
+            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
         }
 
     }
@@ -157,10 +176,23 @@ public class FightHandler {
                 }
             }
 
+            String message;
+            if (result > 0f) {
+                message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_GAIN);
+            } else if (result < 0f) {
+                message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_LOSS);
+            } else {
+                message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_UNCHANGED);
+            }
+            attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
+
             if (doesKarmaChange) {
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma);
                 Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
             }
+
+            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, "all");
+            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
         }
 
         if (victimKarmaChangeExpression != null) {
@@ -207,16 +239,30 @@ public class FightHandler {
     public static void pveHit(Player attacker, Mob victim) {
 
         String entityName = victim.getName();
-        YamlConfiguration config = plugin.getCustomConfig();
-        float reward = config.getInt("entities.list." + entityName + ".hit-karma-reward");
-        CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".hit-commands"));
+        ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
+        float reward = configPve.fileConfig.getInt("pve.list." + entityName + ".hit-karma-reward");
+        CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".hit-commands"));
 
-        rewardChecker(attacker, reward);
-
-        adaptMessage.pveHitMessage(config.getString("entities.list." + entityName + ".hit-message"), attacker, victim);
+        pveHitRewardChecker(attacker, victim, reward);
     }
 
-    private static void rewardChecker(Player attacker, float reward) {
+    private static void pveHitRewardChecker(Player attacker, Mob victim, float reward) {
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        float attackerInitialKarma = model.getKarma();
+
+        if (configData.general.useWorldGuard) {
+            reward *= (float) WGPreps.getWgPreps().checkMultipleKarmaFlags(attacker);
+        }
+
+        boolean doesKarmaChange = true;
+        float attackerNewKarma = attackerInitialKarma + reward;
+
+        AdaptMessage.getAdaptMessage().pveHitMessage(attacker, victim, reward);
+
+        karmaChangeChecker(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
+    }
+
+    private static void pveKillRewardChecker(Player attacker, Mob victim, float reward) {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = model.getKarma();
 
@@ -256,13 +302,13 @@ public class FightHandler {
     public static void pveKill(Player attacker, Mob victim) {
 
         String entityName = victim.getName();
-        YamlConfiguration config = plugin.getCustomConfig();
-        float reward = config.getInt("entities.list." + entityName + ".kill-karma-reward");
-        CommandManager.commandsLauncher(attacker, config.getStringList("entities.list." + entityName + ".kill-commands"));
+        ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
+        float reward = configPve.fileConfig.getInt("pve.list." + entityName + ".kill-karma-reward");
+        CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".kill-commands"));
 
-        rewardChecker(attacker, reward);
+        pveKillRewardChecker(attacker, victim, reward);
 
-        adaptMessage.pveKillMessage(config.getString("entities.list." + entityName + ".kill-message"), attacker, victim);
+        adaptMessage.pveKillMessage(attacker, victim, reward);
     }
 
     public static boolean isFakePlayer(Player player) {

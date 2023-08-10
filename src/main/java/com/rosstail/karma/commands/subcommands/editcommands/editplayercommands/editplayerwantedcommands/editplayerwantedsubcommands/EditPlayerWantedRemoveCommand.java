@@ -3,7 +3,6 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedSubCommand;
-import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.datas.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
@@ -73,12 +72,12 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
         expressionList.remove("remove");
         String expression = String.join(" ", expressionList).trim();
 
-        long duration = AdaptMessage.calculateDuration(wantedTime, expression);
+        long duration = AdaptMessage.evalDuration(wantedTime, expression);
         long baseDuration = model.getWantedTimeStamp().getTime();
         long newDuration = baseDuration - duration;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
+            long limiter = AdaptMessage.evalDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
         }
 
@@ -99,12 +98,12 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
         String expression = String.join(" ", expressionList).trim();
 
         long wantedTime = model.getWantedTimeStamp().getTime();
-        long duration = AdaptMessage.calculateDuration(wantedTime, expression);
+        long duration = AdaptMessage.evalDuration(wantedTime, expression);
         long baseDuration = model.getWantedTimeStamp().getTime();
         long newDuration = baseDuration - duration;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
-            long limiter = AdaptMessage.calculateDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
+            long limiter = AdaptMessage.evalDuration(wantedTime, ConfigData.getConfigData().wanted.wantedMaxDurationExpression);
             newDuration = Math.min(newDuration, limiter);
         }
 
