@@ -2,7 +2,8 @@ package com.rosstail.karma.commands.subcommands.checkcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.HelpCommand;
+import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -10,13 +11,15 @@ import com.rosstail.karma.lang.PlayerType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CheckSelfCommand extends SubCommand {
 
     public CheckSelfCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_CHECK).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
     @Override
     public String getName() {
@@ -39,20 +42,22 @@ public class CheckSelfCommand extends SubCommand {
     }
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_BY_PLAYER_ONLY)));
             return;
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt((Player) sender, LangManager.getMessage(LangMessage.CHECK_OWN_KARMA), PlayerType.PLAYER.getText()));
+        Player player = (Player) sender;
+
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_RESULT), PlayerType.PLAYER.getText()));
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         return null;
     }
 }

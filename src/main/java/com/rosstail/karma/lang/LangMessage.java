@@ -1,72 +1,120 @@
 package com.rosstail.karma.lang;
 
 public enum LangMessage {
+    PLUGIN_PREFIX("prefix", true),
 
-    BY_PLAYER_ONLY("by-player-only"),
-    SET_KARMA("edit.set-karma"),
-    ADD_KARMA("edit.add-karma"),
-    REMOVE_KARMA("edit.remove-karma"),
-    RESET_KARMA("edit.reset-karma"),
-    DISCONNECTED("disconnected"),
-    WRONG_VALUE("wrong-value"),
-    CHECK_OTHER_KARMA("check.other"),
-    CHECK_OWN_KARMA("check.own"),
-    HELP_HEADER("help.header"),
-    HELP_CALCULATE("help.list.calculate"),
-    HELP_CHECK("help.list.check"),
-    HELP_EDIT("help.list.edit.default"),
-    HELP_EDIT_SET("help.list.edit.set"),
-    HELP_EDIT_ADD("help.list.edit.add"),
-    HELP_EDIT_REMOVE("help.list.edit.remove"),
-    HELP_EDIT_RESET("help.list.edit.reset"),
-    HELP_WANTED("help.list.wanted.default"),
-    HELP_WANTED_CHECK("help.list.wanted.check"),
-    HELP_WANTED_EDIT("help.list.wanted.edit.default"),
-    HELP_WANTED_EDIT_SET("help.list.wanted.edit.set"),
-    HELP_WANTED_EDIT_ADD("help.list.wanted.edit.add"),
-    HELP_WANTED_EDIT_REMOVE("help.list.wanted.edit.remove"),
-    HELP_WANTED_EDIT_RESET("help.list.wanted.edit.reset"),
-    HELP_RELOAD("help.list.reload"),
-    HELP_SAVE("help.list.save"),
-    HELP_SHOP("help.list.shop"),
-    PERMISSION_DENIED("permission-denied"),
-    TIER_CHANGE("tier-change"),
-    CALCULATION("calculation"),
-    TOO_FEW_ARGUMENTS("too-few-arguments"),
-    SAVED_DATA("saved-data"),
-    PVP_HIT_KARMA_INCREASE("pvp.hit-karma-increase"),
-    PVP_HIT_KARMA_UNCHANGED("pvp.hit-karma-unchanged"),
-    PVP_HIT_KARMA_DECREASE("pvp.hit-karma-decrease"),
-    PVP_KILL_KARMA_INCREASE("pvp.kill-karma-increase"),
-    PVP_KILL_KARMA_UNCHANGED("pvp.kill-karma-unchanged"),
-    PVP_KILL_KARMA_DECREASE("pvp.kill-karma-decrease"),
-    SET_WANTED("wanted.edit.set-wanted"),
-    ADD_WANTED("wanted.edit.add-wanted"),
-    REMOVE_WANTED("wanted.edit.remove-wanted"),
-    RESET_WANTED("wanted.edit.reset-wanted"),
-    WANTED_OWN_CHECK("wanted.check.own"),
-    WANTED_OTHER_CHECK("wanted.check.other"),
-    WANTED_ENTER("wanted.enter"),
-    WANTED_REFRESH("wanted.refresh"),
-    WANTED_CONNECT_REFRESH("wanted.connect-refresh"),
-    WANTED_EXIT("wanted.exit"),
-    SHOP_HEADER("shop.list.header"),
-    SHOP_LINE("shop.list.line"),
-    SHOP_SUCCESS("shop.success"),
-    SHOP_FAILURE("shop.failure"),
-    SHOP_NOT_EXIST("shop.not-exist"),
-    STATUS_INNOCENT("wanted.status.innocent"),
-    STATUS_INNOCENT_SHORT("wanted.status.innocent-short"),
-    STATUS_WANTED("wanted.status.wanted"),
-    STATUS_WANTED_SHORT("wanted.status.wanted-short"),
-    CONFIG_RELOAD("reload");
+    COMMANDS_BY_PLAYER_ONLY("commands.by-player-only", false),
+    COMMANDS_PERMISSION_DENIED("commands.permission-denied", false),
+    COMMANDS_INSERT_PLAYER_NAME("commands.insert-player-name", false),
+    COMMANDS_WRONG_VALUE("commands.wrong-value", false),
+    COMMANDS_WRONG_COMMAND("commands.wrong-command", false),
+    COMMANDS_PLAYER_DOES_NOT_EXIST("commands.player-does-not-exist", false),
+    COMMANDS_PLAYER_NO_DATA("commands.player-no-data", false),
+
+    COMMANDS_HELP_HEADER("commands.help.header", false),
+
+    COMMANDS_HELP_LINE("commands.help.line", false),
+
+    COMMANDS_CHECK_DESC("commands.check.desc", false),
+    COMMANDS_CHECK_SELF_DESC("commands.check.self.desc", false),
+    COMMANDS_CHECK_SELF_RESULT("commands.check.self.result", false),
+    COMMANDS_CHECK_OTHER_DESC("commands.check.other.desc", false),
+    COMMANDS_CHECK_OTHER_RESULT("commands.check.other.result", false),
+
+    COMMANDS_EDIT_DESC("commands.edit.desc", false),
+
+    COMMANDS_EDIT_PLAYER_DESC("commands.edit.player.desc", false),
+    COMMANDS_EDIT_PLAYER_DISCONNECTED("commands.edit.player.disconnected-player", false),
+    COMMANDS_EDIT_PLAYER_NO_DATA("commands.edit.player.player-no-data", false),
+    COMMANDS_EDIT_PLAYER_OUT_OF_BOUNDS("commands.edit.player.out-of-bounds", false),
+
+    COMMANDS_EDIT_PLAYER_KARMA_DESC("commands.edit.player.karma.desc", false),
+    COMMANDS_EDIT_PLAYER_KARMA_SET_DESC("commands.edit.player.karma.set.desc", false),
+    COMMANDS_EDIT_PLAYER_KARMA_SET_RESULT("commands.edit.player.karma.set.result", false),
+    COMMANDS_EDIT_PLAYER_KARMA_ADD_DESC("commands.edit.player.karma.add.desc", false),
+    COMMANDS_EDIT_PLAYER_KARMA_ADD_RESULT("commands.edit.player.karma.add.result", false),
+    COMMANDS_EDIT_PLAYER_KARMA_REMOVE_DESC("commands.edit.player.karma.remove.desc", false),
+    COMMANDS_EDIT_PLAYER_KARMA_REMOVE_RESULT("commands.edit.player.karma.remove.result", false),
+    COMMANDS_EDIT_PLAYER_KARMA_RESET_DESC("commands.edit.player.karma.reset.desc", false),
+    COMMANDS_EDIT_PLAYER_KARMA_RESET_RESULT("commands.edit.player.karma.reset.result", false),
+
+    COMMANDS_EDIT_PLAYER_TIER_DESC("commands.edit.player.tier.desc", false),
+    COMMANDS_EDIT_PLAYER_TIER_SET_DESC("commands.edit.player.tier.set.desc", false),
+    COMMANDS_EDIT_PLAYER_TIER_SET_RESULT("commands.edit.player.tier.set.result", false),
+
+    COMMANDS_EDIT_PLAYER_WANTED_DESC("commands.edit.player.wanted.desc", false),
+    COMMANDS_EDIT_PLAYER_WANTED_SET_DESC("commands.edit.player.wanted.set.desc", false),
+    COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT("commands.edit.player.wanted.set.result", false),
+    COMMANDS_EDIT_PLAYER_WANTED_ADD_DESC("commands.edit.player.wanted.add.desc", false),
+    COMMANDS_EDIT_PLAYER_WANTED_ADD_RESULT("commands.edit.player.wanted.add.result", false),
+    COMMANDS_EDIT_PLAYER_WANTED_REMOVE_DESC("commands.edit.player.wanted.remove.desc", false),
+    COMMANDS_EDIT_PLAYER_WANTED_REMOVE_RESULT("commands.edit.player.wanted.remove.result", false),
+    COMMANDS_EDIT_PLAYER_WANTED_RESET_DESC("commands.edit.player.wanted.reset.desc", false),
+    COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT("commands.edit.player.wanted.reset.result", false),
+
+
+    COMMANDS_SHOP_HEADER("commands.shop.header", false),
+    COMMANDS_SHOP_LINE("commands.shop.line", false),
+    COMMANDS_SHOP_NOT_EXIST("commands.shop.not-exist", false),
+    COMMANDS_SHOP_BUY_DESC("commands.shop.buy.desc", false),
+    COMMANDS_SHOP_BUY_SUCCESS("commands.shop.buy.success", false),
+    COMMANDS_SHOP_BUY_FAILURE("commands.shop.buy.failure", false),
+
+
+    COMMANDS_RELOAD_DESC("commands.reload.desc", false),
+    COMMANDS_RELOAD_RESULT("commands.reload.result", false),
+
+    COMMANDS_SAVE_DESC("commands.save.desc", false),
+    COMMANDS_SAVE_RESULT("commands.save.result", false),
+
+    COMMANDS_EVAL_DESC("commands.eval.desc", false),
+    COMMANDS_EVAL_RESULT("commands.eval.result", false),
+
+    PLAYER_ONLINE("player.online", false),
+    PLAYER_OFFLINE("player.offline", false),
+
+    STORAGE_TYPE("storage.type", false),
+
+    KARMA_ON_CHANGE("karma.on-change", true),
+    TIER_ON_CHANGE("tier.on-change", true),
+    TIER_NONE_DISPLAY("tier.none.display", false),
+    TIER_NONE_SHORT_DISPLAY("tier.none.short-display", false),
+
+
+    FIGHT_PVP_HIT_ON_KARMA_GAIN("fight.pvp.hit.on-karma-gain", true),
+    FIGHT_PVP_HIT_ON_KARMA_UNCHANGED("fight.pvp.hit.on-karma-unchanged", true),
+    FIGHT_PVP_HIT_ON_KARMA_LOSS("fight.pvp.hit.on-karma-loss", true),
+    FIGHT_PVP_KILL_ON_KARMA_GAIN("fight.pvp.kill.on-karma-gain", true),
+    FIGHT_PVP_KILL_ON_KARMA_UNCHANGED("fight.pvp.kill.on-karma-unchanged", true),
+    FIGHT_PVP_KILL_ON_KARMA_LOSS("fight.pvp.kill.on-karma-loss", true),
+
+    FIGHT_PVE_HIT_ON_KARMA_GAIN("fight.pve.hit.on-karma-gain", true),
+    FIGHT_PVE_HIT_ON_KARMA_UNCHANGED("fight.pve.hit.on-karma-unchanged", true),
+    FIGHT_PVE_HIT_ON_KARMA_LOSS("fight.pve.hit.on-karma-loss", true),
+    FIGHT_PVE_KILL_ON_KARMA_GAIN("fight.pve.kill.on-karma-gain", true),
+    FIGHT_PVE_KILL_ON_KARMA_UNCHANGED("fight.pve.kill.on-karma-unchanged", true),
+    FIGHT_PVE_KILL_ON_KARMA_LOSS("fight.pve.kill.on-karma-loss", true),
+
+    WANTED_STATUS_INNOCENT("wanted.status.innocent.display", false),
+    WANTED_STATUS_INNOCENT_SHORT("wanted.status.innocent.short", false),
+    WANTED_STATUS_WANTED("wanted.status.wanted.display", false),
+    WANTED_STATUS_WANTED_SHORT("wanted.status.wanted.short", false),
+
+    WANTED_EVENT_ON_ENTER("wanted.event.on-enter", true),
+    WANTED_EVENT_ON_REFRESH("wanted.event.on-refresh", true),
+    WANTED_EVENT_ON_EXIT("wanted.event.on-exit", true),
+    FORMAT_DATETIME("format.datetime", false),
+    FORMAT_DATETIME_NEVER("format.datetime-never", false),
+    FORMAT_COUNTDOWN("format.countdown", false),
+    ;
 
     private final String text;
-    private final String displayText;
+    private String displayText;
+    private final boolean nullable;
 
-    LangMessage(String text) {
+    LangMessage(String text, boolean nullable) {
         this.text = text;
-        this.displayText = AdaptMessage.getAdaptMessage().adapt(null, this.text, null);
+        this.nullable = nullable;
     }
 
     String getText() {
@@ -75,5 +123,13 @@ public enum LangMessage {
 
     public String getDisplayText() {
         return displayText;
+    }
+
+    public boolean isNullable() {
+        return nullable;
+    }
+
+    public void setDisplayText(String displayText) {
+        this.displayText = displayText;
     }
 }

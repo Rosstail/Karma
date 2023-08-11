@@ -1,9 +1,8 @@
 package com.rosstail.karma.tiers;
 
-import com.rosstail.karma.Karma;
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.lang.AdaptMessage;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,14 +14,13 @@ public class Tier {
     private final String name;
     private String display;
     private String shortDisplay;
-    private double minKarma;
-    private double maxKarma;
-    private boolean punishWanted;
+    private float minKarma;
+    private float maxKarma;
+    private float defaultKarma;
     private List<String> joinCommands;
     private List<String> joinOnDownCommands;
     private List<String> joinOnUpCommands;
-    private List<String> killedCommands;
-    private Map<Tier, Double> scores = new HashMap<>();
+    private final Map<String, Float> tierScoreMap = new HashMap<>();
 
 
     Tier(String name) {
@@ -35,46 +33,52 @@ public class Tier {
             display = "&7" + name;
         }
 
-        this.display = AdaptMessage.getAdaptMessage().adapt(null, display, null);
+        this.display = AdaptMessage.getAdaptMessage().adaptMessage(display);
 
         String shortDisplay = section.getString("short-display");
         if (shortDisplay == null) {
             shortDisplay = "&7" + name;
         }
-        this.shortDisplay = AdaptMessage.getAdaptMessage().adapt(null, shortDisplay, null);
+        this.shortDisplay = AdaptMessage.getAdaptMessage().adaptMessage(shortDisplay);
 
-        this.minKarma = section.getDouble("minimum");
-        this.maxKarma = section.getDouble("maximum");
-        this.punishWanted = section.getBoolean("punish-wanted", false);
-        this.joinCommands = section.getStringList("commands.join-commands");
-        this.joinOnDownCommands = section.getStringList("commands.join-on-down-commands");
-        this.joinOnUpCommands = section.getStringList("commands.join-on-up-commands");
-        this.killedCommands = section.getStringList("commands.killed-commands.commands");
+        this.minKarma = (float) section.getDouble("minimum", Float.MIN_VALUE);
+        this.maxKarma = (float) section.getDouble("maximum", Float.MAX_VALUE);
+        this.defaultKarma = (float) section.getDouble("default-karma", (maxKarma + minKarma) / 2f);
+
+        this.joinCommands = section.getStringList("commands.on-join");
+        this.joinOnDownCommands = section.getStringList("commands.on-join-down");
+        this.joinOnUpCommands = section.getStringList("commands.on-join-up");
+
+        if (section.getConfigurationSection("score") != null) {
+            for (String subTier : section.getConfigurationSection("score").getKeys(false)) {
+                tierScoreMap.put(subTier, (float) section.getDouble("score." + subTier, 0F));
+            }
+        }
+        tierScoreMap.put(TierManager.getNoTier().getName(), (float) ConfigData.getConfigData().tiers.fileConfig.getDouble("tiers.list." + this.getName() + ".score.none"));
     }
 
     /**
      * NULL TIER
      */
     Tier() {
-        this.name = null;
+        this.name = "none";
     }
 
     public void initNoTier(String display, String shortDisplay) {
         if (display == null) {
             display = "&7";
         }
-        this.display = AdaptMessage.getAdaptMessage().adapt(null, display, null);
+        this.display = AdaptMessage.getAdaptMessage().adaptMessage(display);
 
         if (shortDisplay == null) {
             shortDisplay = "&7";
         }
-        this.shortDisplay = AdaptMessage.getAdaptMessage().adapt(null, shortDisplay, null);
+        this.shortDisplay = AdaptMessage.getAdaptMessage().adaptMessage(shortDisplay);
         this.minKarma = 0;
         this.maxKarma = 0;
         this.joinCommands = new ArrayList<>();
         this.joinOnDownCommands = new ArrayList<>();
         this.joinOnUpCommands = new ArrayList<>();
-        this.killedCommands = new ArrayList<>();
     }
 
     public String getName() {
@@ -89,16 +93,16 @@ public class Tier {
         return shortDisplay;
     }
 
-    public double getMinKarma() {
+    public float getMinKarma() {
         return minKarma;
     }
 
-    public double getMaxKarma() {
+    public float getMaxKarma() {
         return maxKarma;
     }
 
-    public boolean doPunishWanted() {
-        return punishWanted;
+    public float getDefaultKarma() {
+        return defaultKarma;
     }
 
     public List<String> getJoinCommands() {
@@ -113,23 +117,14 @@ public class Tier {
         return joinOnUpCommands;
     }
 
-    public List<String> getKilledCommands() {
-        return killedCommands;
+    public Map<String, Float> getTierScoreMap() {
+        return tierScoreMap;
     }
 
-    public Map<Tier, Double> getScores() {
-        return scores;
-    }
-
-    public double getTierScore(Tier tier) {
-        return scores.get(tier);
-    }
-
-    public void initScores(TierManager tierManager) {
-        YamlConfiguration config = Karma.getInstance().getCustomConfig();
-        tierManager.getTiers().forEach((s, tier) -> {
-            scores.put(tier, config.getDouble("tiers.list." + this.getName() + ".score." + tier.getName()));
-        });
-        scores.put(TierManager.getNoTier(), config.getDouble("tiers.list." + this.getName() + ".score.none"));
+    public float getTierScore(String tierName) {
+        if (tierScoreMap.containsKey(tierName)) {
+            return tierScoreMap.get(tierName);
+        }
+        return 0f;
     }
 }

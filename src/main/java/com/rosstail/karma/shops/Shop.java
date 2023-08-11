@@ -2,9 +2,9 @@ package com.rosstail.karma.shops;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.customevents.PlayerKarmaChangeEvent;
-import com.rosstail.karma.datas.PlayerData;
+import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -30,14 +30,14 @@ public class Shop {
     private List<String> commands;
 
     public void init(ConfigurationSection section) {
-        display = AdaptMessage.getAdaptMessage().adapt(null, section.getString("display", name.toUpperCase()), null);
-        description = AdaptMessage.getAdaptMessage().adapt(null, section.getString("description", "&c-&r"), null);
+        display = AdaptMessage.getAdaptMessage().adaptMessage(section.getString("display", name.toUpperCase()));
+        description = AdaptMessage.getAdaptMessage().adaptMessage(section.getString("description", "&c-&r"));
         price = (float) section.getDouble("price", 0f);
         useMinKarma = section.get("min-karma") != null;
         useMaxKarma = section.get("max-karma") != null;
         costResetOvertime = section.getBoolean("cost-reset-overtime", true);
-        minShopKarma = (float) section.getDouble("min-karma", ConfigData.getConfigData().defaultKarma);
-        maxShopKarma = (float) section.getDouble("max-karma", ConfigData.getConfigData().defaultKarma);
+        minShopKarma = (float) section.getDouble("min-karma", ConfigData.getConfigData().karmaConfig.defaultKarma);
+        maxShopKarma = (float) section.getDouble("max-karma", ConfigData.getConfigData().karmaConfig.defaultKarma);
         sendType = SendType.valueOf(section.getString("send-by", "both").toUpperCase());
         commands = section.getStringList("commands");
     }
@@ -46,24 +46,23 @@ public class Shop {
         this.name = name;
     }
 
-    private boolean check(PlayerData playerData) {
-        if (useMinKarma && playerData.getKarma() < minShopKarma) {
+    private boolean checkHasKarma(PlayerModel model) {
+        if (useMinKarma && model.getKarma() < minShopKarma) {
             return false;
         }
-        return !useMaxKarma || !(playerData.getKarma() > maxShopKarma);
+        return !useMaxKarma || !(model.getKarma() > maxShopKarma);
     }
 
     public void handle(Player target) {
-        PlayerData playerData = PlayerDataManager.getNoSet(target);
-        if (check(playerData)) {
-            PlayerKarmaChangeEvent event = new PlayerKarmaChangeEvent(target, playerData.getKarma() - price, costResetOvertime, this);
+        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(target.getName());
+        if (checkHasKarma(model)) {
+            PlayerKarmaChangeEvent event = new PlayerKarmaChangeEvent(target, model, model.getKarma() - price);
             Bukkit.getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                CommandManager.commandsLauncher(target, commands);
-                target.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.SHOP_SUCCESS), PlayerType.PLAYER.getText()));
-            }
+            //after event done
+            CommandManager.commandsLauncher(target, commands);
+            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_SUCCESS), PlayerType.PLAYER.getText())));
         } else {
-            target.sendMessage(AdaptMessage.getAdaptMessage().adapt(target, LangManager.getMessage(LangMessage.SHOP_FAILURE), PlayerType.PLAYER.getText()));
+            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_FAILURE), PlayerType.PLAYER.getText())));
         }
     }
 

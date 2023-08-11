@@ -18,7 +18,10 @@ import java.util.List;
 public class KarmaShopBuySelfCommand extends SubCommand {
 
     public KarmaShopBuySelfCommand() {
-        help = AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.HELP_SHOP).replaceAll("%syntax%", getSyntax()), null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
+                        .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_DESC))
+                        .replaceAll("\\[syntax]", getSyntax()));
     }
 
     @Override
@@ -42,13 +45,13 @@ public class KarmaShopBuySelfCommand extends SubCommand {
     }
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.BY_PLAYER_ONLY), PlayerType.PLAYER.getText()));
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_BY_PLAYER_ONLY)));
             return;
         }
 
@@ -59,15 +62,15 @@ public class KarmaShopBuySelfCommand extends SubCommand {
             if (shop.getSendType() != SendType.CONSOLE) {
                 shop.handle(((Player) sender).getPlayer());
             } else {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_FAILURE), null));
+                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_FAILURE)));
             }
         } else {
-            AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.SHOP_NOT_EXIST), null);
+            AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_NOT_EXIST));
         }
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         if (args.length <= 3) {
             ArrayList<String> shops = new ArrayList<>();
             ShopManager.getShopManager().getShops().forEach((s, shop) -> {

@@ -1,8 +1,6 @@
 package com.rosstail.karma.apis;
 
-import com.rosstail.karma.KarmaAPI;
-import com.rosstail.karma.datas.PlayerData;
-import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.Karma;
 import com.sk89q.worldguard.LocalPlayer;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
@@ -13,7 +11,6 @@ import com.sk89q.worldguard.protection.flags.registry.FlagConflictException;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
 import com.sk89q.worldguard.protection.regions.RegionQuery;
-import com.rosstail.karma.Karma;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -110,30 +107,6 @@ public class WGPreps {
                 // hopefully this never actually happens
             }
         }
-    }
-
-    public boolean checkRequiredKarmaFlags(Player player) {
-        double karma = PlayerDataManager.getPlayerDataMap().get(player).getKarma();
-        boolean value = true;
-        LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(player);
-        com.sk89q.worldedit.util.Location location = localPlayer.getLocation();
-        RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionQuery query = container.createQuery();
-
-        boolean hasMinKarma = hasReqFlag(location, localPlayer, query, KARMA_MINIMUM);
-        boolean hasMaxKarma = hasReqFlag(location, localPlayer, query, KARMA_MAXIMUM);
-
-        if (hasMinKarma) {
-            if (karma < query.queryValue(location, localPlayer, KARMA_MINIMUM)) {
-                value = false;
-            }
-        }
-        if (hasMaxKarma) {
-            if (karma > query.queryValue(location, localPlayer, KARMA_MAXIMUM)) {
-                value = false;
-            }
-        }
-        return value;
     }
 
     private boolean hasReqFlag(com.sk89q.worldedit.util.Location location, LocalPlayer localPlayer, RegionQuery query, DoubleFlag flag) {

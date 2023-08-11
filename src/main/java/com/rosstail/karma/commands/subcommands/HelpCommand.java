@@ -2,6 +2,7 @@ package com.rosstail.karma.commands.subcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.EditCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -14,20 +15,10 @@ public class HelpCommand extends SubCommand {
 
     public HelpCommand(final CommandManager manager) {
         subCommands = manager.getSubCommands();
-        help = AdaptMessage.getAdaptMessage().adapt(null,
-                LangManager.getMessage(LangMessage.HELP_HEADER)
-                        .replaceAll("%syntax%", getSyntax())
-                        .replaceAll("%permission%", getPermission())
-                , null);
-    }
-
-    public HelpCommand(final SubCommand subCommand) {
-        subCommands = subCommand.getSubCommands();
-        help = AdaptMessage.getAdaptMessage().adapt(null,
-                LangManager.getMessage(LangMessage.HELP_HEADER)
-                        .replaceAll("%syntax%", getSyntax())
-                        .replaceAll("%permission%", getPermission())
-                , null);
+        help = AdaptMessage.getAdaptMessage().adaptMessage(
+                LangManager.getMessage(LangMessage.COMMANDS_HELP_HEADER)
+                        .replaceAll("\\[syntax]", getSyntax())
+                        .replaceAll("\\[permission]", getPermission()));
     }
 
     @Override
@@ -51,7 +42,7 @@ public class HelpCommand extends SubCommand {
     }
 
     @Override
-    public void perform(CommandSender sender, String[] args) {
+    public void perform(CommandSender sender, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
@@ -62,11 +53,11 @@ public class HelpCommand extends SubCommand {
                 helpCommand.append("\n").append(subCommand.getHelp());
             }
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adapt(null, helpCommand.toString(), null));
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(helpCommand.toString()));
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args) {
+    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         return null;
     }
 }

@@ -2,18 +2,23 @@ package com.rosstail.karma.apis;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.datas.PlayerData;
 import com.rosstail.karma.datas.PlayerDataManager;
+import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.datas.TopFlopScoreManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.tiers.Tier;
+import com.rosstail.karma.tiers.TierManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 public class PAPIExpansion extends PlaceholderExpansion {
     // We get an instance of the plugin later.
@@ -26,7 +31,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return true or false depending on if the required plugin is installed.
      */
     @Override
-    public boolean canRegister(){
+    public boolean canRegister() {
         return Bukkit.getPluginManager().getPlugin("Karma") != null;
     }
 
@@ -38,15 +43,15 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return true or false depending on if it can register.
      */
 
-    public PAPIExpansion(Karma plugin){
+    public PAPIExpansion(Karma plugin) {
         this.plugin = plugin;
     }
 
     @Override
-    public boolean register(){
+    public boolean register() {
 
         // Make sure "SomePlugin" is on the server
-        if(!canRegister()){
+        if (!canRegister()) {
             return false;
         }
         /*
@@ -55,7 +60,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
          */
 
         // if for some reason we can not get our variable, we should return false.
-        if (plugin == null){
+        if (plugin == null) {
             return false;
         }
 
@@ -72,9 +77,10 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The name of the author as a String.
      */
     @Override
-    public @NotNull String getAuthor(){
+    public @NotNull String getAuthor() {
         return "Rosstail";
     }
+
     /**
      * The placeholder identifier should go here.
      * <br>This is what tells PlaceholderAPI to call our onRequest
@@ -85,7 +91,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The identifier in {@code %<identifier>_<value>%} as String.
      */
     @Override
-    public @NotNull String getIdentifier(){
+    public @NotNull String getIdentifier() {
         return plugin.getName().toLowerCase();
     }
 
@@ -101,7 +107,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The name of our dependency.
      */
     @Override
-    public String getRequiredPlugin(){
+    public String getRequiredPlugin() {
         return plugin.getName();
     }
 
@@ -112,7 +118,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * @return The version as a String.
      */
     @Override
-    public @NotNull String getVersion(){
+    public @NotNull String getVersion() {
         return plugin.getDescription().getVersion();
     }
 
@@ -122,104 +128,85 @@ public class PAPIExpansion extends PlaceholderExpansion {
      * <br>We specify the value identifier in this method.
      * <br>Since version 2.9.1 can you use OfflinePlayers in your requests.
      *
-     * @param  player
-     *         A {@link Player Player}.
-     * @param  identifier
-     *         A String containing the identifier/value.
-     *
+     * @param player     A {@link Player Player}.
+     * @param identifier A String containing the identifier/value.
      * @return possibly-null String of the requested identifier.
      */
     @Override
-    public String onPlaceholderRequest(Player player, String identifier){
+    public String onPlaceholderRequest(Player player, String identifier) {
+        if (identifier.startsWith("scoreboard_")) {
+
+            TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
+            List<PlayerModel> topFlopList;
+
+            if (identifier.contains("_top_") || identifier.contains("_bottom_")) {
+                if (identifier.contains("_top_")) {
+                    topFlopList = topFlopScoreManager.getPlayerTopScoreList();
+                } else {
+                    topFlopList = topFlopScoreManager.getPlayerFlopScoreList();
+                }
+                String indexStr = identifier.replaceAll("[^0-9]*", "");
+                int index = Math.max(1, Integer.parseInt(indexStr));
+                PlayerModel model = topFlopList.get(index - 1);
+
+                if (model == null) {
+                    return "-";
+                }
+
+                if (identifier.contains("_status")) {
+                    boolean isWanted;
+                    if (ConfigData.getConfigData().wanted.wantedCountdownApplyOnDisconnect) {
+                        isWanted = (model.getWantedTimeStamp().getTime() - System.currentTimeMillis()) > 0L;
+                    } else {
+                        isWanted = model.getWantedTimeStamp().getTime() > 0L;
+                    }
+
+                    if (identifier.contains("_status_display")) {
+                        if (identifier.contains("_status_display_short")) {
+                            return LangManager.getMessage(isWanted ? LangMessage.WANTED_STATUS_WANTED_SHORT : LangMessage.WANTED_STATUS_INNOCENT_SHORT);
+                        }
+                        return LangManager.getMessage(isWanted ? LangMessage.WANTED_STATUS_WANTED : LangMessage.WANTED_STATUS_INNOCENT);
+                    }
+                }
+                if (identifier.contains("_karma_")) {
+                    if (identifier.contains("_tier")) {
+                        Tier tier = TierManager.getTierManager().getTierByKarmaAmount(model.getKarma());
+                        if (identifier.contains("_tier_display")) {
+                            if (identifier.contains("_tier_display_short")) {
+                                return tier != null ? tier.getShortDisplay() : TierManager.getNoTier().getShortDisplay();
+                            }
+                            return tier != null ? tier.getDisplay() : TierManager.getNoTier().getDisplay();
+                        }
+                        return tier != null ? tier.getName() : TierManager.getNoTier().getName();
+                    }
+                    if (identifier.contains("_int_")) {
+                        int intValue = (int) model.getKarma();
+                        return String.valueOf(intValue);
+                    }
+                    float value = model.getKarma();
+                    return AdaptMessage.getAdaptMessage().decimalFormat(value, '.');
+                }
+                if (identifier.contains("_tier_")) {
+                    Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
+                    if (identifier.contains("_tier_display")) {
+                        if (identifier.contains("_tier_display_short")) {
+                            return tier != null ? tier.getShortDisplay() : TierManager.getNoTier().getShortDisplay();
+                        }
+                        return tier != null ? tier.getDisplay() : TierManager.getNoTier().getDisplay();
+                    }
+                    return tier != null ? tier.getName() : TierManager.getNoTier().getName();
+                } else if (identifier.contains("_name_")) {
+                    return model.getUsername();
+                }
+            }
+        }
+
         if (player != null) {
-            PlayerData playerData = PlayerDataManager.getPlayerDataMap().get(player);
-            // %karma_value% here
-            if(identifier.equals("player_karma")){
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma(), '.');
-            }
-            if(identifier.equals("player_previous_karma")){
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getPreviousKarma(), '.');
-            }
-            if(identifier.equals("player_diff")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getKarma() - playerData.getPreviousKarma(), '.');
-            }
-
-            if(identifier.startsWith("player_tier")) {
-                Tier tier = playerData.getTier();
-                if (identifier.equals("player_tier")) {
-                    return tier.getName();
-                }
-                if (identifier.equals("player_tier_display")) {
-                    return tier.getDisplay();
-                }
-                if (identifier.equals("player_tier_short_display")) {
-                    return tier.getShortDisplay();
-                }
-                if (identifier.equals("player_tier_minimum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMinKarma(), '.');
-                }
-                if (identifier.equals("player_tier_maximum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMaxKarma(), '.');
-                }
-            }
-
-            if(identifier.startsWith("player_previous_tier")) {
-                Tier tier = playerData.getPreviousTier();
-                if (identifier.equals("player_previous_tier")) {
-                    return tier.getName();
-                }
-                if (identifier.equals("player_previous_tier_display")) {
-                    return tier.getDisplay();
-                }
-                if (identifier.equals("player_previous_tier_short_display")) {
-                    return tier.getShortDisplay();
-                }
-                if (identifier.equals("player_previous_tier_minimum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMinKarma(), '.');
-                }
-                if (identifier.equals("player_previous_tier_maximum")) {
-                    return AdaptMessage.getAdaptMessage().decimalFormat(tier.getMaxKarma(), '.');
-                }
-            }
-
-            if (identifier.equals("player_wanted_time")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getWantedTimeStamp().getTime(), '.');
-            }
-            if (identifier.equals("player_wanted_time_display")) {
-                long time = playerData.getWantedTimeStamp().getTime();
-                if (time > 0f) {
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(ConfigData.getConfigData().getDateTimeFormat());
-                    return simpleDateFormat.format(time);
-                }
-                return "N/A";
-            }
-
-            if (identifier.equals("player_wanted_time_delay")) {
-                return AdaptMessage.getAdaptMessage().decimalFormat(playerData.getWantedTimeStamp().getTime() - System.currentTimeMillis(), '.');
-            }
-            if (identifier.equals("player_wanted_time_delay_display")) {
-                long time = playerData.getWantedTimeLeft();
-                if (time > 0f) {
-                    return AdaptMessage.getAdaptMessage().countDownFormat(time);
-                }
-                return "-";
-            }
-            if (identifier.equals("player_wanted_status")) {
-                if (playerData.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED), null);
-                }
-                return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT), null);
-            }
-            if (identifier.equals("player_wanted_status_short")) {
-                if (playerData.isWanted()) {
-                    return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_WANTED_SHORT), null);
-                }
-                return AdaptMessage.getAdaptMessage().adapt(null, LangManager.getMessage(LangMessage.STATUS_INNOCENT_SHORT), null);
-            }
+            return AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, "[" + identifier + "]", PlayerType.PLAYER.getText());
         }
 
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
         // was provided
-        return null;
+        return AdaptMessage.getAdaptMessage().adaptMessage("[" + identifier + "]");
     }
 }

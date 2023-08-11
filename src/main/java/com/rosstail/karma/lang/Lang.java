@@ -1,5 +1,6 @@
 package com.rosstail.karma.lang;
 
+import com.rosstail.karma.FileResourcesUtils;
 import com.rosstail.karma.Karma;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -11,33 +12,48 @@ public class Lang {
     private final String langId;
     private String name;
 
-    private final File file;
-    private final YamlConfiguration configuration;
+    private final File langFile;
+    private final YamlConfiguration langConfig;
+    private final YamlConfiguration defaultLangConfig;
 
     public Lang(String langId) {
         this.langId = langId;
-        this.file = new File(Karma.getInstance().getDataFolder(), "lang/" + langId + ".yml");
-        if (available()) {
-            this.configuration = YamlConfiguration.loadConfiguration(this.file);
-            this.name = this.file.getName();
-        } else {
-            this.configuration = null;
-            AdaptMessage.print("The language file/" + langId + ".yml does not exists", AdaptMessage.prints.ERROR);
-        }
-    }
+        File wantedLangFile = new File(Karma.getInstance().getDataFolder(), "lang/" + langId + ".yml");
+        this.defaultLangConfig = FileResourcesUtils.getDefaultFileConfiguration();
 
-    /**
-     * @return true if the lang exists
-     */
-    public boolean available() {
-        return this.file.exists();
+        if (wantedLangFile.exists()) {
+            this.langFile = wantedLangFile;
+            this.langConfig = YamlConfiguration.loadConfiguration(this.langFile);
+            this.name = this.langFile.getName();
+        } else {
+            this.langFile = null;
+            this.langConfig = null;
+            this.name = langId;
+            AdaptMessage.print("Locale lang/" + langId + ".yml does not exists. use en_EN.yml from resources.", AdaptMessage.prints.WARNING);
+        }
+
+
+        for (LangMessage langMessage : LangMessage.values()) {
+            String stringPath = langMessage.getText();
+            String gotMessage = null;
+            if (langConfig != null) {
+                gotMessage = langConfig.getString(stringPath);
+                if (gotMessage != null) {
+                    langMessage.setDisplayText(AdaptMessage.getAdaptMessage().adaptMessage(gotMessage));
+                }
+            }
+
+            if (gotMessage == null && !langMessage.isNullable()) {
+                langMessage.setDisplayText(AdaptMessage.getAdaptMessage().adaptMessage(defaultLangConfig.getString(stringPath)));
+            }
+        }
     }
 
     /**
      * @return the configuration model
      */
-    public YamlConfiguration getConfiguration() {
-        return configuration;
+    public YamlConfiguration getLangConfig() {
+        return langConfig;
     }
 
     /**
@@ -59,8 +75,6 @@ public class Lang {
     }
 
     public static void initLang(String langId) {
-        if (lang == null) {
-            lang = new Lang(langId);
-        }
+        lang = new Lang(langId);
     }
 }
