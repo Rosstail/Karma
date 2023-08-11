@@ -29,7 +29,7 @@ public class Lang {
             this.langFile = null;
             this.langConfig = null;
             this.name = langId;
-            AdaptMessage.print("Locale lang/" + langId + ".yml does not exists. use default.", AdaptMessage.prints.WARNING);
+            AdaptMessage.print("Locale lang/" + langId + ".yml does not exists. use en_EN.yml from resources.", AdaptMessage.prints.WARNING);
         }
 
 
