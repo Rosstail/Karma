@@ -31,6 +31,7 @@ tiers:
       display: "&l{#FF0000}DEVIL"
       short-display: "&l{#FF0000}⛧"
       minimum: -500000 #Out of bounds
+      default-karma: -45000
       maximum: -30000.01 #2 digits accuracy
       # no score.
       commands:
@@ -41,6 +42,7 @@ tiers:
       display: "&4Criminal"
       short-display: "&4"
       minimum: -30000
+      default-karma: -25000
       maximum: -15000
       score:
         devil: 40
@@ -95,6 +97,7 @@ tiers:
       display: "&aVigilante"
       short-display: "&a"
       minimum: 10000
+      default-karma: 11000
       maximum: 13999.99
       score:
         devil: 55
@@ -115,6 +118,7 @@ tiers:
       display: "&6Sheriff"
       short-display: "&6"
       minimum: 14000
+      default-karma: 14100
       maximum: 15000
       score:
         devil: 60

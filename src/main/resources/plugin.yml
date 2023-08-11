@@ -20,8 +20,6 @@ permissions:
     default: true
   karma.command.help:
     default: true
-  karma.command.edit:
-    default: op
   karma.command.calculate:
     default: op
   karma.command.save:
@@ -56,31 +54,23 @@ permissions:
       karma.command.shop.self: true
       karma.command.shop.other: true
 
+  karma.command.edit.player.karma:
+    default: op
+  karma.command.edit.player.tier:
+    default: op
+  karma.command.edit.player.wanted:
+    default: op
+  karma.command.edit.player.*:
+    default: op
+    children:
+      karma.command.edit.player.karma: true
+      karma.command.edit.player.tier: true
+      karma.command.edit.player.wanted: true
 
-  karma.command.wanted:
-    default: true
-  karma.command.wanted.check:
-    default: true
-  karma.command.wanted.check.self:
-    default: true
-  karma.command.wanted.check.other:
+  karma.command.edit.*:
     default: op
-  karma.command.wanted.check.*:
-    default: op
-    description: Gives all wanted check commands permission
     children:
-      karma.command.wanted.check: true
-      karma.command.wanted.check.self: true
-      karma.command.wanted.check.other: true
-  karma.command.wanted.edit:
-    default: op
-  karma.command.wanted.*:
-    default: op
-    description: Gives all wanted check commands permission
-    children:
-      karma.command.wanted: true
-      karma.command.wanted.check.*: true
-      karma.command.wanted.edit: true
+      karma.command.edit.player.*: true
 
   karma.command.*:
     default: op
@@ -89,11 +79,10 @@ permissions:
       karma.command: true
       karma.command.calculate: true
       karma.command.help: true
-      karma.command.edit: true
+      karma.command.edit.*: true
       karma.command.save: true
       karma.command.check.*: true
       karma.command.shop.*: true
-      karma.command.wanted.*: true
   karma.*:
     default: false
     description: Gives all karma plugin permissions
