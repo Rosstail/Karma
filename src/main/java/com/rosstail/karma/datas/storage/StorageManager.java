@@ -44,6 +44,7 @@ public class StorageManager {
         password = ConfigData.getConfigData().storage.storagePass;
         type = ConfigData.getConfigData().storage.storageType.toLowerCase();
         String typeToPrint = LangManager.getMessage(LangMessage.STORAGE_TYPE);
+
         switch (type) {
             case "mysql":
                 AdaptMessage.print(typeToPrint.replaceAll("\\[type]", "MySQL"), AdaptMessage.prints.OUT);

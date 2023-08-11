@@ -1,6 +1,8 @@
 package com.rosstail.karma;
 
 import com.rosstail.karma.lang.AdaptMessage;
+import org.apache.commons.io.IOUtils;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
 import java.net.URI;
@@ -17,8 +19,10 @@ import java.util.stream.Collectors;
 
 public class FileResourcesUtils {
 
-    public static void main(String folder, Karma plugin) throws IOException {
-        FileResourcesUtils app = new FileResourcesUtils();
+    private static final FileResourcesUtils fileResourcesUtils = new FileResourcesUtils();
+    private static YamlConfiguration defaultFileConfiguration; //en_EN.yml
+    public static void generateYamlFile(String folder, Karma plugin) throws IOException {
+        boolean doGenerate = false;
         String pluginFolderPath = (plugin.getDataFolder() + "/" + folder).replaceAll(" ", "%20");
 
         // Sample 3 - read all files from a resources folder (JAR version)
@@ -27,11 +31,12 @@ public class FileResourcesUtils {
             if (!pluginFolder.exists()) {
                 pluginFolder.mkdir();
                 AdaptMessage.print("Creating " + pluginFolder.getName() + " folder.", AdaptMessage.prints.OUT);
-            } else {
-                return;
+                doGenerate = true;
             }
             // get paths from src/main/resources/json
-            List<Path> result = app.getPathsFromResourceJAR(folder);
+            List<Path> result = fileResourcesUtils.getPathsFromResourceJAR(folder);
+            defaultFileConfiguration = YamlConfiguration.loadConfiguration(fileResourcesUtils.getReaderFromStream(plugin.getResource("lang/en_EN.yml")));
+
             for (Path path : result) {
 
                 String filePathInJAR = path.toString();
@@ -42,7 +47,8 @@ public class FileResourcesUtils {
                 }
 
                 File file = new File(filePathInJAR);
-                if (!file.exists()) {
+
+                if (!file.exists() && doGenerate) {
                     plugin.saveResource(filePathInJAR, false);
                     AdaptMessage.print(" > Creating " + file + " config.", AdaptMessage.prints.OUT);
                 }
@@ -69,6 +75,13 @@ public class FileResourcesUtils {
             return inputStream;
         }
 
+    }
+
+    public Reader getReaderFromStream(InputStream initialStream)
+            throws IOException {
+
+        byte[] buffer = IOUtils.toByteArray(initialStream);
+        return new StringReader(new String(buffer));
     }
 
     // Get all paths from a folder that inside the JAR file
@@ -113,4 +126,7 @@ public class FileResourcesUtils {
 
     }
 
+    public static YamlConfiguration getDefaultFileConfiguration() {
+        return defaultFileConfiguration;
+    }
 }

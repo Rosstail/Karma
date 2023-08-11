@@ -296,8 +296,10 @@ public class MinecraftEventHandler implements Listener {
 
 
         if (section.getBoolean("reset-overtime", false)) {
-            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
-            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            model.getOverTimeStampMap().forEach((s, timestamp) -> {
+                PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, s);
+                Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            });
         }
     }
 
@@ -333,8 +335,10 @@ public class MinecraftEventHandler implements Listener {
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (section.getBoolean("reset-overtime", false)) {
-            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, "all");
-            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            model.getOverTimeStampMap().forEach((s, timestamp) -> {
+                PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, s);
+                Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            });
         }
 
     }

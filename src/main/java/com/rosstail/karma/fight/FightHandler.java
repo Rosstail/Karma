@@ -86,12 +86,16 @@ public class FightHandler {
             } else {
                 message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_UNCHANGED);
             }
-            attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
+            if (message != null) {
+                attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
+            }
 
             karmaChangeChecker(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
 
-            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, "all");
-            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            attackerModel.getOverTimeStampMap().forEach((s, timestamp) -> {
+                PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, s);
+                Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            });
         }
 
         if (victimKarmaChangeExpression != null) {
@@ -113,8 +117,10 @@ public class FightHandler {
 
             karmaChangeChecker(victim, result, victimModel, victimInitialKarma, doesKarmaChange, victimNewKarma);
 
-            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, "all");
-            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            attackerModel.getOverTimeStampMap().forEach((s, timestamp) -> {
+                PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, s);
+                Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            });
         }
 
     }
@@ -184,15 +190,19 @@ public class FightHandler {
             } else {
                 message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_UNCHANGED);
             }
-            attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
+            if (message != null) {
+                attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
+            }
 
             if (doesKarmaChange) {
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma);
                 Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
             }
 
-            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, "all");
-            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            attackerModel.getOverTimeStampMap().forEach((s, timestamp) -> {
+                PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, s);
+                Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+            });
         }
 
         if (victimKarmaChangeExpression != null) {
@@ -237,11 +247,15 @@ public class FightHandler {
     }
 
     public static void pveHit(Player attacker, Mob victim) {
-
         String entityName = victim.getName();
         ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
         float reward = configPve.fileConfig.getInt("pve.list." + entityName + ".hit-karma-reward");
         CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".hit-commands"));
+
+        PlayerDataManager.getPlayerModelMap().get(attacker.getName()).getOverTimeStampMap().forEach((s, timestamp) -> {
+            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, s);
+            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+        });
 
         pveHitRewardChecker(attacker, victim, reward);
     }
@@ -273,6 +287,8 @@ public class FightHandler {
         boolean doesKarmaChange = true;
         float attackerNewKarma = attackerInitialKarma + reward;
 
+        AdaptMessage.getAdaptMessage().pveKillMessage(attacker, victim, reward);
+
         karmaChangeChecker(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }
 
@@ -300,15 +316,17 @@ public class FightHandler {
     }
 
     public static void pveKill(Player attacker, Mob victim) {
-
         String entityName = victim.getName();
         ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
         float reward = configPve.fileConfig.getInt("pve.list." + entityName + ".kill-karma-reward");
         CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".kill-commands"));
 
-        pveKillRewardChecker(attacker, victim, reward);
+        PlayerDataManager.getPlayerModelMap().get(attacker.getName()).getOverTimeStampMap().forEach((s, timestamp) -> {
+            PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, s);
+            Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
+        });
 
-        adaptMessage.pveKillMessage(attacker, victim, reward);
+        pveKillRewardChecker(attacker, victim, reward);
     }
 
     public static boolean isFakePlayer(Player player) {

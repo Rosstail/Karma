@@ -112,6 +112,14 @@ public class PlayerDataManager {
         }
 
         float amount = overtimeLoop.amount;
+
+        if (overtimeLoop.hasMinKarma && currentKarma + amount < overtimeLoop.minKarma) {
+            amount = overtimeLoop.minKarma - currentKarma;
+        }
+        if (overtimeLoop.hasMaxKarma && currentKarma + amount > overtimeLoop.maxKarma) {
+            amount = overtimeLoop.maxKarma - currentKarma;
+        }
+
         if (amount != 0F) {
             amount *= multiplier;
             if (overtimeLoop.hasMaxKarma) {

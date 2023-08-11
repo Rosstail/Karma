@@ -316,7 +316,7 @@ overtime:
         next: 10
       requirements:
         karma:
-          minimum: 0.01
+          minimum: 0
           maximum: 15000
       amount: -5
       commands:

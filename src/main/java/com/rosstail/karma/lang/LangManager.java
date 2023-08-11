@@ -1,8 +1,5 @@
 package com.rosstail.karma.lang;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Static language manager
  */
@@ -10,16 +7,12 @@ public class LangManager {
 
     private static Lang currentLang;
 
-
     /**
      * Initialize the current lang from the configuration
      */
     public static void initCurrentLang(String lang) {
         Lang.initLang(lang);
         currentLang = Lang.getLang(); //file isn't found
-        if (!currentLang.available()) {
-            currentLang = null;
-        }
     }
 
     /**
@@ -30,38 +23,15 @@ public class LangManager {
     }
 
     /**
-     * @param message type of desired message
+     * @param langMessage type of desired message
      * @return the string message in {@see LangManager.currentLang} language
      */
-    public static String getMessage(LangMessage message) {
-        String value = getMessage(currentLang, message);
-        if (value != null) {
-            return value.replaceAll("\\[prefix]", getMessage(currentLang, LangMessage.PLUGIN_PREFIX));
+    public static String getMessage(LangMessage langMessage) {
+        String prefix = LangMessage.PLUGIN_PREFIX.getDisplayText();
+        if (langMessage.getDisplayText() != null) {
+            return langMessage.getDisplayText().replaceAll("\\[prefix]", prefix != null ? prefix : "");
         }
         return null;
-    }
-
-    public static List<String> getListMessage(LangMessage message) {
-        return getListMessage(currentLang, message);
-    }
-
-    /**
-     * @param message type of desired message
-     * @param lang desired language
-     * @return the string message in {@param lang} language
-     */
-    public static String getMessage(Lang lang, LangMessage message) {
-        if (lang != null && lang.available()) {
-            return lang.getConfiguration().getString(message.getDisplayText());
-        }
-        return "no-lang selected";
-    }
-
-    public static List<String> getListMessage(Lang lang, LangMessage message) {
-        if (lang != null && lang.available()) {
-            return lang.getConfiguration().getStringList(message.getText());
-        }
-        return Collections.singletonList("no-lang selected");
     }
 
 }

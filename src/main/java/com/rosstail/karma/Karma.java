@@ -144,7 +144,7 @@ public class Karma extends JavaPlugin implements Listener {
 
     private void initDefaultLocales() {
         try {
-            FileResourcesUtils.main("lang",this);
+            FileResourcesUtils.generateYamlFile("lang",this);
         } catch (IOException e) {
             e.printStackTrace();
         }
