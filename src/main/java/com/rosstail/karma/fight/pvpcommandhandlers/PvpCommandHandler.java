@@ -26,8 +26,8 @@ public class PvpCommandHandler {
     }
 
     public void setup() {
-        plugin.getCustomConfig().getConfigurationSection("pvp.commands.kill-commands").getKeys(false).forEach(s -> {
-            pvpCommandList.add(new PvpCommand(plugin.getCustomConfig().getConfigurationSection("pvp.commands.kill-commands." + s)));
+        plugin.getCustomConfig().getConfigurationSection("pvp.commands.kill").getKeys(false).forEach(s -> {
+            pvpCommandList.add(new PvpCommand(plugin.getCustomConfig().getConfigurationSection("pvp.commands.kill." + s)));
         });
     }
 

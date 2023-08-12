@@ -211,10 +211,10 @@ public class ConfigData {
             scoreboardTeamSystemCancelSameTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.same-team", true);
             scoreboardTeamSystemCancelOtherTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.other-team", false);
 
-            wantedOnKarmaGain = config.getBoolean("pvp.wanted.conditions.on-karma-gain", false);
-            wantedOnKarmaUnchanged = config.getBoolean("pvp.wanted.conditions.on-karma-unchanged", false);
-            wantedOnKarmaLoss = config.getBoolean("pvp.wanted.conditions.on-karma-loss", true);
-            wantedRefresh = config.getBoolean("pvp.wanted.conditions.refresh", true);
+            wantedOnKarmaGain = config.getBoolean("pvp.wanted.requirements.on-karma-gain", false);
+            wantedOnKarmaUnchanged = config.getBoolean("pvp.wanted.requirements.on-karma-unchanged", false);
+            wantedOnKarmaLoss = config.getBoolean("pvp.wanted.requirements.on-karma-loss", true);
+            wantedRefresh = config.getBoolean("pvp.wanted.requirements.refresh", true);
             cancelWantedKarmaGain = config.getBoolean("pvp.wanted.cancel-karma-change.wanted.on-karma-gain", true);
             cancelWantedKarmaLoss = config.getBoolean("pvp.wanted.cancel-karma-change.wanted.on-karma-loss", false);
             cancelInnocentKarmaGain = config.getBoolean("pvp.wanted.cancel-karma-change.innocent.on-karma-gain", false);

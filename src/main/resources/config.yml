@@ -183,7 +183,7 @@ pvp:
   wanted:
     hit-duration: "[player_wanted_time] 5m 15s" #compatible with: d h m s
     kill-duration: "[player_wanted_time] 1h 30m" #compatible with: d h m s
-    conditions:
+    requirements:
       on-karma-gain: false
       on-karma-unchanged: false
       on-karma-loss: true
@@ -196,7 +196,7 @@ pvp:
         on-karma-gain: false
         on-karma-loss: true
   commands:
-    kill-commands:
+    kill:
       #command-name:
       #  requirements: # any requirement is ignored if empty
       #    guarantee: <boolean> # default true. If true, commands are sent before checking time periods and worldguard regions. Else, triggers if time periods and worldguard region check are good.
