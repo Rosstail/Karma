@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Shop {
 
-    private String name;
+    private final String name;
     private String display;
     private String description;
     private float price;

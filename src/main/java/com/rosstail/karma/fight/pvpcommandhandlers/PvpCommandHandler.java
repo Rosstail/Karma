@@ -94,9 +94,7 @@ public class PvpCommandHandler {
             if (victimModel.isWanted() && victimStatusRequirement.equalsIgnoreCase("INNOCENT")) {
                 return false;
             }
-            if (!victimModel.isWanted() && victimStatusRequirement.equalsIgnoreCase("WANTED")) {
-                return false;
-            }
+            return victimModel.isWanted() || !victimStatusRequirement.equalsIgnoreCase("WANTED");
         }
 
         return true;

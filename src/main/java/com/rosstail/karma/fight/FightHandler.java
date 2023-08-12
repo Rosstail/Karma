@@ -191,7 +191,7 @@ public class FightHandler {
                 message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_UNCHANGED);
             }
             if (message != null) {
-                attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
+                attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpKillMessage(message, attacker, victim));
             }
 
             if (doesKarmaChange) {

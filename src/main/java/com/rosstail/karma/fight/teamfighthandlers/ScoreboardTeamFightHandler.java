@@ -37,9 +37,7 @@ public class ScoreboardTeamFightHandler implements TeamFightHandler {
                     return true;
                 }
             }
-        } else if (cancelOnOtherTeam && cloneAttackerTeamList.size() == 0) {
-            return true;
-        }
+        } else return cancelOnOtherTeam && cloneAttackerTeamList.size() == 0;
 
         return false;
     }

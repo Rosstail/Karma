@@ -43,7 +43,7 @@ public class FileResourcesUtils {
                 // Windows will returns /json/file1.json, cut the first /
                 // the correct path should be json/file1.json
                 if (filePathInJAR.startsWith("/")) {
-                    filePathInJAR = filePathInJAR.substring(1, filePathInJAR.length());
+                    filePathInJAR = filePathInJAR.substring(1);
                 }
 
                 File file = new File(filePathInJAR);

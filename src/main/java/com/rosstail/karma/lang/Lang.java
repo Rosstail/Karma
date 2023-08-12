@@ -10,7 +10,7 @@ public class Lang {
 
     private static Lang lang = null;
     private final String langId;
-    private String name;
+    private final String name;
 
     private final File langFile;
     private final YamlConfiguration langConfig;

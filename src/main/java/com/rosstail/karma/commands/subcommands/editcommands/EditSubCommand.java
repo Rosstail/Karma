@@ -28,5 +28,5 @@ public abstract class EditSubCommand extends SubCommand {
     }
 
     @Override
-    public abstract List<String> getSubCommandsArguments(Player sender, String args[], String[] arguments);
+    public abstract List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments);
 }

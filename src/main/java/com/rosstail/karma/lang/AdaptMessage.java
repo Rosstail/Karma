@@ -35,7 +35,7 @@ public class AdaptMessage {
     public enum prints {
         OUT,
         WARNING,
-        ERROR;
+        ERROR
     }
 
     public AdaptMessage(Karma plugin) {

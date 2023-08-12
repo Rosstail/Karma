@@ -196,6 +196,7 @@ public class ConfigData {
         public final boolean cancelWantedKarmaLoss;
         public final boolean cancelInnocentKarmaGain;
         public final boolean cancelInnocentKarmaLoss;
+
         ConfigPvp(FileConfiguration config) {
             fileConfig = config;
 
