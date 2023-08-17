@@ -1,6 +1,7 @@
 package com.rosstail.karma.events;
 
 import com.rosstail.karma.ConfigData;
+import com.rosstail.karma.blocks.BlocksManager;
 import com.rosstail.karma.events.karmaevents.*;
 import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
@@ -23,11 +24,13 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -269,38 +272,8 @@ public class MinecraftEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block placedBlock = event.getBlockPlaced();
-        String blockName = placedBlock.getBlockData().getMaterial().name();
-        ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".place");
-        if (section == null) {
-            return;
-        }
 
-        boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
-        List<Integer> ages = section.getIntegerList("data.age.ages");
-        if (!ages.isEmpty() && placedBlock.getBlockData() instanceof Ageable) {
-            Ageable ageable = (Ageable) placedBlock.getBlockData();
-            if (ageBlackList) {
-                if (ages.contains(ageable.getAge())) {
-                    return;
-                }
-            } else {
-                if (!ages.contains(ageable.getAge())) {
-                    return;
-                }
-            }
-        }
-
-        float karma = model.getKarma() + (float) section.getDouble("value");
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, karma);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-
-
-        if (section.getBoolean("reset-overtime", false)) {
-            model.getOverTimeStampMap().forEach((s, timestamp) -> {
-                PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, s);
-                Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
-            });
-        }
+        BlocksManager.getBlocksManager().placeHandler(player, model, placedBlock);
     }
 
 
@@ -309,38 +282,19 @@ public class MinecraftEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block brokenBlock = event.getBlock();
-        String blockName = brokenBlock.getBlockData().getMaterial().name();
-        ConfigurationSection section = ConfigData.getConfigData().config.getConfigurationSection("blocks.list." + blockName + ".break");
-        if (section == null) {
-            return;
+
+        BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPlayerJumpOnRootsEvent(PlayerInteractEvent event) {
+        if (event.getAction() == Action.PHYSICAL) {
+            Player player = event.getPlayer();
+            PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+            Block brokenBlock = event.getClickedBlock();
+
+            BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
         }
-
-        boolean ageBlackList = section.getBoolean("data.age.blacklist", false);
-        List<Integer> ages = section.getIntegerList("data.age.ages");
-        if (!ages.isEmpty() && brokenBlock.getBlockData() instanceof Ageable) {
-            Ageable ageable = (Ageable) brokenBlock.getBlockData();
-            if (ageBlackList) {
-                if (ages.contains(ageable.getAge())) {
-                    return;
-                }
-            } else {
-                if (!ages.contains(ageable.getAge())) {
-                    return;
-                }
-            }
-        }
-
-        float karma = model.getKarma() + (float) section.getDouble("value");
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, karma);
-        Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
-
-        if (section.getBoolean("reset-overtime", false)) {
-            model.getOverTimeStampMap().forEach((s, timestamp) -> {
-                PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, s);
-                Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
-            });
-        }
-
     }
 
     public boolean isClosing() {

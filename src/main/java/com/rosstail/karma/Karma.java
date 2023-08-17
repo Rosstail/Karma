@@ -3,6 +3,7 @@ package com.rosstail.karma;
 
 import com.rosstail.karma.apis.PAPIExpansion;
 import com.rosstail.karma.apis.WGPreps;
+import com.rosstail.karma.blocks.BlocksManager;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.datas.*;
 import com.rosstail.karma.datas.storage.StorageManager;
@@ -57,6 +58,7 @@ public class Karma extends JavaPlugin implements Listener {
         WorldFights.initWorldFights(this);
         WantedManager.init(this);
         PvpCommandHandler.init(this);
+        BlocksManager.initBlocksManager(this);
 
         loadCustomConfig();
 
@@ -178,6 +180,7 @@ public class Karma extends JavaPlugin implements Listener {
         ShopManager.getShopManager().setupShops();
         WantedManager.getWantedManager().setup();
         PvpCommandHandler.getPvpCommandHandler().setup();
+        BlocksManager.getBlocksManager().setup();
     }
 
     public YamlConfiguration getCustomConfig() {

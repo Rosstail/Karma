@@ -73,7 +73,7 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
         String expression = String.join(" ", expressionList).trim();
 
         long duration = AdaptMessage.evalDuration(wantedTime, expression);
-        long baseDuration = model.getWantedTimeStamp().getTime();
+        long baseDuration = Math.max(model.getWantedTimeStamp().getTime(), System.currentTimeMillis());
         long newDuration = baseDuration - duration;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
@@ -85,7 +85,7 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
 
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_RESULT), PlayerType.PLAYER.getText()));
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_RESULT).replaceAll("\\[value]", AdaptMessage.getAdaptMessage().countdownFormatter(duration)), PlayerType.PLAYER.getText()));
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -99,7 +99,7 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
 
         long wantedTime = model.getWantedTimeStamp().getTime();
         long duration = AdaptMessage.evalDuration(wantedTime, expression);
-        long baseDuration = model.getWantedTimeStamp().getTime();
+        long baseDuration = Math.max(model.getWantedTimeStamp().getTime(), System.currentTimeMillis());
         long newDuration = baseDuration - duration;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
@@ -110,7 +110,7 @@ public class EditPlayerWantedRemoveCommand extends EditPlayerWantedSubCommand {
         model.setWantedTimeStamp(new Timestamp(newDuration));
         StorageManager.getManager().updatePlayerModel(model, true);
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_RESULT), PlayerType.PLAYER.getText()));
+        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_REMOVE_RESULT).replaceAll("\\[value]", AdaptMessage.getAdaptMessage().countdownFormatter(duration)), PlayerType.PLAYER.getText()));
     }
 
     @Override

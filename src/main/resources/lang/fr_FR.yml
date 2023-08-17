@@ -31,7 +31,7 @@ commands:
     \n&rActuellement [player_status]
     \n&rTier [player_tier_display] &r| Karma : [player_karma]
     \n&rTier précédent : [player_previous_tier_display] &r| Karma précédent : [player_previous_karma]
-    \n&rStatut [player_wanted_status] &rpour: [player_wanted_status_short[player_wanted_time_delay_display]
+    \n&rStatut [player_wanted_status] &rpour: [player_wanted_status_short][player_wanted_time_delay_display]
     \n&rDernière maj : [player_last_update]&r."
   edit:
     desc: "Commande d'édition."

@@ -123,6 +123,7 @@ public class AdaptMessage {
         Tier playerPreviousTier = TierManager.getTierManager().getTierByName(playerModel.getPreviousTierName());
 
         boolean isWanted;
+
         long time = PlayerDataManager.getWantedTimeLeft(playerModel);
 
         if (isPlayerOnline) {

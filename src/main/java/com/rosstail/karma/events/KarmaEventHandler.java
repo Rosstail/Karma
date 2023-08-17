@@ -119,8 +119,8 @@ public class KarmaEventHandler implements Listener {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_ENTER);
 
-        CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.enterWantedCommands);
         model.setWanted(true);
+        CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.enterWantedCommands);
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
@@ -134,6 +134,7 @@ public class KarmaEventHandler implements Listener {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_REFRESH);
         model.setWanted(true);
+
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.refreshWantedCommands);
         if (message != null) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(

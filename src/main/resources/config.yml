@@ -80,7 +80,7 @@ tiers:
     citizen:
       display: "&fCitizen"
       short-display: "&f"
-      minimum: -149.99
+      minimum: -499.99
       maximum: 9999.99
       score:
         devil: 50
