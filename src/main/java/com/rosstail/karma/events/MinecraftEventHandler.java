@@ -17,6 +17,7 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.Ageable;
 import org.bukkit.configuration.ConfigurationSection;
@@ -33,6 +34,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 import java.util.Map;
@@ -293,7 +295,12 @@ public class MinecraftEventHandler implements Listener {
             PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
             Block brokenBlock = event.getClickedBlock();
 
-            BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
+            if (brokenBlock != null) {
+                Block trampledBlock = player.getWorld().getBlockAt(brokenBlock.getLocation().add(0, 1, 0));
+                if (!trampledBlock.getType().isAir()) {
+                    BlocksManager.getBlocksManager().breakHandler(player, model, trampledBlock);
+                }
+            }
         }
     }
 

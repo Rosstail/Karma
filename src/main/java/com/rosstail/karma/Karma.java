@@ -108,7 +108,11 @@ public class Karma extends JavaPlugin implements Listener {
         }, 60 * 1000, 60 * 1000);
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            PlayerDataManager.initPlayerModelToMap(StorageManager.getManager().selectPlayerModel(player.getUniqueId().toString()));
+            PlayerModel model = StorageManager.getManager().selectPlayerModel(player.getUniqueId().toString());
+            if (model == null) {
+                model = new PlayerModel(player);
+            }
+            PlayerDataManager.initPlayerModelToMap(model);
         });
     }
 

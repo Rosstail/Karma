@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BlocksManager {
 
@@ -40,16 +42,23 @@ public class BlocksManager {
     public void placeHandler(Player player, PlayerModel model, Block block) {
         String blockName = block.getBlockData().getMaterial().name();
 
-        if (blocksModelMap.containsKey(blockName)) {
-            blocksModelMap.get(blockName).handlePlace(player, model, block);
-        }
+        blocksModelMap.forEach((s, blocksModel) -> {
+            Matcher matcher = blocksModel.regexName.matcher(blockName);
+            if (matcher.find()) {
+                blocksModelMap.get(s).handlePlace(player, model, block);
+            }
+        });
     }
 
     public void breakHandler(Player player, PlayerModel model, Block block) {
         String blockName = block.getBlockData().getMaterial().name();
-        if (blocksModelMap.containsKey(blockName)) {
-            blocksModelMap.get(blockName).handleBreak(player, model, block);
-        }
+
+        blocksModelMap.forEach((s, blocksModel) -> {
+            Matcher matcher = blocksModel.regexName.matcher(blockName);
+            if (matcher.find()) {
+                blocksModelMap.get(s).handleBreak(player, model, block);
+            }
+        });
     }
 
     public static BlocksManager getBlocksManager() {

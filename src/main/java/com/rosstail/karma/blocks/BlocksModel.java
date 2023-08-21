@@ -4,13 +4,17 @@ import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
+import kotlin.text.Regex;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.util.regex.Pattern;
+
 public class BlocksModel {
     String blockName;
+    public final Pattern regexName;
 
     private BlocksData placeBlocksData;
     private float placeKarma = 0f;
@@ -22,6 +26,7 @@ public class BlocksModel {
 
     public BlocksModel(ConfigurationSection section) {
         this.blockName = section.getName();
+        this.regexName = Pattern.compile(section.getString("regex", this.blockName).replaceAll("\\*", "(\\\\w+)?"));
         ConfigurationSection placeSection = section.getConfigurationSection("place");
         if (placeSection != null) {
             ConfigurationSection placeDataSection = placeSection.getConfigurationSection("data");
@@ -73,6 +78,10 @@ public class BlocksModel {
                 Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
             });
         }
+    }
+
+    public Pattern getRegexName() {
+        return regexName;
     }
 
     public BlocksData getPlaceBlocksData() {

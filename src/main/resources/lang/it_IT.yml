@@ -1,0 +1,142 @@
+prefix: "&f[&aKarma&f]&r "
+
+format:
+  datetime: "yyyy-MM-dd HH:mm:ss"
+  datetime-never: "&7Mai"
+  countdown: "{dd}g {HH}:{mm}:{ss}" #usa dd, d, hh, h, mm, m, ss, s
+
+commands:
+  by-player-only: "[prefix]Il comando deve essere eseguito da un giocatore."
+  permission-denied: "[prefix]Non hai il permesso per il comando [command_name] : [command_permission]."
+  insert-player-name: "[prefix]Inserisci il nome del giocatore destinatario."
+  wrong-command: "[prefix]Comando errato."
+  wrong-value: "[prefix]Valore errato."
+  player-does-not-exist: "[prefix][player] non esiste."
+  player-no-data: "[prefix]Nessun dato di karma per [player]."
+  help:
+    header: "&b====== &6AIUTO KARMA &b======"
+    line: "&a► &6/[syntax] &8: &r[desc]"
+  check:
+    desc: "Verifica i dati del giocatore"
+    self:
+      desc: "Verifica i tuoi dati"
+      result: "[prefix]I tuoi dati:
+    \n&rTier [player_tier_display] &r| Karma: [player_karma]
+    \n&rTier precedente [player_previous_tier_display] &r| Karma precedente: [player_previous_karma]
+    \n&rStato [player_wanted_status] &rper: [player_wanted_status_short][player_wanted_time_delay_display]
+    \n&rUltimo aggiornamento il [player_last_update]&r."
+    other:
+      desc: "Verifica i dati di un giocatore selezionato"
+      result: "[prefix]Dati di [player]:
+    \n&rAttualmente [player_status]
+    \n&rTier [player_tier_display] &r| Karma: [player_karma]
+    \n&rTier precedente [player_previous_tier_display] &r| Karma precedente: [player_previous_karma]
+    \n&rStato [player_wanted_status] &rper: [player_wanted_status_short][player_wanted_time_delay_display]
+    \n&rUltimo aggiornamento il [player_last_update]&r."
+  edit:
+    desc: "Modifica il comando."
+    player:
+      desc: "Modifica i dati di un giocatore"
+      disconnected-player: "[prefix][player] è disconnesso. Usa -d o --disconnect per forzare l'aggiornamento."
+      player-no-data: "[prefix]Nessun dato di karma per [player]. Usa -g o --generate per generare i dati del giocatore."
+      out-of-bounds: "[prefix]Il valore è fuori dai limiti. Usa -o o --override per ignorare questi limiti."
+      karma:
+        desc: "Modifica il karma di un giocatore"
+        set:
+          desc: "Imposta il valore del karma al giocatore selezionato."
+          result: "[prefix]Impostato il karma a [player_karma] per [player]."
+        add:
+          desc: "Aggiungi un valore al karma attuale del giocatore."
+          result: "[prefix]Aggiunto [player_diff_karma] karma per [player]. Karma finale: [player_karma]."
+        remove:
+          desc: "Rimuovi un valore dal karma attuale del giocatore."
+          result: "[prefix]Rimosso [player_diff_karma] karma per [player]. Karma finale: [player_karma]."
+        reset:
+          desc: "Reimposta il karma del giocatore ai valori predefiniti."
+          result: "[prefix]Reimpostato il karma per [player]. Karma finale: [player_karma]."
+      tier:
+        desc: "Modifica il tier di un giocatore"
+        set:
+          desc: "Imposta il tier con karma predefinito al giocatore selezionato"
+          result: "[prefix]Impostato il tier [player_tier_display] per [player]."
+      wanted:
+        desc: "Modifica il tempo di ricercato di un giocatore"
+        set:
+          desc: "Imposta il tempo di ricercato attuale al giocatore."
+          result: "[prefix]Impostato il tempo di ricercato di [player] a [player_wanted_time_delay_display]. Stato: [player_wanted_status]."
+        add:
+          desc: "Aggiungi tempo al tempo di ricercato attuale del giocatore."
+          result: "[prefix]Aggiunto tempo [value] al tempo di ricercato di [player] a [player_wanted_time_delay_display]. Stato: [player_wanted_status]."
+        remove:
+          desc: "Rimuovi tempo dal tempo di ricercato attuale del giocatore."
+          result: "[prefix]Rimosso tempo [value] dal tempo di ricercato di [player] a [player_wanted_time_delay_display]. Stato: [player_wanted_status]."
+        reset:
+          desc: "Reimposta il ricercato del giocatore."
+          result: "[prefix]Reimpostato il tempo di ricercato e lo stato di [player]."
+  shop:
+    header: "&b====== &6NEGOZIO KARMA &b======"
+    line: " &6> &9[shop_display] &8: &f[shop_description] &8| &e[shop_price]"
+    not-exist: "[prefix]&cQuesto negozio non esiste."
+    buy:
+      desc: "Acquista il contenuto del negozio."
+      success: "[prefix]&aTransazione riuscita."
+      failure: "[prefix]&cTransazione fallita."
+  reload:
+    desc: "Ricarica la configurazione attuale di karma."
+    result: "[prefix]Configurazione ricaricata."
+  save:
+    desc: "Salva istantaneamente i dati di tutti i giocatori online."
+    result: "[prefix]Dati di [amount] giocatori salvati manualmente."
+  eval:
+    desc: "Calcola un'espressione matematica."
+    result: "[prefix]Espressione: [expression] = [result]"
+
+storage:
+  type: "[prefix]Usa il tipo di archiviazione [type]."
+
+player:
+  online: "&aONLINE"
+  offline: "&8OFFLINE"
+
+karma:
+  on-change: "[prefix]Il tuo karma è ora: [player_karma]."
+
+tier:
+  on-change: "[prefix]Il tuo tier è stato impostato a [player_tier_display]."
+  none:
+    display: "&7Nessuno"
+    short-display: "&7"
+
+fight:
+  pvp:
+    hit:
+      on-karma-gain: "[prefix]Hai guadagnato [attacker_karma_diff] karma colpendo [victim]."
+      on-karma-unchanged: "[prefix]Hai colpito [victim] senza cambiamenti al karma."
+      on-karma-loss: "[prefix]Hai perso [attacker_karma_diff] karma colpendo [victim]."
+    kill:
+      on-karma-gain: "[prefix]Hai guadagnato [attacker_karma_diff] karma uccidendo [victim]."
+      on-karma-unchanged: "[prefix]Hai ucciso [victim] senza cambiamenti al karma."
+      on-karma-loss: "[prefix]Hai perso [attacker_karma_diff] karma uccidendo [victim]."
+  pve:
+    hit:
+      on-karma-gain: "[prefix]Hai guadagnato [reward] karma colpendo [victim]."
+      on-karma-unchanged: "[prefix]Hai colpito [victim] senza cambiamenti al karma."
+      on-karma-loss: "[prefix]Hai perso [reward] karma colpendo [victim]."
+    kill:
+      on-karma-gain: "[prefix]Hai guadagnato [reward] karma uccidendo [victim]."
+      on-karma-unchanged: "[prefix]Hai ucciso [victim] senza cambiamenti al karma."
+      on-karma-loss: "[prefix]Hai perso [reward] karma uccidendo [victim]."
+
+wanted:
+  status:
+    innocent:
+      display: "&fInnocente"
+      short: "&f"
+    wanted:
+      display: "&4&lRICERCATO"
+      short: "&4⚠"
+  event:
+    on-enter: "[msg-title]{#FF0000}RICERCATO
+    [msg-subtitle]Sei attivamente ricercato."
+    on-refresh: "[msg-actionbar][prefix]&cIl tuo stato di ricercato è stato aggiornato."
+    on-exit: "[prefix]&aNon sei più ricercato."

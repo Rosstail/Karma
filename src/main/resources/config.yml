@@ -350,7 +350,7 @@ blocks:
   list:
     # https://minecraft-ids.grahamedgecombe.com/
     # Be careful to use the blocks name, not the item (carrot for item, CARROTS for block)
-    WHEAT:
+    WHEAT: #section name, can be block name
       break:
         data:
           age: #useful on crops
@@ -359,15 +359,14 @@ blocks:
               - 7
         value: -5
         reset-overtime: true #Don't mess with the cultures !
-    FARMLAND:
-      place: #Using a hoe tool to transform dirt to farmland
-        value: 1
-    TNT:
+    yellow_or_red_wool:
+      regex: "(RED|YELLOW)_WOOL" #regex. Replace block/section name.
       place:
-        value: -100
-        reset-overtime: true #Reset all the player overtimes timers. Default to false
+        value: 1
+    all_logs:
+      regex: "*LOG" #* equals '(\w+)?' , it means "any characters"
       break:
-        value: 10
+        value: -0.1
     FIRE:
       place: #place fire (flint, fireball)
         value: -5
