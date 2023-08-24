@@ -13,7 +13,7 @@ public interface StorageRequest {
      * Insert player model into storage
      * @param model The model to insert
      */
-    boolean insertPayerModel(PlayerModel model);
+    boolean insertPlayerModel(PlayerModel model);
 
     /**
      * READ

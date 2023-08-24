@@ -84,7 +84,9 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(newDuration));
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_ADD_RESULT).replaceAll("\\[value]", AdaptMessage.getAdaptMessage().countdownFormatter(duration)), PlayerType.PLAYER.getText()));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_ADD_RESULT).replaceAll("\\[value]", AdaptMessage.getAdaptMessage().countdownFormatter(duration)), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -109,7 +111,9 @@ public class EditPlayerWantedAddCommand extends EditPlayerWantedSubCommand {
         model.setWantedTimeStamp(new Timestamp(newDuration));
         StorageManager.getManager().updatePlayerModel(model, true);
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_ADD_RESULT).replaceAll("\\[value]", AdaptMessage.getAdaptMessage().countdownFormatter(duration)), PlayerType.PLAYER.getText()));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_ADD_RESULT).replaceAll("\\[value]", AdaptMessage.getAdaptMessage().countdownFormatter(duration)), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     @Override

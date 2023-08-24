@@ -96,8 +96,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
     private static void permissionDenied(CommandSender sender, SubCommand command) {
         String message = LangManager.getMessage(LangMessage.COMMANDS_PERMISSION_DENIED);
-        message = AdaptMessage.getAdaptMessage().adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
-        message = AdaptMessage.getAdaptMessage().adaptMessage(message);
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        message = adaptMessage.adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
+        message = adaptMessage.adaptMessage(message);
         message = message.replaceAll("\\[command]", command.getName());
         message = message.replaceAll("\\[permission]", command.getPermission());
         sender.sendMessage(message);
@@ -136,7 +137,8 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     }
 
     private static void placeCommands(Player player, String command) {
-        command = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, command, PlayerType.PLAYER.getText());
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        command = adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, command, PlayerType.PLAYER.getText()));
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
 

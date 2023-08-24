@@ -96,7 +96,9 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
             });
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_TIER_SET_RESULT), PlayerType.PLAYER.getText()));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_TIER_SET_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -122,7 +124,9 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
         if (!Objects.equals(currentTierName, tierName)) { //Safe name check
             sender.sendMessage("His tier will change from " + currentTierName + " to " + tierName);
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_TIER_SET_RESULT), PlayerType.PLAYER.getText()));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_TIER_SET_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     @Override

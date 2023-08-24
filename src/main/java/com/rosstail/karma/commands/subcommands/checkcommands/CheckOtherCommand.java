@@ -54,13 +54,14 @@ public class CheckOtherCommand extends SubCommand {
         String username = args[1];
         Player target = Bukkit.getServer().getPlayer(username);
         PlayerModel model;
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
         if (target != null && target.isOnline()) {
             model = PlayerDataManager.getPlayerModelMap().get(username);
         } else {
             String uuid = PlayerDataManager.getPlayerUUIDFromName(username);
             if (uuid == null) {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("\\[player]", username)));
+                sender.sendMessage(adaptMessage.adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_PLAYER_DOES_NOT_EXIST).replaceAll("\\[player]", username)));
                 return;
             }
             model = StorageManager.getManager().selectPlayerModel(uuid);
@@ -71,11 +72,13 @@ public class CheckOtherCommand extends SubCommand {
             return;
         }
 
+        String message;
         if (target != null) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_RESULT), PlayerType.PLAYER.getText()));
+            message = adaptMessage.adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_RESULT), PlayerType.PLAYER.getText());
         } else {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_RESULT), PlayerType.PLAYER.getText()));
+            message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_CHECK_OTHER_RESULT), PlayerType.PLAYER.getText());
         }
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     @Override

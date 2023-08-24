@@ -63,8 +63,8 @@ public class Karma extends JavaPlugin implements Listener {
         loadCustomConfig();
 
         this.createPlayerDataFolder();
-        StorageManager manager = StorageManager.initStorageManage(this);
-        manager.chooseDatabase();
+        StorageManager storageManager = StorageManager.initStorageManage(this);
+        storageManager.chooseDatabase();
 
         FightHandler.initFightHandler();
 

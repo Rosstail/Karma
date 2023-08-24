@@ -66,14 +66,18 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
 
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText()));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
         model.setWantedTimeStamp(new Timestamp(0));
         StorageManager.getManager().updatePlayerModel(model, true);
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText()));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     @Override

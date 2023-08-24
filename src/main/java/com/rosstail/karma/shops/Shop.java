@@ -55,14 +55,15 @@ public class Shop {
 
     public void handle(Player target) {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(target.getName());
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         if (checkHasKarma(model)) {
             PlayerKarmaChangeEvent event = new PlayerKarmaChangeEvent(target, model, model.getKarma() - price);
             Bukkit.getPluginManager().callEvent(event);
             //after event done
             CommandManager.commandsLauncher(target, commands);
-            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_SUCCESS), PlayerType.PLAYER.getText())));
+            target.sendMessage(adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_SUCCESS), PlayerType.PLAYER.getText())));
         } else {
-            target.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_FAILURE), PlayerType.PLAYER.getText())));
+            target.sendMessage(adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(target, LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_FAILURE), PlayerType.PLAYER.getText())));
         }
     }
 

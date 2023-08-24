@@ -87,7 +87,10 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
             });
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_RESET_RESULT), PlayerType.PLAYER.getText()));
+
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_RESET_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] arguments, String[] args) {
@@ -103,7 +106,10 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
         model.setKarma(value);
         StorageManager.getManager().updatePlayerModel(model, true);
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_RESET_RESULT), PlayerType.PLAYER.getText()));
+
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_RESET_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     @Override

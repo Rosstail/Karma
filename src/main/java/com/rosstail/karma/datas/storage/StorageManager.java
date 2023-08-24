@@ -95,13 +95,13 @@ public class StorageManager {
     public boolean insertPlayerModel(PlayerModel model) {
         switch (type) {
             case "mysql":
-                return mySqlStorageRequest.insertPayerModel(model);
+                return mySqlStorageRequest.insertPlayerModel(model);
             case "mariadb":
-                return mariaDBStorageRequest.insertPayerModel(model);
+                return mariaDBStorageRequest.insertPlayerModel(model);
             case "mongodb":
-                return mongoDBStorageRequest.insertPayerModel(model);
+                return mongoDBStorageRequest.insertPlayerModel(model);
             default:
-                return liteSqlDBStorageRequest.insertPayerModel(model);
+                return liteSqlDBStorageRequest.insertPlayerModel(model);
         }
     }
 

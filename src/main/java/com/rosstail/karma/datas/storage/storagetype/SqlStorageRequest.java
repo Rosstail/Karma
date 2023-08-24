@@ -44,7 +44,7 @@ public class SqlStorageRequest implements StorageRequest {
     }
 
     @Override
-    public boolean insertPayerModel(PlayerModel model) {
+    public boolean insertPlayerModel(PlayerModel model) {
         String query = "INSERT INTO " + pluginName + " (uuid, karma, previous_karma, tier, previous_tier)"
                 + " VALUES (?, ?, ?, ?, ?);";
 

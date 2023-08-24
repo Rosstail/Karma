@@ -296,6 +296,7 @@ public class MinecraftEventHandler implements Listener {
             Block brokenBlock = event.getClickedBlock();
 
             if (brokenBlock != null) {
+                BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
                 Block trampledBlock = player.getWorld().getBlockAt(brokenBlock.getLocation().add(0, 1, 0));
                 if (!trampledBlock.getType().isAir()) {
                     BlocksManager.getBlocksManager().breakHandler(player, model, trampledBlock);

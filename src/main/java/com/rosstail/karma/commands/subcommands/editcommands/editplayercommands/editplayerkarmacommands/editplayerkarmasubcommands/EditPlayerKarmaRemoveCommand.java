@@ -96,7 +96,9 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
                 Bukkit.getPluginManager().callEvent(overTimeResetEvent);
             });
         }
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_REMOVE_RESULT), PlayerType.PLAYER.getText()));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_REMOVE_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
     public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
@@ -124,8 +126,9 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
         model.setKarma(value);
         StorageManager.getManager().updatePlayerModel(model, true);
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_REMOVE_RESULT), PlayerType.PLAYER.getText()));
-    }
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_REMOVE_RESULT), PlayerType.PLAYER.getText());
+        sender.sendMessage(adaptMessage.adaptMessage(message));    }
 
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {

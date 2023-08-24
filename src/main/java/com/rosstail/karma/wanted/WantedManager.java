@@ -63,8 +63,9 @@ public class WantedManager {
         }
 
         if (isGuilty) {
-            String calculatedExpression = AdaptMessage.getAdaptMessage().adaptPlayerMessage(attacker, expression, PlayerType.PLAYER.getText());
-            calculatedExpression = AdaptMessage.getAdaptMessage().adaptMessage(calculatedExpression);
+            AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+            String calculatedExpression = adaptMessage.adaptPlayerMessage(attacker, expression, PlayerType.PLAYER.getText());
+            calculatedExpression = adaptMessage.adaptMessage(calculatedExpression);
             Timestamp timestamp = new Timestamp(AdaptMessage.evalDuration(attackerModel.getWantedTimeStamp().getTime(), "[player_wanted_time] " + calculatedExpression));
             PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(attacker, attackerModel, timestamp);
             Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);

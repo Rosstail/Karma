@@ -7,7 +7,6 @@ import com.rosstail.karma.datas.PlayerDataManager;
 import com.rosstail.karma.datas.PlayerModel;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
-import kotlin.text.Regex;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
@@ -77,14 +76,14 @@ public class AdaptMessage {
 
     private void sendActionBar(Player player, String message) {
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
-                adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()))
+                adaptMessage(adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()))
         ));
     }
 
     private void sendTitle(Player player, String title, String subTitle) {
         ConfigData.ConfigLocale configLocale = ConfigData.getConfigData().locale;
-        player.sendTitle(adaptMessage.adaptPlayerMessage(player, title, PlayerType.PLAYER.getText()),
-                adaptMessage.adaptPlayerMessage(player, subTitle, PlayerType.PLAYER.getText()),
+        player.sendTitle(adaptMessage(adaptPlayerMessage(player, title, PlayerType.PLAYER.getText())),
+                adaptMessage(adaptPlayerMessage(player, subTitle, PlayerType.PLAYER.getText())),
                 configLocale.titleFadeIn, configLocale.titleStay, configLocale.titleFadeOut);
     }
 
@@ -108,7 +107,7 @@ public class AdaptMessage {
         if (Objects.equals(playerType, PlayerType.PLAYER.getText())) {
             message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(player, message));
         }
-        return adaptMessage(message);
+        return message;
     }
 
     public String adaptMessageToModel(PlayerModel playerModel, String message, String playerType) {
@@ -188,14 +187,14 @@ public class AdaptMessage {
         message = message.replaceAll(starter + "_wanted_time_display" + ender, simpleDateFormat.format(wantedTimeStamp.getTime()));
         message = message.replaceAll(starter + "_wanted_time_delay" + ender, decimalFormat(wantedTime, '.'));
         message = message.replaceAll(starter + "_wanted_time_delay_display" + ender,
-                isWanted ? AdaptMessage.getAdaptMessage().countdownFormatter(time)
+                isWanted ? countdownFormatter(time)
                         : "-");
 
         message = message.replaceAll(starter + "_status" + ender,
                 LangManager.getMessage(isPlayerOnline ? LangMessage.PLAYER_ONLINE : LangMessage.PLAYER_OFFLINE));
 
         message = message.replaceAll(starter + "_last_update" + ender, playerModel.getLastUpdate() > 0L ? simpleDateFormat.format(playerModel.getLastUpdate()) : LangManager.getMessage(LangMessage.FORMAT_DATETIME_NEVER));
-        return adaptMessage(message);
+        return message;
     }
 
     public String adaptMessage(String message) {
@@ -323,7 +322,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("\\[victim]", victim.getName()), PlayerType.ATTACKER.getText()));
+        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
 
         coolDown.put(player, System.currentTimeMillis());
         sendToPlayer(player, message);
@@ -355,7 +354,7 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("\\[victim]", victim.getName()), PlayerType.ATTACKER.getText()));
+        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
 
         coolDown.put(player, System.currentTimeMillis());
         sendToPlayer(player, message);

@@ -43,17 +43,18 @@ public class CheckSelfCommand extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args, String[] arguments) {
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_BY_PLAYER_ONLY)));
+            sender.sendMessage(adaptMessage.adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_BY_PLAYER_ONLY)));
             return;
         }
         Player player = (Player) sender;
 
-        sender.sendMessage(AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_RESULT), PlayerType.PLAYER.getText()));
+        sender.sendMessage(adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, LangManager.getMessage(LangMessage.COMMANDS_CHECK_SELF_RESULT), PlayerType.PLAYER.getText())));
     }
 
     @Override

@@ -134,6 +134,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
      */
     @Override
     public String onPlaceholderRequest(Player player, String identifier) {
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         if (identifier.startsWith("scoreboard_")) {
 
             TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
@@ -184,7 +185,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                         return String.valueOf(intValue);
                     }
                     float value = model.getKarma();
-                    return AdaptMessage.getAdaptMessage().decimalFormat(value, '.');
+                    return adaptMessage.decimalFormat(value, '.');
                 }
                 if (identifier.contains("_tier_")) {
                     Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
@@ -202,11 +203,11 @@ public class PAPIExpansion extends PlaceholderExpansion {
         }
 
         if (player != null) {
-            return AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, "[" + identifier + "]", PlayerType.PLAYER.getText());
+            return adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, "[" + identifier + "]", PlayerType.PLAYER.getText()));
         }
 
         // We return null if an invalid placeholder (f.e. %someplugin_placeholder3%)
         // was provided
-        return AdaptMessage.getAdaptMessage().adaptMessage("[" + identifier + "]");
+        return adaptMessage.adaptMessage("[" + identifier + "]");
     }
 }

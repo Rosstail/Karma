@@ -132,7 +132,7 @@ tiers:
           - "player[msg] &fYour wanted level is now [player_tier_display]&r."
           - "bc [evalfloat_[player_karma]/2] karma /2 float"
         on-join-up:
-          - "player[msg] &bYou are got promoted from [player_previous_tier_display] &r."
+          - "player[msg] &bYou are got promoted from [player_previous_tier_display]&r."
     paragon:
       display: "&l&bParagon"
       short-display: "&l&b⚖"

@@ -24,8 +24,6 @@ public class EvalCommand extends SubCommand {
                 LangManager.getMessage(LangMessage.COMMANDS_HELP_LINE)
                         .replaceAll("\\[desc]", LangManager.getMessage(LangMessage.COMMANDS_EVAL_DESC))
                         .replaceAll("\\[syntax]", getSyntax()));
-        subCommands.add(new KarmaShopBuySelfCommand());
-        subCommands.add(new KarmaShopBuyOtherCommand());
     }
 
     @Override
@@ -60,8 +58,9 @@ public class EvalCommand extends SubCommand {
             Player player;
             if (sender instanceof Player) {
                 player = ((Player) sender).getPlayer();
-                expression = AdaptMessage.getAdaptMessage().adaptPlayerMessage(player, expression, PlayerType.PLAYER.getText());
-                expression = AdaptMessage.getAdaptMessage().adaptMessage(expression);
+                AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+                expression = adaptMessage.adaptPlayerMessage(player, expression, PlayerType.PLAYER.getText());
+                expression = adaptMessage.adaptMessage(expression);
             }
             float result = (float) ExpressionCalculator.eval(expression);
 
