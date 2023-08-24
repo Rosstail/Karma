@@ -1,6 +1,6 @@
-package com.rosstail.karma.datas.storage.storagetype;
+package com.rosstail.karma.storage.storagetype;
 
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerModel;
 
 import java.util.List;
 

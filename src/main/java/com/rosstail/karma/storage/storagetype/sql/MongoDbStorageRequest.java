@@ -1,6 +1,6 @@
-package com.rosstail.karma.datas.storage.storagetype.sql;
+package com.rosstail.karma.storage.storagetype.sql;
 
-import com.rosstail.karma.datas.storage.storagetype.SqlStorageRequest;
+import com.rosstail.karma.storage.storagetype.SqlStorageRequest;
 
 public class MongoDbStorageRequest extends SqlStorageRequest {
 

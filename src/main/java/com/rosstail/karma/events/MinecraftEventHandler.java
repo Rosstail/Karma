@@ -3,9 +3,9 @@ package com.rosstail.karma.events;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.blocks.BlocksManager;
 import com.rosstail.karma.events.karmaevents.*;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.StorageManager;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamageMobEvent;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamagePlayerEvent;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerKillMobEvent;
@@ -17,10 +17,7 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
-import org.bukkit.block.data.Ageable;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,9 +31,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.util.Vector;
 
-import java.util.List;
 import java.util.Map;
 
 public class MinecraftEventHandler implements Listener {

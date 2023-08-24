@@ -2,20 +2,18 @@ package com.rosstail.karma.commands.subcommands.checkcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.StorageManager;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
-import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Objects;
 
 public class CheckOtherCommand extends SubCommand {
 

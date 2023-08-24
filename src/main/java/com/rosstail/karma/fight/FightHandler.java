@@ -5,8 +5,8 @@ import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
@@ -20,7 +20,6 @@ import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timeperiod.TimeManager;
 import com.rosstail.karma.wanted.WantedManager;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 

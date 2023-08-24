@@ -1,4 +1,4 @@
-package com.rosstail.karma.datas;
+package com.rosstail.karma.players;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
@@ -6,7 +6,7 @@ import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeTriggerEvent;
 import com.rosstail.karma.events.karmaevents.PlayerWantedPeriodEndEvent;
-import com.rosstail.karma.datas.storage.StorageManager;
+import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;

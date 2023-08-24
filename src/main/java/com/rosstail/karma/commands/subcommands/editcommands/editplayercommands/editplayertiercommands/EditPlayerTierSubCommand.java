@@ -1,7 +1,7 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands;
 
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerModel;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

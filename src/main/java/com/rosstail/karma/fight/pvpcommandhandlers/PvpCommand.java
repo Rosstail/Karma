@@ -1,7 +1,5 @@
 package com.rosstail.karma.fight.pvpcommandhandlers;
 
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;

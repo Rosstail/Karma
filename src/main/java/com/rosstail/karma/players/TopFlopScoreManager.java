@@ -1,7 +1,7 @@
-package com.rosstail.karma.datas;
+package com.rosstail.karma.players;
 
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.datas.storage.StorageManager;
+import com.rosstail.karma.storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;

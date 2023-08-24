@@ -2,8 +2,8 @@ package com.rosstail.karma.wanted;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.PlayerType;

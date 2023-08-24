@@ -2,7 +2,7 @@ package com.rosstail.karma.blocks;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerModel;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class BlocksManager {
 

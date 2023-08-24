@@ -1,6 +1,6 @@
 package com.rosstail.karma.events.karmaevents;
 
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerModel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;

@@ -2,8 +2,8 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedSubCommand;
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.StorageManager;
+import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;

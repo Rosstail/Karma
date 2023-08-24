@@ -1,17 +1,14 @@
-package com.rosstail.karma.datas.storage.storagetype;
+package com.rosstail.karma.storage.storagetype;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.TimeZone;
 
 public class SqlStorageRequest implements StorageRequest {
     private final Karma plugin = Karma.getInstance();

@@ -2,12 +2,10 @@ package com.rosstail.karma.events;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.events.karmaevents.*;
-import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamageMobEvent;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamagePlayerEvent;
-import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerKillMobEvent;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerKillPlayerEvent;
 import com.rosstail.karma.fight.FightHandler;
 import com.rosstail.karma.fight.teamfighthandlers.TeamFightHandler;

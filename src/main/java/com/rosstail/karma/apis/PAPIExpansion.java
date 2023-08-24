@@ -2,9 +2,8 @@ package com.rosstail.karma.apis;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.TopFlopScoreManager;
+import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.TopFlopScoreManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -16,8 +15,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class PAPIExpansion extends PlaceholderExpansion {

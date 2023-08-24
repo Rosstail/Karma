@@ -1,10 +1,9 @@
 package com.rosstail.karma.blocks;
 
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
-import kotlin.text.Regex;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;

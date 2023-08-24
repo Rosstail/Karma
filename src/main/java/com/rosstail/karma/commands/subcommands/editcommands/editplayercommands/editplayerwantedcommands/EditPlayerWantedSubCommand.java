@@ -1,8 +1,6 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands;
 
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
-import com.rosstail.karma.datas.PlayerModel;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;

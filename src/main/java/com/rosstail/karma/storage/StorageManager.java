@@ -1,12 +1,12 @@
-package com.rosstail.karma.datas.storage;
+package com.rosstail.karma.storage;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.datas.PlayerModel;
-import com.rosstail.karma.datas.storage.storagetype.sql.MongoDbStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.sql.LiteSqlStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.sql.MariaDbStorageRequest;
-import com.rosstail.karma.datas.storage.storagetype.sql.MySqlStorageRequest;
+import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.storage.storagetype.sql.MongoDbStorageRequest;
+import com.rosstail.karma.storage.storagetype.sql.LiteSqlStorageRequest;
+import com.rosstail.karma.storage.storagetype.sql.MariaDbStorageRequest;
+import com.rosstail.karma.storage.storagetype.sql.MySqlStorageRequest;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;

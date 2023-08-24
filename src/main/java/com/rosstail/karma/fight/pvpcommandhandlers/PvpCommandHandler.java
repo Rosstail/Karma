@@ -2,8 +2,8 @@ package com.rosstail.karma.fight.pvpcommandhandlers;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.commands.CommandManager;
-import com.rosstail.karma.datas.PlayerDataManager;
-import com.rosstail.karma.datas.PlayerModel;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.entity.Player;
 
