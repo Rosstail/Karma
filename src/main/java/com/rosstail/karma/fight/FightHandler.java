@@ -42,6 +42,9 @@ public class FightHandler {
     public static void pvpHit(Player attacker, Player victim) {
         boolean doesKarmaChange = true;
 
+        if (isFakePlayer(victim)) {
+            return;
+        }
         if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
             return;
         }
@@ -127,6 +130,9 @@ public class FightHandler {
     public static void pvpKill(Player attacker, Player victim) {
         boolean doesKarmaChange = true;
 
+        if (isFakePlayer(victim)) {
+            return;
+        }
         if (!TimeManager.getTimeManager().isPlayerInTime(attacker)) {
             return;
         }
