@@ -1,5 +1,6 @@
 package com.rosstail.karma.shops;
 
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,7 +26,13 @@ public class ShopManager {
 
     public void setupShops() {
         FileConfiguration config = plugin.getCustomConfig();
-        Set<String> configShops = config.getConfigurationSection("shops.list").getKeys(false);
+        ConfigurationSection shopSection = config.getConfigurationSection("shops");
+        shops.clear();
+        if (!shopSection.getBoolean("enable", false)) {
+            return;
+        }
+
+        Set<String> configShops = shopSection.getConfigurationSection("list").getKeys(false);
 
         for (Map.Entry<String, Shop> entry : shops.entrySet()) { //Check and remove tiers that do not exist anymore
             String s = entry.getKey();

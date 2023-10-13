@@ -1,6 +1,7 @@
 package com.rosstail.karma.events;
 
 import com.rosstail.karma.ConfigData;
+import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.blocks.BlocksManager;
 import com.rosstail.karma.events.karmaevents.*;
 import com.rosstail.karma.players.PlayerDataManager;
@@ -269,8 +270,10 @@ public class MinecraftEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block placedBlock = event.getBlockPlaced();
-
-        BlocksManager.getBlocksManager().placeHandler(player, model, placedBlock);
+        event.getBlockPlaced().getLocation();
+        if (!WGPreps.getWgPreps().checkBlockPlaceChangeKarmaFlag(player, placedBlock.getLocation())) {
+            BlocksManager.getBlocksManager().placeHandler(player, model, placedBlock);
+        }
     }
 
 
@@ -280,7 +283,9 @@ public class MinecraftEventHandler implements Listener {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block brokenBlock = event.getBlock();
 
-        BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
+        if (!WGPreps.getWgPreps().checkBlockBreakChangeKarmaFlag(player, brokenBlock.getLocation())) {
+            BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
+        }
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -291,10 +296,12 @@ public class MinecraftEventHandler implements Listener {
             Block brokenBlock = event.getClickedBlock();
 
             if (brokenBlock != null) {
-                BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
-                Block trampledBlock = player.getWorld().getBlockAt(brokenBlock.getLocation().add(0, 1, 0));
-                if (!trampledBlock.getType().isAir()) {
-                    BlocksManager.getBlocksManager().breakHandler(player, model, trampledBlock);
+                if (WGPreps.getWgPreps().checkBlockBreakChangeKarmaFlag(player, brokenBlock.getLocation())) {
+                    BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
+                    Block trampledBlock = player.getWorld().getBlockAt(brokenBlock.getLocation().add(0, 1, 0));
+                    if (!trampledBlock.getType().isAir()) {
+                        BlocksManager.getBlocksManager().breakHandler(player, model, trampledBlock);
+                    }
                 }
             }
         }

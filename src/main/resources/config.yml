@@ -375,6 +375,7 @@ blocks:
         value: 2
 
 shops:
+  enable: true
   list:
     first:
       display: "&aFirst"
@@ -386,7 +387,7 @@ shops:
       commands:
         - "bc [player] bought the first item from karma shop !"
     second:
-      display: "&9First"
+      display: "&9Second"
       description: "&fSecond Shop. Not usable by player"
       price: -500.0
       cost-reset-overtime: false

@@ -7,7 +7,7 @@ format:
 
 commands:
   by-player-only: "[prefix]Cette commande doit être envoyée par un joueur."
-  permission-denied: "[prefix]Vous n'avez pas la permission pour la commande [command_name] : [command_permission]."
+  permission-denied: "[prefix]Vous n'avez pas la permission pour la commande [command] : [permission]."
   insert-player-name: "[prefix]Insérez le nom du joueur cible."
   wrong-command: "[prefix]Mauvaise commande."
   wrong-value: "[prefix]Mauvaise valeur."
