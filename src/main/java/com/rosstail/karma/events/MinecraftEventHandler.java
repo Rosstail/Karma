@@ -271,9 +271,11 @@ public class MinecraftEventHandler implements Listener {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block placedBlock = event.getBlockPlaced();
         event.getBlockPlaced().getLocation();
+
         if (!WGPreps.getWgPreps().checkBlockPlaceChangeKarmaFlag(player, placedBlock.getLocation())) {
-            BlocksManager.getBlocksManager().placeHandler(player, model, placedBlock);
+            return;
         }
+        BlocksManager.getBlocksManager().placeHandler(player, model, placedBlock);
     }
 
 
@@ -284,8 +286,9 @@ public class MinecraftEventHandler implements Listener {
         Block brokenBlock = event.getBlock();
 
         if (!WGPreps.getWgPreps().checkBlockBreakChangeKarmaFlag(player, brokenBlock.getLocation())) {
-            BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
+            return;
         }
+        BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -296,12 +299,13 @@ public class MinecraftEventHandler implements Listener {
             Block brokenBlock = event.getClickedBlock();
 
             if (brokenBlock != null) {
-                if (WGPreps.getWgPreps().checkBlockBreakChangeKarmaFlag(player, brokenBlock.getLocation())) {
-                    BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
-                    Block trampledBlock = player.getWorld().getBlockAt(brokenBlock.getLocation().add(0, 1, 0));
-                    if (!trampledBlock.getType().isAir()) {
-                        BlocksManager.getBlocksManager().breakHandler(player, model, trampledBlock);
-                    }
+                if (!WGPreps.getWgPreps().checkBlockBreakChangeKarmaFlag(player, brokenBlock.getLocation())) {
+                    return;
+                }
+                BlocksManager.getBlocksManager().breakHandler(player, model, brokenBlock);
+                Block trampledBlock = player.getWorld().getBlockAt(brokenBlock.getLocation().add(0, 1, 0));
+                if (!trampledBlock.getType().isAir()) {
+                    BlocksManager.getBlocksManager().breakHandler(player, model, trampledBlock);
                 }
             }
         }

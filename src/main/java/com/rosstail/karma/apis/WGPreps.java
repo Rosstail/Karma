@@ -96,13 +96,13 @@ public class WGPreps {
             // create a flag with the name "my-custom-flag", defaulting to true
             StateFlag breakBlockFlag = new StateFlag("karma-block-break", true);
             registry.register(breakBlockFlag);
-            KARMA_BLOCK_PLACE = breakBlockFlag; // only set our field if there was no error
+            KARMA_BLOCK_BREAK = breakBlockFlag; // only set our field if there was no error
         } catch (FlagConflictException e) {
             // some other plugin registered a flag by the same name already.
             // you can use the existing flag, but this may cause conflicts - be sure to check type
             Flag<?> existing = registry.get("karma-block-break");
             if (existing instanceof StateFlag) {
-                KARMA_BLOCK_PLACE = (StateFlag) existing;
+                KARMA_BLOCK_BREAK = (StateFlag) existing;
             } else {
                 Karma.getPlugin(Karma.class).getLogger().log(Level.WARNING,
                         "[WARNING] CONFLICT BETWEEN KARMA karma-block-break FLAG AND ANOTHER PLUGIN, PLEASE CONTACT ROSSTAIL ON SPIGOT OR DISCORD");
