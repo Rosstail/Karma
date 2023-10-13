@@ -5,6 +5,7 @@ import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
+import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.players.PlayerDataManager;
 import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
@@ -325,6 +326,13 @@ public class FightHandler {
         ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
         float reward = configPve.fileConfig.getInt("pve.list." + entityName + ".kill-karma-reward");
         CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".kill-commands"));
+        PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+
+        String message = configPve.fileConfig.getString("pve.list." + entityName + ".kill-message");
+        if (message != null) {
+            message = adaptMessage.adaptMessageToModel(playerModel, message, PlayerType.ATTACKER.getText());
+            attacker.sendMessage(message);
+        }
 
         PlayerDataManager.getPlayerModelMap().get(attacker.getName()).getOverTimeStampMap().forEach((s, timestamp) -> {
             PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(attacker, s);

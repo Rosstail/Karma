@@ -299,21 +299,16 @@ public class AdaptMessage {
     public void pveHitMessage(Player player, Mob victim, float reward) {
         ConfigData configData = ConfigData.getConfigData();
 
-        String message;
+        String pveHitMessage;
+        String mobMessage = configData.pve.fileConfig.getString("pve.list." + victim.getName() + ".hit-message");
+
         if (reward > 0f) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_GAIN);
+            pveHitMessage = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_GAIN);
         } else if (reward < 0f) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_LOSS);
+            pveHitMessage = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_LOSS);
         } else {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_UNCHANGED);
+            pveHitMessage = LangManager.getMessage(LangMessage.FIGHT_PVE_HIT_ON_KARMA_UNCHANGED);
         }
-
-        if (message == null) {
-            return;
-        }
-
-        message = message.replaceAll("\\[reward]", decimalFormat(reward,'.'));
-        message = message.replaceAll("\\[rewardint]", String.valueOf((int) reward));
 
         if (coolDown.containsKey(player)) {
             float timeLeft = coolDown.get(player) - System.currentTimeMillis() + configData.pve.pveHitMessageDelay * 1000f;
@@ -322,30 +317,35 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
+        if (pveHitMessage != null) {
+            pveHitMessage = pveHitMessage.replaceAll("\\[reward]", decimalFormat(reward,'.'));
+            pveHitMessage = pveHitMessage.replaceAll("\\[rewardint]", String.valueOf((int) reward));
+            pveHitMessage = adaptMessage(adaptPlayerMessage(player, pveHitMessage.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
+            sendToPlayer(player, pveHitMessage);
+        }
+
+        if (mobMessage != null) {
+            PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
+            mobMessage = adaptMessage.adaptMessageToModel(playerModel, mobMessage, PlayerType.ATTACKER.getText());
+            player.sendMessage(mobMessage);
+        }
 
         coolDown.put(player, System.currentTimeMillis());
-        sendToPlayer(player, message);
     }
 
     public void pveKillMessage(Player player, Mob victim, float reward) {
         ConfigData configData = ConfigData.getConfigData();
 
-        String message;
+        String pveKillMessage;
+        String mobMessage = configData.pve.fileConfig.getString("pve.list." + victim.getName() + ".kill-message");
+
         if (reward > 0f) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_GAIN);
+            pveKillMessage = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_GAIN);
         } else if (reward < 0f) {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_LOSS);
+            pveKillMessage = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_LOSS);
         } else {
-            message = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_UNCHANGED);
+            pveKillMessage = LangManager.getMessage(LangMessage.FIGHT_PVE_KILL_ON_KARMA_UNCHANGED);
         }
-
-        if (message == null) {
-            return;
-        }
-
-        message = message.replaceAll("\\[reward]", decimalFormat(reward,'.'));
-        message = message.replaceAll("\\[rewardint]", String.valueOf((int) reward));
 
         if (coolDown.containsKey(player)) {
             float timeLeft = coolDown.get(player) - System.currentTimeMillis() + configData.pve.pveKillMessageDelay * 1000f;
@@ -354,10 +354,20 @@ public class AdaptMessage {
             }
         }
 
-        message = adaptMessage(adaptPlayerMessage(player, message.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
+        if (pveKillMessage != null) {
+            pveKillMessage = pveKillMessage.replaceAll("\\[reward]", decimalFormat(reward,'.'));
+            pveKillMessage = pveKillMessage.replaceAll("\\[rewardint]", String.valueOf((int) reward));
+            pveKillMessage = adaptMessage(adaptPlayerMessage(player, pveKillMessage.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
+            sendToPlayer(player, pveKillMessage);
+        }
+
+        if (mobMessage != null) {
+            PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
+            mobMessage = adaptMessage.adaptMessageToModel(playerModel, mobMessage, PlayerType.ATTACKER.getText());
+            player.sendMessage(mobMessage);
+        }
 
         coolDown.put(player, System.currentTimeMillis());
-        sendToPlayer(player, message);
     }
 
     public String decimalFormat(float value, char replacement) {

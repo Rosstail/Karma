@@ -24,7 +24,7 @@ public class BlocksData {
         if (block.getBlockData() instanceof Ageable && !ageList.isEmpty()) {
            int age = ((Ageable) block.getBlockData()).getAge();
 
-           if ((ageReverse && ageList.contains(age)) || (!ageReverse && ageList.contains(age))) {
+           if ((ageReverse && ageList.contains(age)) || (!ageReverse && !ageList.contains(age))) {
                return false;
            }
 

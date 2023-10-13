@@ -1,5 +1,6 @@
 package com.rosstail.karma.blocks;
 
+import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.players.PlayerDataManager;
 import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
@@ -66,12 +67,27 @@ public class BlocksModel {
     }
 
     private void handleKarmaChange(Player player, PlayerModel model, float value) {
-        float newKarma = model.getKarma() + value;
+        float playerKarma = model.getKarma();
+        float newKarma = playerKarma + value;
+        ConfigData.ConfigKarma configKarma = ConfigData.getConfigData().karmaConfig;
 
-        if (PlayerDataManager.limitKarma(newKarma) != model.getKarma()) {
-            PlayerKarmaChangeEvent karmaChangeEvent = new PlayerKarmaChangeEvent(player, model, newKarma);
-            Bukkit.getPluginManager().callEvent(karmaChangeEvent);
+        boolean isKarmaGainOutLimit = newKarma > playerKarma && playerKarma > configKarma.maxKarma;
+        boolean isKarmaLossOutLimit = newKarma < playerKarma && playerKarma < configKarma.minKarma;
 
+        if (newKarma > configKarma.maxKarma) {
+            newKarma = configKarma.maxKarma;
+        } else if (newKarma < configKarma.minKarma) {
+            newKarma = configKarma.minKarma;
+        }
+
+        if (!isKarmaGainOutLimit && !isKarmaLossOutLimit) {
+            if (newKarma != playerKarma) {
+                PlayerKarmaChangeEvent karmaChangeEvent = new PlayerKarmaChangeEvent(player, model, newKarma);
+                Bukkit.getPluginManager().callEvent(karmaChangeEvent);
+            }
+        }
+
+        if (breakResetOvertime) {
             model.getOverTimeStampMap().forEach((s, timestamp) -> {
                 PlayerOverTimeResetEvent playerOverTimeResetEvent = new PlayerOverTimeResetEvent(player, s);
                 Bukkit.getPluginManager().callEvent(playerOverTimeResetEvent);
