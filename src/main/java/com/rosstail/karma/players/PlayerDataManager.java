@@ -85,6 +85,7 @@ public class PlayerDataManager {
 
     /**
      * Set karma of player between karma limits from config
+     *
      * @param value
      */
     public static float limitKarma(float value) {
@@ -101,8 +102,8 @@ public class PlayerDataManager {
     public static void triggerOverTime(Player player, PlayerModel model, String overtimeName, int multiplier) {
         float currentKarma = model.getKarma();
         float newKarma = currentKarma;
-
         OvertimeLoop overtimeLoop = ConfigData.getConfigData().overtime.overtimeLoopMap.get(overtimeName);
+        float amount = overtimeLoop.amount;
 
         if (overtimeLoop.hasMinKarma && currentKarma <= overtimeLoop.minKarma) {
             return;
@@ -110,8 +111,6 @@ public class PlayerDataManager {
         if (overtimeLoop.hasMaxKarma && currentKarma >= overtimeLoop.maxKarma) {
             return;
         }
-
-        float amount = overtimeLoop.amount;
 
         if (overtimeLoop.hasMinKarma && currentKarma + amount < overtimeLoop.minKarma) {
             amount = overtimeLoop.minKarma - currentKarma;
@@ -138,7 +137,9 @@ public class PlayerDataManager {
     }
 
     public static String getPlayerNameFromUUID(String uuid) {
-        String playerName = "UnknownPlayer";
+        if (!Bukkit.getOnlineMode()) {
+            return uuid;
+        }
         try {
             URL url = new URL("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -156,7 +157,7 @@ public class PlayerDataManager {
 
                 String response = responseBuilder.toString();
 
-                playerName = extractPlayerNameFromUUID(response);
+                return extractPlayerNameFromUUID(response);
 
             }
 
@@ -164,11 +165,12 @@ public class PlayerDataManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return playerName;
+        return null;
     }
 
     /**
      * Get player name using UUID from Mojang API
+     *
      * @param response
      * @return
      */
@@ -186,10 +188,14 @@ public class PlayerDataManager {
 
     /**
      * Get player name using username from Mojang API
+     *
      * @param username the name of targeted player
      * @return
      */
     public static String getPlayerUUIDFromName(String username) {
+        if (!Bukkit.getOnlineMode()) {
+            return username;
+        }
         try {
             URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + username);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

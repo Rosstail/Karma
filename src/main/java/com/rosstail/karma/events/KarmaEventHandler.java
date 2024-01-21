@@ -80,6 +80,7 @@ public class KarmaEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         long nextDelay = event.getNextDelay();
+
         PlayerDataManager.triggerOverTime(player, model, event.getOvertimeLoopName(), event.getAmount());
         PlayerDataManager.setOverTimeStamp(model, event.getOvertimeLoopName(), nextDelay);
     }

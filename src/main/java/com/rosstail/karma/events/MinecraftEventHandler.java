@@ -33,6 +33,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public class MinecraftEventHandler implements Listener {
@@ -42,7 +43,9 @@ public class MinecraftEventHandler implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = StorageManager.getManager().selectPlayerModel(event.getPlayer().getUniqueId().toString());
+        PlayerModel model = StorageManager.getManager().selectPlayerModel(
+                Bukkit.getOnlineMode() ? event.getPlayer().getUniqueId().toString() : player.getName()
+        );
         if (model == null) {
             model = new PlayerModel(event.getPlayer());
             StorageManager.getManager().insertPlayerModel(model);
@@ -64,7 +67,6 @@ public class MinecraftEventHandler implements Listener {
             }
         } else {
             PlayerDataManager.initPlayerModelToMap(model);
-
             /*
             Overtime setup WITH/OUT check
              */
@@ -72,21 +74,25 @@ public class MinecraftEventHandler implements Listener {
                 long lastUpdate = model.getLastUpdate();
                 long deltaUpdates = System.currentTimeMillis() - lastUpdate;
 
-                for (Map.Entry<String, OvertimeLoop> entry : ConfigData.getConfigData().overtime.overtimeLoopMap.entrySet()) {
-                    String overtimeName = entry.getKey();
-                    OvertimeLoop overtimeLoop = entry.getValue();
+                for (Map.Entry<String, OvertimeLoop> stringOvertimeLoopEntry : ConfigData.getConfigData().overtime.overtimeLoopMap.entrySet()) {
+                    String overtimeName = stringOvertimeLoopEntry.getKey();
+                    OvertimeLoop overtimeLoop = stringOvertimeLoopEntry.getValue();
+
                     long loopDelta = deltaUpdates - overtimeLoop.firstTimer;
+                    long delay = overtimeLoop.firstTimer;
 
-                    long delay = overtimeLoop.firstTimer; //default online only overtime timer
                     if (overtimeLoop.offline) {
-                        int occurrenceAmount = (int) (Math.floorDiv(loopDelta, overtimeLoop.nextTimer) + 1);
-                        delay = loopDelta % overtimeLoop.nextTimer;
+                        if (loopDelta >= 0) { //If first occurrence happened
+                            int occurrences = 1 + (int) (Math.floorDiv(loopDelta, overtimeLoop.nextTimer));
+                            delay = loopDelta % overtimeLoop.nextTimer;
 
-                        if (occurrenceAmount > 0) {
-                            Bukkit.getPluginManager().callEvent(new PlayerOverTimeTriggerEvent(player, overtimeName, occurrenceAmount, delay));
+                            if (occurrences > 0) {
+                                Bukkit.getPluginManager().callEvent(new PlayerOverTimeTriggerEvent(player, overtimeName, occurrences, delay));
+                            }
                         } else {
                             delay = -loopDelta;
                         }
+
                     }
 
                     PlayerDataManager.setOverTimeStamp(model, overtimeName, delay);

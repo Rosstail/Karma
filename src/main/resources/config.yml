@@ -91,7 +91,6 @@ tiers:
       commands:
         on-join:
           - "player[msg] &fYou are a [player_tier_display]&r."
-          - "bc [evalformat_[player_karma]+10] karma +10 formatted"
           - "player[msg-actionbar] &fYour previous Tier was [player_previous_tier_display] and the previous karma was [player_previous_karma]"
     vigilante:
       display: "&aVigilante"
@@ -109,7 +108,6 @@ tiers:
       commands:
         on-join:
           - "player[msg] &fYour are a [player_tier_display]&r."
-          - "bc [eval_[player_karma]*50] karma * 50 Double"
         on-join-up:
           - "player[msg] &bYou can help the police now."
         on-join-down:
@@ -130,7 +128,6 @@ tiers:
       commands:
         on-join:
           - "player[msg] &fYour wanted level is now [player_tier_display]&r."
-          - "bc [evalfloat_[player_karma]/2] karma /2 float"
         on-join-up:
           - "player[msg] &bYou are got promoted from [player_previous_tier_display]&r."
     paragon:
@@ -231,7 +228,6 @@ pvp:
           victim-status: "WANTED"
         commands:
           - "jail [victim] jail [evalint_[victim_karma_abs]/1000]m"
-          - "bc [evalint_[victim_karma_abs]/1000]m karma_abs/1000 int"
           - "broadcast [victim] &ahas been arrested for [evalint_[victim_karma_abs]/1000] minutes by [attacker] !"
 
 pve:

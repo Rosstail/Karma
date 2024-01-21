@@ -1,6 +1,7 @@
 package com.rosstail.karma.players;
 
 import com.rosstail.karma.ConfigData;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.sql.Timestamp;
@@ -28,7 +29,7 @@ public class PlayerModel {
      * @param player - a user joining the server
      */
     public PlayerModel(Player player) {
-        this.uuid = player.getUniqueId().toString();
+        this.uuid = Bukkit.getOnlineMode() ? player.getUniqueId().toString() : player.getName();
         this.username = player.getName();
     }
 

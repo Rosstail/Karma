@@ -2,22 +2,26 @@ package com.rosstail.karma.storage.storagetype;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
+import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.players.PlayerDataManager;
 import com.rosstail.karma.players.PlayerModel;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SqlStorageRequest implements StorageRequest {
-    private final Karma plugin = Karma.getInstance();
-    private final String pluginName;
+    protected final Karma plugin = Karma.getInstance();
+    protected final String pluginName;
     protected String driver;
     protected String url;
     protected String username;
     protected String password;
-    private Connection connection;
+    protected Connection connection;
 
     public SqlStorageRequest(String pluginName) {
         this.pluginName = pluginName;
@@ -69,7 +73,10 @@ public class SqlStorageRequest implements StorageRequest {
                 model.setPreviousKarma(result.getFloat("previous_karma"));
                 model.setTierName(result.getString("tier"));
                 model.setPreviousTierName(result.getString("previous_tier"));
-                model.setLastUpdate(result.getTimestamp("last_update").getTime());
+
+                long lastUpdateUTC = result.getTimestamp("last_update").getTime();
+                model.setLastUpdate(lastUpdateUTC);
+
                 long wantedTime = result.getLong("wanted_time");
                 if (ConfigData.getConfigData().wanted.wantedCountdownApplyOnDisconnect) {
                     model.setWantedTimeStamp(new Timestamp(model.getLastUpdate() + wantedTime));
@@ -94,13 +101,15 @@ public class SqlStorageRequest implements StorageRequest {
             }
         });
     }
+
     @Override
     public void updatePlayerModel(PlayerModel model) {
         String query = "UPDATE " + pluginName + " SET karma = ?, previous_karma = ?, tier = ?, previous_tier = ?, wanted_time = ?, is_wanted = ?, last_update = CURRENT_TIMESTAMP WHERE uuid = ?";
+
         try {
             boolean success = executeSQLUpdate(query,
                     model.getKarma(), model.getPreviousKarma(),
-                    model.getTierName(),model.getPreviousTierName(),
+                    model.getTierName(), model.getPreviousTierName(),
                     PlayerDataManager.getWantedTimeLeft(model),
                     model.isWanted(),
                     model.getUuid())
@@ -126,6 +135,7 @@ public class SqlStorageRequest implements StorageRequest {
 
     /**
      * Executes an SQL request for INSERT, UPDATE and DELETE
+     *
      * @param query # The query itself
      * @param params #The values to put as WHERE
      * @return # Returns the number of rows affected
@@ -146,6 +156,7 @@ public class SqlStorageRequest implements StorageRequest {
 
     /**
      * Executes an SQL request for SELECT
+     *
      * @param query # The query itself
      * @param params #The values to put as WHERE
      * @return # Returns the ResultSet of the request
@@ -166,6 +177,7 @@ public class SqlStorageRequest implements StorageRequest {
 
     /**
      * Executes an SQL request to CREATE TABLE
+     *
      * @param query # The query itself
      * @return # Returns if the request succeeded
      */
@@ -207,6 +219,7 @@ public class SqlStorageRequest implements StorageRequest {
         }
         return connection;
     }
+
     public void closeConnection() {
         if (connection != null) {
             try {
@@ -237,7 +250,7 @@ public class SqlStorageRequest implements StorageRequest {
             replacement.append(")");
             query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
         }
-        query += " ORDER BY " + pluginName +  ".karma ASC LIMIT ?";
+        query += " ORDER BY " + pluginName + ".karma ASC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
@@ -261,7 +274,7 @@ public class SqlStorageRequest implements StorageRequest {
             replacement.append(")");
             query += " WHERE " + pluginName + ".uuid NOT IN " + replacement;
         }
-        query += " ORDER BY " + pluginName +  ".karma DESC LIMIT ?";
+        query += " ORDER BY " + pluginName + ".karma DESC LIMIT ?";
         return selectPlayerModelList(query, limit);
     }
 
