@@ -125,7 +125,7 @@ public class KarmaEventHandler implements Listener {
 
         model.setWanted(true);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.enterWantedCommands);
-        if (message != null && !event.isSilent()) {
+        if (message != null || !event.isSilent()) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
             ));
@@ -140,7 +140,7 @@ public class KarmaEventHandler implements Listener {
         model.setWanted(true);
 
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.refreshWantedCommands);
-        if (message != null && !event.isSilent()) {
+        if (message != null || !event.isSilent()) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
             ));
@@ -155,7 +155,7 @@ public class KarmaEventHandler implements Listener {
         model.setWanted(false);
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_EXIT);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.leaveWantedCommands);
-        if (message != null && !event.isSilent()) {
+        if (message != null || !event.isSilent()) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
             ));
