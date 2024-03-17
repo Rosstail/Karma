@@ -41,7 +41,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit player <player> wanted set <values> (-d -o -g)";
+        return "karma edit player <player> wanted set <values> (-d -o -g -s)";
     }
 
 
@@ -67,6 +67,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
 
     private void changeWantedOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
         long wantedTime = model.getWantedTimeStamp().getTime();
+        boolean silent;
         List<String> expressionList = new ArrayList<>(Arrays.asList(args));
         expressionList.remove("edit");
         expressionList.remove("player");
@@ -83,8 +84,9 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         } else {
             sender.sendMessage("Wanted time is not limited.");
         }
+        silent = CommandManager.doesCommandMatchParameter(arguments, "s", "silent");
 
-        PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(duration));
+        PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(duration), silent);
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
 
         sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT), PlayerType.PLAYER.getText()));

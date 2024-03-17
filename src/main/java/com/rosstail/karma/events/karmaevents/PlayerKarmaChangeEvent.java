@@ -21,11 +21,13 @@ public class PlayerKarmaChangeEvent extends Event {
     private final Player player;
     private final PlayerModel model;
     private float value;
+    private final boolean silent;
 
-    public PlayerKarmaChangeEvent(Player player, PlayerModel model, float value) {
+    public PlayerKarmaChangeEvent(Player player, PlayerModel model, float value, boolean silent) {
         this.player = player;
         this.model = model;
         this.value = value;
+        this.silent = silent;
     }
 
     public Player getPlayer() throws NullPointerException {
@@ -44,4 +46,7 @@ public class PlayerKarmaChangeEvent extends Event {
         this.value = value;
     }
 
+    public boolean isSilent() {
+        return silent;
+    }
 }

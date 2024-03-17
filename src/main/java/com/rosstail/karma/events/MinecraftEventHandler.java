@@ -52,7 +52,7 @@ public class MinecraftEventHandler implements Listener {
             PlayerDataManager.initPlayerModelToMap(model);
 
             //Event join tier by default
-            PlayerTierChangeEvent defaultTierJoinEvent = new PlayerTierChangeEvent(event.getPlayer(), model, TierManager.getTierManager().getTierByKarmaAmount(model.getKarma()).getName());
+            PlayerTierChangeEvent defaultTierJoinEvent = new PlayerTierChangeEvent(event.getPlayer(), model, TierManager.getTierManager().getTierByKarmaAmount(model.getKarma()).getName(), !ConfigData.getConfigData().pvp.sendMessageOnTierChange);
             Bukkit.getPluginManager().callEvent(defaultTierJoinEvent);
 
             /*
@@ -106,7 +106,7 @@ public class MinecraftEventHandler implements Listener {
             Tier currentKarmaTier = tierManager.getTierByKarmaAmount(model.getKarma());
             Tier modelTier = tierManager.getTierByName(model.getTierName());
             if (!currentKarmaTier.equals(modelTier)) {
-                PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(player, model, currentKarmaTier.getName());
+                PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(player, model, currentKarmaTier.getName(), !ConfigData.getConfigData().pvp.sendMessageOnTierChange);
                 Bukkit.getPluginManager().callEvent(tierChangeEvent);
             }
 
@@ -116,14 +116,14 @@ public class MinecraftEventHandler implements Listener {
             if (ConfigData.getConfigData().wanted.wantedEnable) {
                 if (model.isWanted()) {
                     if (PlayerDataManager.getWantedTimeLeft(model) > 0L) {
-                        PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model);
+                        PlayerWantedPeriodRefreshEvent playerWantedPeriodRefreshEvent = new PlayerWantedPeriodRefreshEvent(player, model, !ConfigData.getConfigData().pvp.sendMessageOnWantedChange);
                         Bukkit.getPluginManager().callEvent(playerWantedPeriodRefreshEvent);
                     } else {
-                        PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model);
+                        PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model, !ConfigData.getConfigData().pvp.sendMessageOnWantedChange);
                         Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
                     }
                 } else if (PlayerDataManager.getWantedTimeLeft(model) > 0L) {
-                    PlayerWantedPeriodStartEvent playerWantedPeriodStartEvent = new PlayerWantedPeriodStartEvent(player, model);
+                    PlayerWantedPeriodStartEvent playerWantedPeriodStartEvent = new PlayerWantedPeriodStartEvent(player, model, !ConfigData.getConfigData().pvp.sendMessageOnWantedChange);
                     Bukkit.getPluginManager().callEvent(playerWantedPeriodStartEvent);
                 }
             }

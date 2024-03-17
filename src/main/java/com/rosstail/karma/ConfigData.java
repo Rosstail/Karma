@@ -66,7 +66,7 @@ public class ConfigData {
         ConfigLocale(FileConfiguration config) {
             this.configFile = config;
 
-            lang = config.getString("locale.lang");
+            lang = config.getString("locale.lang", "en_EN");
             decNumber = config.getInt("locale.decimal-display");
             titleFadeIn = config.getInt("locale.title.fade-in");
             titleStay = config.getInt("locale.title.stay");
@@ -187,6 +187,9 @@ public class ConfigData {
         public final String pvpKillVictimChangeExpression;
         public final String wantedHitDurationExpression;
         public final String wantedKillDurationExpression;
+        public final boolean sendMessageOnKarmaChange;
+        public final boolean sendMessageOnTierChange;
+        public final boolean sendMessageOnWantedChange;
 
         public final boolean wantedOnKarmaGain;
         public final boolean wantedOnKarmaUnchanged;
@@ -211,7 +214,9 @@ public class ConfigData {
             scoreboardTeamSystemCancel = config.getBoolean("pvp.team-system-cancel.scoreboard-team.enable", true);
             scoreboardTeamSystemCancelSameTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.same-team", true);
             scoreboardTeamSystemCancelOtherTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.other-team", false);
-
+            sendMessageOnKarmaChange = config.getBoolean("send-message-on-karma-change", true);
+            sendMessageOnTierChange = config.getBoolean("send-message-on-tier-change", true);
+            sendMessageOnWantedChange = config.getBoolean("send-message-on-wanted-change");
             wantedOnKarmaGain = config.getBoolean("pvp.wanted.requirements.on-karma-gain", false);
             wantedOnKarmaUnchanged = config.getBoolean("pvp.wanted.requirements.on-karma-unchanged", false);
             wantedOnKarmaLoss = config.getBoolean("pvp.wanted.requirements.on-karma-loss", true);

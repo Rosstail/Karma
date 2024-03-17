@@ -10,10 +10,12 @@ public class PlayerWantedPeriodRefreshEvent extends Event {
 
     private final Player player;
     private final PlayerModel model;
+    private final boolean silent;
 
-    public PlayerWantedPeriodRefreshEvent (Player player, PlayerModel model) {
+    public PlayerWantedPeriodRefreshEvent (Player player, PlayerModel model, boolean silent) {
         this.player = player;
         this.model = model;
+        this.silent = silent;
     }
 
     public Player getPlayer() {
@@ -22,6 +24,10 @@ public class PlayerWantedPeriodRefreshEvent extends Event {
 
     public PlayerModel getModel() {
         return model;
+    }
+
+    public boolean isSilent() {
+        return silent;
     }
 
     private static final HandlerList handlers = new HandlerList();

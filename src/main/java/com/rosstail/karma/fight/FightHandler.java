@@ -201,7 +201,7 @@ public class FightHandler {
             }
 
             if (doesKarmaChange) {
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma, !ConfigData.getConfigData().pvp.sendMessageOnKarmaChange);
                 Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
             }
 
@@ -246,7 +246,7 @@ public class FightHandler {
             }
 
             if (doesKarmaChange) {
-                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(victim, victimModel, victimNewKarma);
+                PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(victim, victimModel, victimNewKarma, !ConfigData.getConfigData().pvp.sendMessageOnKarmaChange);
                 Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
             }
         }
@@ -316,7 +316,7 @@ public class FightHandler {
         }
 
         if (doesKarmaChange) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerNewKarma);
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, model, attackerNewKarma, !ConfigData.getConfigData().pvp.sendMessageOnKarmaChange);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         }
     }

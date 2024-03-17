@@ -39,7 +39,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit remove <player> <value> (-d -o -g)";
+        return "karma edit remove <player> <value> (-d -o -g -s)";
     }
 
     @Override
@@ -69,6 +69,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
 
     public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
         float value;
+        boolean silent;
 
         if (args.length < 6) {
             sender.sendMessage("Set a numerical value");
@@ -86,7 +87,9 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
             value = PlayerDataManager.limitKarma(value);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value);
+        silent = CommandManager.doesCommandMatchParameter(arguments, "s", "silent");
+
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value, silent);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {

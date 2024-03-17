@@ -41,13 +41,14 @@ public class CommandManager implements CommandExecutor, TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        String[] arguments = getCommandArguments(args);
+        args = removeFoundArgumentsFromCommand(args, arguments);
+
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             HelpCommand help = new HelpCommand(this);
             help.perform(sender, args, null);
             return true;
         }
-        String[] arguments = getCommandArguments(args);
-        args = removeFoundArgumentsFromCommand(args, arguments);
 
         for (int index = 0; index < getSubCommands().size(); index++) {
             if (args[0].equalsIgnoreCase(getSubCommands().get(index).getName())) {

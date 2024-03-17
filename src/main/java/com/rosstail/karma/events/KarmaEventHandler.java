@@ -37,7 +37,9 @@ public class KarmaEventHandler implements Listener {
         model.setPreviousKarma(model.getKarma());
         model.setKarma(event.getValue());
 
-        PlayerDataManager.changePlayerKarmaMessage(player);
+        if (!event.isSilent()) {
+            PlayerDataManager.changePlayerKarmaMessage(player);
+        }
         /*
         CHECK PLAYER TIER
          */
@@ -45,7 +47,7 @@ public class KarmaEventHandler implements Listener {
         Tier currentKarmaTier = tierManager.getTierByKarmaAmount(model.getKarma());
         Tier modelTier = tierManager.getTierByName(model.getTierName());
         if (!currentKarmaTier.equals(modelTier)) {
-            PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(event.getPlayer(), model, currentKarmaTier.getName());
+            PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(event.getPlayer(), model, currentKarmaTier.getName(), event.isSilent());
             Bukkit.getPluginManager().callEvent(tierChangeEvent);
         }
     }
@@ -63,7 +65,9 @@ public class KarmaEventHandler implements Listener {
         Tier tier = TierManager.getTierManager().getTierByName(model.getTierName());
         Tier previousTier = TierManager.getTierManager().getTierByName(model.getPreviousTierName());
 
-        PlayerDataManager.changePlayerTierMessage(player);
+        if (!event.isSilent()) {
+            PlayerDataManager.changePlayerTierMessage(player);
+        }
         CommandManager.commandsLauncher(player, tier.getJoinCommands());
 
         if (!previousTier.equals(TierManager.getNoTier())) {
@@ -97,6 +101,7 @@ public class KarmaEventHandler implements Listener {
     public void onPlayerWantedChangeEvent(PlayerWantedChangeEvent event) {
         PlayerModel model = event.getModel();
         Timestamp duration = event.getTimestamp();
+        boolean silent = event.isSilent();
 
         model.setWantedTimeStamp(duration);
 
@@ -104,11 +109,11 @@ public class KarmaEventHandler implements Listener {
         boolean willBeWanted = PlayerDataManager.isWanted(model);
 
         if (!isWanted && willBeWanted) {
-            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodStartEvent(event.getPlayer(), model));
+            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodStartEvent(event.getPlayer(), model, silent));
         } else if (isWanted && willBeWanted) { //stay
-            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodRefreshEvent(event.getPlayer(), model));
+            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodRefreshEvent(event.getPlayer(), model, silent));
         } else if (isWanted) {
-            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodEndEvent(event.getPlayer(), model));
+            Bukkit.getPluginManager().callEvent(new PlayerWantedPeriodEndEvent(event.getPlayer(), model, silent));
         }
     }
 
@@ -120,7 +125,7 @@ public class KarmaEventHandler implements Listener {
 
         model.setWanted(true);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.enterWantedCommands);
-        if (message != null) {
+        if (message != null && !event.isSilent()) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
             ));
@@ -135,7 +140,7 @@ public class KarmaEventHandler implements Listener {
         model.setWanted(true);
 
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.refreshWantedCommands);
-        if (message != null) {
+        if (message != null && !event.isSilent()) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
             ));
@@ -150,7 +155,7 @@ public class KarmaEventHandler implements Listener {
         model.setWanted(false);
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_EXIT);
         CommandManager.commandsLauncher(player, ConfigData.getConfigData().wanted.leaveWantedCommands);
-        if (message != null) {
+        if (message != null && !event.isSilent()) {
             adaptMessage.sendToPlayer(player, adaptMessage.adaptMessage(
                     adaptMessage.adaptPlayerMessage(player, message, PlayerType.PLAYER.getText())
             ));

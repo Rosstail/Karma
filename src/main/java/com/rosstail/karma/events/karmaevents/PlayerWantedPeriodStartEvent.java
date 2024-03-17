@@ -11,10 +11,12 @@ public class PlayerWantedPeriodStartEvent extends Event {
 
     private final Player player;
     private final PlayerModel model;
+    private final boolean silent;
 
-    public PlayerWantedPeriodStartEvent(Player player, PlayerModel model) {
+    public PlayerWantedPeriodStartEvent(Player player, PlayerModel model, boolean silent) {
         this.player = player;
         this.model = model;
+        this.silent = silent;
     }
 
     public Player getPlayer() {
@@ -25,6 +27,10 @@ public class PlayerWantedPeriodStartEvent extends Event {
         return model;
     }
 
+    public boolean isSilent() {
+        return silent;
+    }
+
     @Override
     public @NotNull HandlerList getHandlers() {
         return handlers;
@@ -33,4 +39,5 @@ public class PlayerWantedPeriodStartEvent extends Event {
     public static HandlerList getHandlerList() {
         return handlers;
     }
+
 }

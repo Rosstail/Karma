@@ -76,7 +76,7 @@ public class PlayerDataManager {
                 }
 
                 if (ConfigData.getConfigData().wanted.wantedEnable && model.isWanted() && !PlayerDataManager.isWanted(model)) {
-                    PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model);
+                    PlayerWantedPeriodEndEvent playerWantedPeriodEndEvent = new PlayerWantedPeriodEndEvent(player, model, !ConfigData.getConfigData().pvp.sendMessageOnWantedChange);
                     Bukkit.getPluginManager().callEvent(playerWantedPeriodEndEvent);
                 }
             }
@@ -130,7 +130,7 @@ public class PlayerDataManager {
         }
 
         if (newKarma != currentKarma) {
-            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, newKarma);
+            PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, newKarma, !ConfigData.getConfigData().pvp.sendMessageOnKarmaChange);
             Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
         }
         CommandManager.commandsLauncher(player, overtimeLoop.commands);

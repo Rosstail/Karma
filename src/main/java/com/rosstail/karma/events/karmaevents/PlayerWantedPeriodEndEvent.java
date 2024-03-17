@@ -11,10 +11,12 @@ public class PlayerWantedPeriodEndEvent extends Event {
 
     private final Player player;
     private final PlayerModel model;
+    private final boolean silent;
 
-    public PlayerWantedPeriodEndEvent(Player player, PlayerModel model) {
+    public PlayerWantedPeriodEndEvent(Player player, PlayerModel model, boolean silent) {
         this.player = player;
         this.model = model;
+        this.silent = silent;
     }
 
     public Player getPlayer() {
@@ -23,6 +25,10 @@ public class PlayerWantedPeriodEndEvent extends Event {
 
     public PlayerModel getModel() {
         return model;
+    }
+
+    public boolean isSilent() {
+        return silent;
     }
 
     @Override

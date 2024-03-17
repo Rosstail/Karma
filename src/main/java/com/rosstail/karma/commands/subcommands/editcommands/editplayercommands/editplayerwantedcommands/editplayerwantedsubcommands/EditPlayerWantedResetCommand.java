@@ -37,7 +37,7 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit player <player> wanted reset (-d -o -g)";
+        return "karma edit player <player> wanted reset (-d -o -g -s)";
     }
 
 
@@ -62,10 +62,10 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
     }
 
     private void changeWantedOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(0));
+        boolean silent = CommandManager.doesCommandMatchParameter(arguments, "s", "silent");
+        PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(0), silent);
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
-
-
+        
         AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText());
         sender.sendMessage(adaptMessage.adaptMessage(message));

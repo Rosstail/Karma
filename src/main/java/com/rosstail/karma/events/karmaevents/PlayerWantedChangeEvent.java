@@ -15,10 +15,13 @@ public class PlayerWantedChangeEvent extends Event {
     private final PlayerModel model;
     private Timestamp timestamp;
 
-    public PlayerWantedChangeEvent(Player player, PlayerModel model, Timestamp timestamp) {
+    private final boolean silent;
+
+    public PlayerWantedChangeEvent(Player player, PlayerModel model, Timestamp timestamp, boolean silent) {
         this.player = player;
         this.model = model;
         this.timestamp = timestamp;
+        this.silent = silent;
     }
 
     public Player getPlayer() {
@@ -31,6 +34,10 @@ public class PlayerWantedChangeEvent extends Event {
 
     public Timestamp getTimestamp() {
         return timestamp;
+    }
+
+    public boolean isSilent() {
+        return silent;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit player <player> tier set <tiername> (-d -o -g)";
+        return "karma edit player <player> tier set <tiername> (-d -o -g -s)";
     }
 
     @Override
@@ -71,6 +71,7 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
         }
 
         String tierName = args[5];
+        boolean silent;
 
         if (!TierManager.getTierManager().getTiers().containsKey(tierName)) {
             sender.sendMessage("This tier does not exist");
@@ -86,7 +87,9 @@ public class EditPlayerTierSetCommand extends EditPlayerTierSubCommand {
             }
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value);
+        silent = CommandManager.doesCommandMatchParameter(arguments, "s", "silent");
+
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value, silent);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {

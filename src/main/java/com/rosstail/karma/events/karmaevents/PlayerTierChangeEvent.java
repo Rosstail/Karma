@@ -21,10 +21,13 @@ public class PlayerTierChangeEvent extends Event {
     private final PlayerModel model;
     private final String tierName;
 
-    public PlayerTierChangeEvent(Player player, PlayerModel model, String tierName) {
+    private final boolean silent;
+
+    public PlayerTierChangeEvent(Player player, PlayerModel model, String tierName, boolean silent) {
         this.player = player;
         this.model = model;
         this.tierName = tierName;
+        this.silent = silent;
     }
 
     public Player getPlayer() {
@@ -37,5 +40,9 @@ public class PlayerTierChangeEvent extends Event {
 
     public String getTierName() {
         return tierName;
+    }
+
+    public boolean isSilent() {
+        return silent;
     }
 }

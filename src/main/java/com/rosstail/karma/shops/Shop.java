@@ -57,7 +57,7 @@ public class Shop {
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(target.getName());
         AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         if (checkHasKarma(model)) {
-            PlayerKarmaChangeEvent event = new PlayerKarmaChangeEvent(target, model, model.getKarma() - price);
+            PlayerKarmaChangeEvent event = new PlayerKarmaChangeEvent(target, model, model.getKarma() - price, true);
             Bukkit.getPluginManager().callEvent(event);
             //after event done
             CommandManager.commandsLauncher(target, commands);

@@ -47,6 +47,7 @@ public class ReloadCommand extends SubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args, String[] arguments) {
+        boolean silent = CommandManager.doesCommandMatchParameter(arguments, "s", "silent");
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
@@ -62,7 +63,7 @@ public class ReloadCommand extends SubCommand {
             Tier currentKarmaTier = tierManager.getTierByKarmaAmount(playerModel.getKarma());
             Tier modelTier = tierManager.getTierByName(playerModel.getTierName());
             if (!currentKarmaTier.equals(modelTier)) {
-                PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(player, playerModel, currentKarmaTier.getName());
+                PlayerTierChangeEvent tierChangeEvent = new PlayerTierChangeEvent(player, playerModel, currentKarmaTier.getName(), silent);
                 Bukkit.getPluginManager().callEvent(tierChangeEvent);
             }
         });

@@ -82,7 +82,7 @@ public class BlocksModel {
 
         if (!isKarmaGainOutLimit && !isKarmaLossOutLimit) {
             if (newKarma != playerKarma) {
-                PlayerKarmaChangeEvent karmaChangeEvent = new PlayerKarmaChangeEvent(player, model, newKarma);
+                PlayerKarmaChangeEvent karmaChangeEvent = new PlayerKarmaChangeEvent(player, model, newKarma, !ConfigData.getConfigData().pvp.sendMessageOnKarmaChange);
                 Bukkit.getPluginManager().callEvent(karmaChangeEvent);
             }
         }

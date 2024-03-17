@@ -40,7 +40,7 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
 
     @Override
     public String getSyntax() {
-        return "karma edit player <player> karma reset (-d -o -g)";
+        return "karma edit player <player> karma reset (-d -o -g -s)";
     }
 
     @Override
@@ -70,12 +70,15 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
 
     public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
         float value = ConfigData.getConfigData().karmaConfig.defaultKarma;
+        boolean silent;
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "o", "override")) {
             value = PlayerDataManager.limitKarma(value);
         }
 
-        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value);
+        silent = CommandManager.doesCommandMatchParameter(arguments, "s", "silent");
+
+        PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(player, model, value, silent);
         Bukkit.getPluginManager().callEvent(playerKarmaChangeEvent);
 
         if (!CommandManager.doesCommandMatchParameter(arguments, "r", "reset")) {
