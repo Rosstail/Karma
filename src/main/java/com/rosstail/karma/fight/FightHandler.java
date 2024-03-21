@@ -23,6 +23,7 @@ import com.rosstail.karma.wanted.WantedManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.enginehub.piston.config.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -277,7 +278,9 @@ public class FightHandler {
         boolean doesKarmaChange = true;
         float attackerNewKarma = attackerInitialKarma + reward;
 
-        AdaptMessage.getAdaptMessage().pveHitMessage(attacker, victim, reward);
+        if (ConfigData.getConfigData().pve.sendMessageOnKarmaChange) {
+            AdaptMessage.getAdaptMessage().pveHitMessage(attacker, victim, reward);
+        }
 
         karmaChangeChecker(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }
@@ -293,7 +296,9 @@ public class FightHandler {
         boolean doesKarmaChange = true;
         float attackerNewKarma = attackerInitialKarma + reward;
 
-        AdaptMessage.getAdaptMessage().pveKillMessage(attacker, victim, reward);
+        if (ConfigData.getConfigData().pve.sendMessageOnKarmaChange) {
+            AdaptMessage.getAdaptMessage().pveKillMessage(attacker, victim, reward);
+        }
 
         karmaChangeChecker(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }

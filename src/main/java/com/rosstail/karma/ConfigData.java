@@ -214,9 +214,9 @@ public class ConfigData {
             scoreboardTeamSystemCancel = config.getBoolean("pvp.team-system-cancel.scoreboard-team.enable", true);
             scoreboardTeamSystemCancelSameTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.same-team", true);
             scoreboardTeamSystemCancelOtherTeam = config.getBoolean("pvp.team-system-cancel.scoreboard-team.other-team", false);
-            sendMessageOnKarmaChange = config.getBoolean("send-message-on-karma-change", true);
-            sendMessageOnTierChange = config.getBoolean("send-message-on-tier-change", true);
-            sendMessageOnWantedChange = config.getBoolean("send-message-on-wanted-change");
+            sendMessageOnKarmaChange = config.getBoolean("pvp.send-message-on-karma-change", true);
+            sendMessageOnTierChange = config.getBoolean("pvp.send-message-on-tier-change", true);
+            sendMessageOnWantedChange = config.getBoolean("pvp.send-message-on-wanted-change", true);
             wantedOnKarmaGain = config.getBoolean("pvp.wanted.requirements.on-karma-gain", false);
             wantedOnKarmaUnchanged = config.getBoolean("pvp.wanted.requirements.on-karma-unchanged", false);
             wantedOnKarmaLoss = config.getBoolean("pvp.wanted.requirements.on-karma-loss", true);
@@ -233,12 +233,14 @@ public class ConfigData {
 
         public final int pveHitMessageDelay;
         public final int pveKillMessageDelay;
+        public final boolean sendMessageOnKarmaChange;
 
         ConfigPve(FileConfiguration config) {
             fileConfig = config;
 
             pveHitMessageDelay = config.getInt("pve.messages-delay.hit");
             pveKillMessageDelay = config.getInt("pve.messages-delay.kill");
+            sendMessageOnKarmaChange = config.getBoolean("pve.send-message-on-karma-change", true);
         }
     }
 

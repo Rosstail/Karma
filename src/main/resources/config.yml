@@ -234,6 +234,7 @@ pvp:
           - "broadcast [victim] &ahas been arrested for [evalint_[victim_karma_abs]/1000] minutes by [attacker] !"
 
 pve:
+  send-message-on-karma-change: true
   messages-delay:
     hit: 5
     kill: 10
