@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 public class BlocksManager {
 
@@ -40,7 +41,6 @@ public class BlocksManager {
 
     public void placeHandler(Player player, PlayerModel model, Block block) {
         String blockName = block.getBlockData().getMaterial().name();
-
         blocksModelMap.forEach((s, blocksModel) -> {
             Matcher matcher = blocksModel.regexName.matcher(blockName);
             if (matcher.find()) {

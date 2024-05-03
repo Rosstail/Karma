@@ -18,6 +18,7 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -276,7 +277,6 @@ public class MinecraftEventHandler implements Listener {
         Player player = event.getPlayer();
         PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block placedBlock = event.getBlockPlaced();
-        event.getBlockPlaced().getLocation();
 
         if (!WGPreps.getWgPreps().checkBlockPlaceChangeKarmaFlag(player, placedBlock.getLocation())) {
             return;

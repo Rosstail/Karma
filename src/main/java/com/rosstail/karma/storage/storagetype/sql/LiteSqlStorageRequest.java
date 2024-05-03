@@ -26,7 +26,7 @@ public class LiteSqlStorageRequest extends SqlStorageRequest {
     public PlayerModel selectPlayerModel(String uuid) {
         String query = "SELECT * FROM " + pluginName + " WHERE uuid = ?";
         try {
-            ResultSet result = executeSQLQuery(connection, query, uuid);
+            ResultSet result = executeSQLQuery(openConnection(), query, uuid);
             if (result.next()) {
                 PlayerModel model = new PlayerModel(uuid, PlayerDataManager.getPlayerNameFromUUID(uuid));
                 model.setKarma(result.getFloat("karma"));

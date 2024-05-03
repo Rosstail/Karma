@@ -350,7 +350,7 @@ blocks:
   list:
     # https://minecraft-ids.grahamedgecombe.com/
     # Be careful to use the blocks name, not the item (carrot for item, CARROTS for block)
-    WHEAT: #section name, can be block name
+    WHEAT: #section name, any block containing WHEAT in its name
       break:
         data:
           age: #useful on crops
@@ -367,7 +367,12 @@ blocks:
       regex: "*LOG" #* equals '(\w+)?' , it means "any characters"
       break:
         value: -0.1
+    any-starting-by-mossy:
+      regex: "^mossy"
+      break:
+        value: 2
     FIRE:
+      regex: "^FIRE$" # Does not affect any other block with fire such as FIRECAMP ^ for begin $ for end
       place: #place fire (flint, fireball)
         value: -5
         reset-overtime: true #Reset all the player overtimes timers. Default to false
