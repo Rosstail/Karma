@@ -40,7 +40,7 @@ public class SqlStorageRequest implements StorageRequest {
                 " previous_tier varchar(50)," +
                 " wanted_time bigint UNSIGNED NOT NULL  DEFAULT 0," +
                 " is_wanted boolean NOT NULL DEFAULT false," +
-                " last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+                " last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP) CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
         executeSQL(query);
     }
 
