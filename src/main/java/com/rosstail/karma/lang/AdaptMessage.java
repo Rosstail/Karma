@@ -206,7 +206,7 @@ public class AdaptMessage {
         message = message.replaceAll("\\[now]", String.valueOf(System.currentTimeMillis()));
 
         message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(null, message));
-        if (Integer.parseInt(Bukkit.getVersion().split("\\.")[1].replaceAll("\\)", "")) >= 16) {
+        if (getVersionNumbers().get(1) >= 16) {
             Matcher hexMatcher = hexPattern.matcher(message);
             while (hexMatcher.find()) {
                 try {
@@ -260,40 +260,40 @@ public class AdaptMessage {
         return newMessages.toArray(new String[0]);
     }
 
-    public String pvpHitMessage(String message, Player attacker, Player victim) {
+    public void pvpHitMessage(String message, Player attacker, Player victim) {
         ConfigData configData = ConfigData.getConfigData();
         if (message == null) {
-            return null;
+            return;
         }
         if (coolDown.containsKey(attacker)) {
             float timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + configData.pvp.pvpHitMessageDelay * 1000f;
             if (!(timeLeft <= 0)) {
-                return null;
+                return;
             }
         }
 
         message = adaptPvpMessage(attacker, victim, message);
 
         coolDown.put(attacker, System.currentTimeMillis());
-        return message;
+        attacker.sendMessage(message);
     }
 
-    public String pvpKillMessage(String message, Player attacker, Player victim) {
+    public void pvpKillMessage(String message, Player attacker, Player victim) {
         ConfigData configData = ConfigData.getConfigData();
         if (message == null) {
-            return null;
+            return;
         }
         if (coolDown.containsKey(attacker)) {
             float timeLeft = coolDown.get(attacker) - System.currentTimeMillis() + configData.pvp.pvpKillMessageDelay * 1000f;
             if (!(timeLeft <= 0)) {
-                return null;
+                return;
             }
         }
 
         message = adaptPvpMessage(attacker, victim, message);
 
         coolDown.put(attacker, System.currentTimeMillis());
-        return message;
+        attacker.sendMessage(message);
     }
 
     public void pveHitMessage(Player player, Mob victim, float reward) {
@@ -475,5 +475,18 @@ public class AdaptMessage {
         }
 
         return totalTimeMs;
+    }
+
+    private List<Integer> getVersionNumbers() {
+        ArrayList<Integer> versionNumbers = new ArrayList<>();
+        Pattern pattern = Pattern.compile("(\\d+)\\.(\\d+)");
+        String version = Bukkit.getVersion();
+        Matcher matcher = pattern.matcher(version);
+        if (matcher.find()) {
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                versionNumbers.add(Integer.valueOf(matcher.group(i)));
+            }
+        }
+        return versionNumbers;
     }
 }

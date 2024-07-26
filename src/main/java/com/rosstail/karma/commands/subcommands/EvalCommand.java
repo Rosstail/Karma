@@ -76,10 +76,18 @@ public class EvalCommand extends SubCommand {
     @Override
     public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
         ArrayList<String> expressions = new ArrayList<>();
-        expressions.add(ConfigData.getConfigData().pvp.pvpHitAttackerChangeExpression);
-        expressions.add(ConfigData.getConfigData().pvp.pvpKillAttackerChangeExpression);
-        expressions.add(ConfigData.getConfigData().pvp.pvpHitVictimChangeExpression);
-        expressions.add(ConfigData.getConfigData().pvp.pvpKillVictimChangeExpression);
+        if (ConfigData.getConfigData().pvp.pvpHitAttackerChangeExpression != null) {
+            expressions.add(ConfigData.getConfigData().pvp.pvpHitAttackerChangeExpression);
+        }
+        if (ConfigData.getConfigData().pvp.pvpKillAttackerChangeExpression != null) {
+            expressions.add(ConfigData.getConfigData().pvp.pvpKillAttackerChangeExpression);
+        }
+        if (ConfigData.getConfigData().pvp.pvpHitVictimChangeExpression != null) {
+            expressions.add(ConfigData.getConfigData().pvp.pvpHitVictimChangeExpression);
+        }
+        if (ConfigData.getConfigData().pvp.pvpKillVictimChangeExpression != null) {
+            expressions.add(ConfigData.getConfigData().pvp.pvpKillVictimChangeExpression);
+        }
         return expressions;
     }
 }
