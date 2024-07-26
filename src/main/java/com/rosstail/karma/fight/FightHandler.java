@@ -76,7 +76,7 @@ public class FightHandler {
 
             float attackerNewKarma = attackerInitialKarma + result;
 
-            if (ConfigData.getConfigData().wanted.wantedEnable) {
+            if (configData.wanted.wantedEnable) {
                 WantedManager wantedManager = WantedManager.getWantedManager();
                 doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
                 wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
@@ -90,9 +90,7 @@ public class FightHandler {
             } else {
                 message = LangManager.getMessage(LangMessage.FIGHT_PVP_HIT_ON_KARMA_UNCHANGED);
             }
-            if (message != null) {
-                attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim));
-            }
+            AdaptMessage.getAdaptMessage().pvpHitMessage(message, attacker, victim);
 
             karmaChangeChecker(attacker, result, attackerModel, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
 
@@ -197,9 +195,7 @@ public class FightHandler {
             } else {
                 message = LangManager.getMessage(LangMessage.FIGHT_PVP_KILL_ON_KARMA_UNCHANGED);
             }
-            if (message != null) {
-                attacker.sendMessage(AdaptMessage.getAdaptMessage().pvpKillMessage(message, attacker, victim));
-            }
+            AdaptMessage.getAdaptMessage().pvpKillMessage(message, attacker, victim);
 
             if (doesKarmaChange) {
                 PlayerKarmaChangeEvent playerKarmaChangeEvent = new PlayerKarmaChangeEvent(attacker, attackerModel, attackerNewKarma, !ConfigData.getConfigData().pvp.sendMessageOnKarmaChange);
