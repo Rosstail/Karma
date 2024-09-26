@@ -16,6 +16,19 @@ public class LiteSqlStorageRequest extends SqlStorageRequest {
     }
 
     @Override
+    public void createKarmaTable() {
+        String query = "CREATE TABLE IF NOT EXISTS " + pluginName + " ( uuid varchar(40) PRIMARY KEY UNIQUE NOT NULL," +
+                " karma float NOT NULL DEFAULT 0," +
+                " previous_karma float NOT NULL DEFAULT 0," +
+                " tier varchar(50)," +
+                " previous_tier varchar(50)," +
+                " wanted_time bigint UNSIGNED NOT NULL  DEFAULT 0," +
+                " is_wanted boolean NOT NULL DEFAULT false," +
+                " last_update timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP);";
+        executeSQL(query);
+    }
+
+    @Override
     public void setupStorage(String host, short port, String database, String username, String password) {
         this.url = "jdbc:sqlite:./plugins/Karma/playerdata/playerdata.db";
         this.createKarmaTable();
