@@ -75,6 +75,10 @@ public class AdaptMessage {
     }
 
     private void sendActionBar(Player player, String message) {
+        if (message == null) {
+            return;
+        }
+
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(
                 adaptMessage(adaptPlayerMessage(player, message, PlayerType.PLAYER.getText()))
         ));
@@ -88,6 +92,11 @@ public class AdaptMessage {
     }
 
     public String adaptPvpMessage(Player attacker, Player victim, String message) {
+        if (message == null) {
+            return null;
+        }
+
+
         message = adaptPlayerMessage(attacker, message, PlayerType.ATTACKER.getText());
         message = adaptPlayerMessage(victim, message, PlayerType.VICTIM.getText());
 
@@ -97,6 +106,10 @@ public class AdaptMessage {
     }
 
     public String adaptPlayerMessage(Player player, String message, String playerType) {
+        if (message == null) {
+            return null;
+        }
+
         message = message.replaceAll("\\[" + playerType + "]", player.getName());
         if (!player.hasMetadata("NPC")) {
             PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
@@ -111,6 +124,10 @@ public class AdaptMessage {
     }
 
     public String adaptMessageToModel(PlayerModel playerModel, String message, String playerType) {
+        if (message == null) {
+            return null;
+        }
+
         Player player = Bukkit.getPlayer(playerModel.getUsername());
         boolean isPlayerOnline = player != null && player.isOnline();
 

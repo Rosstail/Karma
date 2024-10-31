@@ -23,7 +23,6 @@ import com.rosstail.karma.wanted.WantedManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.enginehub.piston.config.Config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +78,9 @@ public class FightHandler {
             if (configData.wanted.wantedEnable) {
                 WantedManager wantedManager = WantedManager.getWantedManager();
                 doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
-                wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
+                if (configData.pvp.wantedHitDurationExpression != null) {
+                    wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedHitDurationExpression);
+                }
             }
 
             String message;
@@ -168,7 +169,9 @@ public class FightHandler {
             if (ConfigData.getConfigData().wanted.wantedEnable) {
                 WantedManager wantedManager = WantedManager.getWantedManager();
                 doesKarmaChange = wantedManager.doKarmaChange(attackerModel, victimModel, result);
-                wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedKillDurationExpression);
+                if (configData.pvp.wantedKillDurationExpression != null) {
+                    wantedManager.wantedHandler(attacker, attackerNewKarma, victim, configData.pvp.wantedKillDurationExpression);
+                }
             }
 
             if (result == 0F) { //If no change, skip
