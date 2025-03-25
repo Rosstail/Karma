@@ -384,7 +384,10 @@ shops:
   list:
     first:
       display: "&aFirst"
-      description: "&fFirst Shop. Usable by player"
+      description:
+        - "    &eCost: [shop_price]☯"
+        - "    &eMin/Max karma: [shop_min_karma]☯~[shop_max_karma]☯"
+        - "    &fFirst Shop. Usable by player"
       price: 1000.0
       cost-reset-overtime: false
       min-karma: 1000
@@ -393,7 +396,10 @@ shops:
         - "bc [player] bought the first item from karma shop !"
     second:
       display: "&9Second"
-      description: "&fSecond Shop. Not usable by player"
+      description:
+        - "    &eCost: [shop_price]☯"
+        - "    &eMin/Max karma: [shop_min_karma]☯~[shop_max_karma]☯"
+        - "    &fSecond Shop. Not usable by player"
       price: -500.0
       cost-reset-overtime: false
       max-karma: -500

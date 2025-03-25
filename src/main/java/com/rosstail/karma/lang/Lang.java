@@ -33,19 +33,30 @@ public class Lang {
         }
 
 
+
+
         for (LangMessage langMessage : LangMessage.values()) {
             String stringPath = langMessage.getText();
             String gotMessage = null;
             if (langConfig != null) {
-                gotMessage = langConfig.getString(stringPath);
+                if (langConfig.isList(stringPath)) {
+                    gotMessage = String.join("\n", langConfig.getStringList(stringPath));
+                } else {
+                    gotMessage = langConfig.getString(stringPath);
+                }
                 if (gotMessage != null) {
                     langMessage.setDisplayText(AdaptMessage.getAdaptMessage().adaptMessage(gotMessage));
                 }
             }
 
             if (gotMessage == null && !langMessage.isNullable()) {
-                langMessage.setDisplayText(AdaptMessage.getAdaptMessage().adaptMessage(defaultLangConfig.getString(stringPath)));
+                if (defaultLangConfig.isList(stringPath)) {
+                    langMessage.setDisplayText(AdaptMessage.getAdaptMessage().adaptMessage(String.join("\n", defaultLangConfig.getStringList(stringPath))));
+                } else {
+                    langMessage.setDisplayText(AdaptMessage.getAdaptMessage().adaptMessage(defaultLangConfig.getString(stringPath)));
+                }
             }
+
         }
     }
 

@@ -255,7 +255,7 @@ public class FightHandler {
     public static void pveHit(Player attacker, Mob victim) {
         String entityName = victim.getName();
         ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
-        float reward = configPve.fileConfig.getInt("pve.list." + entityName + ".hit-karma-reward");
+        float reward = (float) configPve.fileConfig.getDouble("pve.list." + entityName + ".hit-karma-reward");
         CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".hit-commands"));
 
         PlayerDataManager.getPlayerModelMap().get(attacker.getName()).getOverTimeStampMap().forEach((s, timestamp) -> {
@@ -328,7 +328,7 @@ public class FightHandler {
     public static void pveKill(Player attacker, Mob victim) {
         String entityName = victim.getName();
         ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
-        float reward = configPve.fileConfig.getInt("pve.list." + entityName + ".kill-karma-reward");
+        float reward = (float) configPve.fileConfig.getDouble("pve.list." + entityName + ".kill-karma-reward");
         CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".kill-commands"));
         PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
 

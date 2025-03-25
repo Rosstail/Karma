@@ -266,7 +266,7 @@ public class AdaptMessage {
         }
         matcher.appendTail(buffer);
 
-        return buffer.toString();
+        return buffer.toString().trim();
     }
 
     public String[] listMessage(Player player, List<String> messages) {
@@ -292,7 +292,7 @@ public class AdaptMessage {
         message = adaptPvpMessage(attacker, victim, message);
 
         coolDown.put(attacker, System.currentTimeMillis());
-        attacker.sendMessage(message);
+        attacker.sendMessage(message.trim());
     }
 
     public void pvpKillMessage(String message, Player attacker, Player victim) {

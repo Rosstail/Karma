@@ -50,6 +50,9 @@ public class ShopCommand extends SubCommand {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
+
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+
         if (args.length >= 3) {
             if (args.length >= 4) {
                 subCommands.get(1).perform(sender, args, arguments);
@@ -57,15 +60,18 @@ public class ShopCommand extends SubCommand {
                 subCommands.get(0).perform(sender, args, arguments);
             }
         } else {
-            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_HEADER)));
+            StringBuilder message = new StringBuilder();
+            message.append(adaptMessage.adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_HEADER)));
             for (Shop shop : ShopManager.getShopManager().getShops().values()) {
                 String line = LangManager.getMessage(LangMessage.COMMANDS_SHOP_LINE);
-                line = line.replaceAll("\\[shop_name]", shop.getName());
-                line = line.replaceAll("\\[shop_display]", shop.getDisplay());
-                line = line.replaceAll("\\[shop_description]", shop.getDescription());
-                line = line.replaceAll("\\[shop_price]", String.valueOf(shop.getPrice()));
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(line));
+                line = shop.adaptMessage(line);
+                message.append("\n").append(line);
             }
+            String footer = LangManager.getMessage(LangMessage.COMMANDS_SHOP_FOOTER);
+            if (footer != null) {
+                message.append("\n").append(adaptMessage.adaptMessage(footer));
+            }
+            sender.sendMessage(adaptMessage.adaptMessage(message.toString()));
         }
     }
 

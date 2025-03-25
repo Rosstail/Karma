@@ -20,19 +20,21 @@ commands:
     desc: "Check player data"
     self:
       desc: "Check your own data"
-      result: "[prefix]Your data:
-    \n&rTier [player_tier_display] &r| Karma: [player_karma]
-    \n&rPrevious tier [player_previous_tier_display] &r| Previous karma: [player_previous_karma]
-    \n&rStatus [player_wanted_status] &rfor: [player_wanted_status_short][player_wanted_time_delay_display]
-    \n&rLast update on [player_last_update]&r."
+      result:
+      - "[prefix]Your data:"
+      - "&rTier [player_tier_display] &r| Karma: [player_karma]"
+      - "&rPrevious tier [player_previous_tier_display] &r| Previous karma: [player_previous_karma]"
+      - "&rStatus [player_wanted_status] &rfor: [player_wanted_status_short][player_wanted_time_delay_display]"
+      - "&rLast update on [player_last_update]&r."
     other:
       desc: "Check data of selected player"
-      result: "[prefix][player] data:
-    \n&rCurrently [player_status]
-    \n&rTier [player_tier_display] &r| Karma: [player_karma]
-    \n&rPrevious tier [player_previous_tier_display] &r| previous karma: [player_previous_karma]
-    \n&rStatus [player_wanted_status] &rfor: [player_wanted_status_short][player_wanted_time_delay_display]
-    \n&rLast update on [player_last_update]&r."
+      result:
+        - "[prefix][player] data:"
+        - "&rCurrently [player_status]"
+        - "&rTier [player_tier_display] &r| Karma: [player_karma]"
+        - "&rPrevious tier [player_previous_tier_display] &r| previous karma: [player_previous_karma]"
+        - "&rStatus [player_wanted_status] &rfor: [player_wanted_status_short][player_wanted_time_delay_display]"
+        - "&rLast update on [player_last_update]&r."
   edit:
     desc: "Edit command."
     player:
@@ -75,8 +77,9 @@ commands:
           result: "[prefix]Reset wanted time and status of [player]."
   shop:
     header: "&b====== &6KARMA SHOP &b======"
-    line: " &6> &9[shop_display] &8: &f[shop_description] &8| &e[shop_price]"
+    line: "  &6► &9[shop_display] &8: &r\n[shop_description]"
     not-exist: "[prefix]&cThis shop does not exist."
+    footer: "&9================================"
     buy:
       desc: "Buy content of shop."
       success: "[prefix]&aTransaction successful."

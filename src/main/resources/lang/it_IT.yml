@@ -20,19 +20,21 @@ commands:
     desc: "Verifica i dati del giocatore"
     self:
       desc: "Verifica i tuoi dati"
-      result: "[prefix]I tuoi dati:
-    \n&rTier [player_tier_display] &r| Karma: [player_karma]
-    \n&rTier precedente [player_previous_tier_display] &r| Karma precedente: [player_previous_karma]
-    \n&rStato [player_wanted_status] &rper: [player_wanted_status_short][player_wanted_time_delay_display]
-    \n&rUltimo aggiornamento il [player_last_update]&r."
+      result:
+        - "[prefix]I tuoi dati:"
+        - "&rTier [player_tier_display] &r| Karma: [player_karma]"
+        - "&rTier precedente [player_previous_tier_display] &r| Karma precedente: [player_previous_karma]"
+        - "&rStato [player_wanted_status] &rper: [player_wanted_status_short][player_wanted_time_delay_display]"
+        - "&rUltimo aggiornamento il [player_last_update]&r."
     other:
       desc: "Verifica i dati di un giocatore selezionato"
-      result: "[prefix]Dati di [player]:
-    \n&rAttualmente [player_status]
-    \n&rTier [player_tier_display] &r| Karma: [player_karma]
-    \n&rTier precedente [player_previous_tier_display] &r| Karma precedente: [player_previous_karma]
-    \n&rStato [player_wanted_status] &rper: [player_wanted_status_short][player_wanted_time_delay_display]
-    \n&rUltimo aggiornamento il [player_last_update]&r."
+      result:
+        - "[prefix]Dati di [player]:"
+        - "&rAttualmente [player_status]"
+        - "&rTier [player_tier_display] &r| Karma: [player_karma]"
+        - "&rTier precedente [player_previous_tier_display] &r| Karma precedente: [player_previous_karma]"
+        - "&rStato [player_wanted_status] &rper: [player_wanted_status_short][player_wanted_time_delay_display]"
+        - "&rUltimo aggiornamento il [player_last_update]&r."
   edit:
     desc: "Modifica il comando."
     player:
@@ -75,8 +77,9 @@ commands:
           result: "[prefix]Reimpostato il tempo di ricercato e lo stato di [player]."
   shop:
     header: "&b====== &6NEGOZIO KARMA &b======"
-    line: " &6> &9[shop_display] &8: &f[shop_description] &8| &e[shop_price]"
+    line: " &6► &9[shop_display] &8: &r\n[shop_description]"
     not-exist: "[prefix]&cQuesto negozio non esiste."
+    footer: "&9================================"
     buy:
       desc: "Acquista il contenuto del negozio."
       success: "[prefix]&aTransazione riuscita."

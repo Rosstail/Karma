@@ -12,6 +12,7 @@ public enum LangMessage {
     COMMANDS_PLAYER_NO_DATA("commands.player-no-data", false),
 
     COMMANDS_HELP_HEADER("commands.help.header", false),
+    COMMANDS_HELP_FOOTER("commands.help.footer", true),
 
     COMMANDS_HELP_LINE("commands.help.line", false),
 
@@ -55,6 +56,7 @@ public enum LangMessage {
 
     COMMANDS_SHOP_HEADER("commands.shop.header", false),
     COMMANDS_SHOP_LINE("commands.shop.line", false),
+    COMMANDS_SHOP_FOOTER("commands.shop.footer", true),
     COMMANDS_SHOP_NOT_EXIST("commands.shop.not-exist", false),
     COMMANDS_SHOP_BUY_DESC("commands.shop.buy.desc", false),
     COMMANDS_SHOP_BUY_SUCCESS("commands.shop.buy.success", false),

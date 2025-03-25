@@ -13,6 +13,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Shop {
@@ -30,8 +32,8 @@ public class Shop {
     private List<String> commands;
 
     public void init(ConfigurationSection section) {
-        display = AdaptMessage.getAdaptMessage().adaptMessage(section.getString("display", name.toUpperCase()));
-        description = AdaptMessage.getAdaptMessage().adaptMessage(section.getString("description", "&c-&r"));
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+        display = adaptMessage.adaptMessage(section.getString("display", name.toUpperCase()));
         price = (float) section.getDouble("price", 0f);
         useMinKarma = section.get("min-karma") != null;
         useMaxKarma = section.get("max-karma") != null;
@@ -40,6 +42,16 @@ public class Shop {
         maxShopKarma = (float) section.getDouble("max-karma", ConfigData.getConfigData().karmaConfig.defaultKarma);
         sendType = SendType.valueOf(section.getString("send-by", "both").toUpperCase());
         commands = section.getStringList("commands");
+
+        List<String> desc = new ArrayList<>();
+        if (section.isList("description")) {
+            for (String s : section.getStringList("description")) {
+                desc.add(adaptMessage(s));
+            }
+        } else {
+            desc.add(adaptMessage(section.getString("description")));
+        }
+        description = String.join("\n", desc);
     }
 
     Shop(String name) {
@@ -85,5 +97,21 @@ public class Shop {
 
     public SendType getSendType() {
         return sendType;
+    }
+
+    public String adaptMessage(String message) {
+        if (message == null) {
+            return null;
+        }
+        AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
+
+        message = message.replace("[shop_display]", display)
+                .replace("[shop_price]", adaptMessage.decimalFormat(price, '.'))
+                .replace("[shop_min_karma]", adaptMessage.decimalFormat(minShopKarma, '.'))
+                .replace("[shop_max_karma]", adaptMessage.decimalFormat(maxShopKarma, '.'))
+                .replaceAll("\\[shop_desc]", description)
+                .replaceAll("\\[shop_description]", description);
+
+        return message;
     }
 }
