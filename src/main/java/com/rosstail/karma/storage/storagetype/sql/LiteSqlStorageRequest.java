@@ -48,7 +48,7 @@ public class LiteSqlStorageRequest extends SqlStorageRequest {
                 model.setPreviousTierName(result.getString("previous_tier"));
 
                 long lastUpdateUTC = result.getTimestamp("last_update").getTime();
-                model.setLastUpdate(lastUpdateUTC + offsetMillis);
+                model.setLastUpdate(lastUpdateUTC + getOffsetMillis());
 
                 long wantedTime = result.getLong("wanted_time");
 

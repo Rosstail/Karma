@@ -9,7 +9,9 @@ import java.util.List;
 public interface StorageRequest {
     ZoneId serverZoneId = ZoneId.systemDefault();
 
-    long offsetMillis = serverZoneId.getRules().getOffset(Instant.now()).getTotalSeconds() * 1000L;
+    default long getOffsetMillis() {
+        return serverZoneId.getRules().getOffset(Instant.now()).getTotalSeconds() * 1000L;
+    }
 
     void setupStorage(String host, short port, String database, String username, String password);
 
