@@ -76,7 +76,7 @@ public class ShopCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 2) {
             ArrayList<String> subCommands = new ArrayList<>();
             for (SubCommand subCommand : getSubCommands()) {

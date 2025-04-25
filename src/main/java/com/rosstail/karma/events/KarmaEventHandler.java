@@ -3,7 +3,7 @@ package com.rosstail.karma.events;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.events.karmaevents.*;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamagePlayerEvent;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerKillPlayerEvent;
@@ -33,7 +33,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerKarmaChange(PlayerKarmaChangeEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = event.getModel();
+        PlayerDataModel model = event.getModel();
         model.setPreviousKarma(model.getKarma());
         model.setKarma(event.getValue());
 
@@ -55,7 +55,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerTierChange(PlayerTierChangeEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = event.getModel();
+        PlayerDataModel model = event.getModel();
         model.setPreviousTierName(model.getTierName());
         model.setTierName(event.getTierName());
 
@@ -82,7 +82,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerOverTimeTriggerEvent(PlayerOverTimeTriggerEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         long nextDelay = event.getNextDelay();
 
         PlayerDataManager.triggerOverTime(player, model, event.getOvertimeLoopName(), event.getAmount());
@@ -92,14 +92,14 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerOverTimeResetEvent(PlayerOverTimeResetEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         OvertimeLoop loop = ConfigData.getConfigData().overtime.overtimeLoopMap.get(event.getOvertimeLoopName());
         PlayerDataManager.setOverTimeStamp(model, event.getOvertimeLoopName(), (int) loop.firstTimer);
     }
 
     @EventHandler
     public void onPlayerWantedChangeEvent(PlayerWantedChangeEvent event) {
-        PlayerModel model = event.getModel();
+        PlayerDataModel model = event.getModel();
         Timestamp duration = event.getTimestamp();
         boolean silent = event.isSilent();
 
@@ -120,7 +120,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodStartEvent(PlayerWantedPeriodStartEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_ENTER);
 
         model.setWanted(true);
@@ -135,7 +135,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodRefreshEvent(PlayerWantedPeriodRefreshEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_REFRESH);
         model.setWanted(true);
 
@@ -150,7 +150,7 @@ public class KarmaEventHandler implements Listener {
     @EventHandler
     public void onPlayerWantedPeriodEndEvent(PlayerWantedPeriodEndEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = event.getModel();
+        PlayerDataModel model = event.getModel();
 
         model.setWanted(false);
         String message = LangManager.getMessage(LangMessage.WANTED_EVENT_ON_EXIT);

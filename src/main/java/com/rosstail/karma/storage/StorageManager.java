@@ -2,28 +2,28 @@ package com.rosstail.karma.storage;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.players.PlayerModel;
-import com.rosstail.karma.storage.storagetype.sql.MongoDbStorageRequest;
-import com.rosstail.karma.storage.storagetype.sql.LiteSqlStorageRequest;
-import com.rosstail.karma.storage.storagetype.sql.MariaDbStorageRequest;
-import com.rosstail.karma.storage.storagetype.sql.MySqlStorageRequest;
 import com.rosstail.karma.lang.AdaptMessage;
-import com.rosstail.karma.lang.LangManager;
-import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.players.PlayerDataModel;
+import com.rosstail.karma.storage.mappers.playerdataentity.PlayerDataEntity;
+import com.rosstail.karma.storage.mappers.playerdataentity.PlayerDataMapper;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
+import java.io.File;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StorageManager {
     private static StorageManager manager;
-    private final String pluginName;
-    private String type;
-    public String host, database, username, password;
-    public short port;
 
-    private MySqlStorageRequest mySqlStorageRequest;
-    private MariaDbStorageRequest mariaDBStorageRequest;
-    private MongoDbStorageRequest mongoDBStorageRequest;
-    private LiteSqlStorageRequest liteSqlDBStorageRequest;
+    private final Karma plugin;
+    private final String pluginName;
+    private SessionFactory sessionFactory;
+    private final Set<PlayerDataEntity> pendingUpdates = ConcurrentHashMap.newKeySet();
 
     public static StorageManager initStorageManage(Karma plugin) {
         if (manager == null) {
@@ -33,180 +33,145 @@ public class StorageManager {
     }
 
     private StorageManager(Karma plugin) {
+        this.plugin = plugin;
         this.pluginName = plugin.getName().toLowerCase();
     }
 
-    public void chooseDatabase() {
-        host = ConfigData.getConfigData().storage.storageHost;
-        database = ConfigData.getConfigData().storage.storageDatabase;
-        port = ConfigData.getConfigData().storage.storagePort;
-        username = ConfigData.getConfigData().storage.storageUser;
-        password = ConfigData.getConfigData().storage.storagePass;
-        type = ConfigData.getConfigData().storage.storageType.toLowerCase();
-        String typeToPrint = LangManager.getMessage(LangMessage.STORAGE_TYPE);
-
-        switch (type) {
+    public void connect() {
+        Properties settings = new Properties();
+        switch (ConfigData.getConfigData().storage.storageType) {
             case "mysql":
-                AdaptMessage.print(typeToPrint.replaceAll("\\[type]", "MySQL"), AdaptMessage.prints.OUT);
-                mySqlStorageRequest = new MySqlStorageRequest(pluginName);
-                mySqlStorageRequest.setupStorage(host, port, database, username, password);
+                // TODO: implement MySQL configuration
                 break;
-            case "mariadb":
-                AdaptMessage.print(typeToPrint.replaceAll("\\[type]", "mariaDB"), AdaptMessage.prints.OUT);
-                mariaDBStorageRequest = new MariaDbStorageRequest(pluginName);
-                mariaDBStorageRequest.setupStorage(host, port, database, username, password);
-                break;
-            case "mongodb":
-                AdaptMessage.print(typeToPrint.replaceAll("\\[type]", "MongoDB"), AdaptMessage.prints.OUT);
-                mongoDBStorageRequest = new MongoDbStorageRequest(pluginName);
-                mongoDBStorageRequest.setupStorage(host, port, database, username, password);
-                break;
-            default:
-                AdaptMessage.print(typeToPrint.replaceAll("\\[type]", "LiteSQL"), AdaptMessage.prints.OUT);
-                liteSqlDBStorageRequest = new LiteSqlStorageRequest(pluginName);
-                liteSqlDBStorageRequest.setupStorage(host, port, database, username, password);
+            default: // SQLITE
+                File dbFile = new File(plugin.getDataFolder(), "data/data.db");
+                settings.put("hibernate.dialect", "org.hibernate.dialect.SQLiteDialect");
+                settings.put("hibernate.connection.driver_class", "org.sqlite.JDBC");
+                settings.put("hibernate.connection.url", "jdbc:sqlite:" + dbFile.getAbsolutePath());
+                settings.put("hibernate.hbm2ddl.auto", "update");
                 break;
         }
 
+        sessionFactory = HibernateUtil.buildSessionFactory(settings);
     }
 
     public void disconnect() {
-        switch (type) {
-            case "mysql":
-                mySqlStorageRequest.closeConnection();
-                break;
-            case "mariadb":
-                mariaDBStorageRequest.closeConnection();
-                break;
-            case "mongodb":
-                mongoDBStorageRequest.closeConnection();
-                break;
-            default:
-                liteSqlDBStorageRequest.closeConnection();
-                break;
+        if (sessionFactory != null) {
+            sessionFactory.close();
         }
     }
 
-    /**
-     * Insert player to the storage
-     *
-     * @param model
-     */
-    public boolean insertPlayerModel(PlayerModel model) {
-        switch (type) {
-            case "mysql":
-                return mySqlStorageRequest.insertPlayerModel(model);
-            case "mariadb":
-                return mariaDBStorageRequest.insertPlayerModel(model);
-            case "mongodb":
-                return mongoDBStorageRequest.insertPlayerModel(model);
-            default:
-                return liteSqlDBStorageRequest.insertPlayerModel(model);
+    public boolean uploadPlayerModel(PlayerDataModel model) {
+        Transaction tx = null;
+        PlayerDataEntity playerDataEntity = PlayerDataMapper.toEntity(model);
+
+        try (Session session = sessionFactory.openSession()) {
+            tx = session.beginTransaction();
+            session.merge(playerDataEntity);
+            tx.commit();
+            return true;
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            AdaptMessage.print("StorageManager#uploadPlayerModel - erreur", AdaptMessage.prints.ERROR);
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean asyncUploadPlayerModel(PlayerDataModel model) {
+        return CompletableFuture.supplyAsync(() -> uploadPlayerModel(model)).join();
+    }
+
+    public void queueUserForUpdate(PlayerDataEntity entity) {
+        pendingUpdates.removeIf(playerDataEntity -> playerDataEntity.getUuid().equalsIgnoreCase(entity.getUuid()));
+        pendingUpdates.add(entity);
+    }
+
+    public void flushPendingUpdates() {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            for (PlayerDataEntity entity : pendingUpdates) {
+                session.merge(entity);
+            }
+            session.getTransaction().commit();
+            pendingUpdates.clear();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    /**
-     * READ
-     *
-     * @param uuid
-     */
-    public PlayerModel selectPlayerModel(String uuid) {
-        switch (type) {
-            case "mysql":
-                return mySqlStorageRequest.selectPlayerModel(uuid);
-            case "mariadb":
-                return mariaDBStorageRequest.selectPlayerModel(uuid);
-            case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModel(uuid);
-            default:
-                return liteSqlDBStorageRequest.selectPlayerModel(uuid);
+    public PlayerDataModel selectPlayerModel(String uuid) {
+        try (Session session = sessionFactory.openSession()) {
+            PlayerDataEntity playerDataEntity =
+                    session.createQuery("FROM karma WHERE uuid = :uuid", PlayerDataEntity.class)
+                            .setParameter("uuid", uuid)
+                            .uniqueResult();
+
+            if (playerDataEntity != null) {
+                return PlayerDataMapper.toProfile(playerDataEntity);
+            }
+        } catch (Exception e) {
+            AdaptMessage.print("StorageManager#selectPlayerModel - erreur", AdaptMessage.prints.ERROR);
+            e.printStackTrace();
         }
+        return null;
     }
 
-    /**
-     * UPDATE
-     *
-     * @param model
-     */
-    public void updatePlayerModel(PlayerModel model, boolean async) {
-        switch (type) {
-            case "mysql":
-                if (async) {
-                    mySqlStorageRequest.updatePlayerModelAsync(model);
-                } else {
-                    mySqlStorageRequest.updatePlayerModel(model);
-                }
-                break;
-            case "mariadb":
-                if (async) {
-                    mariaDBStorageRequest.updatePlayerModelAsync(model);
-                } else {
-                    mariaDBStorageRequest.updatePlayerModel(model);
-                }
-                break;
-            case "mongodb":
-                if (async) {
-                    mongoDBStorageRequest.updatePlayerModelAsync(model);
-                } else {
-                    mongoDBStorageRequest.updatePlayerModel(model);
-                }
-                break;
-            default:
-                if (async) {
-                    liteSqlDBStorageRequest.updatePlayerModelAsync(model);
-                } else {
-                    liteSqlDBStorageRequest.updatePlayerModel(model);
-                }
-                break;
+    public boolean deletePlayerModel(String uuid) {
+        Transaction tx = null;
+
+        try (Session session = sessionFactory.openSession()) {
+            PlayerDataEntity playerDataEntity =
+                    session.createQuery("FROM karma WHERE uuid = :uuid", PlayerDataEntity.class)
+                            .setParameter("uuid", uuid)
+                            .uniqueResult();
+
+            if (playerDataEntity != null) {
+                tx = session.beginTransaction();
+                session.remove(playerDataEntity);
+                tx.commit();
+                return true;
+            }
+        } catch (Exception e) {
+            if (tx != null && tx.isActive()) {
+                tx.rollback();
+            }
+            AdaptMessage.print("StorageManager#deletePlayerModel - erreur", AdaptMessage.prints.ERROR);
+            e.printStackTrace();
         }
+        return false;
     }
 
-    /**
-     * DELETE
-     *
-     * @param uuid
-     */
-    public void deletePlayerModel(String uuid) {
-        switch (type) {
-            case "mysql":
-                mySqlStorageRequest.deletePlayerModel(uuid);
-                break;
-            case "mariadb":
-                mariaDBStorageRequest.deletePlayerModel(uuid);
-                break;
-            case "mongodb":
-                mongoDBStorageRequest.deletePlayerModel(uuid);
-                break;
-            default:
-                liteSqlDBStorageRequest.deletePlayerModel(uuid);
-                break;
+    public List<PlayerDataModel> selectPlayerModelListTop(int limit) {
+        try (Session session = sessionFactory.openSession()) {
+            List<PlayerDataEntity> playerDataEntityList =
+                    session.createQuery("FROM karma ORDER BY karma DESC", PlayerDataEntity.class)
+                            .setMaxResults(limit)
+                            .list();
+
+            return playerDataEntityList.stream().map(PlayerDataMapper::toProfile).toList();
+        } catch (Exception e) {
+            AdaptMessage.print("StorageManager#selectPlayerModelListTop - erreur", AdaptMessage.prints.ERROR);
+            e.printStackTrace();
         }
+        return null;
     }
 
-    public List<PlayerModel> selectPlayerModelListTop(int limit) {
-        switch (type) {
-            case "mysql":
-                return mySqlStorageRequest.selectPlayerModelListDesc(limit);
-            case "mariadb":
-                return mariaDBStorageRequest.selectPlayerModelListDesc(limit);
-            case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModelListDesc(limit);
-            default:
-                return liteSqlDBStorageRequest.selectPlayerModelListDesc(limit);
-        }
-    }
+    public List<PlayerDataModel> selectPlayerModelListBottom(int limit) {
+        try (Session session = sessionFactory.openSession()) {
+            List<PlayerDataEntity> playerDataEntityList =
+                    session.createQuery("FROM karma ORDER BY karma ASC", PlayerDataEntity.class)
+                            .setMaxResults(limit)
+                            .list();
 
-    public List<PlayerModel> selectPlayerModelListBottom(int limit) {
-        switch (type) {
-            case "mysql":
-                return mySqlStorageRequest.selectPlayerModelListAsc(limit);
-            case "mariadb":
-                return mariaDBStorageRequest.selectPlayerModelListAsc(limit);
-            case "mongodb":
-                return mongoDBStorageRequest.selectPlayerModelListAsc(limit);
-            default:
-                return liteSqlDBStorageRequest.selectPlayerModelListAsc(limit);
+            return playerDataEntityList.stream().map(PlayerDataMapper::toProfile).toList();
+        } catch (Exception e) {
+            AdaptMessage.print("StorageManager#selectPlayerModelListBottom - erreur", AdaptMessage.prints.ERROR);
+            e.printStackTrace();
         }
+        return null;
     }
 
     public static StorageManager getManager() {

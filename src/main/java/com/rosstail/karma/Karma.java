@@ -15,6 +15,7 @@ import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.shops.ShopManager;
+import com.rosstail.karma.storage.mappers.playerdataentity.PlayerDataMapper;
 import com.rosstail.karma.tiers.TierManager;
 import com.rosstail.karma.timeperiod.TimeManager;
 import com.rosstail.karma.wanted.WantedManager;
@@ -63,8 +64,8 @@ public class Karma extends JavaPlugin implements Listener {
         loadCustomConfig();
 
         this.createPlayerDataFolder();
-        StorageManager storageManager = StorageManager.initStorageManage(this);
-        storageManager.chooseDatabase();
+        StorageManager.initStorageManage(this);
+        StorageManager.getManager().connect();
 
         FightHandler.initFightHandler();
 
@@ -95,7 +96,7 @@ public class Karma extends JavaPlugin implements Listener {
             @Override
             public void run() {
                 if (!minecraftEventHandler.isClosing()) {
-                    PlayerDataManager.saveAllPlayerModelToStorage();
+                    StorageManager.getManager().flushPendingUpdates();
                 }
             }
         }, delay, delay);
@@ -108,9 +109,9 @@ public class Karma extends JavaPlugin implements Listener {
         }, 60 * 1000, 60 * 1000);
 
         Bukkit.getOnlinePlayers().forEach(player -> {
-            PlayerModel model = StorageManager.getManager().selectPlayerModel(player.getUniqueId().toString());
+            PlayerDataModel model = StorageManager.getManager().selectPlayerModel(player.getUniqueId().toString());
             if (model == null) {
-                model = new PlayerModel(player);
+                model = new PlayerDataModel(player);
             }
             PlayerDataManager.initPlayerModelToMap(model);
         });
@@ -120,32 +121,34 @@ public class Karma extends JavaPlugin implements Listener {
      * Create the folder for player's datas
      */
     private void createPlayerDataFolder() {
-        File folder = new File(this.getDataFolder(), "playerdata/");
+        File folder = new File(this.getDataFolder(), "data/");
         if (!folder.exists()) {
-            String message = this.getCustomConfig().getString("messages.creating-playerdata-folder");
-            if (message != null) {
-                message = AdaptMessage.getAdaptMessage().adaptMessage(message);
-
-                getServer().getConsoleSender().sendMessage(message);
-            }
             folder.mkdir();
+            getServer().getConsoleSender().sendMessage("create data folder");
         }
     }
 
     public void onDisable() {
-        minecraftEventHandler.setClosing(true);
+        if (minecraftEventHandler != null) {
+            minecraftEventHandler.setClosing(true);
+        }
         if (ConfigData.getConfigData().overtime.overtimeActive || ConfigData.getConfigData().wanted.wantedEnable) {
             PlayerDataManager.stopTimer(PlayerDataManager.getScheduler());
         }
-        Map<String, PlayerModel> playerModelMap = PlayerDataManager.getPlayerModelMap();
-        for (Map.Entry<String, PlayerModel> entry : playerModelMap.entrySet()) {
+        Map<String, PlayerDataModel> playerModelMap = PlayerDataManager.getPlayerModelMap();
+        for (Map.Entry<String, PlayerDataModel> entry : playerModelMap.entrySet()) {
             String s = entry.getKey();
-            PlayerModel model = entry.getValue();
-            StorageManager.getManager().updatePlayerModel(model, false);
+            PlayerDataModel model = entry.getValue();
+            StorageManager.getManager().queueUserForUpdate(PlayerDataMapper.toEntity(model));
         }
+        StorageManager.getManager().flushPendingUpdates();
         StorageManager.getManager().disconnect();
-        updateDataTimer.cancel();
-        scoreboardTimer.cancel();
+        if (updateDataTimer != null) {
+            updateDataTimer.cancel();
+        }
+        if (scoreboardTimer != null) {
+            scoreboardTimer.cancel();
+        }
     }
 
     private void initDefaultLocales() {

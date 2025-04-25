@@ -6,7 +6,7 @@ import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.e
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands.EditPlayerTierCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedCommand;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -63,7 +63,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
         player = Bukkit.getPlayerExact(playerName);
 
         if (player != null && player.isOnline()) {
-            PlayerModel model = PlayerDataManager.getPlayerModelMap().get(playerName);
+            PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(playerName);
             subCommand.performOnline(sender, model, args, arguments, player);
         } else {
             String playerUUID = PlayerDataManager.getPlayerUUIDFromName(playerName);
@@ -73,15 +73,15 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
                 return;
             }
 
-            PlayerModel model = StorageManager.getManager().selectPlayerModel(playerUUID);
+            PlayerDataModel model = StorageManager.getManager().selectPlayerModel(playerUUID);
             //if not, force
             if (CommandManager.doesCommandMatchParameter(arguments, "d", "disconnect")) {
 
                 if (model != null) {
                     subCommand.performOffline(sender, model, args, arguments);
                 } else if (CommandManager.doesCommandMatchParameter(arguments, "g", "generate")){
-                    model = new PlayerModel(playerUUID, playerName);
-                    if (!StorageManager.getManager().insertPlayerModel(model)) {
+                    model = new PlayerDataModel(playerUUID, playerName);
+                    if (!StorageManager.getManager().uploadPlayerModel(model)) {
                         AdaptMessage.print("Problem with the storage.", AdaptMessage.prints.WARNING);
                         return;
                     }
@@ -96,7 +96,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length == 4) {
             List<String> list = new ArrayList<>();
             for (SubCommand subCommand : subCommands) {
@@ -114,12 +114,12 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    public void performOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
 
     }
 
     @Override
-    public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
+    public void performOffline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments) {
 
     }
 

@@ -1,6 +1,6 @@
 package com.rosstail.karma.events.karmaevents;
 
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -10,10 +10,10 @@ public class PlayerWantedPeriodStartEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
-    private final PlayerModel model;
+    private final PlayerDataModel model;
     private final boolean silent;
 
-    public PlayerWantedPeriodStartEvent(Player player, PlayerModel model, boolean silent) {
+    public PlayerWantedPeriodStartEvent(Player player, PlayerDataModel model, boolean silent) {
         this.player = player;
         this.model = model;
         this.silent = silent;
@@ -23,7 +23,7 @@ public class PlayerWantedPeriodStartEvent extends Event {
         return player;
     }
 
-    public PlayerModel getModel() {
+    public PlayerDataModel getModel() {
         return model;
     }
 

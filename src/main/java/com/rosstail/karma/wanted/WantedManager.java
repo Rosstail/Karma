@@ -3,7 +3,7 @@ package com.rosstail.karma.wanted;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.PlayerType;
@@ -35,8 +35,8 @@ public class WantedManager {
     }
 
     public void wantedHandler(Player attacker, float newKarma, Player victim, String expression) {
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
+        PlayerDataModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        PlayerDataModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         float attackerInitialKarma = attackerModel.getKarma();
         long attackerLastWanted = attackerModel.getWantedTimeStamp().getTime();
         long victimLastWanted = victimModel.getWantedTimeStamp().getTime();
@@ -72,7 +72,7 @@ public class WantedManager {
         }
     }
 
-    public boolean doKarmaChange(PlayerModel attackerModel, PlayerModel victimModel, float karmaDiff) {
+    public boolean doKarmaChange(PlayerDataModel attackerModel, PlayerDataModel victimModel, float karmaDiff) {
         if (!attackerModel.isWanted() && victimModel.isWanted()) {
             return (!(karmaDiff > 0F) || !configData.pvp.cancelInnocentKarmaGain) && (!(karmaDiff < 0F) || !configData.pvp.cancelInnocentKarmaLoss);
         } else if (attackerModel.isWanted()) {

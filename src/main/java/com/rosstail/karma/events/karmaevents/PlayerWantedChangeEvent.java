@@ -1,6 +1,6 @@
 package com.rosstail.karma.events.karmaevents;
 
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -12,12 +12,12 @@ public class PlayerWantedChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private final Player player;
-    private final PlayerModel model;
+    private final PlayerDataModel model;
     private Timestamp timestamp;
 
     private final boolean silent;
 
-    public PlayerWantedChangeEvent(Player player, PlayerModel model, Timestamp timestamp, boolean silent) {
+    public PlayerWantedChangeEvent(Player player, PlayerDataModel model, Timestamp timestamp, boolean silent) {
         this.player = player;
         this.model = model;
         this.timestamp = timestamp;
@@ -28,7 +28,7 @@ public class PlayerWantedChangeEvent extends Event {
         return player;
     }
 
-    public PlayerModel getModel() {
+    public PlayerDataModel getModel() {
         return model;
     }
 

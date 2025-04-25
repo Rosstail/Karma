@@ -1,8 +1,7 @@
 package com.rosstail.karma.blocks;
 
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import org.bukkit.Bukkit;
@@ -48,7 +47,7 @@ public class BlocksModel {
 
     }
 
-    public void handlePlace(Player player, PlayerModel model, Block block) {
+    public void handlePlace(Player player, PlayerDataModel model, Block block) {
         if (placeBlocksData != null) {
             if (!placeBlocksData.checkData(block)) {
                 return;
@@ -57,7 +56,7 @@ public class BlocksModel {
         handleKarmaChange(player, model, placeKarma);
     }
 
-    public void handleBreak(Player player, PlayerModel model, Block block) {
+    public void handleBreak(Player player, PlayerDataModel model, Block block) {
         if (breakBlocksData != null) {
             if (!breakBlocksData.checkData(block)) {
                 return;
@@ -66,7 +65,7 @@ public class BlocksModel {
         handleKarmaChange(player, model, breakKarma);
     }
 
-    private void handleKarmaChange(Player player, PlayerModel model, float value) {
+    private void handleKarmaChange(Player player, PlayerDataModel model, float value) {
         float playerKarma = model.getKarma();
         float newKarma = playerKarma + value;
         ConfigData.ConfigKarma configKarma = ConfigData.getConfigData().karmaConfig;

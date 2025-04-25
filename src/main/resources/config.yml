@@ -382,27 +382,25 @@ blocks:
 shops:
   enable: true
   list:
-    first:
+    diamond-vs-karma:
       display: "&aFirst"
       description:
-        - "    &eCost: [shop_price]☯"
-        - "    &eMin/Max karma: [shop_min_karma]☯~[shop_max_karma]☯"
-        - "    &fFirst Shop. Usable by player"
+        - "    &ePrice&8: &a[shop_price]&r☯"
+        - "    &eMin/Max karma&8: &a[shop_min_karma]&r☯&8~&a[shop_max_karma]&r☯"
       price: 1000.0
       cost-reset-overtime: false
       min-karma: 1000
-      send-by: PLAYER #PLAYER / CONSOLE / BOTH
       commands:
-        - "bc [player] bought the first item from karma shop !"
-    second:
+        - "give [player] diamond 3"
+        - "bc [player] bought 3 diamonds throught the karma shop !"
+    levitation-and-karma:
       display: "&9Second"
       description:
-        - "    &eCost: [shop_price]☯"
-        - "    &eMin/Max karma: [shop_min_karma]☯~[shop_max_karma]☯"
-        - "    &fSecond Shop. Not usable by player"
+        - "    &ePrice&8: &c[shop_price]&r☯"
+        - "    &eMin/Max karma&8: &c[shop_min_karma]&r☯&8~&c[shop_max_karma]&r☯"
       price: -500.0
       cost-reset-overtime: false
       max-karma: -500
-      send-by: CONSOLE #PLAYER / CONSOLE / BOTH
       commands:
-        - "bc [player] bought the second item from karma shop !"
+        - "minecraft:effect give [player] minecraft:levitation 5"
+        - "bc [player] got 5 seconds of LEVITATION and gained 500 karma from shop !"

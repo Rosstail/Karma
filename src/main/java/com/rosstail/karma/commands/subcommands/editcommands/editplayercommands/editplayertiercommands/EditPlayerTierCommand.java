@@ -3,7 +3,7 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands.editplayertiersubcommands.EditPlayerTierSetCommand;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -49,7 +49,7 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 5) {
             List<String> list = new ArrayList<>();
             for (SubCommand subCommand : subCommands) {
@@ -67,7 +67,7 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    public void performOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
         List<String> subCommandsStringList = new ArrayList<>();
         for (EditPlayerTierSubCommand subCommand : subCommands) {
             subCommandsStringList.add(subCommand.getName());
@@ -87,7 +87,7 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
     }
 
     @Override
-    public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
+    public void performOffline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments) {
         List<String> subCommandsStringList = new ArrayList<>();
         for (EditPlayerSubCommand subCommand : subCommands) {
             subCommandsStringList.add(subCommand.getName());

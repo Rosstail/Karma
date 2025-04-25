@@ -11,8 +11,8 @@ import java.util.Objects;
 public class TopFlopScoreManager {
     private static TopFlopScoreManager topFlopScoreManager;
 
-    private final List<PlayerModel> playerTopScoreList = new ArrayList<>();
-    private final List<PlayerModel> playerFlopScoreList = new ArrayList<>();
+    private final List<PlayerDataModel> playerTopScoreList = new ArrayList<>();
+    private final List<PlayerDataModel> playerFlopScoreList = new ArrayList<>();
     private final int limitSize;
 
     public static void init() {
@@ -27,7 +27,7 @@ public class TopFlopScoreManager {
         presetValuesInList(playerFlopScoreList);
     }
 
-    private void presetValuesInList(List<PlayerModel> list) {
+    private void presetValuesInList(List<PlayerDataModel> list) {
         while (list.size() < limitSize) {
             list.add(null);
         }
@@ -36,67 +36,67 @@ public class TopFlopScoreManager {
     public void getScores() {
         int limit = ConfigData.getConfigData().general.topScoreLimit;
         StorageManager storageManager = StorageManager.getManager();
-        Collection<PlayerModel> onlinePlayerModels = PlayerDataManager.getPlayerModelMap().values();
-        List<PlayerModel> orderedPlayerModelList = new ArrayList<>();
-        for (PlayerModel playerModel : onlinePlayerModels) {
+        Collection<PlayerDataModel> onlinePlayerDataModels = PlayerDataManager.getPlayerModelMap().values();
+        List<PlayerDataModel> orderedPlayerDataModelList = new ArrayList<>();
+        for (PlayerDataModel playerDataModel : onlinePlayerDataModels) {
             int index = 0;
 
-            for (PlayerModel model : orderedPlayerModelList) {
-                if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, new PlayerModel(playerModel));
+            for (PlayerDataModel model : orderedPlayerDataModelList) {
+                if (playerDataModel.getKarma() < model.getKarma()) {
+                    orderedPlayerDataModelList.add(index, new PlayerDataModel(playerDataModel));
                     break;
                 }
                 index++;
             }
-            if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(new PlayerModel(playerModel));
+            if (orderedPlayerDataModelList.isEmpty() || index == orderedPlayerDataModelList.size()) {
+                orderedPlayerDataModelList.add(new PlayerDataModel(playerDataModel));
             }
         }
 
-        List<PlayerModel> reqTopScores = storageManager.selectPlayerModelListTop(limit);
-        List<PlayerModel> reqBottomScores = storageManager.selectPlayerModelListBottom(limit);
+        List<PlayerDataModel> reqTopScores = storageManager.selectPlayerModelListTop(limit);
+        List<PlayerDataModel> reqBottomScores = storageManager.selectPlayerModelListBottom(limit);
 
-        for (PlayerModel playerModel : reqTopScores) {
+        for (PlayerDataModel playerDataModel : reqTopScores) {
             int index = 0;
 
-            for (PlayerModel model : orderedPlayerModelList) {
-                if (Objects.equals(playerModel.getUuid(), model.getUuid())) {
+            for (PlayerDataModel model : orderedPlayerDataModelList) {
+                if (Objects.equals(playerDataModel.getUuid(), model.getUuid())) {
                     break;
                 }
-                if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, playerModel);
+                if (playerDataModel.getKarma() < model.getKarma()) {
+                    orderedPlayerDataModelList.add(index, playerDataModel);
                     break;
                 }
                 index++;
             }
-            if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(playerModel);
+            if (orderedPlayerDataModelList.isEmpty() || index == orderedPlayerDataModelList.size()) {
+                orderedPlayerDataModelList.add(playerDataModel);
             }
         }
 
-        for (PlayerModel playerModel : reqBottomScores) {
+        for (PlayerDataModel playerDataModel : reqBottomScores) {
             int index = 0;
 
-            for (PlayerModel model : orderedPlayerModelList) {
-                if (Objects.equals(playerModel.getUuid(), model.getUuid())) {
+            for (PlayerDataModel model : orderedPlayerDataModelList) {
+                if (Objects.equals(playerDataModel.getUuid(), model.getUuid())) {
                     break;
                 }
-                if (playerModel.getKarma() < model.getKarma()) {
-                    orderedPlayerModelList.add(index, playerModel);
+                if (playerDataModel.getKarma() < model.getKarma()) {
+                    orderedPlayerDataModelList.add(index, playerDataModel);
                     break;
                 }
                 index++;
             }
-            if (orderedPlayerModelList.isEmpty() || index == orderedPlayerModelList.size()) {
-                orderedPlayerModelList.add(playerModel);
+            if (orderedPlayerDataModelList.isEmpty() || index == orderedPlayerDataModelList.size()) {
+                orderedPlayerDataModelList.add(playerDataModel);
             }
         }
 
-        int currentLimit = Math.min(orderedPlayerModelList.size(), limit);
+        int currentLimit = Math.min(orderedPlayerDataModelList.size(), limit);
 
         for (int index = 0; index < currentLimit; index++) {
-            playerTopScoreList.set(index, orderedPlayerModelList.get(orderedPlayerModelList.size() -1 - index));
-            playerFlopScoreList.set(index, orderedPlayerModelList.get(index));
+            playerTopScoreList.set(index, orderedPlayerDataModelList.get(orderedPlayerDataModelList.size() -1 - index));
+            playerFlopScoreList.set(index, orderedPlayerDataModelList.get(index));
         }
     }
 
@@ -104,11 +104,11 @@ public class TopFlopScoreManager {
         return topFlopScoreManager;
     }
 
-    public List<PlayerModel> getPlayerTopScoreList() {
+    public List<PlayerDataModel> getPlayerTopScoreList() {
         return playerTopScoreList;
     }
 
-    public List<PlayerModel> getPlayerFlopScoreList() {
+    public List<PlayerDataModel> getPlayerFlopScoreList() {
         return playerFlopScoreList;
     }
 

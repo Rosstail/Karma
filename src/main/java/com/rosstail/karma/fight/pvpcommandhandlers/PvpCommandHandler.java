@@ -3,7 +3,7 @@ package com.rosstail.karma.fight.pvpcommandhandlers;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.entity.Player;
 
@@ -40,8 +40,8 @@ public class PvpCommandHandler {
     }
 
     public void handle(Player attacker, Player victim, boolean guarantee) {
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
-        PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
+        PlayerDataModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        PlayerDataModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
         pvpCommandList.forEach(pvpCommand -> {
             if (checkRequirement(attackerModel, victimModel, pvpCommand, guarantee)) {
                 CommandManager.commandsLauncher(attacker, victim, pvpCommand.getCommands());
@@ -49,7 +49,7 @@ public class PvpCommandHandler {
         });
     }
 
-    public boolean checkRequirement(PlayerModel attackerModel, PlayerModel victimModel, PvpCommand pvpCommand, boolean guarantee) {
+    public boolean checkRequirement(PlayerDataModel attackerModel, PlayerDataModel victimModel, PvpCommand pvpCommand, boolean guarantee) {
         if (pvpCommand.isGuarantee() != guarantee) {
             return false;
         }

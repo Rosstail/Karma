@@ -7,7 +7,7 @@ import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.fight.pvpcommandhandlers.PvpCommandHandler;
@@ -50,8 +50,8 @@ public class FightHandler {
             return;
         }
 
-        PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        PlayerDataModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
+        PlayerDataModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         String attackerKarmaChangeExpression = configData.pvp.pvpHitAttackerChangeExpression;
         String victimKarmaChangeExpression = configData.pvp.pvpHitVictimChangeExpression;
 
@@ -138,8 +138,8 @@ public class FightHandler {
             return;
         }
 
-        PlayerModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
-        PlayerModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        PlayerDataModel victimModel = PlayerDataManager.getPlayerModelMap().get(victim.getName());
+        PlayerDataModel attackerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         String attackerKarmaChangeExpression = configData.pvp.pvpKillAttackerChangeExpression;
         String victimKarmaChangeExpression = configData.pvp.pvpKillVictimChangeExpression;
         Tier attackerTier = TierManager.getTierManager().getTierByName(attackerModel.getTierName());
@@ -267,7 +267,7 @@ public class FightHandler {
     }
 
     private static void pveHitRewardChecker(Player attacker, Mob victim, float reward) {
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = model.getKarma();
 
         if (configData.general.useWorldGuard) {
@@ -285,7 +285,7 @@ public class FightHandler {
     }
 
     private static void pveKillRewardChecker(Player attacker, Mob victim, float reward) {
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
         float attackerInitialKarma = model.getKarma();
 
         if (configData.general.useWorldGuard) {
@@ -302,7 +302,7 @@ public class FightHandler {
         karmaChangeChecker(attacker, reward, model, attackerInitialKarma, doesKarmaChange, attackerNewKarma);
     }
 
-    private static void karmaChangeChecker(Player attacker, float reward, PlayerModel model, float attackerInitialKarma, boolean doesKarmaChange, float attackerNewKarma) {
+    private static void karmaChangeChecker(Player attacker, float reward, PlayerDataModel model, float attackerInitialKarma, boolean doesKarmaChange, float attackerNewKarma) {
         if (reward == 0F) { //If no change, skip
             doesKarmaChange = false;
         } else if (attackerNewKarma > ConfigData.getConfigData().karmaConfig.maxKarma) { //If new karma > max karma
@@ -330,11 +330,11 @@ public class FightHandler {
         ConfigData.ConfigPve configPve = ConfigData.getConfigData().pve;
         float reward = (float) configPve.fileConfig.getDouble("pve.list." + entityName + ".kill-karma-reward");
         CommandManager.commandsLauncher(attacker, configPve.fileConfig.getStringList("pve.list." + entityName + ".kill-commands"));
-        PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
+        PlayerDataModel playerDataModel = PlayerDataManager.getPlayerModelMap().get(attacker.getName());
 
         String message = configPve.fileConfig.getString("pve.list." + entityName + ".kill-message");
         if (message != null) {
-            message = adaptMessage.adaptMessageToModel(playerModel, message, PlayerType.ATTACKER.getText());
+            message = adaptMessage.adaptMessageToModel(playerDataModel, message, PlayerType.ATTACKER.getText());
             attacker.sendMessage(message);
         }
 

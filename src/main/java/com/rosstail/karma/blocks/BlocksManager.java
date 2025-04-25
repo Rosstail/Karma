@@ -2,7 +2,7 @@ package com.rosstail.karma.blocks;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
-import java.util.stream.Collectors;
 
 public class BlocksManager {
 
@@ -39,7 +38,7 @@ public class BlocksManager {
         }
     }
 
-    public void placeHandler(Player player, PlayerModel model, Block block) {
+    public void placeHandler(Player player, PlayerDataModel model, Block block) {
         String blockName = block.getBlockData().getMaterial().name();
         blocksModelMap.forEach((s, blocksModel) -> {
             Matcher matcher = blocksModel.regexName.matcher(blockName);
@@ -49,7 +48,7 @@ public class BlocksManager {
         });
     }
 
-    public void breakHandler(Player player, PlayerModel model, Block block) {
+    public void breakHandler(Player player, PlayerDataModel model, Block block) {
         String blockName = block.getBlockData().getMaterial().name();
 
         blocksModelMap.forEach((s, blocksModel) -> {

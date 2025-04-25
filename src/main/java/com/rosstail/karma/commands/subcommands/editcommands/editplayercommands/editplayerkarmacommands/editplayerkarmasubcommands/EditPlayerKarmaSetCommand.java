@@ -6,12 +6,13 @@ import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.e
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.storage.mappers.playerdataentity.PlayerDataMapper;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -52,7 +53,7 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     }
 
     @Override
-    public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    public void performOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
@@ -60,14 +61,14 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     }
 
     @Override
-    public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
+    public void performOffline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
         changeOfflineKarma(sender, model, args, arguments);
     }
 
-    public void changeOnlineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    public void changeOnlineKarma(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
         if (args.length < 6) {
             sender.sendMessage("Set a numerical value");
             return;
@@ -105,7 +106,7 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
         sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
-    public void changeOfflineKarma(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
+    public void changeOfflineKarma(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments) {
         if (args.length < 6) {
             sender.sendMessage("Set a numerical value");
             return;
@@ -128,7 +129,7 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
 
         model.setPreviousKarma(model.getKarma());
         model.setKarma(value);
-        StorageManager.getManager().updatePlayerModel(model, true);
+        StorageManager.getManager().asyncUploadPlayerModel(model);
 
         AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_KARMA_SET_RESULT), PlayerType.PLAYER.getText());
@@ -136,7 +137,7 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         List<String> list = new ArrayList<>();
         list.add(String.valueOf(ConfigData.getConfigData().karmaConfig.minKarma));
         list.add(String.valueOf(ConfigData.getConfigData().karmaConfig.defaultKarma));

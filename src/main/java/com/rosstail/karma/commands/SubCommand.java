@@ -30,5 +30,5 @@ public abstract class SubCommand {
         return AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_HELP_HEADER));
     }
 
-    public abstract List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments);
+    public abstract List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments);
 }

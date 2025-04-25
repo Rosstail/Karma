@@ -5,8 +5,6 @@ import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
-import com.rosstail.karma.lang.PlayerType;
-import com.rosstail.karma.shops.SendType;
 import com.rosstail.karma.shops.Shop;
 import com.rosstail.karma.shops.ShopManager;
 import org.bukkit.command.CommandSender;
@@ -59,18 +57,14 @@ public class KarmaShopBuySelfCommand extends SubCommand {
 
         if (ShopManager.getShopManager().getShops().containsKey(shopName)) {
             Shop shop = ShopManager.getShopManager().getShops().get(shopName);
-            if (shop.getSendType() != SendType.CONSOLE) {
-                shop.handle(((Player) sender).getPlayer());
-            } else {
-                sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_BUY_FAILURE)));
-            }
+            shop.handle(((Player) sender).getPlayer());
         } else {
             AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_SHOP_NOT_EXIST));
         }
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 3) {
             ArrayList<String> shops = new ArrayList<>();
             ShopManager.getShopManager().getShops().forEach((s, shop) -> {

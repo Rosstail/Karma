@@ -3,7 +3,7 @@ package com.rosstail.karma.commands.subcommands.checkcommands;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -51,7 +51,7 @@ public class CheckOtherCommand extends SubCommand {
         }
         String username = args[1];
         Player target = Bukkit.getServer().getPlayer(username);
-        PlayerModel model;
+        PlayerDataModel model;
         AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
         if (target != null && target.isOnline()) {
@@ -80,7 +80,7 @@ public class CheckOtherCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         return null;
     }
 }

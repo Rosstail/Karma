@@ -1,7 +1,7 @@
 package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands;
 
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -28,12 +28,12 @@ public abstract class EditPlayerTierSubCommand extends EditPlayerSubCommand {
         return "karma.commands.edit.player.tier";
     }
 
-    public abstract void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player);
+    public abstract void performOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player);
 
-    public abstract void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments);
+    public abstract void performOffline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments);
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         return null;
     }
 }

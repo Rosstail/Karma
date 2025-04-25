@@ -4,7 +4,7 @@ import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.apis.ExpressionCalculator;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -112,8 +112,8 @@ public class AdaptMessage {
 
         message = message.replaceAll("\\[" + playerType + "]", player.getName());
         if (!player.hasMetadata("NPC")) {
-            PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
-            message = adaptMessageToModel(playerModel, message, playerType);
+            PlayerDataModel playerDataModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
+            message = adaptMessageToModel(playerDataModel, message, playerType);
         } else {
             message = message.replaceAll("\\[karma]", decimalFormat(player.getMetadata("Karma").get(0).asFloat(), '.'));
         }
@@ -123,35 +123,35 @@ public class AdaptMessage {
         return message;
     }
 
-    public String adaptMessageToModel(PlayerModel playerModel, String message, String playerType) {
+    public String adaptMessageToModel(PlayerDataModel playerDataModel, String message, String playerType) {
         if (message == null) {
             return null;
         }
 
-        Player player = Bukkit.getPlayer(playerModel.getUsername());
+        Player player = Bukkit.getPlayer(playerDataModel.getUsername());
         boolean isPlayerOnline = player != null && player.isOnline();
 
-        float playerKarma = playerModel.getKarma();
-        float playerPreviousKarma = playerModel.getPreviousKarma();
+        float playerKarma = playerDataModel.getKarma();
+        float playerPreviousKarma = playerDataModel.getPreviousKarma();
         float difPlayerDiffKarma = playerKarma - playerPreviousKarma;
 
         Tier playerTier;
-        Tier playerPreviousTier = TierManager.getTierManager().getTierByName(playerModel.getPreviousTierName());
+        Tier playerPreviousTier = TierManager.getTierManager().getTierByName(playerDataModel.getPreviousTierName());
 
         boolean isWanted;
 
-        long time = PlayerDataManager.getWantedTimeLeft(playerModel);
+        long time = PlayerDataManager.getWantedTimeLeft(playerDataModel);
 
         if (isPlayerOnline) {
-            playerTier = TierManager.getTierManager().getTierByName(playerModel.getTierName());
-            isWanted = playerModel.isWanted();
+            playerTier = TierManager.getTierManager().getTierByName(playerDataModel.getTierName());
+            isWanted = playerDataModel.isWanted();
         } else {
             playerTier = TierManager.getTierManager().getTierByKarmaAmount(playerKarma);
             isWanted = time > 0L;
         }
 
-        long wantedTime = PlayerDataManager.getWantedTimeLeft(playerModel);
-        Timestamp wantedTimeStamp = playerModel.getWantedTimeStamp();
+        long wantedTime = PlayerDataManager.getWantedTimeLeft(playerDataModel);
+        Timestamp wantedTimeStamp = playerDataModel.getWantedTimeStamp();
 
         String status;
         String shortStatus;
@@ -166,8 +166,8 @@ public class AdaptMessage {
         String starter = "\\[" + playerType;
         String ender = "]";
 
-        message = message.replaceAll(starter + ender, playerModel.getUsername());
-        message = message.replaceAll(starter + "_uuid" + ender, playerModel.getUuid());
+        message = message.replaceAll(starter + ender, playerDataModel.getUsername());
+        message = message.replaceAll(starter + "_uuid" + ender, playerDataModel.getUuid());
 
         message = message.replaceAll(starter + "_karma" + ender, decimalFormat(playerKarma, '.'));
         message = message.replaceAll(starter + "_karma_abs" + ender, decimalFormat(Math.abs(playerKarma), '.'));
@@ -210,7 +210,7 @@ public class AdaptMessage {
         message = message.replaceAll(starter + "_status" + ender,
                 LangManager.getMessage(isPlayerOnline ? LangMessage.PLAYER_ONLINE : LangMessage.PLAYER_OFFLINE));
 
-        message = message.replaceAll(starter + "_last_update" + ender, playerModel.getLastUpdate() > 0L ? simpleDateFormat.format(playerModel.getLastUpdate()) : LangManager.getMessage(LangMessage.FORMAT_DATETIME_NEVER));
+        message = message.replaceAll(starter + "_last_update" + ender, playerDataModel.getLastUpdate() > 0L ? simpleDateFormat.format(playerDataModel.getLastUpdate()) : LangManager.getMessage(LangMessage.FORMAT_DATETIME_NEVER));
         return message;
     }
 
@@ -342,8 +342,8 @@ public class AdaptMessage {
         }
 
         if (mobMessage != null) {
-            PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
-            mobMessage = adaptMessage.adaptMessageToModel(playerModel, mobMessage, PlayerType.ATTACKER.getText());
+            PlayerDataModel playerDataModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
+            mobMessage = adaptMessage.adaptMessageToModel(playerDataModel, mobMessage, PlayerType.ATTACKER.getText());
             player.sendMessage(mobMessage);
         }
 
@@ -379,8 +379,8 @@ public class AdaptMessage {
         }
 
         if (mobMessage != null) {
-            PlayerModel playerModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
-            mobMessage = adaptMessage.adaptMessageToModel(playerModel, mobMessage, PlayerType.ATTACKER.getText());
+            PlayerDataModel playerDataModel = PlayerDataManager.getPlayerModelMap().get(player.getName());
+            mobMessage = adaptMessage.adaptMessageToModel(playerDataModel, mobMessage, PlayerType.ATTACKER.getText());
             player.sendMessage(mobMessage);
         }
 

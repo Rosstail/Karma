@@ -74,7 +74,7 @@ public class EvalCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         ArrayList<String> expressions = new ArrayList<>();
         if (ConfigData.getConfigData().pvp.pvpHitAttackerChangeExpression != null) {
             expressions.add(ConfigData.getConfigData().pvp.pvpHitAttackerChangeExpression);

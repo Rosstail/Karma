@@ -2,7 +2,7 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedSubCommand;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
@@ -46,7 +46,7 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
     }
 
     @Override
-    public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    public void performOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
@@ -54,14 +54,14 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
     }
 
     @Override
-    public void performOffline(CommandSender sender, PlayerModel model, String[] arguments, String[] args) {
+    public void performOffline(CommandSender sender, PlayerDataModel model, String[] arguments, String[] args) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
         changeWantedOffline(sender, model, args, arguments);
     }
 
-    private void changeWantedOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    private void changeWantedOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
         boolean silent = CommandManager.doesCommandMatchParameter(arguments, "s", "silent");
         PlayerWantedChangeEvent playerWantedChangeEvent = new PlayerWantedChangeEvent(player, model, new Timestamp(0), silent);
         Bukkit.getPluginManager().callEvent(playerWantedChangeEvent);
@@ -71,9 +71,9 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
         sender.sendMessage(adaptMessage.adaptMessage(message));
     }
 
-    private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
+    private void changeWantedOffline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments) {
         model.setWantedTimeStamp(new Timestamp(0));
-        StorageManager.getManager().updatePlayerModel(model, true);
+        StorageManager.getManager().asyncUploadPlayerModel(model);
 
         AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         String message = adaptMessage.adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_RESET_RESULT), PlayerType.PLAYER.getText());
@@ -81,7 +81,7 @@ public class EditPlayerWantedResetCommand extends EditPlayerWantedSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         return null;
     }
 }

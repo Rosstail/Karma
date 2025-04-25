@@ -12,6 +12,7 @@ import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
 import com.rosstail.karma.overtime.OvertimeLoop;
+import com.rosstail.karma.storage.mappers.playerdataentity.PlayerDataMapper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -29,13 +30,13 @@ public class PlayerDataManager {
     private static int scheduler;
     private static final AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
 
-    private static final Map<String, PlayerModel> playerModelMap = new HashMap<>();
+    private static final Map<String, PlayerDataModel> playerModelMap = new HashMap<>();
 
-    public static PlayerModel initPlayerModelToMap(PlayerModel model) {
+    public static PlayerDataModel initPlayerModelToMap(PlayerDataModel model) {
         return playerModelMap.put(model.getUsername(), model);
     }
 
-    public static PlayerModel removePlayerModelFromMap(Player player) {
+    public static PlayerDataModel removePlayerModelFromMap(Player player) {
         return playerModelMap.remove(player.getName());
     }
 
@@ -55,9 +56,9 @@ public class PlayerDataManager {
 
     public static void setupScheduler() {
         scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
-            for (Map.Entry<String, PlayerModel> e : PlayerDataManager.getPlayerModelMap().entrySet()) {
+            for (Map.Entry<String, PlayerDataModel> e : PlayerDataManager.getPlayerModelMap().entrySet()) {
                 String username = e.getKey();
-                PlayerModel model = e.getValue();
+                PlayerDataModel model = e.getValue();
 
                 Player player = Bukkit.getPlayer(username);
 
@@ -99,7 +100,7 @@ public class PlayerDataManager {
         return value;
     }
 
-    public static void triggerOverTime(Player player, PlayerModel model, String overtimeName, int multiplier) {
+    public static void triggerOverTime(Player player, PlayerDataModel model, String overtimeName, int multiplier) {
         float currentKarma = model.getKarma();
         float newKarma = currentKarma;
         OvertimeLoop overtimeLoop = ConfigData.getConfigData().overtime.overtimeLoopMap.get(overtimeName);
@@ -251,23 +252,23 @@ public class PlayerDataManager {
         return scheduler;
     }
 
-    public static Map<String, PlayerModel> getPlayerModelMap() {
+    public static Map<String, PlayerDataModel> getPlayerModelMap() {
         return playerModelMap;
     }
 
-    public static long getWantedTime(PlayerModel model) {
+    public static long getWantedTime(PlayerDataModel model) {
         return model.getWantedTimeStamp().getTime();
     }
 
-    public static long getWantedTimeLeft(PlayerModel model) {
+    public static long getWantedTimeLeft(PlayerDataModel model) {
         return Math.max(0L, getWantedTime(model) - System.currentTimeMillis());
     }
 
-    public static long getOvertime(PlayerModel model, String name) {
+    public static long getOvertime(PlayerDataModel model, String name) {
         return model.getOverTimeStampMap().get(name).getTime() - System.currentTimeMillis();
     }
 
-    public boolean isOverTime(PlayerModel model, String name) {
+    public boolean isOverTime(PlayerDataModel model, String name) {
         return getOvertime(model, name) <= 0L;
     }
 
@@ -275,18 +276,18 @@ public class PlayerDataManager {
         Bukkit.getScheduler().cancelTask(scheduler);
     }
 
-    public static boolean isWanted(PlayerModel model) {
+    public static boolean isWanted(PlayerDataModel model) {
         return getWantedTimeLeft(model) > 0L;
     }
 
 
-    public static void setOverTimeStamp(PlayerModel model, String name, long value) {
+    public static void setOverTimeStamp(PlayerDataModel model, String name, long value) {
         model.getOverTimeStampMap().put(name, new Timestamp(System.currentTimeMillis() + value));
     }
 
     public static void saveAllPlayerModelToStorage() {
         getPlayerModelMap().forEach((s, model) -> {
-            StorageManager.getManager().updatePlayerModel(model, true);
+            StorageManager.getManager().queueUserForUpdate(PlayerDataMapper.toEntity(model));
         });
     }
 }

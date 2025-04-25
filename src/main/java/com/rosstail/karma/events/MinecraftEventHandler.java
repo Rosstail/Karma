@@ -5,7 +5,7 @@ import com.rosstail.karma.apis.WGPreps;
 import com.rosstail.karma.blocks.BlocksManager;
 import com.rosstail.karma.events.karmaevents.*;
 import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamageMobEvent;
 import com.rosstail.karma.events.karmaevents.karmafightevents.PlayerDamagePlayerEvent;
@@ -18,7 +18,6 @@ import com.rosstail.karma.overtime.OvertimeLoop;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -34,7 +33,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public class MinecraftEventHandler implements Listener {
@@ -44,12 +42,12 @@ public class MinecraftEventHandler implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = StorageManager.getManager().selectPlayerModel(
+        PlayerDataModel model = StorageManager.getManager().selectPlayerModel(
                 Bukkit.getOnlineMode() ? event.getPlayer().getUniqueId().toString() : player.getName()
         );
         if (model == null) {
-            model = new PlayerModel(event.getPlayer());
-            StorageManager.getManager().insertPlayerModel(model);
+            model = new PlayerDataModel(event.getPlayer());
+            StorageManager.getManager().uploadPlayerModel(model);
             PlayerDataManager.initPlayerModelToMap(model);
 
             //Event join tier by default
@@ -134,9 +132,9 @@ public class MinecraftEventHandler implements Listener {
     @EventHandler
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         if (!isClosing) {
-            StorageManager.getManager().updatePlayerModel(model, true);
+            StorageManager.getManager().asyncUploadPlayerModel(model);
             PlayerDataManager.removePlayerModelFromMap(player);
         }
     }
@@ -275,7 +273,7 @@ public class MinecraftEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void OnPlayerPlaceBlock(BlockPlaceEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block placedBlock = event.getBlockPlaced();
 
         if (!WGPreps.getWgPreps().checkBlockPlaceChangeKarmaFlag(player, placedBlock.getLocation())) {
@@ -288,7 +286,7 @@ public class MinecraftEventHandler implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void OnPlayerBreakBlock(BlockBreakEvent event) {
         Player player = event.getPlayer();
-        PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+        PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
         Block brokenBlock = event.getBlock();
 
         if (!WGPreps.getWgPreps().checkBlockBreakChangeKarmaFlag(player, brokenBlock.getLocation())) {
@@ -301,7 +299,7 @@ public class MinecraftEventHandler implements Listener {
     public void onPlayerJumpOnRootsEvent(PlayerInteractEvent event) {
         if (event.getAction() == Action.PHYSICAL) {
             Player player = event.getPlayer();
-            PlayerModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
+            PlayerDataModel model = PlayerDataManager.getPlayerModelMap().get(player.getName());
             Block brokenBlock = event.getClickedBlock();
 
             if (brokenBlock != null) {

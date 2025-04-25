@@ -2,7 +2,7 @@ package com.rosstail.karma.apis;
 
 import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.players.TopFlopScoreManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
@@ -135,7 +135,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
         if (identifier.startsWith("scoreboard_")) {
 
             TopFlopScoreManager topFlopScoreManager = TopFlopScoreManager.getTopFlopScoreManager();
-            List<PlayerModel> topFlopList;
+            List<PlayerDataModel> topFlopList;
 
             if (identifier.contains("_top_") || identifier.contains("_bottom_")) {
                 if (identifier.contains("_top_")) {
@@ -145,7 +145,7 @@ public class PAPIExpansion extends PlaceholderExpansion {
                 }
                 String indexStr = identifier.replaceAll("[^0-9]*", "");
                 int index = Math.max(1, Integer.parseInt(indexStr));
-                PlayerModel model = topFlopList.get(index - 1);
+                PlayerDataModel model = topFlopList.get(index - 1);
 
                 if (model == null) {
                     return "-";

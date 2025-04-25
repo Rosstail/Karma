@@ -3,13 +3,14 @@ package com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedSubCommand;
-import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.PlayerDataModel;
 import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.events.karmaevents.PlayerWantedChangeEvent;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.storage.mappers.playerdataentity.PlayerDataMapper;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -50,7 +51,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
     }
 
     @Override
-    public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    public void performOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
@@ -58,14 +59,14 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
     }
 
     @Override
-    public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
+    public void performOffline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments) {
         if (!CommandManager.canLaunchCommand(sender, this)) {
             return;
         }
         changeWantedOffline(sender, model, args, arguments);
     }
 
-    private void changeWantedOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
+    private void changeWantedOnline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments, Player player) {
         long wantedTime = model.getWantedTimeStamp().getTime();
         boolean silent;
         List<String> expressionList = new ArrayList<>(Arrays.asList(args));
@@ -92,7 +93,7 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT), PlayerType.PLAYER.getText()));
     }
 
-    private void changeWantedOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
+    private void changeWantedOffline(CommandSender sender, PlayerDataModel model, String[] args, String[] arguments) {
         long wantedTime = model.getWantedTimeStamp().getTime();
         List<String> expressionList = new ArrayList<>(Arrays.asList(args));
         expressionList.remove("edit");
@@ -112,13 +113,13 @@ public class EditPlayerWantedSetCommand extends EditPlayerWantedSubCommand {
         }
 
         model.setWantedTimeStamp(new Timestamp(duration));
-        StorageManager.getManager().updatePlayerModel(model, true);
+        StorageManager.getManager().asyncUploadPlayerModel(model);
 
         sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessageToModel(model, LangManager.getMessage(LangMessage.COMMANDS_EDIT_PLAYER_WANTED_SET_RESULT), PlayerType.PLAYER.getText()));
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         return Collections.singletonList("xd xh xm xs");
     }
 }

@@ -8,7 +8,7 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PlayerModel {
+public class PlayerDataModel {
     private String uuid;
     private String username;
 
@@ -28,7 +28,7 @@ public class PlayerModel {
      * Constructor if the selected player is connected
      * @param player - a user joining the server
      */
-    public PlayerModel(Player player) {
+    public PlayerDataModel(Player player) {
         this.uuid = Bukkit.getOnlineMode() ? player.getUniqueId().toString() : player.getName();
         this.username = player.getName();
     }
@@ -38,7 +38,7 @@ public class PlayerModel {
      * @param uuid - microsoft/mojang identifier of selected player
      * @param username - current username of the selected player
      */
-    public PlayerModel(String uuid, String username) {
+    public PlayerDataModel(String uuid, String username) {
         this.uuid = uuid;
         this.username = username;
         this.checkForData();
@@ -46,19 +46,19 @@ public class PlayerModel {
 
     /**
      * Creates a copy of an existing PlayerModel. Should only be used to read players data, not
-     * @param playerModel
+     * @param playerDataModel
      */
-    public PlayerModel(PlayerModel playerModel) {
-        this.uuid = playerModel.getUuid();
-        this.username = playerModel.getUsername();
-        this.karma = playerModel.getKarma();
-        this.tierName = playerModel.getTierName();
-        this.previousKarma = playerModel.getPreviousKarma();
-        this.previousTierName = playerModel.getPreviousTierName();
-        this.lastUpdate = playerModel.getLastUpdate();
-        this.wanted = playerModel.isWanted();
-        this.wantedTimeStamp = playerModel.getWantedTimeStamp();
-        this.overTimeStampMap = playerModel.getOverTimeStampMap();
+    public PlayerDataModel(PlayerDataModel playerDataModel) {
+        this.uuid = playerDataModel.getUuid();
+        this.username = playerDataModel.getUsername();
+        this.karma = playerDataModel.getKarma();
+        this.tierName = playerDataModel.getTierName();
+        this.previousKarma = playerDataModel.getPreviousKarma();
+        this.previousTierName = playerDataModel.getPreviousTierName();
+        this.lastUpdate = playerDataModel.getLastUpdate();
+        this.wanted = playerDataModel.isWanted();
+        this.wantedTimeStamp = playerDataModel.getWantedTimeStamp();
+        this.overTimeStampMap = playerDataModel.getOverTimeStampMap();
     }
 
     /**
