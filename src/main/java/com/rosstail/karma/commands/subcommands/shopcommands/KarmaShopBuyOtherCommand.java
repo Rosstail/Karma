@@ -55,8 +55,7 @@ public class KarmaShopBuyOtherCommand extends SubCommand {
         Player player = Bukkit.getPlayerExact(playerName);
 
         if (player == null) {
-            sender.sendMessage(PlayerDataManager.getPlayerUUIDFromName(args[3]));
-            //CommandManager.disconnectedPlayer(sender);
+            CommandManager.disconnectedPlayer(sender, playerName);
             return;
         }
 
@@ -69,7 +68,7 @@ public class KarmaShopBuyOtherCommand extends SubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 3) {
             ArrayList<String> shops = new ArrayList<>();
             ShopManager.getShopManager().getShops().forEach((s, shop) -> {

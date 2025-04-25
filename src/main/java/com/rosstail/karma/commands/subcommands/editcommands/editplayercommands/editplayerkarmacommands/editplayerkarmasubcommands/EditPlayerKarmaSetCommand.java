@@ -136,7 +136,7 @@ public class EditPlayerKarmaSetCommand extends EditPlayerKarmaSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         List<String> list = new ArrayList<>();
         list.add(String.valueOf(ConfigData.getConfigData().karmaConfig.minKarma));
         list.add(String.valueOf(ConfigData.getConfigData().karmaConfig.defaultKarma));

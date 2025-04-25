@@ -134,7 +134,7 @@ public class EditPlayerKarmaRemoveCommand extends EditPlayerKarmaSetCommand {
         sender.sendMessage(adaptMessage.adaptMessage(message));    }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         List<String> list = new ArrayList<>();
         list.add(String.valueOf(0));
         return list;

@@ -79,7 +79,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         } else {
             for (SubCommand subCommand : getSubCommands()) {
                 if (subCommand.getName().equalsIgnoreCase(args[0])) {
-                    return subCommand.getSubCommandsArguments((Player) sender, commandArgs, arguments);
+                    return subCommand.getSubCommandsArguments(sender, commandArgs, arguments);
                 }
             }
         }

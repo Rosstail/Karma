@@ -114,7 +114,7 @@ public class EditPlayerKarmaResetCommand extends EditPlayerKarmaSubCommand {
     }
 
     @Override
-    public List<String> getSubCommandsArguments(Player sender, String[] args, String[] arguments) {
+    public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 3) {
             return null;
         } else if (args.length <= 4) {
