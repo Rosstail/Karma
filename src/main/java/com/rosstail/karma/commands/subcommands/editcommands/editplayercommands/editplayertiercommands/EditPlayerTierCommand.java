@@ -51,59 +51,58 @@ public class EditPlayerTierCommand extends EditPlayerSubCommand {
     @Override
     public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 5) {
-            List<String> list = new ArrayList<>();
-            for (SubCommand subCommand : subCommands) {
-                list.add(subCommand.getName());
-            }
-            return list;
-        } else {
-            for (SubCommand subCommand : subCommands) {
-                if (args[4].equalsIgnoreCase(subCommand.getName())) {
-                    return subCommand.getSubCommandsArguments(sender, args, arguments);
-                }
-            }
+            return subCommands.stream().map(EditPlayerTierSubCommand::getName).toList();
         }
-        return null;
+
+        SubCommand subCommand = getSubCommand(subCommands, args[4]);
+
+        if (subCommand == null) {
+            return null;
+        }
+
+        return subCommand.getSubCommandsArguments(sender, args, arguments);
     }
 
     @Override
     public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        List<String> subCommandsStringList = new ArrayList<>();
-        for (EditPlayerTierSubCommand subCommand : subCommands) {
-            subCommandsStringList.add(subCommand.getName());
-        }
-
         if (args.length < 5) {
             sender.sendMessage(getSubCommandHelp());
             return;
         }
+
         String subCommandString = args[4];
 
-        if (!subCommandsStringList.contains(subCommandString)) {
+        EditPlayerTierSubCommand editPlayerTierSubCommand = subCommands.stream()
+                .filter(subCommand -> subCommand.getName().equalsIgnoreCase(subCommandString))
+                .findFirst().orElse(null);
+
+        if (editPlayerTierSubCommand == null) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
             return;
         }
-        subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOnline(sender, model, args, arguments, player);
+
+        editPlayerTierSubCommand.performOnline(sender, model, args, arguments, player);
     }
 
     @Override
     public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
-        List<String> subCommandsStringList = new ArrayList<>();
-        for (EditPlayerSubCommand subCommand : subCommands) {
-            subCommandsStringList.add(subCommand.getName());
-        }
-
         if (args.length < 5) {
             sender.sendMessage(getSubCommandHelp());
             return;
         }
+
         String subCommandString = args[4];
 
-        if (!subCommandsStringList.contains(subCommandString)) {
+        EditPlayerTierSubCommand editPlayerTierSubCommand = subCommands.stream()
+                .filter(subCommand -> subCommand.getName().equalsIgnoreCase(subCommandString))
+                .findFirst().orElse(null);
+
+        if (editPlayerTierSubCommand == null) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
             return;
         }
-        subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOffline(sender, model, args, arguments);
+
+        editPlayerTierSubCommand.performOffline(sender, model, args, arguments);
     }
 
     @Override

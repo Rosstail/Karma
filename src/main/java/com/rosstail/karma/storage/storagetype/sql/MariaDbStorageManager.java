@@ -1,10 +1,10 @@
 package com.rosstail.karma.storage.storagetype.sql;
 
-import com.rosstail.karma.storage.storagetype.SqlStorageRequest;
+import com.rosstail.karma.storage.storagetype.SqlStorageManager;
 
-public class MariaDbStorageRequest extends SqlStorageRequest {
+public class MariaDbStorageManager extends SqlStorageManager {
 
-    public MariaDbStorageRequest(String pluginName) {
+    public MariaDbStorageManager(String pluginName) {
         super(pluginName);
     }
 
@@ -16,5 +16,10 @@ public class MariaDbStorageRequest extends SqlStorageRequest {
         this.password = password;
 
         super.createKarmaTable();
+    }
+
+    @Override
+    public String getName() {
+        return "MariaDB";
     }
 }

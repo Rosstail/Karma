@@ -1,10 +1,10 @@
 package com.rosstail.karma.storage.storagetype.sql;
 
-import com.rosstail.karma.storage.storagetype.SqlStorageRequest;
+import com.rosstail.karma.storage.storagetype.SqlStorageManager;
 
-public class MongoDbStorageRequest extends SqlStorageRequest {
+public class MongoDbStorageManager extends SqlStorageManager {
 
-    public MongoDbStorageRequest(String pluginName) {
+    public MongoDbStorageManager(String pluginName) {
         super(pluginName);
     }
 
@@ -16,5 +16,10 @@ public class MongoDbStorageRequest extends SqlStorageRequest {
         this.password = password;
 
         super.createKarmaTable();
+    }
+
+    @Override
+    public String getName() {
+        return "MongoDB";
     }
 }

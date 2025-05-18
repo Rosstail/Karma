@@ -5,12 +5,12 @@ import com.rosstail.karma.commands.SubCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerkarmacommands.EditPlayerKarmaCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayertiercommands.EditPlayerTierCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.EditPlayerWantedCommand;
-import com.rosstail.karma.players.PlayerDataManager;
-import com.rosstail.karma.players.PlayerModel;
-import com.rosstail.karma.storage.StorageManager;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.players.PlayerDataManager;
+import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.storage.StorageManager;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,12 +33,6 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
 
     @Override
     public void perform(CommandSender sender, String[] args, String[] arguments) {
-        List<String> subCommandsStringList = new ArrayList<>();
-        for (EditPlayerSubCommand subCommand : subCommands) {
-            subCommandsStringList.add(subCommand.getName());
-        }
-
-
         if (args.length < 4) {
             if (args.length < 3) {
                 sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_INSERT_PLAYER_NAME)));
@@ -50,14 +44,12 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
         }
 
         String playerName = args[2];
-        String subCommandString = args[3];
+        EditPlayerSubCommand subCommand = (EditPlayerSubCommand) getSubCommand(subCommands, args[3]);
 
-        if (!subCommandsStringList.contains(subCommandString)) {
+        if (subCommand == null) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
             return;
         }
-
-        EditPlayerSubCommand subCommand = this.subCommands.get(subCommandsStringList.indexOf(subCommandString));
 
         Player player;
         player = Bukkit.getPlayerExact(playerName);
@@ -79,7 +71,7 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
 
                 if (model != null) {
                     subCommand.performOffline(sender, model, args, arguments);
-                } else if (CommandManager.doesCommandMatchParameter(arguments, "g", "generate")){
+                } else if (CommandManager.doesCommandMatchParameter(arguments, "g", "generate")) {
                     model = new PlayerModel(playerUUID, playerName);
                     if (!StorageManager.getManager().insertPlayerModel(model)) {
                         AdaptMessage.print("Problem with the storage.", AdaptMessage.prints.WARNING);
@@ -98,17 +90,18 @@ public class EditPlayerCommand extends EditPlayerSubCommand {
     @Override
     public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length == 4) {
-            List<String> list = new ArrayList<>();
-            for (SubCommand subCommand : subCommands) {
-                list.add(subCommand.getName());
-            }
-            return list;
+            return subCommands.stream().map(EditPlayerSubCommand::getName).toList();
         } else if (args.length >= 5) {
-            for (SubCommand subCommand : subCommands) {
-                if (args[3].equalsIgnoreCase(subCommand.getName())) {
-                    return subCommand.getSubCommandsArguments(sender, args, arguments);
-                }
+            EditPlayerSubCommand editPlayerSubCommand =
+                    subCommands.stream()
+                            .filter(subCommand -> subCommand.getName().equalsIgnoreCase(args[3]))
+                            .findFirst().orElse(null);
+
+            if (editPlayerSubCommand == null) {
+                return null;
             }
+
+            return editPlayerSubCommand.getSubCommandsArguments(sender, args, arguments);
         }
         return null;
     }

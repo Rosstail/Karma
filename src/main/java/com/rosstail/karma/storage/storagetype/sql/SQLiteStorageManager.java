@@ -3,15 +3,15 @@ package com.rosstail.karma.storage.storagetype.sql;
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.players.PlayerDataManager;
 import com.rosstail.karma.players.PlayerModel;
-import com.rosstail.karma.storage.storagetype.SqlStorageRequest;
+import com.rosstail.karma.storage.storagetype.SqlStorageManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-public class LiteSqlStorageRequest extends SqlStorageRequest {
+public class SQLiteStorageManager extends SqlStorageManager {
 
-    public LiteSqlStorageRequest(String pluginName) {
+    public SQLiteStorageManager(String pluginName) {
         super(pluginName);
     }
 
@@ -65,5 +65,10 @@ public class LiteSqlStorageRequest extends SqlStorageRequest {
             e.printStackTrace();
         }
         return null;
+    }
+
+    @Override
+    public String getName() {
+        return "SQLite";
     }
 }

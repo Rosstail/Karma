@@ -6,8 +6,9 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 
-public interface StorageRequest {
+public interface IStorageManager {
     ZoneId serverZoneId = ZoneId.systemDefault();
+    String name = "defStorageRequest";
 
     default long getOffsetMillis() {
         return serverZoneId.getRules().getOffset(Instant.now()).getTotalSeconds() * 1000L;
@@ -51,4 +52,8 @@ public interface StorageRequest {
      * @return the models found
      */
     List<PlayerModel> selectPlayerModelList(String order, int limit);
+
+    default String getName() {
+        return name;
+    }
 }

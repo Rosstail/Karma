@@ -2,19 +2,15 @@ package com.rosstail.karma.storage.storagetype;
 
 import com.rosstail.karma.ConfigData;
 import com.rosstail.karma.Karma;
-import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.players.PlayerDataManager;
 import com.rosstail.karma.players.PlayerModel;
 import org.bukkit.Bukkit;
 
 import java.sql.*;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SqlStorageRequest implements StorageRequest {
+public class SqlStorageManager implements IStorageManager {
     protected final Karma plugin = Karma.getInstance();
     protected final String pluginName;
     protected String driver;
@@ -23,7 +19,7 @@ public class SqlStorageRequest implements StorageRequest {
     protected String password;
     protected Connection connection;
 
-    public SqlStorageRequest(String pluginName) {
+    public SqlStorageManager(String pluginName) {
         this.pluginName = pluginName;
     }
 

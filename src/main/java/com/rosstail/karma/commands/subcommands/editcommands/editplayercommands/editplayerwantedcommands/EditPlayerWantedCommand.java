@@ -6,10 +6,10 @@ import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.e
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedRemoveCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedResetCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.editplayerwantedcommands.editplayerwantedsubcommands.EditPlayerWantedSetCommand;
-import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
+import com.rosstail.karma.players.PlayerModel;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -29,6 +29,7 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
         subCommands.add(new EditPlayerWantedRemoveCommand());
         subCommands.add(new EditPlayerWantedResetCommand());
     }
+
     @Override
     public String getName() {
         return "wanted";
@@ -56,28 +57,22 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
     @Override
     public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 5) {
-            List<String> list = new ArrayList<>();
-            for (SubCommand subCommand : subCommands) {
-                list.add(subCommand.getName());
-            }
-            return list;
+            return subCommands.stream().map(EditPlayerWantedSubCommand::getName).toList();
         } else {
-            for (SubCommand subCommand : subCommands) {
-                if (args[4].equalsIgnoreCase(subCommand.getName())) {
-                    return subCommand.getSubCommandsArguments(sender, args, arguments);
-                }
+            EditPlayerWantedSubCommand editPlayerWantedSubCommand = subCommands.stream()
+                    .filter(subCommand -> subCommand.getName().equalsIgnoreCase(args[4]))
+                    .findFirst().orElse(null);
+
+            if (editPlayerWantedSubCommand == null) {
+                return null;
             }
+
+            return editPlayerWantedSubCommand.getSubCommandsArguments(sender, args, arguments);
         }
-        return null;
     }
 
     @Override
     public void performOnline(CommandSender sender, PlayerModel model, String[] args, String[] arguments, Player player) {
-        List<String> subCommandsStringList = new ArrayList<>();
-        for (EditPlayerWantedSubCommand subCommand : subCommands) {
-            subCommandsStringList.add(subCommand.getName());
-        }
-
         if (args.length < 5) {
             StringBuilder message = new StringBuilder("EditPlayerKarmaCommand:");
             for (EditPlayerSubCommand subCommand : subCommands) {
@@ -86,21 +81,21 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
             sender.sendMessage(message.toString());
             return;
         }
-        String subCommandString = args[4];
 
-        if (!subCommandsStringList.contains(subCommandString)) {
+        String subCommandString = args[4];
+        EditPlayerWantedSubCommand editPlayerWantedSubCommand =
+                subCommands.stream().filter(subCommands -> subCommands.getName().equalsIgnoreCase(subCommandString))
+                        .findFirst().orElse(null);
+
+        if (editPlayerWantedSubCommand == null) {
             sender.sendMessage("EditPlayerKarmaCommand#performOnline wrong command " + subCommandString);
+            return;
         }
-        subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOnline(sender, model, args, arguments, player);
+        editPlayerWantedSubCommand.performOnline(sender, model, args, arguments, player);
     }
 
     @Override
     public void performOffline(CommandSender sender, PlayerModel model, String[] args, String[] arguments) {
-        List<String> subCommandsStringList = new ArrayList<>();
-        for (EditPlayerSubCommand subCommand : subCommands) {
-            subCommandsStringList.add(subCommand.getName());
-        }
-
         if (args.length < 5) {
             StringBuilder message = new StringBuilder("EditPlayerWantedCommand:");
             for (EditPlayerSubCommand subCommand : subCommands) {
@@ -111,11 +106,16 @@ public class EditPlayerWantedCommand extends EditPlayerSubCommand {
         }
         String subCommandString = args[4];
 
-        if (!subCommandsStringList.contains(subCommandString)) {
+        EditPlayerWantedSubCommand editPlayerWantedSubCommand =
+                subCommands.stream().filter(subCommands -> subCommands.getName().equalsIgnoreCase(subCommandString))
+                        .findFirst().orElse(null);
+
+        if (editPlayerWantedSubCommand == null) {
             sender.sendMessage("EditPlayerKarmaCommand#performOffline wrong command " + subCommandString);
             return;
         }
-        subCommands.get(subCommandsStringList.indexOf(subCommandString)).performOffline(sender, model, args, arguments);
+
+        editPlayerWantedSubCommand.performOffline(sender, model, args, arguments);
     }
 
     @Override

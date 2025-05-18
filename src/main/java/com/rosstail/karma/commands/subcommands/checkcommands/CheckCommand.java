@@ -1,13 +1,10 @@
 package com.rosstail.karma.commands.subcommands.checkcommands;
 
-import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.HelpCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.List;
 
@@ -58,12 +55,8 @@ public class CheckCommand extends SubCommand {
 
     @Override
     public String getSubCommandHelp() {
-        StringBuilder subCommandHelp = new StringBuilder(super.getSubCommandHelp());
-        for (SubCommand subCommand : subCommands) {
-            if (subCommand.getHelp() != null) {
-                subCommandHelp.append("\n").append(subCommand.getHelp());
-            }
-        }
-        return subCommandHelp.toString();
+        return subCommands.stream()
+                .filter(subCommand -> subCommand.getHelp() != null)
+                .map(subCommand -> "\n" + subCommand.getHelp()).toString();
     }
 }

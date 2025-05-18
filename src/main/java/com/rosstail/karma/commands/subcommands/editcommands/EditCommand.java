@@ -2,14 +2,11 @@ package com.rosstail.karma.commands.subcommands.editcommands;
 
 import com.rosstail.karma.commands.CommandManager;
 import com.rosstail.karma.commands.SubCommand;
-import com.rosstail.karma.commands.subcommands.HelpCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerCommand;
-import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,40 +33,31 @@ public class EditCommand extends EditSubCommand {
             return;
         }
 
-        List<String> subCommandsStringList = new ArrayList<>();
-        for (EditSubCommand subCommand : subCommands) {
-            subCommandsStringList.add(subCommand.getName());
-        }
+        EditSubCommand subCommand = (EditSubCommand) getSubCommand(subCommands, args[1]);
 
-        if (!subCommandsStringList.contains(args[1])) {
+        if (subCommand == null) {
             sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
             return;
         }
 
-        for (EditSubCommand subCommand : subCommands) {
-            if (subCommand.getName().equalsIgnoreCase(args[1])) {
-                subCommand.perform(sender, args, arguments);
-            }
-        }
-
+        subCommand.perform(sender, args, arguments);
     }
 
     @Override
     public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 2) {
-            List<String> list = new ArrayList<>();
-            for (SubCommand subCommand : subCommands) {
-                list.add(subCommand.getName());
-                return list;
-            }
+            return subCommands.stream().map(EditSubCommand::getName).toList();
         } else {
-            for (SubCommand subCommand : subCommands) {
-                if (subCommand.getName().equalsIgnoreCase(args[1])) {
-                    return subCommand.getSubCommandsArguments(sender, args, arguments);
-                }
+            SubCommand editSubCommand = subCommands.stream()
+                    .filter(subCommand -> subCommand.getName().equalsIgnoreCase(args[1]))
+                    .findFirst().orElse(null);
+
+            if (editSubCommand == null) {
+                return null;
             }
+
+            return editSubCommand.getSubCommandsArguments(sender, args, arguments);
         }
-        return null;
     }
 
     @Override

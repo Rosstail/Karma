@@ -3,6 +3,7 @@ package com.rosstail.karma.commands;
 import com.rosstail.karma.commands.subcommands.*;
 import com.rosstail.karma.commands.subcommands.checkcommands.CheckCommand;
 import com.rosstail.karma.commands.subcommands.editcommands.EditCommand;
+import com.rosstail.karma.commands.subcommands.editcommands.editplayercommands.EditPlayerSubCommand;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
@@ -31,6 +32,7 @@ public class CommandManager implements CommandExecutor, TabExecutor {
     private static final Pattern longParamPattern = Pattern.compile("^--[A-Za-z]+");
 
     public CommandManager() {
+        subCommands.add(new HelpCommand(this));
         subCommands.add(new EvalCommand());
         subCommands.add(new CheckCommand());
         subCommands.add(new EditCommand());
@@ -44,19 +46,19 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         String[] arguments = getCommandArguments(args);
         args = removeFoundArgumentsFromCommand(args, arguments);
 
-        if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
-            HelpCommand help = new HelpCommand(this);
-            help.perform(sender, args, null);
+        if (args.length == 0) {
+            getSubCommand("help").perform(sender, args, arguments);
             return true;
         }
 
-        for (int index = 0; index < getSubCommands().size(); index++) {
-            if (args[0].equalsIgnoreCase(getSubCommands().get(index).getName())) {
-                getSubCommands().get(index).perform(sender, args, arguments);
-                return true;
-            }
+        SubCommand subCommand = getSubCommand(args[0]);
+
+        if (subCommand == null) {
+            sender.sendMessage(AdaptMessage.getAdaptMessage().adaptMessage(LangManager.getMessage(LangMessage.COMMANDS_WRONG_COMMAND)));
+            return true;
         }
 
+        subCommand.perform(sender, args, arguments);
         return true;
     }
 
@@ -69,22 +71,18 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         String[] commandArgs = removeFoundArgumentsFromCommand(args, arguments);
 
         if (args.length <= 1) {
-            ArrayList<String> subCommandArguments = new ArrayList<>();
-
-            for (int i = 0; i < getSubCommands().size(); i++) {
-                subCommandArguments.add(getSubCommands().get(i).getName());
-            }
-
-            return subCommandArguments;
+            return getSubCommands().stream().map(SubCommand::getName).toList();
         } else {
-            for (SubCommand subCommand : getSubCommands()) {
-                if (subCommand.getName().equalsIgnoreCase(args[0])) {
-                    return subCommand.getSubCommandsArguments(sender, commandArgs, arguments);
-                }
-            }
-        }
+            SubCommand subCommand = getSubCommands().stream()
+                    .filter(subCommand1 -> subCommand1.getName().equalsIgnoreCase(args[0]))
+                    .findFirst().orElse(null);
 
-        return null;
+            if (subCommand == null) {
+                return null;
+            }
+
+            return subCommand.getSubCommandsArguments(sender, commandArgs, arguments);
+        }
     }
 
     public static boolean canLaunchCommand(CommandSender sender, SubCommand command) {
@@ -99,9 +97,9 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         String message = LangManager.getMessage(LangMessage.COMMANDS_PERMISSION_DENIED);
         AdaptMessage adaptMessage = AdaptMessage.getAdaptMessage();
         message = adaptMessage.adaptPlayerMessage((Player) sender, message, PlayerType.PLAYER.getText());
-        message = adaptMessage.adaptMessage(message);
-        message = message.replaceAll("\\[command]", command.getName());
-        message = message.replaceAll("\\[permission]", command.getPermission());
+        message = adaptMessage.adaptMessage(message)
+                .replaceAll("\\[command]", command.getName())
+                .replaceAll("\\[permission]", command.getPermission());
         sender.sendMessage(message);
     }
 
@@ -227,5 +225,12 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         }
 
         return false;
+    }
+
+    public SubCommand getSubCommand(String name) {
+        return subCommands
+                .stream()
+                .filter(subCommand -> subCommand.getName().equalsIgnoreCase(name))
+                .findFirst().orElse(null);
     }
 }

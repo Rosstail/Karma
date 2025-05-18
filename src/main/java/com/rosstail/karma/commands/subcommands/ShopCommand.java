@@ -10,7 +10,6 @@ import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.shops.Shop;
 import com.rosstail.karma.shops.ShopManager;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,18 +77,17 @@ public class ShopCommand extends SubCommand {
     @Override
     public List<String> getSubCommandsArguments(CommandSender sender, String[] args, String[] arguments) {
         if (args.length <= 2) {
-            ArrayList<String> subCommands = new ArrayList<>();
-            for (SubCommand subCommand : getSubCommands()) {
-                subCommands.add(subCommand.getName());
-            }
-            return subCommands;
+            return getSubCommands().stream().map(SubCommand::getName).toList();
         } else {
-            for (SubCommand subCommand : getSubCommands()) {
-                if (args[1].equalsIgnoreCase(subCommand.getName())) {
-                    return subCommand.getSubCommandsArguments(sender, args, arguments);
-                }
+            SubCommand subCommand = getSubCommands().stream()
+                    .filter(command -> command.getName().equalsIgnoreCase(args[1]))
+                    .findFirst().orElse(null);
+
+            if (subCommand == null) {
+                return null;
             }
+
+            return subCommand.getSubCommandsArguments(sender, args, arguments);
         }
-        return null;
     }
 }

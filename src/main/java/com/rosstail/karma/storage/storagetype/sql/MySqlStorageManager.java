@@ -1,10 +1,10 @@
 package com.rosstail.karma.storage.storagetype.sql;
 
-import com.rosstail.karma.storage.storagetype.SqlStorageRequest;
+import com.rosstail.karma.storage.storagetype.SqlStorageManager;
 
-public class MySqlStorageRequest extends SqlStorageRequest {
+public class MySqlStorageManager extends SqlStorageManager {
 
-    public MySqlStorageRequest(String pluginName) {
+    public MySqlStorageManager(String pluginName) {
         super(pluginName);
     }
 
@@ -18,5 +18,8 @@ public class MySqlStorageRequest extends SqlStorageRequest {
         super.createKarmaTable();
     }
 
-
+    @Override
+    public String getName() {
+        return "MySQL";
+    }
 }
