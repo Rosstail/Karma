@@ -1,0 +1,145 @@
+prefix: "&f☯[&a声誉&f]&r "
+
+format:
+  datetime: "yyyy-MM-dd HH:mm:ss"
+  datetime-never: "&7永不"
+  countdown: "{dd}d {HH}:{mm}:{ss}" # 可用时间单位: dd, d, hh, h, mm, m, ss, s
+
+commands:
+  by-player-only: "[prefix]命令只能由玩家执行."
+  permission-denied: "[prefix]你没有执行命令 [command] 的权限: [permission]."
+  insert-player-name: "[prefix]请输入玩家名称."
+  wrong-command: "[prefix]命令错误."
+  wrong-value: "[prefix]无效的值."
+  player-does-not-exist: "[prefix]名为 [player] 的玩家不存在."
+  player-no-data: "[prefix]玩家 [player] 没有任何声誉数据."
+  help:
+    header: "&b====== &6声誉帮助 &b======"
+    line: "&a► &6/[syntax] &8: &r[desc]"
+  check:
+    desc: "检查玩家数据"
+    self:
+      desc: "检查你的数据"
+      result:
+      - "[prefix]你的数据:"
+      - "&r当前等级 [player_tier_display] &r| 当前声誉: [player_karma]"
+      - "&r上一等级 [player_previous_tier_display] &r| 先前声誉: [player_previous_karma]"
+      - "&r当前状态 [player_wanted_status] &r持续时间: [player_wanted_status_short][player_wanted_time_delay_display]"
+      - "&r最后更新于 [player_last_update]&r."
+    other:
+      desc: "检查指定玩家的数据"
+      result:
+        - "[prefix][player] 的数据:"
+        - "&r当前状态 [player_status]"
+        - "&r当前等级 [player_tier_display] &r| 当前声誉: [player_karma]"
+        - "&r上一等级 [player_previous_tier_display] &r| 先前声誉: [player_previous_karma]"
+        - "&r当前状态 [player_wanted_status] &r持续时间: [player_wanted_status_short][player_wanted_time_delay_display]"
+        - "&r最后更新于 [player_last_update]&r."
+  edit:
+    desc: "编辑命令."
+    player:
+      desc: "编辑玩家数据"
+      disconnected-player: "[prefix]玩家 [player] 未在线. 使用 -d 或 --disconnect 参数强制更新."
+      player-no-data: "[prefix]玩家 [player] 没有声誉数据. 使用 -g 或 --generate 参数为当前玩家创建声誉数据."
+      out-of-bounds: "[prefix]给定值超出范围. 使用 -o 或 --override 参数忽略范围."
+      karma:
+        desc: "编辑玩家声誉值"
+        set:
+          desc: "将指定玩家的声誉设置为固定值."
+          result: "[prefix]将玩家 [player] 的声誉值设置为了 [player_karma]."
+        add:
+          desc: "为指定玩家添加声誉值."
+          result: "[prefix]为玩家 [player] 添加了 [player_diff_karma] 点声誉值. 当前声誉值为 [player_karma]."
+        remove:
+          desc: "为指定玩家减少声誉值."
+          result: "[prefix]为玩家 [player] 减少了 [player_diff_karma] 点声誉值. 当前声誉值为 [player_karma]."
+        reset:
+          desc: "将指定玩家声誉值重置回默认值."
+          result: "[prefix]成功重置了玩家 [player] 的声誉值. 当前声誉值为 [player_karma]."
+      tier:
+        desc: "编辑玩家声誉等级"
+        set:
+          desc: "将玩家设定为指定声誉等级, 将其声誉值设定为对应等级的默认值"
+          result: "[prefix]将玩家 [player] 的声誉等级设置为了 [player_tier_display]."
+      wanted:
+        desc: "编辑玩家悬赏时间"
+        set:
+          desc: "设置玩家当前悬赏时间."
+          result: "[prefix]将玩家 [player] 的悬赏时间设置为了 [player_wanted_time_delay_display]. 当前状态: [player_wanted_status]."
+        add:
+          desc: "增加玩家当前悬赏时间."
+          result: "[prefix]将玩家 [player] 的悬赏时间增加了 [value], 增加后时间为 [player_wanted_time_delay_display]. 当前状态: [player_wanted_status]."
+        remove:
+          desc: "减少玩家当前悬赏时间."
+          result: "[prefix]将玩家 [player] 的悬赏时间减少了 [value], 增加后时间为 [player_wanted_time_delay_display]. 当前状态: [player_wanted_status]."
+        reset:
+          desc: "重置玩家当前悬赏."
+          result: "[prefix]成功重置了玩家 [player] 当前的悬赏."
+  shop:
+    header: "&b====== &6声誉商店 &b======"
+    line: "  &6► &9[shop_display] &8: &r\n[shop_description]"
+    not-exist: "[prefix]&c该商店不存在."
+    footer: "&9================================"
+    buy:
+      desc: "购买商店内物品."
+      success: "[prefix]&a交易成功."
+      failure: "[prefix]&c交易失败."
+  reload:
+    desc: "重载插件配置."
+    result: "[prefix]配置已重载."
+  save:
+    desc: "保存所有在线玩家的数据."
+    result: "[prefix]成功手动保存了 [amount] 名玩家的数据."
+  eval:
+    desc: "计算表达式."
+    result: "[prefix]表达式: [expression] = [result]"
+
+storage:
+  type: "[prefix]使用 [type] 存储类型."
+
+player:
+  online: "&a在线"
+  offline: "&8离线"
+
+karma:
+  on-change: "[prefix]当前声誉值为: [player_karma]."
+
+tier:
+  on-change: "[prefix]你的声誉等级已被设置为 [player_tier_display]."
+  none:
+    display: "&7无"
+    short-display: "&7"
+
+fight:
+  pvp:
+    hit:
+      on-karma-gain: "[prefix]你通过攻击 [victim] 获得了 [attacker_karma_diff]."
+      on-karma-unchanged: "[prefix]你攻击 [victim] 后, 声誉值没有受到影响."
+      on-karma-loss: "[prefix]你通过攻击 [victim] 失去了 [attacker_karma_diff]."
+    kill:
+      on-karma-gain: "[prefix]你通过击杀 [victim] 获得了 [attacker_karma_diff]."
+      on-karma-unchanged: "[prefix]你击杀 [victim] 后, 声誉值没有受到影响."
+      on-karma-loss: "[prefix]你通过击杀 [victim] 失去了 [attacker_karma_diff]."
+  pve:
+    hit:
+      on-karma-gain: "[prefix]你通过攻击 [victim] 获得了 [reward]."
+      on-karma-unchanged: "[prefix]你攻击 [victim] 后, 声誉值没有受到影响."
+      on-karma-loss: "[prefix]你通过攻击 [reward] karma by hitting [victim]."
+    kill:
+      on-karma-gain: "[prefix]你通过击杀 [victim] 获得了 [reward]."
+      on-karma-unchanged: "[prefix]你击杀 [victim] 后, 声誉值没有受到影响."
+      on-karma-loss: "[prefix]你通过击杀 [victim] 失去了 [reward]."
+
+wanted:
+  status:
+    innocent:
+      display: "&f无辜"
+      short: "&f"
+    wanted:
+      display: "&4&l被悬赏"
+      short: "&4⚠"
+  event:
+    on-enter: "[msg-title]{#FF0000}被悬赏
+    [msg-subtitle]你正被人悬赏捉拿."
+    on-refresh: "[msg-actionbar][prefix]&c你的悬赏状态已被刷新."
+    on-exit: "[prefix]&a你已不再处于悬赏状态."
