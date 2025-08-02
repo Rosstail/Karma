@@ -1,7 +1,6 @@
 package com.rosstail.karma.blocks;
 
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.players.PlayerDataManager;
 import com.rosstail.karma.players.PlayerModel;
 import com.rosstail.karma.events.karmaevents.PlayerKarmaChangeEvent;
 import com.rosstail.karma.events.karmaevents.PlayerOverTimeResetEvent;

@@ -163,49 +163,50 @@ public class AdaptMessage {
             status = LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT);
             shortStatus = LangManager.getMessage(LangMessage.WANTED_STATUS_INNOCENT_SHORT);
         }
+
+        Pattern karmaPattern = Pattern.compile("\\[player_karma(_(int|abs))*]");
+        Matcher karmaMatcher = karmaPattern.matcher(message);
         String starter = "\\[" + playerType;
         String ender = "]";
 
-        message = message.replaceAll(starter + ender, playerModel.getUsername());
-        message = message.replaceAll(starter + "_uuid" + ender, playerModel.getUuid());
+        message = message.replaceAll(starter + ender, playerModel.getUsername()
+                .replaceAll(starter + "_uuid" + ender, playerModel.getUuid()));
 
-        message = message.replaceAll(starter + "_karma" + ender, decimalFormat(playerKarma, '.'));
-        message = message.replaceAll(starter + "_karma_abs" + ender, decimalFormat(Math.abs(playerKarma), '.'));
-        message = message.replaceAll(starter + "_karma_int" + ender, String.valueOf((int) playerKarma));
-        message = message.replaceAll(starter + "_karma_int_abs" + ender, String.valueOf(Math.abs((int) playerKarma)));
+        message = message.replaceAll(starter + "_karma" + ender, decimalFormat(playerKarma, '.'))
+                .replaceAll(starter + "_karma_abs" + ender, decimalFormat(Math.abs(playerKarma), '.'))
+                .replaceAll(starter + "_karma_int" + ender, String.valueOf((int) playerKarma))
+                .replaceAll(starter + "_karma_int_abs" + ender, String.valueOf(Math.abs((int) playerKarma)));
 
-        message = message.replaceAll(starter + "_previous_karma" + ender, decimalFormat(playerPreviousKarma, '.'));
-        message = message.replaceAll(starter + "_previous_karma_abs" + ender, decimalFormat(Math.abs(playerPreviousKarma), '.'));
-        message = message.replaceAll(starter + "_previous_karma_int" + ender, String.valueOf((int) playerPreviousKarma));
-        message = message.replaceAll(starter + "_previous_karma_int_abs" + ender, String.valueOf(Math.abs((int) playerPreviousKarma)));
+        message = message.replaceAll(starter + "_previous_karma" + ender, decimalFormat(playerPreviousKarma, '.'))
+                .replaceAll(starter + "_previous_karma_abs" + ender, decimalFormat(Math.abs(playerPreviousKarma), '.'))
+                .replaceAll(starter + "_previous_karma_int" + ender, String.valueOf((int) playerPreviousKarma))
+                .replaceAll(starter + "_previous_karma_int_abs" + ender, String.valueOf(Math.abs((int) playerPreviousKarma)));
 
-        message = message.replaceAll(starter + "_karma_diff" + ender, decimalFormat(difPlayerDiffKarma, '.'));
-        message = message.replaceAll(starter + "_karma_abs_diff" + ender, decimalFormat(Math.abs(difPlayerDiffKarma), '.'));
-        message = message.replaceAll(starter + "_karma_int_diff" + ender, String.valueOf((int) difPlayerDiffKarma));
-        message = message.replaceAll(starter + "_karma_int_abs_diff" + ender, String.valueOf(Math.abs((int) difPlayerDiffKarma)));
+        message = message.replaceAll(starter + "_karma_diff" + ender, decimalFormat(difPlayerDiffKarma, '.'))
+                .replaceAll(starter + "_karma_abs_diff" + ender, decimalFormat(Math.abs(difPlayerDiffKarma), '.'))
+                .replaceAll(starter + "_karma_int_diff" + ender, String.valueOf((int) difPlayerDiffKarma))
+                .replaceAll(starter + "_karma_int_abs_diff" + ender, String.valueOf(Math.abs((int) difPlayerDiffKarma)));
 
-        message = message.replaceAll(starter + "_tier" + ender, playerTier.getName());
-        message = message.replaceAll(starter + "_tier_display" + ender, playerTier.getDisplay());
-        message = message.replaceAll(starter + "_tier_short" + ender, playerTier.getShortDisplay());
-        message = message.replaceAll(starter + "_tier_minimum_karma" + ender, decimalFormat(playerTier.getMinKarma(), '.'));
-        message = message.replaceAll(starter + "_tier_maximum_karma" + ender, decimalFormat(playerTier.getMaxKarma(), '.'));
+        message = message.replaceAll(starter + "_tier" + ender, playerTier.getName())
+                .replaceAll(starter + "_tier_display" + ender, playerTier.getDisplay())
+                .replaceAll(starter + "_tier_short" + ender, playerTier.getShortDisplay())
+                .replaceAll(starter + "_tier_minimum_karma" + ender, decimalFormat(playerTier.getMinKarma(), '.'))
+                .replaceAll(starter + "_tier_maximum_karma" + ender, decimalFormat(playerTier.getMaxKarma(), '.'));
 
-        message = message.replaceAll(starter + "_previous_tier" + ender, playerPreviousTier.getName());
-        message = message.replaceAll(starter + "_previous_tier_display" + ender, playerPreviousTier.getDisplay());
-        message = message.replaceAll(starter + "_previous_tier_short" + ender, playerPreviousTier.getShortDisplay());
-        message = message.replaceAll(starter + "_previous_tier_minimum_karma" + ender, decimalFormat(playerPreviousTier.getMinKarma(), '.'));
-        message = message.replaceAll(starter + "_previous_tier_maximum_karma" + ender, decimalFormat(playerPreviousTier.getMaxKarma(), '.'));
+        message = message.replaceAll(starter + "_previous_tier" + ender, playerPreviousTier.getName())
+                .replaceAll(starter + "_previous_tier_display" + ender, playerPreviousTier.getDisplay())
+                .replaceAll(starter + "_previous_tier_short" + ender, playerPreviousTier.getShortDisplay())
+                .replaceAll(starter + "_previous_tier_minimum_karma" + ender, decimalFormat(playerPreviousTier.getMinKarma(), '.'))
+                .replaceAll(starter + "_previous_tier_maximum_karma" + ender, decimalFormat(playerPreviousTier.getMaxKarma(), '.'));
 
-        message = message.replaceAll(starter + "_wanted_status" + ender, status);
-        message = message.replaceAll(starter + "_wanted_status_short" + ender, shortStatus);
+        message = message.replaceAll(starter + "_wanted_status" + ender, status)
+                .replaceAll(starter + "_wanted_status_short" + ender, shortStatus);
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(LangManager.getMessage(LangMessage.FORMAT_DATETIME));
-        message = message.replaceAll(starter + "_wanted_time" + ender, decimalFormat(wantedTimeStamp.getTime(), '.'));
-        message = message.replaceAll(starter + "_wanted_time_display" + ender, simpleDateFormat.format(wantedTimeStamp.getTime()));
-        message = message.replaceAll(starter + "_wanted_time_delay" + ender, decimalFormat(wantedTime, '.'));
-        message = message.replaceAll(starter + "_wanted_time_delay_display" + ender,
-                isWanted ? countdownFormatter(time)
-                        : "-");
+        message = message.replaceAll(starter + "_wanted_time" + ender, decimalFormat(wantedTimeStamp.getTime(), '.'))
+                .replaceAll(starter + "_wanted_time_display" + ender, simpleDateFormat.format(wantedTimeStamp.getTime()))
+                .replaceAll(starter + "_wanted_time_delay" + ender, decimalFormat(wantedTime, '.'))
+                .replaceAll(starter + "_wanted_time_delay_display" + ender, isWanted ? countdownFormatter(time) : "-");
 
         message = message.replaceAll(starter + "_status" + ender,
                 LangManager.getMessage(isPlayerOnline ? LangMessage.PLAYER_ONLINE : LangMessage.PLAYER_OFFLINE));
@@ -214,13 +215,39 @@ public class AdaptMessage {
         return message;
     }
 
+    public static class TestRegex {
+        public static void main(String[] args) {
+            String regex = "\\[player_karma(_(int|abs))*]";
+            String[] tests = {
+                    "[player_karma]",
+                    "[player_karma_int]",
+                    "[player_karma_abs]",
+                    "[player_karma_abs_int]",
+                    "[player_karma_int_abs]",
+                    "[player_karma_abs_abs]",
+                    "[player_karma_int_int_abs]",
+                    "[player_karma_absfoo]",
+                    "[playerkarma]"
+            };
+
+            Pattern pattern = Pattern.compile(regex);
+            for (String test : tests) {
+                Matcher matcher = pattern.matcher(test);
+                System.out.println(test + " -> " + matcher.matches());
+            }
+        }
+    }
+
     public String adaptMessage(String message) {
         if (message == null) {
             return null;
         }
 
-        message = message.replaceAll("\\[timestamp]", String.valueOf(System.currentTimeMillis()));
-        message = message.replaceAll("\\[now]", String.valueOf(System.currentTimeMillis()));
+        message = message.replaceAll("\\[timestamp]", String.valueOf(System.currentTimeMillis()))
+                .replaceAll("\\[now]", String.valueOf(System.currentTimeMillis()));
+
+        String prefix = LangMessage.PLUGIN_PREFIX.getDisplayText();
+        message = message.replaceAll("\\[prefix]", prefix != null ? prefix : "");
 
         message = ChatColor.translateAlternateColorCodes('&', setPlaceholderMessage(null, message));
         if (getVersionNumbers().get(1) >= 16) {
@@ -245,20 +272,12 @@ public class AdaptMessage {
             double result = ExpressionCalculator.eval(expression);
             String replacement;
             if (type != null) {
-                switch (type) {
-                    case "int":
-                        replacement = String.valueOf((int) result);
-                        break;
-                    case "float":
-                        replacement = String.valueOf((float) result);
-                        break;
-                    case "format":
-                        replacement = decimalFormat((float) result, '.');
-                        break;
-                    default:
-                        replacement = String.valueOf(result);
-                        break;
-                }
+                replacement = switch (type) {
+                    case "int" -> String.valueOf((int) result);
+                    case "float" -> String.valueOf((float) result);
+                    case "format" -> decimalFormat((float) result, '.');
+                    default -> String.valueOf(result);
+                };
             } else {
                 replacement = String.valueOf(result);
             }
@@ -335,7 +354,7 @@ public class AdaptMessage {
         }
 
         if (pveHitMessage != null) {
-            pveHitMessage = pveHitMessage.replaceAll("\\[reward]", decimalFormat(reward,'.'));
+            pveHitMessage = pveHitMessage.replaceAll("\\[reward]", decimalFormat(reward, '.'));
             pveHitMessage = pveHitMessage.replaceAll("\\[rewardint]", String.valueOf((int) reward));
             pveHitMessage = adaptMessage(adaptPlayerMessage(player, pveHitMessage.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
             sendToPlayer(player, pveHitMessage);
@@ -372,7 +391,7 @@ public class AdaptMessage {
         }
 
         if (pveKillMessage != null) {
-            pveKillMessage = pveKillMessage.replaceAll("\\[reward]", decimalFormat(reward,'.'));
+            pveKillMessage = pveKillMessage.replaceAll("\\[reward]", decimalFormat(reward, '.'));
             pveKillMessage = pveKillMessage.replaceAll("\\[rewardint]", String.valueOf((int) reward));
             pveKillMessage = adaptMessage(adaptPlayerMessage(player, pveKillMessage.replaceAll("\\[victim]", victim.getName()), PlayerType.VICTIM.getText()));
             sendToPlayer(player, pveKillMessage);
@@ -390,7 +409,7 @@ public class AdaptMessage {
     public String decimalFormat(float value, char replacement) {
         ConfigData configData = ConfigData.getConfigData();
         int decimal = configData.locale.decNumber;
-        return String.format("%." +  decimal + "f", value).replaceAll(",", String.valueOf(replacement));
+        return String.format("%." + decimal + "f", value).replaceAll(",", String.valueOf(replacement));
     }
 
     /**

@@ -1,13 +1,13 @@
 package com.rosstail.karma.apis;
 
-import com.rosstail.karma.Karma;
 import com.rosstail.karma.ConfigData;
-import com.rosstail.karma.players.PlayerModel;
-import com.rosstail.karma.players.TopFlopScoreManager;
+import com.rosstail.karma.Karma;
 import com.rosstail.karma.lang.AdaptMessage;
 import com.rosstail.karma.lang.LangManager;
 import com.rosstail.karma.lang.LangMessage;
 import com.rosstail.karma.lang.PlayerType;
+import com.rosstail.karma.players.PlayerModel;
+import com.rosstail.karma.players.TopFlopScoreManager;
 import com.rosstail.karma.tiers.Tier;
 import com.rosstail.karma.tiers.TierManager;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;

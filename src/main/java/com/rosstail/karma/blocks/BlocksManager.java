@@ -30,11 +30,11 @@ public class BlocksManager {
     }
 
     public void setup() {
-        ConfigurationSection blocksSection = ConfigData.getConfigData().config.getConfigurationSection("blocks.list");
-        if (blocksSection != null) {
-            blocksModelMap = new HashMap<>();
-            blocksSection.getKeys(false).forEach(s -> {
-                blocksModelMap.put(s, new BlocksModel(blocksSection.getConfigurationSection(s)));
+        blocksModelMap = new HashMap<>();
+        if (ConfigData.getConfigData().config.isConfigurationSection("blocks.list")) {
+            ConfigurationSection blockListSection = ConfigData.getConfigData().config.getConfigurationSection("blocks.list");
+            blockListSection.getKeys(false).forEach(s -> {
+                blocksModelMap.put(s, new BlocksModel(blockListSection.getConfigurationSection(s)));
             });
         }
     }

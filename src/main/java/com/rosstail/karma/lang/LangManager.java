@@ -27,9 +27,8 @@ public class LangManager {
      * @return the string message in {@see LangManager.currentLang} language
      */
     public static String getMessage(LangMessage langMessage) {
-        String prefix = LangMessage.PLUGIN_PREFIX.getDisplayText();
         if (langMessage.getDisplayText() != null) {
-            return langMessage.getDisplayText().replaceAll("\\[prefix]", prefix != null ? prefix : "");
+            return langMessage.getDisplayText();
         }
         return null;
     }

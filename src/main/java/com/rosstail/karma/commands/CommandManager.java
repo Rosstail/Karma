@@ -140,7 +140,6 @@ public class CommandManager implements CommandExecutor, TabExecutor {
         command = adaptMessage.adaptMessage(adaptMessage.adaptPlayerMessage(player, command, PlayerType.PLAYER.getText()));
 
         CommandSender senderOrTarget = Bukkit.getConsoleSender();
-
         String regex = PlayerType.PLAYER.getText();
         if (command.startsWith(regex)) {
             command = command.replaceFirst(regex, "").trim();
